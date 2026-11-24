@@ -1,0 +1,52 @@
+name: Deploy Backend to Coolify
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-coolify-production
+  cancel-in-progress: false
+
+jobs:
+  verify-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Install Rust 1.100.0
+        run: rustup toolchain install 1.100.0 --profile minimal --component clippy
+
+      - name: Clippy (backend crates)
+        run: cargo +1.100.0 clippy -p swaggen-server -p swaggen-api-contract -p swaggen-domain -p swaggen-mongo-store --all-targets --locked -- -D warnings
+
+      - name: Test (backend crates)
+        run: cargo +1.100.0 test -p swaggen-server -p swaggen-api-contract -p swaggen-domain -p swaggen-mongo-store --locked
+
+      - name: Build server binary
+        run: cargo +1.100.0 build --release -p swaggen-server --locked
+
+  deploy-coolify:
+    needs: verify-backend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Coolify Deploy Webhook
+        env:
+          COOLIFY_WEBHOOK_URL: ${{ secrets.COOLIFY_WEBHOOK_URL }}
+          COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
+        run: |
+          if [ -z "$COOLIFY_WEBHOOK_URL" ] || [ -z "$COOLIFY_TOKEN" ]; then
+            echo "Missing COOLIFY_WEBHOOK_URL or COOLIFY_TOKEN in GitHub Actions Secrets." >&2
+            exit 1
+          fi
+          curl --request POST "$COOLIFY_WEBHOOK_URL" \
+            --header "Authorization: Bearer $COOLIFY_TOKEN" \
+            --header "Content-Type: application/json" \
+            --fail-with-body \
+            --silent \
+            --show-error

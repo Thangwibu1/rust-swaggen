@@ -41,3 +41,16 @@ Tài liệu này dùng khi bạn đã có `SWAGGEN_MONGO_URI` trỏ tới một 
    ```
 3. Mở app desktop Windows (`swaggen-desktop.exe`), kết nối tới `https://<domain-cua-ban>`, tạo **Server Owner** đầu tiên bằng `SWAGGEN_BOOTSTRAP_TOKEN`.
 4. Xóa/làm rỗng `SWAGGEN_BOOTSTRAP_TOKEN` trong Coolify và **Redeploy** để khóa đường bootstrap.
+
+## CI/CD tự động từ GitHub Actions lên Coolify
+
+Workflow [.github/workflows/deploy-coolify.yml](../.github/workflows/deploy-coolify.yml) chạy mỗi khi push lên `main` (hoặc chạy tay qua **Run workflow**):
+
+1. Chạy `verify-backend` trên `ubuntu-latest` (`cargo fmt`, `clippy -D warnings`, `test`, `build --release -p swaggen-server`).
+2. Chỉ khi bước kiểm tra pass mới gọi `COOLIFY_WEBHOOK_URL` kèm `Authorization: Bearer $COOLIFY_TOKEN`.
+
+Cần tạo 2 Repository Secrets trong GitHub (**Settings -> Secrets and variables -> Actions**):
+- `COOLIFY_WEBHOOK_URL`: lấy trong Coolify -> ứng dụng của bạn -> tab **Webhooks** -> **Deploy Webhook (auth required)** (dạng `https://<coolify-domain>/api/v1/deploy?uuid=<app-uuid>&force=false`).
+- `COOLIFY_TOKEN`: tạo trong Coolify -> **Keys & Tokens -> API Tokens** (cấp quyền **deploy**).
+
+Nếu muốn chỉ deploy sau khi CI GitHub pass (tránh Coolify tự deploy song song ngay khi vừa push), tắt tùy chọn **Auto Deploy** trong cấu hình Git/Webhook của ứng dụng trên Coolify.
