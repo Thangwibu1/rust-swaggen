@@ -1,0 +1,11 @@
+﻿{
+    "version":  "0.1.0",
+    "target":  "x86_64-pc-windows-msvc",
+    "webview2_required":  false,
+    "offline_capable_without_activation":  true,
+    "exe_sha256":  "881b9afd502a6327adde1ccc5bd68ff34a45cb7356f33366c481e7040a9c0a98",
+    "zip_path":  "dist\\windows-x64\\Swaggen-0.1.0-win64-unsigned.zip",
+    "zip_sha256":  "1e84a40526841cdea09158e0c78c697a0aff0d11a4c996bef46816a1746ed9fe",
+    "msi_status":  "BLOCKED_NO_WIX_TOOLSET",
+    "signing_status":  "BLOCKED_NO_CODESIGN_CERTIFICATE"
+}

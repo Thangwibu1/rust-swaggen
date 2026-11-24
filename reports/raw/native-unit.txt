@@ -1,0 +1,13 @@
+﻿   Compiling swaggen-p00 v0.0.0 (D:\code\potmen\spikes\p00)
+   Compiling swaggen-p00-native v0.0.0 (D:\code\potmen\spikes\p00-native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.03s
+     Running unittests src\lib.rs (spikes\p00-native\target\debug\build\swaggen-p00-native/39d7345380060305\out\swaggen_p00_native-39d7345380060305.exe)
+
+running 3 tests
+test tests::history_preserves_unicode_and_clears_redo_on_branch ... ok
+test tests::history_has_fixed_capacity ... ok
+test tests::virtualization_is_bounded_and_reaches_last_row ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+

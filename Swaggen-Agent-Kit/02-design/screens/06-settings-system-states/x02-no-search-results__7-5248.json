@@ -1,0 +1,48 @@
+{
+  "node": {
+    "page": "06-settings-system-states",
+    "page_id": "4:94",
+    "id": "7:5248",
+    "name": "X02 / No search results",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/06-settings-system-states/x02-no-search-results__7-5248",
+    "requirements": [
+      "WS07"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "7:5249",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "7:5252",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "7:5377",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "No search results",
+    "DisNote API / Settings"
+  ]
+}

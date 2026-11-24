@@ -1,0 +1,10 @@
+[
+  {"name":"native-render","status":"PASS","command":"Native app launcher + computer-use window/screenshot inspection","exit_code":null,"timestamp":"2026-11-24","artifact_path":"reports/native-ui.md"},
+  {"name":"native-unicode-undo-search","status":"PASS","command":"Computer-use: paste fixture Vietnamese JSON, Ctrl+Z, Ctrl+Y, exact search","exit_code":null,"timestamp":"2026-11-24","artifact_path":"reports/native-ui.md"},
+  {"name":"native-virtual-list","status":"PASS","command":"Computer-use: scroll to fixture/1000 and inspect rendered row count","exit_code":null,"timestamp":"2026-11-24","artifact_path":"reports/native-ui.md"},
+  {"name":"native-ui-transfer","status":"PASS","command":"Computer-use: send real 20MiB loopback fixture and inspect completed byte/preview counts","exit_code":null,"timestamp":"2026-11-24","artifact_path":"reports/native-ui-http-artifact.json"},
+  {"name":"native-ui-local-save","status":"PASS","command":"Computer-use Ctrl+S, then cargo +stable run --manifest-path spikes/p00/Cargo.toml --offline --locked --bin journal-ui-reopen","exit_code":0,"timestamp":"2026-11-24","artifact_path":"reports/raw/native-ui-save-reopen.txt"},
+  {"name":"native-app-scale-stress","status":"PASS","command":"Computer-use: inspect corrected compact editor layout at 200% application scale; 125% also observed","exit_code":null,"timestamp":"2026-11-24","artifact_path":"reports/native-ui.md"},
+  {"name":"native-accessibility","status":"FAIL","command":"Computer-use accessibility tree inspection: no internal editor/list/button semantics","exit_code":null,"timestamp":"2026-11-24","artifact_path":"reports/native-ui.md"},
+  {"name":"native-ime-osdpi-narrator","status":"BLOCKED","command":"Real IME composition, OS per-monitor DPI and Narrator acceptance not performed","exit_code":null,"timestamp":"2026-11-24","artifact_path":"reports/native-ui.md"}
+]

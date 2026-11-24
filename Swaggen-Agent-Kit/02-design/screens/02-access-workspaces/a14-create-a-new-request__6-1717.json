@@ -1,0 +1,61 @@
+{
+  "node": {
+    "page": "02-access-workspaces",
+    "page_id": "4:90",
+    "id": "6:1717",
+    "name": "A14 / Create a new request",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/02-access-workspaces/a14-create-a-new-request__6-1717",
+    "requirements": [
+      "RQ01",
+      "RQ08",
+      "RQ09"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "6:1718",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "6:1721",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "6:1873",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Create a new request",
+    "DisNote API / Team workspace",
+    "Configuration",
+    "Name",
+    "Workspace configuration",
+    "Method",
+    "Workspace configuration",
+    "URL",
+    "Workspace configuration",
+    "Save to",
+    "Workspace configuration",
+    "Access & sharing",
+    "Changes are saved locally before they are published to your team."
+  ]
+}

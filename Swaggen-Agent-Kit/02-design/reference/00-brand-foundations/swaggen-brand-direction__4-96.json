@@ -1,0 +1,94 @@
+{
+  "node": {
+    "page": "00-brand-foundations",
+    "page_id": "0:1",
+    "id": "4:96",
+    "name": "Swaggen / Brand direction",
+    "type": "frame",
+    "width": "1440",
+    "height": "650",
+    "path": "02-design/reference/00-brand-foundations/swaggen-brand-direction__4-96",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "4:97",
+      "name": "SWAGGEN",
+      "type": "text",
+      "x": "64",
+      "y": "64",
+      "width": "202",
+      "height": "60"
+    },
+    {
+      "id": "4:98",
+      "name": "One workspace. Every API.",
+      "type": "text",
+      "x": "64",
+      "y": "148",
+      "width": "480",
+      "height": "44"
+    },
+    {
+      "id": "4:99",
+      "name": "Design • document • test • collaborate",
+      "type": "text",
+      "x": "64",
+      "y": "216",
+      "width": "411",
+      "height": "28"
+    },
+    {
+      "id": "4:100",
+      "name": "Brand palette",
+      "type": "frame",
+      "x": "64",
+      "y": "268",
+      "width": "1208",
+      "height": "184"
+    },
+    {
+      "id": "4:117",
+      "name": "Windows desktop  /  Light only  /  JetBrains Mono",
+      "type": "text",
+      "x": "64",
+      "y": "476",
+      "width": "382",
+      "height": "20"
+    },
+    {
+      "id": "4:118",
+      "name": "A calm, precise API workspace for building togethe",
+      "type": "text",
+      "x": "64",
+      "y": "520",
+      "width": "1240",
+      "height": "22"
+    },
+    {
+      "id": "4:119",
+      "name": "Structure inspired by DISNOTE: semantic colors, re",
+      "type": "text",
+      "x": "64",
+      "y": "566",
+      "width": "1240",
+      "height": "20"
+    }
+  ],
+  "text_layer_names": [
+    "SWAGGEN",
+    "One workspace. Every API.",
+    "Design • document • test • collaborate",
+    "Cream",
+    "#FFEFD2",
+    "Teal",
+    "#6AB0AF",
+    "Salmon",
+    "#F5A89A",
+    "Yellow",
+    "#FFF2A5",
+    "Windows desktop  /  Light only  /  JetBrains Mono",
+    "A calm, precise API workspace for building togethe",
+    "Structure inspired by DISNOTE: semantic colors, re"
+  ]
+}

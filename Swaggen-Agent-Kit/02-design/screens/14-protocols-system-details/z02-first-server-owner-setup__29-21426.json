@@ -1,0 +1,56 @@
+{
+  "node": {
+    "page": "14-protocols-system-details",
+    "page_id": "27:325",
+    "id": "29:21426",
+    "name": "Z02 / First server owner setup",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/14-protocols-system-details/z02-first-server-owner-setup__29-21426",
+    "requirements": [
+      "OP03",
+      "SC03"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:21427",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:21430",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:21572",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "First server owner setup",
+    "DisNote API / system / Z02",
+    "Team server",
+    "https://api.swaggen.team",
+    "Bootstrap identity",
+    "hagiang@gmail.com · Google",
+    "Workspace name",
+    "Bootstrap state",
+    "Disabled permanently after owner creation"
+  ]
+}

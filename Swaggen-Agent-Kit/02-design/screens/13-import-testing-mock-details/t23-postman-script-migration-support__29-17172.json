@@ -1,0 +1,52 @@
+{
+  "node": {
+    "page": "13-import-testing-mock-details",
+    "page_id": "27:324",
+    "id": "29:17172",
+    "name": "T23 / Postman script migration support",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/13-import-testing-mock-details/t23-postman-script-migration-support__29-17172",
+    "requirements": [
+      "IM02",
+      "TS08"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:17173",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:17176",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:17331",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Postman script migration support",
+    "DisNote API / tools / T23",
+    "API CALL",
+    "COMPATIBILITY",
+    "MIGRATION ACTION"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:306",
+    "name": "Method=PATCH",
+    "type": "symbol",
+    "width": "216",
+    "height": "36",
+    "path": "02-design/components/01-component-library/method-patch__5-306",
+    "requirements": []
+  },
+  "direct_children": [],
+  "text_layer_names": []
+}

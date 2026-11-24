@@ -1,0 +1,113 @@
+{
+  "timestamp": "2026-11-24T05:00:50.602149+00:00",
+  "command": "python -X utf8 tools/p00-durability-evidence.py",
+  "exit_code": 0,
+  "status": "PASS",
+  "scope": "Six completed process-crash cases and artifact consistency; no power-loss acceptance",
+  "fixture_artifact": ".local/p00-crash-matrix/run-37416-1795496330640567500/results.csv",
+  "cases": [
+    {
+      "case": "created",
+      "recovered_batches": "2",
+      "orphan_files": "1",
+      "status": "PASS"
+    },
+    {
+      "case": "partial",
+      "recovered_batches": "2",
+      "orphan_files": "1",
+      "status": "PASS"
+    },
+    {
+      "case": "written",
+      "recovered_batches": "2",
+      "orphan_files": "1",
+      "status": "PASS"
+    },
+    {
+      "case": "synced",
+      "recovered_batches": "2",
+      "orphan_files": "1",
+      "status": "PASS"
+    },
+    {
+      "case": "replaced",
+      "recovered_batches": "1",
+      "orphan_files": "0",
+      "status": "PASS"
+    },
+    {
+      "case": "acked",
+      "recovered_batches": "1",
+      "orphan_files": "0",
+      "status": "PASS"
+    }
+  ],
+  "source_hashes_observed_at_review": [
+    {
+      "path": "rust-toolchain.toml",
+      "sha256": "1c4f6596d2c5c37fc3f5f5a8594418911b9d7a7fe96591daba551a2ec1bfccf1"
+    },
+    {
+      "path": "spikes/p00/Cargo.lock",
+      "sha256": "70262167d25dea14c25e03c915f19c8d3a330c1192f08120874bd855b215eefc"
+    },
+    {
+      "path": "spikes/p00/Cargo.toml",
+      "sha256": "212896ad715e9ec0712fdc645e565e2003a79502d439364e741ac04d0a635ac2"
+    },
+    {
+      "path": "spikes/p00/src/bin/journal-crash-matrix.rs",
+      "sha256": "241772c62d34ebaaaeb7061c1d02692c958cc31e93c433bfed621dff6dc465ab"
+    },
+    {
+      "path": "spikes/p00/src/bin/journal-smoke.rs",
+      "sha256": "7e1fec3d93ab111f0690670b6034c37d84995c909409d32a60378a4e49b3eeb5"
+    },
+    {
+      "path": "spikes/p00/src/bin/journal-ui-reopen.rs",
+      "sha256": "8a39c64f1ae450ea95764b510690f87433171cb12601293429262cb2ffdbc0ec"
+    },
+    {
+      "path": "spikes/p00/src/bin/mongo-smoke.rs",
+      "sha256": "d4e7cd2580d8948cf376983d09e99a62c73107e0d16fb43a8c53da4c1e5a22f2"
+    },
+    {
+      "path": "spikes/p00/src/journal.rs",
+      "sha256": "80cf095cd978191ab3eecd0b23e2aba680dca48e7c989a3c2d6c39d2a2522dd5"
+    },
+    {
+      "path": "spikes/p00/src/lib.rs",
+      "sha256": "99c7ba496bf799bbb6e7252bb469b94a4245504054dfb810d266bb4897c56643"
+    },
+    {
+      "path": "spikes/p00-native/Cargo.lock",
+      "sha256": "55cf96d89e597f7dac66ffa235394e3ca965555c087b977cd81a2c90d12d331b"
+    },
+    {
+      "path": "spikes/p00-native/Cargo.toml",
+      "sha256": "23ce2f230820a218d91cadf3b81b0ba7cae6459ddee3505a670d5c91620ae2b7"
+    },
+    {
+      "path": "spikes/p00-native/src/bin/http-gate.rs",
+      "sha256": "3a6c9e3494abf9db0fc946a46a4b1537eaa67b20381f13a97b022c2205a9859f"
+    },
+    {
+      "path": "spikes/p00-native/src/lib.rs",
+      "sha256": "c95081ee33cad6e79c8ef96d3e32f73972bf7a4207e35319dabe91bb5babfd03"
+    },
+    {
+      "path": "spikes/p00-native/src/main.rs",
+      "sha256": "091067a1e10e2e28a5291274ba487223bc400d2169630257819a07333532a40d"
+    },
+    {
+      "path": "spikes/p00-native/src/transport.rs",
+      "sha256": "fc0bb01477852147ee9498539c67e9f9776daa514ac4acca7f827023daf47997"
+    },
+    {
+      "path": "tools/p00-check.ps1",
+      "sha256": "7e3c07a3f24e7923ca72e356f3f2fe34e691a4bfc650dff016dcfe5a8561cd3f"
+    }
+  ],
+  "hash_limit": "Current review-time fingerprints, not a Git diff or retroactive hashes for earlier UI observations."
+}

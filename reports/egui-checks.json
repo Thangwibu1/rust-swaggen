@@ -1,0 +1,50 @@
+﻿[
+    {
+        "name":  "egui-format",
+        "status":  "PASS",
+        "command":  "cargo +stable fmt --manifest-path spikes/p00-egui/Cargo.toml -- --check",
+        "exit_code":  0,
+        "timestamp":  "2026-11-24T06:47:59.7474364Z",
+        "artifact_path":  "reports/raw/egui-format.txt"
+    },
+    {
+        "name":  "egui-unit",
+        "status":  "PASS",
+        "command":  "cargo +stable test --manifest-path spikes/p00-egui/Cargo.toml --offline --locked --target x86_64-pc-windows-msvc --lib",
+        "exit_code":  0,
+        "timestamp":  "2026-11-24T06:48:00.2965240Z",
+        "artifact_path":  "reports/raw/egui-unit.txt"
+    },
+    {
+        "name":  "egui-build",
+        "status":  "PASS",
+        "command":  "cargo +stable build --manifest-path spikes/p00-egui/Cargo.toml --offline --locked --target x86_64-pc-windows-msvc",
+        "exit_code":  0,
+        "timestamp":  "2026-11-24T06:48:15.4827078Z",
+        "artifact_path":  "reports/raw/egui-build.txt"
+    },
+    {
+        "name":  "egui-release-build",
+        "status":  "PASS",
+        "command":  "cargo +stable build --manifest-path spikes/p00-egui/Cargo.toml --offline --locked --target x86_64-pc-windows-msvc --release",
+        "exit_code":  0,
+        "timestamp":  "2026-11-24T06:48:38.3441016Z",
+        "artifact_path":  "reports/raw/egui-release-build.txt"
+    },
+    {
+        "name":  "egui-clippy",
+        "status":  "PASS",
+        "command":  "cargo +stable clippy --manifest-path spikes/p00-egui/Cargo.toml --offline --locked --target x86_64-pc-windows-msvc --all-targets -- -D warnings",
+        "exit_code":  0,
+        "timestamp":  "2026-11-24T06:48:50.7738629Z",
+        "artifact_path":  "reports/raw/egui-clippy.txt"
+    },
+    {
+        "name":  "egui-metadata",
+        "status":  "PASS",
+        "command":  "cargo +stable metadata --manifest-path spikes/p00-egui/Cargo.toml --offline --locked --filter-platform x86_64-pc-windows-msvc --format-version 1",
+        "exit_code":  0,
+        "timestamp":  "2026-11-24T06:48:55.5512314Z",
+        "artifact_path":  "reports/raw/egui-metadata.txt"
+    }
+]

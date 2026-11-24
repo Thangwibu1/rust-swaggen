@@ -1,0 +1,60 @@
+{
+  "node": {
+    "page": "02-access-workspaces",
+    "page_id": "4:90",
+    "id": "6:769",
+    "name": "A08 / Your workspaces",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/02-access-workspaces/a08-your-workspaces__6-769",
+    "requirements": [
+      "WS01",
+      "WS04",
+      "WS09"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "6:770",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "6:773",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "6:935",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Your workspaces",
+    "DisNote API / Team workspace",
+    "DisNote API",
+    "24 requests · 5 members",
+    "Expense tracker",
+    "16 requests · Personal",
+    "Swaggen internal",
+    "42 requests · 3 members",
+    "Recently opened",
+    "NAME / OPERATION",
+    "VALUE / DETAILS",
+    "STATUS"
+  ]
+}

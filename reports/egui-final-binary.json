@@ -1,0 +1,7 @@
+{
+  "recorded_at": "2026-11-24T06:54:43.721752+00:00",
+  "path": "spikes/p00-egui/target/x86_64-pc-windows-msvc/release/swaggen-p00-egui.exe",
+  "profile": "release",
+  "sha256": "c5b91dd8dcb170c0fc6af68782354133186ee246e87853d3e8d458edaca55eee",
+  "scope": "Final release executable launched and interacted with; no installer/signing claim"
+}

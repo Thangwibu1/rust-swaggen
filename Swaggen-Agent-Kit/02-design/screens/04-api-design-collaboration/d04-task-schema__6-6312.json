@@ -1,0 +1,55 @@
+{
+  "node": {
+    "page": "04-api-design-collaboration",
+    "page_id": "4:92",
+    "id": "6:6312",
+    "name": "D04 / Task schema",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/04-api-design-collaboration/d04-task-schema__6-6312",
+    "requirements": [
+      "OA05",
+      "OA06",
+      "OA07"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "6:6313",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "6:6316",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "6:6489",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Task schema",
+    "DisNote API / Team workspace",
+    "Schema properties",
+    "NAME / OPERATION",
+    "VALUE / DETAILS",
+    "STATUS",
+    "Example"
+  ]
+}

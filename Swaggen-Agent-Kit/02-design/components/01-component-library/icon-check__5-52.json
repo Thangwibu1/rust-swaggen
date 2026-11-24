@@ -1,0 +1,15 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:52",
+    "name": "Icon/check",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-check__5-52",
+    "requirements": []
+  },
+  "direct_children": [],
+  "text_layer_names": []
+}

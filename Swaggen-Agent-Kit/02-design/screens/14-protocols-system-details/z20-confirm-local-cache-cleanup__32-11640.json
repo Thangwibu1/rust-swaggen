@@ -1,0 +1,59 @@
+{
+  "node": {
+    "page": "14-protocols-system-details",
+    "page_id": "27:325",
+    "id": "32:11640",
+    "name": "Z20 / Confirm local cache cleanup",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/14-protocols-system-details/z20-confirm-local-cache-cleanup__32-11640",
+    "requirements": [
+      "RS07",
+      "UX10"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "32:11641",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "32:11644",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "32:11800",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Confirm local cache cleanup",
+    "DisNote API / system / Z20",
+    "Remove response cache",
+    "Enabled",
+    "Remove request history",
+    "Disabled",
+    "Unsynced drafts",
+    "Preserved · 3 pending",
+    "Personal secrets",
+    "Preserved in Windows secure storage",
+    "Estimated space reclaimed",
+    "1.8 GB"
+  ]
+}

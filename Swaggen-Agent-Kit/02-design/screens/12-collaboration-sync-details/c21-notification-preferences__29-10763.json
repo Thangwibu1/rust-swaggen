@@ -1,0 +1,56 @@
+{
+  "node": {
+    "page": "12-collaboration-sync-details",
+    "page_id": "27:323",
+    "id": "29:10763",
+    "name": "C21 / Notification preferences",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/12-collaboration-sync-details/c21-notification-preferences__29-10763",
+    "requirements": [
+      "CO05",
+      "MK09"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:10764",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:10767",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:10917",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Notification preferences",
+    "DisNote API / collab / C21",
+    "Mentions",
+    "Enabled",
+    "API contract changes",
+    "Enabled",
+    "Runner failures",
+    "Enabled",
+    "Delivery"
+  ]
+}

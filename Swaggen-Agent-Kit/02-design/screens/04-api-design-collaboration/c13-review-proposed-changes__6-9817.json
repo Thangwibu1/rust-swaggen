@@ -1,0 +1,55 @@
+{
+  "node": {
+    "page": "04-api-design-collaboration",
+    "page_id": "4:92",
+    "id": "6:9817",
+    "name": "C13 / Review proposed changes",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/04-api-design-collaboration/c13-review-proposed-changes__6-9817",
+    "requirements": [
+      "DC07",
+      "SY10"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "6:9818",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "6:9821",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "6:9973",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Review proposed changes",
+    "DisNote API / Team workspace",
+    "Changes to share",
+    "NAME / OPERATION",
+    "VALUE / DETAILS",
+    "STATUS",
+    "Publish note",
+    "Personal secrets will never be published."
+  ]
+}

@@ -1,0 +1,82 @@
+﻿[
+    {
+        "name":  "format",
+        "status":  "PASS",
+        "command":  "cargo +stable fmt --manifest-path spikes/p00/Cargo.toml -- --check",
+        "exit_code":  0,
+        "timestamp":  "2026-11-24T04:35:04.3061218Z",
+        "artifact_path":  "reports/raw/format.txt"
+    },
+    {
+        "name":  "journal-unit",
+        "status":  "PASS",
+        "command":  "cargo +stable test --manifest-path spikes/p00/Cargo.toml --offline --locked --lib",
+        "exit_code":  0,
+        "timestamp":  "2026-11-24T04:35:04.4639974Z",
+        "artifact_path":  "reports/raw/journal-unit.txt"
+    },
+    {
+        "name":  "journal-process-crash",
+        "status":  "PASS",
+        "command":  "cargo +stable run --manifest-path spikes/p00/Cargo.toml --offline --locked --bin journal-smoke",
+        "exit_code":  0,
+        "timestamp":  "2026-11-24T04:35:05.1448382Z",
+        "artifact_path":  "reports/raw/journal-process-crash.txt"
+    },
+    {
+        "name":  "mongo-build",
+        "status":  "PASS",
+        "command":  "cargo +stable build --manifest-path spikes/p00/Cargo.toml --offline --locked --features mongo",
+        "exit_code":  0,
+        "timestamp":  "2026-11-24T04:35:08.4528139Z",
+        "artifact_path":  "reports/raw/mongo-build.txt"
+    },
+    {
+        "name":  "clippy",
+        "status":  "PASS",
+        "command":  "cargo +stable clippy --manifest-path spikes/p00/Cargo.toml --offline --locked --features mongo --all-targets -- -D warnings",
+        "exit_code":  0,
+        "timestamp":  "2026-11-24T04:35:20.2117164Z",
+        "artifact_path":  "reports/raw/clippy.txt"
+    },
+    {
+        "name":  "native-format",
+        "status":  "PASS",
+        "command":  "cargo +stable fmt --manifest-path spikes/p00-native/Cargo.toml -- --check",
+        "exit_code":  0,
+        "timestamp":  "2026-11-24T04:35:25.7916462Z",
+        "artifact_path":  "reports/raw/native-format.txt"
+    },
+    {
+        "name":  "native-build",
+        "status":  "PASS",
+        "command":  "cargo +stable build --manifest-path spikes/p00-native/Cargo.toml --offline --locked",
+        "exit_code":  0,
+        "timestamp":  "2026-11-24T04:35:26.0136857Z",
+        "artifact_path":  "reports/raw/native-build.txt"
+    },
+    {
+        "name":  "native-unit",
+        "status":  "PASS",
+        "command":  "cargo +stable test --manifest-path spikes/p00-native/Cargo.toml --offline --locked --lib",
+        "exit_code":  0,
+        "timestamp":  "2026-11-24T04:35:54.8911674Z",
+        "artifact_path":  "reports/raw/native-unit.txt"
+    },
+    {
+        "name":  "native-http",
+        "status":  "FAIL",
+        "command":  "cargo +stable run --manifest-path spikes/p00-native/Cargo.toml --offline --locked --bin http-gate",
+        "exit_code":  2,
+        "timestamp":  "2026-11-24T04:36:03.7739420Z",
+        "artifact_path":  "reports/raw/native-http.txt"
+    },
+    {
+        "name":  "native-clippy",
+        "status":  "FAIL",
+        "command":  "cargo +stable clippy --manifest-path spikes/p00-native/Cargo.toml --offline --locked --all-targets -- -D warnings",
+        "exit_code":  101,
+        "timestamp":  "2026-11-24T04:36:05.2507060Z",
+        "artifact_path":  "reports/raw/native-clippy.txt"
+    }
+]

@@ -1,0 +1,53 @@
+{
+  "node": {
+    "page": "11-openapi-contract-details",
+    "page_id": "27:322",
+    "id": "29:8161",
+    "name": "O16 / Bundle a multi-file specification",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/11-openapi-contract-details/o16-bundle-a-multi-file-specification__29-8161",
+    "requirements": [
+      "IM04",
+      "OA08"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:8162",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:8165",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:8315",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Bundle a multi-file specification",
+    "DisNote API / openapi / O16",
+    "INPUT FILE",
+    "REFERENCES",
+    "BUNDLE ACTION",
+    "Unknown extensions are preserved. Preview the output before repl"
+  ]
+}

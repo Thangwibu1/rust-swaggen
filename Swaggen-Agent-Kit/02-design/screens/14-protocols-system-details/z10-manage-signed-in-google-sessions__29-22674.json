@@ -1,0 +1,57 @@
+{
+  "node": {
+    "page": "14-protocols-system-details",
+    "page_id": "27:325",
+    "id": "29:22674",
+    "name": "Z10 / Manage signed-in Google sessions",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/14-protocols-system-details/z10-manage-signed-in-google-sessions__29-22674",
+    "requirements": [
+      "SC03",
+      "SC09",
+      "WS03"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:22675",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:22678",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:22822",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Manage signed-in Google sessions",
+    "DisNote API / system / Z10",
+    "Account",
+    "hagiang@gmail.com · Google",
+    "This device",
+    "Windows 11 · active now",
+    "Other session",
+    "Recovery and MFA",
+    "Managed in Google account security"
+  ]
+}

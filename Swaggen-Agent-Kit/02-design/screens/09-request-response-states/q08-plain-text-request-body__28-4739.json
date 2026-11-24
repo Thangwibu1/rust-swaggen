@@ -1,0 +1,50 @@
+{
+  "node": {
+    "page": "09-request-response-states",
+    "page_id": "27:320",
+    "id": "28:4739",
+    "name": "Q08 / Plain text request body",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/09-request-response-states/q08-plain-text-request-body__28-4739",
+    "requirements": [
+      "RQ04"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "28:4740",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "28:4743",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "28:4891",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Plain text request body",
+    "DisNote API / request / Q08",
+    "{{base_url}}/v1/tasks",
+    "Text"
+  ]
+}

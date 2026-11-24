@@ -1,0 +1,43 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:234",
+    "name": "Tab",
+    "type": "frame",
+    "width": "628",
+    "height": "132",
+    "path": "02-design/components/01-component-library/tab__5-234",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "5:235",
+      "name": "State=Default",
+      "type": "symbol",
+      "x": "24",
+      "y": "56",
+      "width": "180",
+      "height": "40"
+    },
+    {
+      "id": "5:239",
+      "name": "State=Active",
+      "type": "symbol",
+      "x": "224",
+      "y": "56",
+      "width": "180",
+      "height": "40"
+    },
+    {
+      "id": "5:243",
+      "name": "State=Dirty",
+      "type": "symbol",
+      "x": "424",
+      "y": "56",
+      "width": "180",
+      "height": "40"
+    }
+  ],
+  "text_layer_names": []
+}

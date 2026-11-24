@@ -1,0 +1,157 @@
+{
+  "node": {
+    "page": "07-coverage-handoff",
+    "page_id": "4:95",
+    "id": "15:6672",
+    "name": "Coverage / UX",
+    "type": "frame",
+    "width": "1440",
+    "height": "716",
+    "path": "02-design/reference/07-coverage-handoff/coverage-ux__15-6672",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "15:6673",
+      "name": "UX / REQUIREMENT COVERAGE",
+      "type": "text",
+      "x": "41",
+      "y": "41",
+      "width": "360",
+      "height": "34"
+    },
+    {
+      "id": "15:6674",
+      "name": "UX01",
+      "type": "frame",
+      "x": "41",
+      "y": "91",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6679",
+      "name": "UX02",
+      "type": "frame",
+      "x": "41",
+      "y": "151",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6684",
+      "name": "UX03",
+      "type": "frame",
+      "x": "41",
+      "y": "211",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6689",
+      "name": "UX04",
+      "type": "frame",
+      "x": "41",
+      "y": "271",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6694",
+      "name": "UX05",
+      "type": "frame",
+      "x": "41",
+      "y": "331",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6699",
+      "name": "UX06",
+      "type": "frame",
+      "x": "41",
+      "y": "391",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6704",
+      "name": "UX07",
+      "type": "frame",
+      "x": "41",
+      "y": "451",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6709",
+      "name": "UX08",
+      "type": "frame",
+      "x": "41",
+      "y": "511",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6714",
+      "name": "UX09",
+      "type": "frame",
+      "x": "41",
+      "y": "571",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6719",
+      "name": "UX10",
+      "type": "frame",
+      "x": "41",
+      "y": "631",
+      "width": "1360",
+      "height": "44"
+    }
+  ],
+  "text_layer_names": [
+    "UX / REQUIREMENT COVERAGE",
+    "UX01",
+    "Bố cục làm việc",
+    "Stage A",
+    "R01 · A11",
+    "UX02",
+    "Tab và khôi phục",
+    "Stage A",
+    "X01 · X04",
+    "UX03",
+    "Phím tắt",
+    "Stage A",
+    "S04 · M03",
+    "UX04",
+    "Command palette",
+    "Stage B",
+    "A13 · S04 · M03",
+    "UX05",
+    "Hiển thị Windows",
+    "Stage A",
+    "S03",
+    "UX06",
+    "Theme và ngôn ngữ",
+    "Stage B",
+    "S03",
+    "UX07",
+    "Khả năng truy cập",
+    "Stage B",
+    "S03",
+    "UX08",
+    "Mở file và liên kết",
+    "Stage B",
+    "I01 · C04",
+    "UX09",
+    "Trạng thái kết nối",
+    "Stage A",
+    "A06 · C08",
+    "UX10",
+    "Quản lý dữ liệu máy",
+    "Stage A",
+    "S05 · X05"
+  ]
+}

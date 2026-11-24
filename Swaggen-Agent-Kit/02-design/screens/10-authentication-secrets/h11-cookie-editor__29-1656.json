@@ -1,0 +1,54 @@
+{
+  "node": {
+    "page": "10-authentication-secrets",
+    "page_id": "27:321",
+    "id": "29:1656",
+    "name": "H11 / Cookie editor",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/10-authentication-secrets/h11-cookie-editor__29-1656",
+    "requirements": [
+      "AU04"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:1657",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:1660",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:1812",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Cookie editor",
+    "DisNote API / auth / H11",
+    "Domain",
+    "Path",
+    "Name",
+    "Value",
+    "Security flags",
+    "Expires"
+  ]
+}

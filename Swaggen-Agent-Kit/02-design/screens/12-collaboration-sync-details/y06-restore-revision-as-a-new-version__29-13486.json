@@ -1,0 +1,51 @@
+{
+  "node": {
+    "page": "12-collaboration-sync-details",
+    "page_id": "27:323",
+    "id": "29:13486",
+    "name": "Y06 / Restore revision as a new version",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/12-collaboration-sync-details/y06-restore-revision-as-a-new-version__29-13486",
+    "requirements": [
+      "SY08"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:13487",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:13490",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:13635",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Restore revision as a new version",
+    "DisNote API / collab / Y06",
+    "Current revision 16",
+    "Restore content from revision 13",
+    "Revision history remains intact. Restore never rewrites or delet"
+  ]
+}

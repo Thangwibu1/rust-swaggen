@@ -1,0 +1,57 @@
+{
+  "node": {
+    "page": "04-api-design-collaboration",
+    "page_id": "4:92",
+    "id": "6:9977",
+    "name": "C14 / Live specification editing",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/04-api-design-collaboration/c14-live-specification-editing__6-9977",
+    "requirements": [
+      "CO07",
+      "CO10"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "6:9978",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "6:9981",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "6:10173",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Live specification editing",
+    "DisNote API / Team workspace",
+    "openapi.yaml",
+    "Live documentation",
+    "DisNote API",
+    "Everything your team needs to build with confidence.",
+    "/v1/tasks",
+    "List workspace tasks",
+    "Parameters",
+    "page   integer   optional limit  integer   optional"
+  ]
+}

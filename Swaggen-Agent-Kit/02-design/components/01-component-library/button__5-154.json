@@ -1,0 +1,196 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:154",
+    "name": "Button",
+    "type": "frame",
+    "width": "812",
+    "height": "372",
+    "path": "02-design/components/01-component-library/button__5-154",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "5:155",
+      "name": "Kind=Primary, State=Default",
+      "type": "symbol",
+      "x": "24",
+      "y": "56",
+      "width": "176",
+      "height": "40"
+    },
+    {
+      "id": "5:157",
+      "name": "Kind=Primary, State=Hover",
+      "type": "symbol",
+      "x": "220",
+      "y": "56",
+      "width": "176",
+      "height": "40"
+    },
+    {
+      "id": "5:159",
+      "name": "Kind=Primary, State=Disabled",
+      "type": "symbol",
+      "x": "416",
+      "y": "56",
+      "width": "176",
+      "height": "40"
+    },
+    {
+      "id": "5:161",
+      "name": "Kind=Primary, State=Loading",
+      "type": "symbol",
+      "x": "612",
+      "y": "56",
+      "width": "176",
+      "height": "40"
+    },
+    {
+      "id": "5:163",
+      "name": "Kind=Secondary, State=Default",
+      "type": "symbol",
+      "x": "24",
+      "y": "116",
+      "width": "176",
+      "height": "40"
+    },
+    {
+      "id": "5:165",
+      "name": "Kind=Secondary, State=Hover",
+      "type": "symbol",
+      "x": "220",
+      "y": "116",
+      "width": "176",
+      "height": "40"
+    },
+    {
+      "id": "5:167",
+      "name": "Kind=Secondary, State=Disabled",
+      "type": "symbol",
+      "x": "416",
+      "y": "116",
+      "width": "176",
+      "height": "40"
+    },
+    {
+      "id": "5:169",
+      "name": "Kind=Secondary, State=Loading",
+      "type": "symbol",
+      "x": "612",
+      "y": "116",
+      "width": "176",
+      "height": "40"
+    },
+    {
+      "id": "5:171",
+      "name": "Kind=Ghost, State=Default",
+      "type": "symbol",
+      "x": "24",
+      "y": "176",
+      "width": "176",
+      "height": "40"
+    },
+    {
+      "id": "5:173",
+      "name": "Kind=Ghost, State=Hover",
+      "type": "symbol",
+      "x": "220",
+      "y": "176",
+      "width": "176",
+      "height": "40"
+    },
+    {
+      "id": "5:175",
+      "name": "Kind=Ghost, State=Disabled",
+      "type": "symbol",
+      "x": "416",
+      "y": "176",
+      "width": "176",
+      "height": "40"
+    },
+    {
+      "id": "5:177",
+      "name": "Kind=Ghost, State=Loading",
+      "type": "symbol",
+      "x": "612",
+      "y": "176",
+      "width": "176",
+      "height": "40"
+    },
+    {
+      "id": "5:179",
+      "name": "Kind=Danger, State=Default",
+      "type": "symbol",
+      "x": "24",
+      "y": "236",
+      "width": "176",
+      "height": "40"
+    },
+    {
+      "id": "5:181",
+      "name": "Kind=Danger, State=Hover",
+      "type": "symbol",
+      "x": "220",
+      "y": "236",
+      "width": "176",
+      "height": "40"
+    },
+    {
+      "id": "5:183",
+      "name": "Kind=Danger, State=Disabled",
+      "type": "symbol",
+      "x": "416",
+      "y": "236",
+      "width": "176",
+      "height": "40"
+    },
+    {
+      "id": "5:185",
+      "name": "Kind=Danger, State=Loading",
+      "type": "symbol",
+      "x": "612",
+      "y": "236",
+      "width": "176",
+      "height": "40"
+    },
+    {
+      "id": "5:187",
+      "name": "Kind=Google, State=Default",
+      "type": "symbol",
+      "x": "24",
+      "y": "296",
+      "width": "176",
+      "height": "40"
+    },
+    {
+      "id": "5:190",
+      "name": "Kind=Google, State=Hover",
+      "type": "symbol",
+      "x": "220",
+      "y": "296",
+      "width": "176",
+      "height": "40"
+    },
+    {
+      "id": "5:193",
+      "name": "Kind=Google, State=Disabled",
+      "type": "symbol",
+      "x": "416",
+      "y": "296",
+      "width": "176",
+      "height": "40"
+    },
+    {
+      "id": "5:196",
+      "name": "Kind=Google, State=Loading",
+      "type": "symbol",
+      "x": "612",
+      "y": "296",
+      "width": "176",
+      "height": "40"
+    }
+  ],
+  "text_layer_names": []
+}

@@ -1,0 +1,4 @@
+﻿    Checking swaggen-p00 v0.0.0 (D:\code\potmen\spikes\p00)
+    Checking swaggen-p00-native v0.0.0 (D:\code\potmen\spikes\p00-native)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.92s
+

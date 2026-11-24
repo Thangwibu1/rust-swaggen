@@ -1,0 +1,157 @@
+{
+  "node": {
+    "page": "07-coverage-handoff",
+    "page_id": "4:95",
+    "id": "15:6568",
+    "name": "Coverage / MK",
+    "type": "frame",
+    "width": "1440",
+    "height": "716",
+    "path": "02-design/reference/07-coverage-handoff/coverage-mk__15-6568",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "15:6569",
+      "name": "MK / REQUIREMENT COVERAGE",
+      "type": "text",
+      "x": "41",
+      "y": "41",
+      "width": "360",
+      "height": "34"
+    },
+    {
+      "id": "15:6570",
+      "name": "MK01",
+      "type": "frame",
+      "x": "41",
+      "y": "91",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6575",
+      "name": "MK02",
+      "type": "frame",
+      "x": "41",
+      "y": "151",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6580",
+      "name": "MK03",
+      "type": "frame",
+      "x": "41",
+      "y": "211",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6585",
+      "name": "MK04",
+      "type": "frame",
+      "x": "41",
+      "y": "271",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6590",
+      "name": "MK05",
+      "type": "frame",
+      "x": "41",
+      "y": "331",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6595",
+      "name": "MK06",
+      "type": "frame",
+      "x": "41",
+      "y": "391",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6600",
+      "name": "MK07",
+      "type": "frame",
+      "x": "41",
+      "y": "451",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6605",
+      "name": "MK08",
+      "type": "frame",
+      "x": "41",
+      "y": "511",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6610",
+      "name": "MK09",
+      "type": "frame",
+      "x": "41",
+      "y": "571",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6615",
+      "name": "MK10",
+      "type": "frame",
+      "x": "41",
+      "y": "631",
+      "width": "1360",
+      "height": "44"
+    }
+  ],
+  "text_layer_names": [
+    "MK / REQUIREMENT COVERAGE",
+    "MK01",
+    "Mock từ example",
+    "Stage B",
+    "T07 · T08",
+    "MK02",
+    "Mock từ schema",
+    "Stage B",
+    "T07 · T08",
+    "MK03",
+    "Kịch bản mock",
+    "Stage C",
+    "T08 · T09",
+    "MK04",
+    "Mock dùng chung",
+    "Stage B",
+    "T07 · T08",
+    "MK05",
+    "CLI Rust",
+    "Stage B",
+    "T10",
+    "MK06",
+    "Kết quả cho CI",
+    "Stage B",
+    "T04 · T10",
+    "MK07",
+    "Runner tự host",
+    "Stage C",
+    "T11",
+    "MK08",
+    "Lịch chạy kiểm tra",
+    "Stage C",
+    "T12",
+    "MK09",
+    "Thông báo lỗi chạy",
+    "Stage C",
+    "T12",
+    "MK10",
+    "Quản lý tài nguyên",
+    "Stage B",
+    "T11"
+  ]
+}

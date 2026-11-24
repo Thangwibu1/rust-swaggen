@@ -1,0 +1,66 @@
+{
+  "node": {
+    "page": "03-api-workbench",
+    "page_id": "4:91",
+    "id": "6:4185",
+    "name": "R13 / Connection settings",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/03-api-workbench/r13-connection-settings__6-4185",
+    "requirements": [
+      "AU05",
+      "AU06",
+      "AU07",
+      "AU09",
+      "AU10",
+      "PR06"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "6:4186",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "6:4189",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "6:4347",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Connection settings",
+    "DisNote API / Team workspace",
+    "Configuration",
+    "HTTP version",
+    "Workspace configuration",
+    "Verify TLS certificates",
+    "Workspace configuration",
+    "Client certificate",
+    "Workspace configuration",
+    "Proxy",
+    "Workspace configuration",
+    "Redirect limit",
+    "Workspace configuration",
+    "Access & sharing",
+    "Changes are saved locally before they are published to your team."
+  ]
+}

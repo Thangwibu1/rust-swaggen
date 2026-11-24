@@ -1,0 +1,1002 @@
+[
+  {
+    "page": "00-brand-foundations",
+    "page_id": "0:1",
+    "id": "4:81",
+    "name": "Brand/Mark",
+    "type": "symbol",
+    "width": "32",
+    "height": "32",
+    "path": "02-design/components/00-brand-foundations/brand-mark__4-81",
+    "files": [
+      "02-design/components/00-brand-foundations/brand-mark__4-81.png",
+      "02-design/components/00-brand-foundations/brand-mark__4-81__svgAssets-00.svg",
+      "02-design/components/00-brand-foundations/brand-mark__4-81__svgAssets-01.svg",
+      "02-design/components/00-brand-foundations/brand-mark__4-81__svgAssets-02.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "00-brand-foundations",
+    "page_id": "0:1",
+    "id": "4:96",
+    "name": "Swaggen / Brand direction",
+    "type": "frame",
+    "width": "1440",
+    "height": "650",
+    "path": "02-design/reference/00-brand-foundations/swaggen-brand-direction__4-96",
+    "files": [
+      "02-design/reference/00-brand-foundations/swaggen-brand-direction__4-96.png"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "00-brand-foundations",
+    "page_id": "0:1",
+    "id": "4:120",
+    "name": "Foundations / Typography & layout",
+    "type": "frame",
+    "width": "1440",
+    "height": "1016",
+    "path": "02-design/reference/00-brand-foundations/foundations-typography-layout__4-120",
+    "files": [
+      "02-design/reference/00-brand-foundations/foundations-typography-layout__4-120.png"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "00-brand-foundations",
+    "page_id": "0:1",
+    "id": "4:139",
+    "name": "Foundations / Semantic colors",
+    "type": "frame",
+    "width": "1120",
+    "height": "1122",
+    "path": "02-design/reference/00-brand-foundations/foundations-semantic-colors__4-139",
+    "files": [
+      "02-design/reference/00-brand-foundations/foundations-semantic-colors__4-139.png"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "00-brand-foundations",
+    "page_id": "0:1",
+    "id": "18:2",
+    "name": "Brand / Logo system & usage",
+    "type": "frame",
+    "width": "1440",
+    "height": "736",
+    "path": "02-design/reference/00-brand-foundations/brand-logo-system-usage__18-2",
+    "files": [
+      "02-design/reference/00-brand-foundations/brand-logo-system-usage__18-2.png"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "00-brand-foundations",
+    "page_id": "0:1",
+    "id": "51:40541",
+    "name": "Foundations / Foreground-only color",
+    "type": "frame",
+    "width": "1440",
+    "height": "308",
+    "path": "02-design/reference/00-brand-foundations/foundations-foreground-only-color__51-40541",
+    "files": [
+      "02-design/reference/00-brand-foundations/foundations-foreground-only-color__51-40541.png"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:4",
+    "name": "Icon/folder",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-folder__5-4",
+    "files": [
+      "02-design/components/01-component-library/icon-folder__5-4.png",
+      "02-design/components/01-component-library/icon-folder__5-4__svgAssets-00.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:8",
+    "name": "Icon/search",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-search__5-8",
+    "files": [
+      "02-design/components/01-component-library/icon-search__5-8.png",
+      "02-design/components/01-component-library/icon-search__5-8__svgAssets-00.svg",
+      "02-design/components/01-component-library/icon-search__5-8__svgAssets-01.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:12",
+    "name": "Icon/plus",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-plus__5-12",
+    "files": [
+      "02-design/components/01-component-library/icon-plus__5-12.png",
+      "02-design/components/01-component-library/icon-plus__5-12__svgAssets-00.svg",
+      "02-design/components/01-component-library/icon-plus__5-12__svgAssets-01.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:15",
+    "name": "Icon/chevron-down",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-chevron-down__5-15",
+    "files": [
+      "02-design/components/01-component-library/icon-chevron-down__5-15.png",
+      "02-design/components/01-component-library/icon-chevron-down__5-15__svgAssets-00.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:18",
+    "name": "Icon/chevron-right",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-chevron-right__5-18",
+    "files": [
+      "02-design/components/01-component-library/icon-chevron-right__5-18.png",
+      "02-design/components/01-component-library/icon-chevron-right__5-18__svgAssets-00.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:22",
+    "name": "Icon/arrow-right",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-arrow-right__5-22",
+    "files": [
+      "02-design/components/01-component-library/icon-arrow-right__5-22.png",
+      "02-design/components/01-component-library/icon-arrow-right__5-22__svgAssets-00.svg",
+      "02-design/components/01-component-library/icon-arrow-right__5-22__svgAssets-01.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:26",
+    "name": "Icon/settings",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-settings__5-26",
+    "files": [
+      "02-design/components/01-component-library/icon-settings__5-26.png",
+      "02-design/components/01-component-library/icon-settings__5-26__svgAssets-00.svg",
+      "02-design/components/01-component-library/icon-settings__5-26__svgAssets-01.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:32",
+    "name": "Icon/users",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-users__5-32",
+    "files": [
+      "02-design/components/01-component-library/icon-users__5-32.png",
+      "02-design/components/01-component-library/icon-users__5-32__svgAssets-00.svg",
+      "02-design/components/01-component-library/icon-users__5-32__svgAssets-01.svg",
+      "02-design/components/01-component-library/icon-users__5-32__svgAssets-02.svg",
+      "02-design/components/01-component-library/icon-users__5-32__svgAssets-03.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:38",
+    "name": "Icon/file-code",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-file-code__5-38",
+    "files": [
+      "02-design/components/01-component-library/icon-file-code__5-38.png",
+      "02-design/components/01-component-library/icon-file-code__5-38__svgAssets-00.svg",
+      "02-design/components/01-component-library/icon-file-code__5-38__svgAssets-01.svg",
+      "02-design/components/01-component-library/icon-file-code__5-38__svgAssets-02.svg",
+      "02-design/components/01-component-library/icon-file-code__5-38__svgAssets-03.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:42",
+    "name": "Icon/book-open",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-book-open__5-42",
+    "files": [
+      "02-design/components/01-component-library/icon-book-open__5-42.png",
+      "02-design/components/01-component-library/icon-book-open__5-42__svgAssets-00.svg",
+      "02-design/components/01-component-library/icon-book-open__5-42__svgAssets-01.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:46",
+    "name": "Icon/send",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-send__5-46",
+    "files": [
+      "02-design/components/01-component-library/icon-send__5-46.png",
+      "02-design/components/01-component-library/icon-send__5-46__svgAssets-00.svg",
+      "02-design/components/01-component-library/icon-send__5-46__svgAssets-01.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:49",
+    "name": "Icon/play",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-play__5-49",
+    "files": [
+      "02-design/components/01-component-library/icon-play__5-49.png",
+      "02-design/components/01-component-library/icon-play__5-49__svgAssets-00.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:52",
+    "name": "Icon/check",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-check__5-52",
+    "files": [
+      "02-design/components/01-component-library/icon-check__5-52.png",
+      "02-design/components/01-component-library/icon-check__5-52__svgAssets-00.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:56",
+    "name": "Icon/x",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-x__5-56",
+    "files": [
+      "02-design/components/01-component-library/icon-x__5-56.png",
+      "02-design/components/01-component-library/icon-x__5-56__svgAssets-00.svg",
+      "02-design/components/01-component-library/icon-x__5-56__svgAssets-01.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:60",
+    "name": "Icon/bell",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-bell__5-60",
+    "files": [
+      "02-design/components/01-component-library/icon-bell__5-60.png",
+      "02-design/components/01-component-library/icon-bell__5-60__svgAssets-00.svg",
+      "02-design/components/01-component-library/icon-bell__5-60__svgAssets-01.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:65",
+    "name": "Icon/history",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-history__5-65",
+    "files": [
+      "02-design/components/01-component-library/icon-history__5-65.png",
+      "02-design/components/01-component-library/icon-history__5-65__svgAssets-00.svg",
+      "02-design/components/01-component-library/icon-history__5-65__svgAssets-01.svg",
+      "02-design/components/01-component-library/icon-history__5-65__svgAssets-02.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:71",
+    "name": "Icon/git-branch",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-git-branch__5-71",
+    "files": [
+      "02-design/components/01-component-library/icon-git-branch__5-71.png",
+      "02-design/components/01-component-library/icon-git-branch__5-71__svgAssets-00.svg",
+      "02-design/components/01-component-library/icon-git-branch__5-71__svgAssets-01.svg",
+      "02-design/components/01-component-library/icon-git-branch__5-71__svgAssets-02.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:74",
+    "name": "Icon/cloud",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-cloud__5-74",
+    "files": [
+      "02-design/components/01-component-library/icon-cloud__5-74.png",
+      "02-design/components/01-component-library/icon-cloud__5-74__svgAssets-00.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:79",
+    "name": "Icon/cloud-off",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-cloud-off__5-79",
+    "files": [
+      "02-design/components/01-component-library/icon-cloud-off__5-79.png",
+      "02-design/components/01-component-library/icon-cloud-off__5-79__svgAssets-00.svg",
+      "02-design/components/01-component-library/icon-cloud-off__5-79__svgAssets-01.svg",
+      "02-design/components/01-component-library/icon-cloud-off__5-79__svgAssets-02.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:83",
+    "name": "Icon/shield-check",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-shield-check__5-83",
+    "files": [
+      "02-design/components/01-component-library/icon-shield-check__5-83.png",
+      "02-design/components/01-component-library/icon-shield-check__5-83__svgAssets-00.svg",
+      "02-design/components/01-component-library/icon-shield-check__5-83__svgAssets-01.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:87",
+    "name": "Icon/key-round",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-key-round__5-87",
+    "files": [
+      "02-design/components/01-component-library/icon-key-round__5-87.png",
+      "02-design/components/01-component-library/icon-key-round__5-87__svgAssets-00.svg",
+      "02-design/components/01-component-library/icon-key-round__5-87__svgAssets-01.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:91",
+    "name": "Icon/copy",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-copy__5-91",
+    "files": [
+      "02-design/components/01-component-library/icon-copy__5-91.png",
+      "02-design/components/01-component-library/icon-copy__5-91__svgAssets-00.svg",
+      "02-design/components/01-component-library/icon-copy__5-91__svgAssets-01.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:96",
+    "name": "Icon/download",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-download__5-96",
+    "files": [
+      "02-design/components/01-component-library/icon-download__5-96.png",
+      "02-design/components/01-component-library/icon-download__5-96__svgAssets-00.svg",
+      "02-design/components/01-component-library/icon-download__5-96__svgAssets-01.svg",
+      "02-design/components/01-component-library/icon-download__5-96__svgAssets-02.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:101",
+    "name": "Icon/upload",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-upload__5-101",
+    "files": [
+      "02-design/components/01-component-library/icon-upload__5-101.png",
+      "02-design/components/01-component-library/icon-upload__5-101__svgAssets-00.svg",
+      "02-design/components/01-component-library/icon-upload__5-101__svgAssets-01.svg",
+      "02-design/components/01-component-library/icon-upload__5-101__svgAssets-02.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:105",
+    "name": "Icon/terminal",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-terminal__5-105",
+    "files": [
+      "02-design/components/01-component-library/icon-terminal__5-105.png",
+      "02-design/components/01-component-library/icon-terminal__5-105__svgAssets-00.svg",
+      "02-design/components/01-component-library/icon-terminal__5-105__svgAssets-01.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:108",
+    "name": "Icon/zap",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-zap__5-108",
+    "files": [
+      "02-design/components/01-component-library/icon-zap__5-108.png",
+      "02-design/components/01-component-library/icon-zap__5-108__svgAssets-00.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:113",
+    "name": "Icon/circle-alert",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-circle-alert__5-113",
+    "files": [
+      "02-design/components/01-component-library/icon-circle-alert__5-113.png",
+      "02-design/components/01-component-library/icon-circle-alert__5-113__svgAssets-00.svg",
+      "02-design/components/01-component-library/icon-circle-alert__5-113__svgAssets-01.svg",
+      "02-design/components/01-component-library/icon-circle-alert__5-113__svgAssets-02.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:119",
+    "name": "Icon/refresh-cw",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-refresh-cw__5-119",
+    "files": [
+      "02-design/components/01-component-library/icon-refresh-cw__5-119.png",
+      "02-design/components/01-component-library/icon-refresh-cw__5-119__svgAssets-00.svg",
+      "02-design/components/01-component-library/icon-refresh-cw__5-119__svgAssets-01.svg",
+      "02-design/components/01-component-library/icon-refresh-cw__5-119__svgAssets-02.svg",
+      "02-design/components/01-component-library/icon-refresh-cw__5-119__svgAssets-03.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:123",
+    "name": "Icon/eye",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-eye__5-123",
+    "files": [
+      "02-design/components/01-component-library/icon-eye__5-123.png",
+      "02-design/components/01-component-library/icon-eye__5-123__svgAssets-00.svg",
+      "02-design/components/01-component-library/icon-eye__5-123__svgAssets-01.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:130",
+    "name": "Icon/trash-2",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-trash-2__5-130",
+    "files": [
+      "02-design/components/01-component-library/icon-trash-2__5-130.png",
+      "02-design/components/01-component-library/icon-trash-2__5-130__svgAssets-00.svg",
+      "02-design/components/01-component-library/icon-trash-2__5-130__svgAssets-01.svg",
+      "02-design/components/01-component-library/icon-trash-2__5-130__svgAssets-02.svg",
+      "02-design/components/01-component-library/icon-trash-2__5-130__svgAssets-03.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:138",
+    "name": "Icon/grip-vertical",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-grip-vertical__5-138",
+    "files": [
+      "02-design/components/01-component-library/icon-grip-vertical__5-138.png",
+      "02-design/components/01-component-library/icon-grip-vertical__5-138__svgAssets-00.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:143",
+    "name": "Icon/globe",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-globe__5-143",
+    "files": [
+      "02-design/components/01-component-library/icon-globe__5-143.png",
+      "02-design/components/01-component-library/icon-globe__5-143__svgAssets-00.svg",
+      "02-design/components/01-component-library/icon-globe__5-143__svgAssets-01.svg",
+      "02-design/components/01-component-library/icon-globe__5-143__svgAssets-02.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:147",
+    "name": "Icon/blocks",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-blocks__5-147",
+    "files": [
+      "02-design/components/01-component-library/icon-blocks__5-147.png",
+      "02-design/components/01-component-library/icon-blocks__5-147__svgAssets-00.svg",
+      "02-design/components/01-component-library/icon-blocks__5-147__svgAssets-01.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:153",
+    "name": "Icon/arrow-left-right",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-arrow-left-right__5-153",
+    "files": [
+      "02-design/components/01-component-library/icon-arrow-left-right__5-153.png",
+      "02-design/components/01-component-library/icon-arrow-left-right__5-153__svgAssets-00.svg",
+      "02-design/components/01-component-library/icon-arrow-left-right__5-153__svgAssets-01.svg",
+      "02-design/components/01-component-library/icon-arrow-left-right__5-153__svgAssets-02.svg",
+      "02-design/components/01-component-library/icon-arrow-left-right__5-153__svgAssets-03.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:154",
+    "name": "Button",
+    "type": "frame",
+    "width": "812",
+    "height": "372",
+    "path": "02-design/components/01-component-library/button__5-154",
+    "files": [
+      "02-design/components/01-component-library/button__5-154.png",
+      "02-design/components/01-component-library/button__5-154__svgAssets-00.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:199",
+    "name": "Input",
+    "type": "frame",
+    "width": "1168",
+    "height": "196",
+    "path": "02-design/components/01-component-library/input__5-199",
+    "files": [
+      "02-design/components/01-component-library/input__5-199.png"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:210",
+    "name": "Badge",
+    "type": "frame",
+    "width": "424",
+    "height": "168",
+    "path": "02-design/components/01-component-library/badge__5-210",
+    "files": [
+      "02-design/components/01-component-library/badge__5-210.png"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:223",
+    "name": "Navigation item",
+    "type": "frame",
+    "width": "500",
+    "height": "132",
+    "path": "02-design/components/01-component-library/navigation-item__5-223",
+    "files": [
+      "02-design/components/01-component-library/navigation-item__5-223.png",
+      "02-design/components/01-component-library/navigation-item__5-223__svgAssets-00.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:234",
+    "name": "Tab",
+    "type": "frame",
+    "width": "628",
+    "height": "132",
+    "path": "02-design/components/01-component-library/tab__5-234",
+    "files": [
+      "02-design/components/01-component-library/tab__5-234.png"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:263",
+    "name": "Avatar",
+    "type": "frame",
+    "width": "184",
+    "height": "124",
+    "path": "02-design/components/01-component-library/avatar__5-263",
+    "files": [
+      "02-design/components/01-component-library/avatar__5-263.png"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:283",
+    "name": "Code line",
+    "type": "frame",
+    "width": "3136",
+    "height": "164",
+    "path": "02-design/components/01-component-library/code-line__5-283",
+    "files": [
+      "02-design/components/01-component-library/code-line__5-283.png"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:296",
+    "name": "Endpoint",
+    "type": "frame",
+    "width": "736",
+    "height": "184",
+    "path": "02-design/components/01-component-library/endpoint__5-296",
+    "files": [
+      "02-design/components/01-component-library/endpoint__5-296.png"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:312",
+    "name": "Notice",
+    "type": "frame",
+    "width": "3184",
+    "height": "216",
+    "path": "02-design/components/01-component-library/notice__5-312",
+    "files": [
+      "02-design/components/01-component-library/notice__5-312.png",
+      "02-design/components/01-component-library/notice__5-312__svgAssets-00.svg",
+      "02-design/components/01-component-library/notice__5-312__svgAssets-01.svg",
+      "02-design/components/01-component-library/notice__5-312__svgAssets-02.svg",
+      "02-design/components/01-component-library/notice__5-312__svgAssets-03.svg",
+      "02-design/components/01-component-library/notice__5-312__svgAssets-04.svg",
+      "02-design/components/01-component-library/notice__5-312__svgAssets-05.svg",
+      "02-design/components/01-component-library/notice__5-312__svgAssets-06.svg",
+      "02-design/components/01-component-library/notice__5-312__svgAssets-07.svg",
+      "02-design/components/01-component-library/notice__5-312__svgAssets-08.svg",
+      "02-design/components/01-component-library/notice__5-312__svgAssets-09.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:348",
+    "name": "Metric",
+    "type": "symbol",
+    "width": "240",
+    "height": "116",
+    "path": "02-design/components/01-component-library/metric__5-348",
+    "files": [
+      "02-design/components/01-component-library/metric__5-348.png"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:352",
+    "name": "Empty state",
+    "type": "symbol",
+    "width": "700",
+    "height": "260",
+    "path": "02-design/components/01-component-library/empty-state__5-352",
+    "files": [
+      "02-design/components/01-component-library/empty-state__5-352.png",
+      "02-design/components/01-component-library/empty-state__5-352__svgAssets-00.svg",
+      "02-design/components/01-component-library/empty-state__5-352__svgAssets-01.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:360",
+    "name": "Dialog",
+    "type": "symbol",
+    "width": "560",
+    "height": "264",
+    "path": "02-design/components/01-component-library/dialog__5-360",
+    "files": [
+      "02-design/components/01-component-library/dialog__5-360.png"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:370",
+    "name": "Shell/Activity rail",
+    "type": "symbol",
+    "width": "64",
+    "height": "836",
+    "path": "02-design/components/01-component-library/shell-activity-rail__5-370",
+    "files": [
+      "02-design/components/01-component-library/shell-activity-rail__5-370.png",
+      "02-design/components/01-component-library/shell-activity-rail__5-370__svgAssets-00.svg",
+      "02-design/components/01-component-library/shell-activity-rail__5-370__svgAssets-01.svg",
+      "02-design/components/01-component-library/shell-activity-rail__5-370__svgAssets-02.svg",
+      "02-design/components/01-component-library/shell-activity-rail__5-370__svgAssets-03.svg",
+      "02-design/components/01-component-library/shell-activity-rail__5-370__svgAssets-04.svg",
+      "02-design/components/01-component-library/shell-activity-rail__5-370__svgAssets-05.svg",
+      "02-design/components/01-component-library/shell-activity-rail__5-370__svgAssets-06.svg",
+      "02-design/components/01-component-library/shell-activity-rail__5-370__svgAssets-07.svg",
+      "02-design/components/01-component-library/shell-activity-rail__5-370__svgAssets-08.svg",
+      "02-design/components/01-component-library/shell-activity-rail__5-370__svgAssets-09.svg",
+      "02-design/components/01-component-library/shell-activity-rail__5-370__svgAssets-10.svg",
+      "02-design/components/01-component-library/shell-activity-rail__5-370__svgAssets-11.svg",
+      "02-design/components/01-component-library/shell-activity-rail__5-370__svgAssets-12.svg",
+      "02-design/components/01-component-library/shell-activity-rail__5-370__svgAssets-13.svg",
+      "02-design/components/01-component-library/shell-activity-rail__5-370__svgAssets-14.svg",
+      "02-design/components/01-component-library/shell-activity-rail__5-370__svgAssets-15.svg",
+      "02-design/components/01-component-library/shell-activity-rail__5-370__svgAssets-16.svg",
+      "02-design/components/01-component-library/shell-activity-rail__5-370__svgAssets-17.svg",
+      "02-design/components/01-component-library/shell-activity-rail__5-370__svgAssets-18.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:405",
+    "name": "Shell/Project sidebar",
+    "type": "symbol",
+    "width": "248",
+    "height": "836",
+    "path": "02-design/components/01-component-library/shell-project-sidebar__5-405",
+    "files": [
+      "02-design/components/01-component-library/shell-project-sidebar__5-405.png",
+      "02-design/components/01-component-library/shell-project-sidebar__5-405__svgAssets-00.svg",
+      "02-design/components/01-component-library/shell-project-sidebar__5-405__svgAssets-01.svg",
+      "02-design/components/01-component-library/shell-project-sidebar__5-405__svgAssets-02.svg",
+      "02-design/components/01-component-library/shell-project-sidebar__5-405__svgAssets-03.svg",
+      "02-design/components/01-component-library/shell-project-sidebar__5-405__svgAssets-04.svg",
+      "02-design/components/01-component-library/shell-project-sidebar__5-405__svgAssets-05.svg",
+      "02-design/components/01-component-library/shell-project-sidebar__5-405__svgAssets-06.svg",
+      "02-design/components/01-component-library/shell-project-sidebar__5-405__svgAssets-07.svg",
+      "02-design/components/01-component-library/shell-project-sidebar__5-405__svgAssets-08.svg",
+      "02-design/components/01-component-library/shell-project-sidebar__5-405__svgAssets-09.svg",
+      "02-design/components/01-component-library/shell-project-sidebar__5-405__svgAssets-10.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:462",
+    "name": "Shell/Windows titlebar",
+    "type": "symbol",
+    "width": "1440",
+    "height": "36",
+    "path": "02-design/components/01-component-library/shell-windows-titlebar__5-462",
+    "files": [
+      "02-design/components/01-component-library/shell-windows-titlebar__5-462.png"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "11:12188",
+    "name": "Tooltip",
+    "type": "frame",
+    "width": "288",
+    "height": "120",
+    "path": "02-design/components/01-component-library/tooltip__11-12188",
+    "files": [
+      "02-design/components/01-component-library/tooltip__11-12188.png"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "27:159",
+    "name": "Select",
+    "type": "frame",
+    "width": "1352",
+    "height": "208",
+    "path": "02-design/components/01-component-library/select__27-159",
+    "files": [
+      "02-design/components/01-component-library/select__27-159.png",
+      "02-design/components/01-component-library/select__27-159__svgAssets-00.svg"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false
+  },
+  {
+    "page": "02-access-workspaces",
+    "page_id": "4:90",
+    "id": "6:144",
+    "name": "A01 / Welcome to Swaggen",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/02-access-workspaces/a01-welcome-to-swaggen__6-144",
+    "requirements": [
+      "SC03",
+      "WS03"
+    ],
+    "files": [
+      "02-design/screens/02-access-workspaces/a01-welcome-to-swaggen__6-144.png"
+    ],
+    "svg_truncated": false,
+    "raw_images_truncated": false,
+    "source": "download_assets export from prior inspection; copied exact PNG"
+  }
+]

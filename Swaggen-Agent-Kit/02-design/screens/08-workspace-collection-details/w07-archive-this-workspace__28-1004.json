@@ -1,0 +1,56 @@
+{
+  "node": {
+    "page": "08-workspace-collection-details",
+    "page_id": "27:319",
+    "id": "28:1004",
+    "name": "W07 / Archive this workspace",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/08-workspace-collection-details/w07-archive-this-workspace__28-1004",
+    "requirements": [
+      "WS04",
+      "WS09"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "28:1005",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "28:1008",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "28:1150",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Archive this workspace",
+    "DisNote API / workspace / W07",
+    "Workspace",
+    "DisNote API",
+    "Access after archive",
+    "Read only for all members",
+    "Data retention",
+    "Collections and history are preserved",
+    "Confirmation"
+  ]
+}

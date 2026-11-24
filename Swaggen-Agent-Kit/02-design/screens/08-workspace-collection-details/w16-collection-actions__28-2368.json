@@ -1,0 +1,52 @@
+{
+  "node": {
+    "page": "08-workspace-collection-details",
+    "page_id": "27:319",
+    "id": "28:2368",
+    "name": "W16 / Collection actions",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/08-workspace-collection-details/w16-collection-actions__28-2368",
+    "requirements": [
+      "RQ09",
+      "WS06"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "28:2369",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "28:2372",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "28:2542",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Collection actions",
+    "DisNote API / workspace / W16",
+    "Available actions",
+    "Selection details",
+    "Choose an action from the menu. Your current draft stays availab"
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "node": {
+    "page": "02-access-workspaces",
+    "page_id": "4:90",
+    "id": "6:1569",
+    "name": "A13 / Find anything in your workspace",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/02-access-workspaces/a13-find-anything-in-your-workspace__6-1569",
+    "requirements": [
+      "UX04",
+      "WS07"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "6:1570",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "6:1573",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "6:1713",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Find anything in your workspace",
+    "DisNote API / Team workspace",
+    "Search results",
+    "NAME / OPERATION",
+    "VALUE / DETAILS",
+    "STATUS",
+    "Showing 3 items",
+    "All changes saved locally"
+  ]
+}

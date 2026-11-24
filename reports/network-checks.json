@@ -1,0 +1,18 @@
+﻿[
+    {
+        "name":  "index.crates.io",
+        "status":  "BLOCKED",
+        "command":  "Resolve-DnsName index.crates.io",
+        "exit_code":  null,
+        "timestamp":  "2026-11-24T05:07:06.5852275Z",
+        "detail":  "DNS lookup failed in execution environment; no URI or credentials logged"
+    },
+    {
+        "name":  "coolify.be-learning.io.vn",
+        "status":  "BLOCKED",
+        "command":  "Resolve-DnsName coolify.be-learning.io.vn",
+        "exit_code":  null,
+        "timestamp":  "2026-11-24T05:07:07.5408404Z",
+        "detail":  "DNS lookup failed in execution environment; no URI or credentials logged"
+    }
+]

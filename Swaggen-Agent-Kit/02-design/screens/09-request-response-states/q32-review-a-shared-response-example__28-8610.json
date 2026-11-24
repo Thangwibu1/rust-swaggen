@@ -1,0 +1,53 @@
+{
+  "node": {
+    "page": "09-request-response-states",
+    "page_id": "27:320",
+    "id": "28:8610",
+    "name": "Q32 / Review a shared response example",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/09-request-response-states/q32-review-a-shared-response-example__28-8610",
+    "requirements": [
+      "CO08",
+      "RS08",
+      "SC02"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "28:8611",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "28:8614",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "28:8765",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Review a shared response example",
+    "DisNote API / request / Q32",
+    "Local response",
+    "Sanitized shared example",
+    "Linked to GET /v1/tasks · status 200 · content type application/"
+  ]
+}

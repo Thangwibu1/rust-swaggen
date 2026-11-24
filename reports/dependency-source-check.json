@@ -1,0 +1,11 @@
+{
+  "name": "dependency-source-license-msrv",
+  "status": "PASS",
+  "timestamp": "2026-11-24T06:46:33.788740+00:00",
+  "exit_code": 0,
+  "command": "python -X utf8 tools/p00-dependency-review.py",
+  "artifact_path": "reports/dependency-source-review.json",
+  "scope": "Selected Windows source manifests, declared licenses/MSRV and bundled upstream notices only; current advisories and license obligations remain separate",
+  "issues": [],
+  "release_notice_bundle_complete": false
+}

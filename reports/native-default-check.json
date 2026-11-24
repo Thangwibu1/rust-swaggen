@@ -1,0 +1,8 @@
+{
+  "name": "native-default-check",
+  "status": "PASS",
+  "exit_code": 0,
+  "command": "cargo +stable check --manifest-path spikes/p00-native/Cargo.toml --offline --locked",
+  "timestamp": "2026-11-24T05:20:21.5016174Z",
+  "artifact_path": "reports/raw/native-default-check.txt"
+}

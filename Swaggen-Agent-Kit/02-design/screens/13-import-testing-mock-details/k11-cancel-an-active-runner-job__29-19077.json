@@ -1,0 +1,55 @@
+{
+  "node": {
+    "page": "13-import-testing-mock-details",
+    "page_id": "27:324",
+    "id": "29:19077",
+    "name": "K11 / Cancel an active runner job",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/13-import-testing-mock-details/k11-cancel-an-active-runner-job__29-19077",
+    "requirements": [
+      "MK10"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:19078",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:19081",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:19230",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Cancel an active runner job",
+    "DisNote API / tools / K11",
+    "Review details",
+    "Job",
+    "job_8421",
+    "Current step",
+    "POST /v1/tasks",
+    "Completed",
+    "4 of 12 requests"
+  ]
+}

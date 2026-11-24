@@ -1,0 +1,37 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:491",
+    "name": "Library / Introduction",
+    "type": "frame",
+    "width": "1520",
+    "height": "74",
+    "path": "02-design/components/01-component-library/library-introduction__5-491",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "5:492",
+      "name": "SWAGGEN / COMPONENT LIBRARY",
+      "type": "text",
+      "x": "0",
+      "y": "0",
+      "width": "519",
+      "height": "44"
+    },
+    {
+      "id": "5:493",
+      "name": "Editable variants + properties + semantic tokens. ",
+      "type": "text",
+      "x": "0",
+      "y": "52",
+      "width": "832",
+      "height": "22"
+    }
+  ],
+  "text_layer_names": [
+    "SWAGGEN / COMPONENT LIBRARY",
+    "Editable variants + properties + semantic tokens. "
+  ]
+}

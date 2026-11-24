@@ -1,0 +1,25 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "11:12204",
+    "name": "Skeleton",
+    "type": "frame",
+    "width": "368",
+    "height": "120",
+    "path": "02-design/components/01-component-library/skeleton__11-12204",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "11:12205",
+      "name": "State=Default",
+      "type": "symbol",
+      "x": "24",
+      "y": "48",
+      "width": "320",
+      "height": "32"
+    }
+  ],
+  "text_layer_names": []
+}

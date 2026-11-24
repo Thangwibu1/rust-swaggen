@@ -1,0 +1,53 @@
+{
+  "node": {
+    "page": "13-import-testing-mock-details",
+    "page_id": "27:324",
+    "id": "29:18134",
+    "name": "K05 / Runner job resource limits",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/13-import-testing-mock-details/k05-runner-job-resource-limits__29-18134",
+    "requirements": [
+      "MK10"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:18135",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:18138",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:18288",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Runner job resource limits",
+    "DisNote API / tools / K05",
+    "Maximum simultaneous jobs",
+    "Maximum response body",
+    "Run log retention",
+    "Artifact retention",
+    "Disk quota"
+  ]
+}

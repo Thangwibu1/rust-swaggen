@@ -1,0 +1,54 @@
+{
+  "node": {
+    "page": "08-workspace-collection-details",
+    "page_id": "27:319",
+    "id": "28:1154",
+    "name": "W08 / Leave your workspace",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/08-workspace-collection-details/w08-leave-your-workspace__28-1154",
+    "requirements": [
+      "WS10"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "28:1155",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "28:1158",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "28:1296",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Leave your workspace",
+    "DisNote API / workspace / W08",
+    "Workspace",
+    "DisNote API",
+    "Your role",
+    "Owner",
+    "Required action",
+    "Transfer ownership before leaving"
+  ]
+}

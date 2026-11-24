@@ -1,0 +1,51 @@
+{
+  "node": {
+    "page": "12-collaboration-sync-details",
+    "page_id": "27:323",
+    "id": "29:9853",
+    "name": "C15 / Create a branch",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/12-collaboration-sync-details/c15-create-a-branch__29-9853",
+    "requirements": [
+      "SY10"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:9854",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:9857",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:9997",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Create a branch",
+    "DisNote API / collab / C15",
+    "Source branch",
+    "Branch name",
+    "Description"
+  ]
+}

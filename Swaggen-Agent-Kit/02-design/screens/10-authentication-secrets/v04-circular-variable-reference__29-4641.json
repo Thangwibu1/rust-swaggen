@@ -1,0 +1,53 @@
+{
+  "node": {
+    "page": "10-authentication-secrets",
+    "page_id": "27:321",
+    "id": "29:4641",
+    "name": "V04 / Circular variable reference",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/10-authentication-secrets/v04-circular-variable-reference__29-4641",
+    "requirements": [
+      "EV04"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:4642",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:4645",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:4791",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Circular variable reference",
+    "DisNote API / auth / V04",
+    "Action required",
+    "Cycle",
+    "base_url → api_host → base_url",
+    "Fix",
+    "Replace one reference with a literal value"
+  ]
+}

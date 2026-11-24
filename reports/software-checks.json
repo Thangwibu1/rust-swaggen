@@ -1,0 +1,34 @@
+﻿[
+    {
+        "name":  "software-build-debug",
+        "status":  "PASS",
+        "command":  "cargo +stable build --manifest-path spikes/p00-native/Cargo.toml --offline --locked --no-default-features --features software --target x86_64-pc-windows-msvc --target-dir spikes/p00-native/target-software --bin native-gate",
+        "exit_code":  0,
+        "timestamp":  "2026-11-24T05:09:44.1663919Z",
+        "artifact_path":  "reports/raw/software-build-debug.txt"
+    },
+    {
+        "name":  "software-unit",
+        "status":  "PASS",
+        "command":  "cargo +stable test --manifest-path spikes/p00-native/Cargo.toml --offline --locked --no-default-features --features software --target x86_64-pc-windows-msvc --target-dir spikes/p00-native/target-software --lib",
+        "exit_code":  0,
+        "timestamp":  "2026-11-24T05:12:41.6905069Z",
+        "artifact_path":  "reports/raw/software-unit.txt"
+    },
+    {
+        "name":  "software-clippy",
+        "status":  "PASS",
+        "command":  "cargo +stable clippy --manifest-path spikes/p00-native/Cargo.toml --offline --locked --no-default-features --features software --target x86_64-pc-windows-msvc --target-dir spikes/p00-native/target-software --all-targets -- -D warnings",
+        "exit_code":  0,
+        "timestamp":  "2026-11-24T05:13:10.4828555Z",
+        "artifact_path":  "reports/raw/software-clippy.txt"
+    },
+    {
+        "name":  "software-metadata",
+        "status":  "PASS",
+        "command":  "cargo +stable metadata --manifest-path spikes/p00-native/Cargo.toml --offline --locked --no-default-features --features software --filter-platform x86_64-pc-windows-msvc --format-version 1",
+        "exit_code":  0,
+        "timestamp":  "2026-11-24T05:13:45.0879940Z",
+        "artifact_path":  "reports/raw/software-metadata.txt"
+    }
+]

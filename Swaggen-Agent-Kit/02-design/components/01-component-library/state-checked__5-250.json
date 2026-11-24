@@ -1,0 +1,15 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:250",
+    "name": "State=Checked",
+    "type": "symbol",
+    "width": "24",
+    "height": "24",
+    "path": "02-design/components/01-component-library/state-checked__5-250",
+    "requirements": []
+  },
+  "direct_children": [],
+  "text_layer_names": []
+}

@@ -1,0 +1,49 @@
+{
+  "node": {
+    "page": "06-settings-system-states",
+    "page_id": "4:94",
+    "id": "7:5113",
+    "name": "X01 / Loading your workspace",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/06-settings-system-states/x01-loading-your-workspace__7-5113",
+    "requirements": [
+      "UX02"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "7:5114",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "7:5117",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "7:5244",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Loading your workspace",
+    "DisNote API / Settings",
+    "Restoring your workspace…"
+  ]
+}

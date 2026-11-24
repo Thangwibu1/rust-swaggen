@@ -1,0 +1,157 @@
+{
+  "node": {
+    "page": "07-coverage-handoff",
+    "page_id": "4:95",
+    "id": "15:6204",
+    "name": "Coverage / RS",
+    "type": "frame",
+    "width": "1440",
+    "height": "716",
+    "path": "02-design/reference/07-coverage-handoff/coverage-rs__15-6204",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "15:6205",
+      "name": "RS / REQUIREMENT COVERAGE",
+      "type": "text",
+      "x": "41",
+      "y": "41",
+      "width": "360",
+      "height": "34"
+    },
+    {
+      "id": "15:6206",
+      "name": "RS01",
+      "type": "frame",
+      "x": "41",
+      "y": "91",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6211",
+      "name": "RS02",
+      "type": "frame",
+      "x": "41",
+      "y": "151",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6216",
+      "name": "RS03",
+      "type": "frame",
+      "x": "41",
+      "y": "211",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6221",
+      "name": "RS04",
+      "type": "frame",
+      "x": "41",
+      "y": "271",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6226",
+      "name": "RS05",
+      "type": "frame",
+      "x": "41",
+      "y": "331",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6231",
+      "name": "RS06",
+      "type": "frame",
+      "x": "41",
+      "y": "391",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6236",
+      "name": "RS07",
+      "type": "frame",
+      "x": "41",
+      "y": "451",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6241",
+      "name": "RS08",
+      "type": "frame",
+      "x": "41",
+      "y": "511",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6246",
+      "name": "RS09",
+      "type": "frame",
+      "x": "41",
+      "y": "571",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6251",
+      "name": "RS10",
+      "type": "frame",
+      "x": "41",
+      "y": "631",
+      "width": "1360",
+      "height": "44"
+    }
+  ],
+  "text_layer_names": [
+    "RS / REQUIREMENT COVERAGE",
+    "RS01",
+    "Thông tin tổng quan",
+    "Stage A",
+    "R07",
+    "RS02",
+    "Hiển thị body",
+    "Stage A",
+    "R07",
+    "RS03",
+    "Response headers",
+    "Stage A",
+    "R07",
+    "RS04",
+    "Tìm và sao chép",
+    "Stage A",
+    "R07",
+    "RS05",
+    "Thông báo lỗi",
+    "Stage A",
+    "R08",
+    "RS06",
+    "Response lớn",
+    "Stage A",
+    "R09",
+    "RS07",
+    "Lịch sử riêng",
+    "Stage A",
+    "R14 · S05",
+    "RS08",
+    "Ví dụ chia sẻ",
+    "Stage A",
+    "R17",
+    "RS09",
+    "So sánh response",
+    "Stage B",
+    "R15",
+    "RS10",
+    "Đo thời gian chi tiết",
+    "Stage B",
+    "R15"
+  ]
+}

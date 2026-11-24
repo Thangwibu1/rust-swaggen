@@ -1,0 +1,49 @@
+{
+  "node": {
+    "page": "06-settings-system-states",
+    "page_id": "4:94",
+    "id": "7:5564",
+    "name": "X04 / Your drafts were recovered",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/06-settings-system-states/x04-your-drafts-were-recovered__7-5564",
+    "requirements": [
+      "SY01",
+      "UX02"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "7:5565",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "7:5568",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "7:5693",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Your drafts were recovered",
+    "DisNote API / Settings"
+  ]
+}

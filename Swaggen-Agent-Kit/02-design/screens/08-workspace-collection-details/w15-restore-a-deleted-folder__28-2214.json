@@ -1,0 +1,55 @@
+{
+  "node": {
+    "page": "08-workspace-collection-details",
+    "page_id": "27:319",
+    "id": "28:2214",
+    "name": "W15 / Restore a deleted folder",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/08-workspace-collection-details/w15-restore-a-deleted-folder__28-2214",
+    "requirements": [
+      "SY07",
+      "WS09"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "28:2215",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "28:2218",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "28:2364",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Restore a deleted folder",
+    "DisNote API / workspace / W15",
+    "Folder",
+    "Legacy tasks",
+    "Deleted by",
+    "Tina · 3 days ago",
+    "Restore destination",
+    "Naming conflict"
+  ]
+}

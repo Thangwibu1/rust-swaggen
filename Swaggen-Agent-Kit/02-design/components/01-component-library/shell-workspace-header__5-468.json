@@ -1,0 +1,15 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:468",
+    "name": "Shell/Workspace header",
+    "type": "symbol",
+    "width": "1128",
+    "height": "64",
+    "path": "02-design/components/01-component-library/shell-workspace-header__5-468",
+    "requirements": []
+  },
+  "direct_children": [],
+  "text_layer_names": []
+}

@@ -1,0 +1,62 @@
+{
+  "node": {
+    "page": "05-testing-developer-tools",
+    "page_id": "4:93",
+    "id": "7:1765",
+    "name": "T12 / Scheduled checks",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/05-testing-developer-tools/t12-scheduled-checks__7-1765",
+    "requirements": [
+      "MK08",
+      "MK09"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "7:1766",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "7:1769",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "7:1927",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Scheduled checks",
+    "DisNote API / Developer tools",
+    "Configuration",
+    "Collection",
+    "Workspace configuration",
+    "Schedule",
+    "Workspace configuration",
+    "Timezone",
+    "Workspace configuration",
+    "Runner",
+    "Workspace configuration",
+    "On failure",
+    "Workspace configuration",
+    "Access & sharing",
+    "Changes are saved locally before they are published to your team."
+  ]
+}

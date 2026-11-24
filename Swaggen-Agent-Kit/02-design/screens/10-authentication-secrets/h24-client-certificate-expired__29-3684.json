@@ -1,0 +1,55 @@
+{
+  "node": {
+    "page": "10-authentication-secrets",
+    "page_id": "27:321",
+    "id": "29:3684",
+    "name": "H24 / Client certificate expired",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/10-authentication-secrets/h24-client-certificate-expired__29-3684",
+    "requirements": [
+      "AU09"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:3685",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:3688",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:3838",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Client certificate expired",
+    "DisNote API / auth / H24",
+    "Action required",
+    "Certificate",
+    "dev-client.pem",
+    "Expired",
+    "22 Nov 2026",
+    "Private key",
+    "Still stored only on this device"
+  ]
+}

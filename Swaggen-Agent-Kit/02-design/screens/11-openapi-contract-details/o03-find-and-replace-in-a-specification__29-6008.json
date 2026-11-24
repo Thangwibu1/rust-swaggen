@@ -1,0 +1,50 @@
+{
+  "node": {
+    "page": "11-openapi-contract-details",
+    "page_id": "27:322",
+    "id": "29:6008",
+    "name": "O03 / Find and replace in a specification",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/11-openapi-contract-details/o03-find-and-replace-in-a-specification__29-6008",
+    "requirements": [
+      "OA02"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:6009",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:6012",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:6159",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Find and replace in a specification",
+    "DisNote API / openapi / O03",
+    "YAML",
+    "3 matches in this file · replacement is kept as a draft until pu"
+  ]
+}

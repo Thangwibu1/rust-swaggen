@@ -1,0 +1,57 @@
+{
+  "node": {
+    "page": "04-api-design-collaboration",
+    "page_id": "4:92",
+    "id": "6:8335",
+    "name": "C04 / Discuss List tasks",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/04-api-design-collaboration/c04-discuss-list-tasks__6-8335",
+    "requirements": [
+      "CO04",
+      "CO05",
+      "CO09"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "6:8336",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "6:8339",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "6:8519",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Discuss List tasks",
+    "DisNote API / Team workspace",
+    "GET /v1/tasks",
+    "List workspace tasks",
+    "Discussion / 2 replies",
+    "Tina Nguyen · 8 min ago",
+    "Could we add an example for the empty task list? @HaGiang",
+    "Ha Giang · 3 min ago",
+    "Added a sanitized example. The pagination metadata stays the same"
+  ]
+}

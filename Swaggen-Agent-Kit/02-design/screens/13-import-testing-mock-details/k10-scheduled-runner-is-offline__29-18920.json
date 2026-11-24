@@ -1,0 +1,57 @@
+{
+  "node": {
+    "page": "13-import-testing-mock-details",
+    "page_id": "27:324",
+    "id": "29:18920",
+    "name": "K10 / Scheduled runner is offline",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/13-import-testing-mock-details/k10-scheduled-runner-is-offline__29-18920",
+    "requirements": [
+      "MK07",
+      "MK08",
+      "MK09"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:18921",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:18924",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:19073",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Scheduled runner is offline",
+    "DisNote API / tools / K10",
+    "Review details",
+    "Timezone",
+    "Asia/Ho_Chi_Minh",
+    "Next run",
+    "Next weekday at 09:00",
+    "Notification",
+    "Sent to workspace inbox"
+  ]
+}

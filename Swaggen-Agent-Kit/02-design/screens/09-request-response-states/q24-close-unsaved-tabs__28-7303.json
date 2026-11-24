@@ -1,0 +1,52 @@
+{
+  "node": {
+    "page": "09-request-response-states",
+    "page_id": "27:320",
+    "id": "28:7303",
+    "name": "Q24 / Close unsaved tabs",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/09-request-response-states/q24-close-unsaved-tabs__28-7303",
+    "requirements": [
+      "RQ08",
+      "UX02"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "28:7304",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "28:7307",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "28:7456",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Close unsaved tabs",
+    "DisNote API / request / Q24",
+    "TAB",
+    "LOCAL STATE",
+    "ACTION"
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "node": {
+    "page": "06-settings-system-states",
+    "page_id": "4:94",
+    "id": "7:3221",
+    "name": "S01 / Workspace settings",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/06-settings-system-states/s01-workspace-settings__7-3221",
+    "requirements": [
+      "WS08",
+      "WS09",
+      "WS10"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "7:3222",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "7:3225",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "7:3377",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Workspace settings",
+    "DisNote API / Settings",
+    "Configuration",
+    "Workspace name",
+    "Workspace configuration",
+    "Description",
+    "Workspace configuration",
+    "Default environment",
+    "Workspace configuration",
+    "Owner",
+    "Workspace configuration",
+    "Access & sharing",
+    "Changes are saved locally before they are published to your team."
+  ]
+}

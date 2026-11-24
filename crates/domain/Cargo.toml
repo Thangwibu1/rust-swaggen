@@ -1,0 +1,17 @@
+[package]
+name = "swaggen-domain"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+time.workspace = true
+uuid.workspace = true
+roxmltree.workspace = true
+hmac.workspace = true
+sha2.workspace = true
+hex.workspace = true
+url.workspace = true

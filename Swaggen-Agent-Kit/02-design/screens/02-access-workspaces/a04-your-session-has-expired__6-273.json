@@ -1,0 +1,57 @@
+{
+  "node": {
+    "page": "02-access-workspaces",
+    "page_id": "4:90",
+    "id": "6:273",
+    "name": "A04 / Your session has expired",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/02-access-workspaces/a04-your-session-has-expired__6-273",
+    "requirements": [
+      "SC03",
+      "WS03"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "6:274",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "6:277",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "6:312",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "swaggen",
+    "Welcome back",
+    "A shared home for your requests, API contracts and team conversat",
+    "YOUR SERVER. YOUR WORKFLOW.",
+    "Session expired",
+    "Continue with your Google account to access your team workspace.",
+    "Google is the only sign-in method.",
+    "Your tokens stay on your device.",
+    "Team server  api.swaggen.team",
+    "By continuing, you agree to your team’s workspace policy."
+  ]
+}

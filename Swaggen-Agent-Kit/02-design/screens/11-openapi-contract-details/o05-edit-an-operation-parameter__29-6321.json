@@ -1,0 +1,55 @@
+{
+  "node": {
+    "page": "11-openapi-contract-details",
+    "page_id": "27:322",
+    "id": "29:6321",
+    "name": "O05 / Edit an operation parameter",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/11-openapi-contract-details/o05-edit-an-operation-parameter__29-6321",
+    "requirements": [
+      "OA05"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:6322",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:6325",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:6481",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Edit an operation parameter",
+    "DisNote API / openapi / O05",
+    "Name",
+    "Location",
+    "Schema type",
+    "Required",
+    "Enabled for path parameters",
+    "Description",
+    "Example"
+  ]
+}

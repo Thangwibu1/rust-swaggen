@@ -1,0 +1,14 @@
+{
+  "requirements": 160,
+  "mapped_requirements": 160,
+  "phases": 13,
+  "pages": 15,
+  "export_targets": 522,
+  "rendered_targets": 58,
+  "missing_images": 464,
+  "png_files": 59,
+  "svg_files": 125,
+  "documentation_valid": true,
+  "all_images_complete": false,
+  "errors": []
+}

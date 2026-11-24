@@ -1,0 +1,2786 @@
+[
+  {
+    "id": "5:247",
+    "name": "Checkbox",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/checkbox__5-247.png"
+  },
+  {
+    "id": "5:256",
+    "name": "Switch",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/switch__5-256.png"
+  },
+  {
+    "id": "5:270",
+    "name": "Table row",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/table-row__5-270.png"
+  },
+  {
+    "id": "5:335",
+    "name": "Toast",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/toast__5-335.png"
+  },
+  {
+    "id": "5:465",
+    "name": "Shell/Statusbar",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/shell-statusbar__5-465.png"
+  },
+  {
+    "id": "5:468",
+    "name": "Shell/Workspace header",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/shell-workspace-header__5-468.png"
+  },
+  {
+    "id": "5:491",
+    "name": "Library / Introduction",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/library-introduction__5-491.png"
+  },
+  {
+    "id": "6:79",
+    "name": "Library / Component specimen",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/library-component-specimen__6-79.png"
+  },
+  {
+    "id": "11:12128",
+    "name": "Brand/Google",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/brand-google__11-12128.png"
+  },
+  {
+    "id": "11:12145",
+    "name": "Icon button",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/icon-button__11-12145.png"
+  },
+  {
+    "id": "11:12162",
+    "name": "Menu item",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/menu-item__11-12162.png"
+  },
+  {
+    "id": "11:12191",
+    "name": "Progress",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/progress__11-12191.png"
+  },
+  {
+    "id": "11:12204",
+    "name": "Skeleton",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/skeleton__11-12204.png"
+  },
+  {
+    "id": "11:12207",
+    "name": "Field help",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/field-help__11-12207.png"
+  },
+  {
+    "id": "11:12302",
+    "name": "Brand/Wordmark",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/brand-wordmark__11-12302.png"
+  },
+  {
+    "id": "27:176",
+    "name": "Radio",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/radio__27-176.png"
+  },
+  {
+    "id": "27:183",
+    "name": "Data row",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/data-row__27-183.png"
+  },
+  {
+    "id": "27:214",
+    "name": "Tree row",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/tree-row__27-214.png"
+  },
+  {
+    "id": "27:271",
+    "name": "Request tab",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/request-tab__27-271.png"
+  },
+  {
+    "id": "27:284",
+    "name": "Step",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/step__27-284.png"
+  },
+  {
+    "id": "27:297",
+    "name": "Token chip",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/token-chip__27-297.png"
+  },
+  {
+    "id": "27:310",
+    "name": "Inspector row",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/inspector-row__27-310.png"
+  },
+  {
+    "id": "6:187",
+    "name": "A02 / Continue in your browser",
+    "page": "02-access-workspaces",
+    "expected_path": "02-design/screens/02-access-workspaces/a02-continue-in-your-browser__6-187.png"
+  },
+  {
+    "id": "6:230",
+    "name": "A03 / Google sign-in was interrupted",
+    "page": "02-access-workspaces",
+    "expected_path": "02-design/screens/02-access-workspaces/a03-google-sign-in-was-interrupted__6-230.png"
+  },
+  {
+    "id": "6:273",
+    "name": "A04 / Your session has expired",
+    "page": "02-access-workspaces",
+    "expected_path": "02-design/screens/02-access-workspaces/a04-your-session-has-expired__6-273.png"
+  },
+  {
+    "id": "6:316",
+    "name": "A05 / Connect your team server",
+    "page": "02-access-workspaces",
+    "expected_path": "02-design/screens/02-access-workspaces/a05-connect-your-team-server__6-316.png"
+  },
+  {
+    "id": "6:476",
+    "name": "A06 / Unable to reach your server",
+    "page": "02-access-workspaces",
+    "expected_path": "02-design/screens/02-access-workspaces/a06-unable-to-reach-your-server__6-476.png"
+  },
+  {
+    "id": "6:615",
+    "name": "A07 / Let’s build together",
+    "page": "02-access-workspaces",
+    "expected_path": "02-design/screens/02-access-workspaces/a07-let-s-build-together__6-615.png"
+  },
+  {
+    "id": "6:769",
+    "name": "A08 / Your workspaces",
+    "page": "02-access-workspaces",
+    "expected_path": "02-design/screens/02-access-workspaces/a08-your-workspaces__6-769.png"
+  },
+  {
+    "id": "6:939",
+    "name": "A09 / Create a workspace",
+    "page": "02-access-workspaces",
+    "expected_path": "02-design/screens/02-access-workspaces/a09-create-a-workspace__6-939.png"
+  },
+  {
+    "id": "6:1099",
+    "name": "A10 / You’re invited to DisNote API",
+    "page": "02-access-workspaces",
+    "expected_path": "02-design/screens/02-access-workspaces/a10-you-re-invited-to-disnote-api__6-1099.png"
+  },
+  {
+    "id": "6:1259",
+    "name": "A11 / Good morning, Ha Giang",
+    "page": "02-access-workspaces",
+    "expected_path": "02-design/screens/02-access-workspaces/a11-good-morning-ha-giang__6-1259.png"
+  },
+  {
+    "id": "6:1436",
+    "name": "A12 / Your API workspace starts here",
+    "page": "02-access-workspaces",
+    "expected_path": "02-design/screens/02-access-workspaces/a12-your-api-workspace-starts-here__6-1436.png"
+  },
+  {
+    "id": "6:1569",
+    "name": "A13 / Find anything in your workspace",
+    "page": "02-access-workspaces",
+    "expected_path": "02-design/screens/02-access-workspaces/a13-find-anything-in-your-workspace__6-1569.png"
+  },
+  {
+    "id": "6:1717",
+    "name": "A14 / Create a new request",
+    "page": "02-access-workspaces",
+    "expected_path": "02-design/screens/02-access-workspaces/a14-create-a-new-request__6-1717.png"
+  },
+  {
+    "id": "6:1908",
+    "name": "R01 / List tasks",
+    "page": "03-api-workbench",
+    "expected_path": "02-design/screens/03-api-workbench/r01-list-tasks__6-1908.png"
+  },
+  {
+    "id": "6:2102",
+    "name": "R02 / Request headers",
+    "page": "03-api-workbench",
+    "expected_path": "02-design/screens/03-api-workbench/r02-request-headers__6-2102.png"
+  },
+  {
+    "id": "6:2296",
+    "name": "R03 / Create a task",
+    "page": "03-api-workbench",
+    "expected_path": "02-design/screens/03-api-workbench/r03-create-a-task__6-2296.png"
+  },
+  {
+    "id": "6:2492",
+    "name": "R04 / Upload an attachment",
+    "page": "03-api-workbench",
+    "expected_path": "02-design/screens/03-api-workbench/r04-upload-an-attachment__6-2492.png"
+  },
+  {
+    "id": "6:2686",
+    "name": "R05 / Request authorization",
+    "page": "03-api-workbench",
+    "expected_path": "02-design/screens/03-api-workbench/r05-request-authorization__6-2686.png"
+  },
+  {
+    "id": "6:2875",
+    "name": "R06 / OAuth 2.0 authorization",
+    "page": "03-api-workbench",
+    "expected_path": "02-design/screens/03-api-workbench/r06-oauth-2-0-authorization__6-2875.png"
+  },
+  {
+    "id": "6:3066",
+    "name": "R07 / Inspect the response",
+    "page": "03-api-workbench",
+    "expected_path": "02-design/screens/03-api-workbench/r07-inspect-the-response__6-3066.png"
+  },
+  {
+    "id": "6:3260",
+    "name": "R08 / Request failed",
+    "page": "03-api-workbench",
+    "expected_path": "02-design/screens/03-api-workbench/r08-request-failed__6-3260.png"
+  },
+  {
+    "id": "6:3446",
+    "name": "R09 / Large response preview",
+    "page": "03-api-workbench",
+    "expected_path": "02-design/screens/03-api-workbench/r09-large-response-preview__6-3446.png"
+  },
+  {
+    "id": "6:3649",
+    "name": "R10 / Resolved request preview",
+    "page": "03-api-workbench",
+    "expected_path": "02-design/screens/03-api-workbench/r10-resolved-request-preview__6-3649.png"
+  },
+  {
+    "id": "6:3839",
+    "name": "R11 / Streaming response",
+    "page": "03-api-workbench",
+    "expected_path": "02-design/screens/03-api-workbench/r11-streaming-response__6-3839.png"
+  },
+  {
+    "id": "6:4033",
+    "name": "R12 / Cookies for this workspace",
+    "page": "03-api-workbench",
+    "expected_path": "02-design/screens/03-api-workbench/r12-cookies-for-this-workspace__6-4033.png"
+  },
+  {
+    "id": "6:4185",
+    "name": "R13 / Connection settings",
+    "page": "03-api-workbench",
+    "expected_path": "02-design/screens/03-api-workbench/r13-connection-settings__6-4185.png"
+  },
+  {
+    "id": "6:4351",
+    "name": "R14 / Your request history",
+    "page": "03-api-workbench",
+    "expected_path": "02-design/screens/03-api-workbench/r14-your-request-history__6-4351.png"
+  },
+  {
+    "id": "6:4501",
+    "name": "R15 / Compare responses",
+    "page": "03-api-workbench",
+    "expected_path": "02-design/screens/03-api-workbench/r15-compare-responses__6-4501.png"
+  },
+  {
+    "id": "6:4697",
+    "name": "R16 / Confirm production request",
+    "page": "03-api-workbench",
+    "expected_path": "02-design/screens/03-api-workbench/r16-confirm-production-request__6-4697.png"
+  },
+  {
+    "id": "6:4863",
+    "name": "R17 / Save a response example",
+    "page": "03-api-workbench",
+    "expected_path": "02-design/screens/03-api-workbench/r17-save-a-response-example__6-4863.png"
+  },
+  {
+    "id": "6:5029",
+    "name": "R18 / Generate a code snippet",
+    "page": "03-api-workbench",
+    "expected_path": "02-design/screens/03-api-workbench/r18-generate-a-code-snippet__6-5029.png"
+  },
+  {
+    "id": "6:5197",
+    "name": "E01 / Environments",
+    "page": "03-api-workbench",
+    "expected_path": "02-design/screens/03-api-workbench/e01-environments__6-5197.png"
+  },
+  {
+    "id": "6:5343",
+    "name": "E02 / Edit Development",
+    "page": "03-api-workbench",
+    "expected_path": "02-design/screens/03-api-workbench/e02-edit-development__6-5343.png"
+  },
+  {
+    "id": "6:5509",
+    "name": "E03 / Personal secrets",
+    "page": "03-api-workbench",
+    "expected_path": "02-design/screens/03-api-workbench/e03-personal-secrets__6-5509.png"
+  },
+  {
+    "id": "6:5746",
+    "name": "D01 / DisNote OpenAPI",
+    "page": "04-api-design-collaboration",
+    "expected_path": "02-design/screens/04-api-design-collaboration/d01-disnote-openapi__6-5746.png"
+  },
+  {
+    "id": "6:5940",
+    "name": "D02 / Specification needs attention",
+    "page": "04-api-design-collaboration",
+    "expected_path": "02-design/screens/04-api-design-collaboration/d02-specification-needs-attention__6-5940.png"
+  },
+  {
+    "id": "6:6146",
+    "name": "D03 / Design an endpoint",
+    "page": "04-api-design-collaboration",
+    "expected_path": "02-design/screens/04-api-design-collaboration/d03-design-an-endpoint__6-6146.png"
+  },
+  {
+    "id": "6:6312",
+    "name": "D04 / Task schema",
+    "page": "04-api-design-collaboration",
+    "expected_path": "02-design/screens/04-api-design-collaboration/d04-task-schema__6-6312.png"
+  },
+  {
+    "id": "6:6493",
+    "name": "D05 / References & components",
+    "page": "04-api-design-collaboration",
+    "expected_path": "02-design/screens/04-api-design-collaboration/d05-references-components__6-6493.png"
+  },
+  {
+    "id": "6:6643",
+    "name": "D06 / API documentation",
+    "page": "04-api-design-collaboration",
+    "expected_path": "02-design/screens/04-api-design-collaboration/d06-api-documentation__6-6643.png"
+  },
+  {
+    "id": "6:6814",
+    "name": "D07 / Try List tasks",
+    "page": "04-api-design-collaboration",
+    "expected_path": "02-design/screens/04-api-design-collaboration/d07-try-list-tasks__6-6814.png"
+  },
+  {
+    "id": "6:7008",
+    "name": "D08 / Review specification changes",
+    "page": "04-api-design-collaboration",
+    "expected_path": "02-design/screens/04-api-design-collaboration/d08-review-specification-changes__6-7008.png"
+  },
+  {
+    "id": "6:7204",
+    "name": "D09 / Update linked requests",
+    "page": "04-api-design-collaboration",
+    "expected_path": "02-design/screens/04-api-design-collaboration/d09-update-linked-requests__6-7204.png"
+  },
+  {
+    "id": "6:7356",
+    "name": "D10 / API quality checks",
+    "page": "04-api-design-collaboration",
+    "expected_path": "02-design/screens/04-api-design-collaboration/d10-api-quality-checks__6-7356.png"
+  },
+  {
+    "id": "6:7502",
+    "name": "D11 / Export API documentation",
+    "page": "04-api-design-collaboration",
+    "expected_path": "02-design/screens/04-api-design-collaboration/d11-export-api-documentation__6-7502.png"
+  },
+  {
+    "id": "6:7662",
+    "name": "D12 / Deprecated operation",
+    "page": "04-api-design-collaboration",
+    "expected_path": "02-design/screens/04-api-design-collaboration/d12-deprecated-operation__6-7662.png"
+  },
+  {
+    "id": "6:7879",
+    "name": "C01 / Workspace members",
+    "page": "04-api-design-collaboration",
+    "expected_path": "02-design/screens/04-api-design-collaboration/c01-workspace-members__6-7879.png"
+  },
+  {
+    "id": "6:8029",
+    "name": "C02 / Invite teammates",
+    "page": "04-api-design-collaboration",
+    "expected_path": "02-design/screens/04-api-design-collaboration/c02-invite-teammates__6-8029.png"
+  },
+  {
+    "id": "6:8189",
+    "name": "C03 / Workspace activity",
+    "page": "04-api-design-collaboration",
+    "expected_path": "02-design/screens/04-api-design-collaboration/c03-workspace-activity__6-8189.png"
+  },
+  {
+    "id": "6:8335",
+    "name": "C04 / Discuss List tasks",
+    "page": "04-api-design-collaboration",
+    "expected_path": "02-design/screens/04-api-design-collaboration/c04-discuss-list-tasks__6-8335.png"
+  },
+  {
+    "id": "6:8523",
+    "name": "C05 / Publish your changes",
+    "page": "04-api-design-collaboration",
+    "expected_path": "02-design/screens/04-api-design-collaboration/c05-publish-your-changes__6-8523.png"
+  },
+  {
+    "id": "6:8677",
+    "name": "C06 / Resolve a sync conflict",
+    "page": "04-api-design-collaboration",
+    "expected_path": "02-design/screens/04-api-design-collaboration/c06-resolve-a-sync-conflict__6-8677.png"
+  },
+  {
+    "id": "6:8899",
+    "name": "C07 / Sync queue",
+    "page": "04-api-design-collaboration",
+    "expected_path": "02-design/screens/04-api-design-collaboration/c07-sync-queue__6-8899.png"
+  },
+  {
+    "id": "6:9049",
+    "name": "C08 / Working offline",
+    "page": "04-api-design-collaboration",
+    "expected_path": "02-design/screens/04-api-design-collaboration/c08-working-offline__6-9049.png"
+  },
+  {
+    "id": "6:9232",
+    "name": "C09 / Workspace access removed",
+    "page": "04-api-design-collaboration",
+    "expected_path": "02-design/screens/04-api-design-collaboration/c09-workspace-access-removed__6-9232.png"
+  },
+  {
+    "id": "6:9371",
+    "name": "C10 / Version history",
+    "page": "04-api-design-collaboration",
+    "expected_path": "02-design/screens/04-api-design-collaboration/c10-version-history__6-9371.png"
+  },
+  {
+    "id": "6:9517",
+    "name": "C11 / Restore revision 12",
+    "page": "04-api-design-collaboration",
+    "expected_path": "02-design/screens/04-api-design-collaboration/c11-restore-revision-12__6-9517.png"
+  },
+  {
+    "id": "6:9671",
+    "name": "C12 / Branches",
+    "page": "04-api-design-collaboration",
+    "expected_path": "02-design/screens/04-api-design-collaboration/c12-branches__6-9671.png"
+  },
+  {
+    "id": "6:9817",
+    "name": "C13 / Review proposed changes",
+    "page": "04-api-design-collaboration",
+    "expected_path": "02-design/screens/04-api-design-collaboration/c13-review-proposed-changes__6-9817.png"
+  },
+  {
+    "id": "6:9977",
+    "name": "C14 / Live specification editing",
+    "page": "04-api-design-collaboration",
+    "expected_path": "02-design/screens/04-api-design-collaboration/c14-live-specification-editing__6-9977.png"
+  },
+  {
+    "id": "7:2",
+    "name": "T01 / Request assertions",
+    "page": "05-testing-developer-tools",
+    "expected_path": "02-design/screens/05-testing-developer-tools/t01-request-assertions__7-2.png"
+  },
+  {
+    "id": "7:206",
+    "name": "T02 / Run a collection",
+    "page": "05-testing-developer-tools",
+    "expected_path": "02-design/screens/05-testing-developer-tools/t02-run-a-collection__7-206.png"
+  },
+  {
+    "id": "7:372",
+    "name": "T03 / Runner data preview",
+    "page": "05-testing-developer-tools",
+    "expected_path": "02-design/screens/05-testing-developer-tools/t03-runner-data-preview__7-372.png"
+  },
+  {
+    "id": "7:518",
+    "name": "T04 / Run results",
+    "page": "05-testing-developer-tools",
+    "expected_path": "02-design/screens/05-testing-developer-tools/t04-run-results__7-518.png"
+  },
+  {
+    "id": "7:691",
+    "name": "T05 / Contract validation",
+    "page": "05-testing-developer-tools",
+    "expected_path": "02-design/screens/05-testing-developer-tools/t05-contract-validation__7-691.png"
+  },
+  {
+    "id": "7:837",
+    "name": "T06 / Script editor",
+    "page": "05-testing-developer-tools",
+    "expected_path": "02-design/screens/05-testing-developer-tools/t06-script-editor__7-837.png"
+  },
+  {
+    "id": "7:1006",
+    "name": "T07 / Mock servers",
+    "page": "05-testing-developer-tools",
+    "expected_path": "02-design/screens/05-testing-developer-tools/t07-mock-servers__7-1006.png"
+  },
+  {
+    "id": "7:1148",
+    "name": "T08 / Configure a mock",
+    "page": "05-testing-developer-tools",
+    "expected_path": "02-design/screens/05-testing-developer-tools/t08-configure-a-mock__7-1148.png"
+  },
+  {
+    "id": "7:1314",
+    "name": "T09 / Mock rules & traffic",
+    "page": "05-testing-developer-tools",
+    "expected_path": "02-design/screens/05-testing-developer-tools/t09-mock-rules-traffic__7-1314.png"
+  },
+  {
+    "id": "7:1460",
+    "name": "T10 / CLI & CI configuration",
+    "page": "05-testing-developer-tools",
+    "expected_path": "02-design/screens/05-testing-developer-tools/t10-cli-ci-configuration__7-1460.png"
+  },
+  {
+    "id": "7:1623",
+    "name": "T11 / Self-hosted runners",
+    "page": "05-testing-developer-tools",
+    "expected_path": "02-design/screens/05-testing-developer-tools/t11-self-hosted-runners__7-1623.png"
+  },
+  {
+    "id": "7:1765",
+    "name": "T12 / Scheduled checks",
+    "page": "05-testing-developer-tools",
+    "expected_path": "02-design/screens/05-testing-developer-tools/t12-scheduled-checks__7-1765.png"
+  },
+  {
+    "id": "7:1931",
+    "name": "I01 / Import APIs & collections",
+    "page": "05-testing-developer-tools",
+    "expected_path": "02-design/screens/05-testing-developer-tools/i01-import-apis-collections__7-1931.png"
+  },
+  {
+    "id": "7:2085",
+    "name": "I02 / Review import compatibility",
+    "page": "05-testing-developer-tools",
+    "expected_path": "02-design/screens/05-testing-developer-tools/i02-review-import-compatibility__7-2085.png"
+  },
+  {
+    "id": "7:2237",
+    "name": "I03 / Export your project",
+    "page": "05-testing-developer-tools",
+    "expected_path": "02-design/screens/05-testing-developer-tools/i03-export-your-project__7-2237.png"
+  },
+  {
+    "id": "7:2397",
+    "name": "I04 / Connect a Git repository",
+    "page": "05-testing-developer-tools",
+    "expected_path": "02-design/screens/05-testing-developer-tools/i04-connect-a-git-repository__7-2397.png"
+  },
+  {
+    "id": "7:2557",
+    "name": "P01 / GraphQL explorer",
+    "page": "05-testing-developer-tools",
+    "expected_path": "02-design/screens/05-testing-developer-tools/p01-graphql-explorer__7-2557.png"
+  },
+  {
+    "id": "7:2723",
+    "name": "P02 / WebSocket session",
+    "page": "05-testing-developer-tools",
+    "expected_path": "02-design/screens/05-testing-developer-tools/p02-websocket-session__7-2723.png"
+  },
+  {
+    "id": "7:2869",
+    "name": "P03 / gRPC request",
+    "page": "05-testing-developer-tools",
+    "expected_path": "02-design/screens/05-testing-developer-tools/p03-grpc-request__7-2869.png"
+  },
+  {
+    "id": "7:3035",
+    "name": "P04 / Developer utilities",
+    "page": "05-testing-developer-tools",
+    "expected_path": "02-design/screens/05-testing-developer-tools/p04-developer-utilities__7-3035.png"
+  },
+  {
+    "id": "7:3221",
+    "name": "S01 / Workspace settings",
+    "page": "06-settings-system-states",
+    "expected_path": "02-design/screens/06-settings-system-states/s01-workspace-settings__7-3221.png"
+  },
+  {
+    "id": "7:3381",
+    "name": "S02 / Your Google account",
+    "page": "06-settings-system-states",
+    "expected_path": "02-design/screens/06-settings-system-states/s02-your-google-account__7-3381.png"
+  },
+  {
+    "id": "7:3547",
+    "name": "S03 / Personal preferences",
+    "page": "06-settings-system-states",
+    "expected_path": "02-design/screens/06-settings-system-states/s03-personal-preferences__7-3547.png"
+  },
+  {
+    "id": "7:3713",
+    "name": "S04 / Keyboard shortcuts",
+    "page": "06-settings-system-states",
+    "expected_path": "02-design/screens/06-settings-system-states/s04-keyboard-shortcuts__7-3713.png"
+  },
+  {
+    "id": "7:3867",
+    "name": "S05 / Storage & retention",
+    "page": "06-settings-system-states",
+    "expected_path": "02-design/screens/06-settings-system-states/s05-storage-retention__7-3867.png"
+  },
+  {
+    "id": "7:4033",
+    "name": "S06 / Privacy & permissions",
+    "page": "06-settings-system-states",
+    "expected_path": "02-design/screens/06-settings-system-states/s06-privacy-permissions__7-4033.png"
+  },
+  {
+    "id": "7:4193",
+    "name": "S07 / Audit log",
+    "page": "06-settings-system-states",
+    "expected_path": "02-design/screens/06-settings-system-states/s07-audit-log__7-4193.png"
+  },
+  {
+    "id": "7:4339",
+    "name": "S08 / Server health",
+    "page": "06-settings-system-states",
+    "expected_path": "02-design/screens/06-settings-system-states/s08-server-health__7-4339.png"
+  },
+  {
+    "id": "7:4509",
+    "name": "S09 / Backup & restore",
+    "page": "06-settings-system-states",
+    "expected_path": "02-design/screens/06-settings-system-states/s09-backup-restore__7-4509.png"
+  },
+  {
+    "id": "7:4655",
+    "name": "S10 / Application updates",
+    "page": "06-settings-system-states",
+    "expected_path": "02-design/screens/06-settings-system-states/s10-application-updates__7-4655.png"
+  },
+  {
+    "id": "7:4815",
+    "name": "S11 / Extensions & permissions",
+    "page": "06-settings-system-states",
+    "expected_path": "02-design/screens/06-settings-system-states/s11-extensions-permissions__7-4815.png"
+  },
+  {
+    "id": "7:4961",
+    "name": "S12 / Team secret vault",
+    "page": "06-settings-system-states",
+    "expected_path": "02-design/screens/06-settings-system-states/s12-team-secret-vault__7-4961.png"
+  },
+  {
+    "id": "7:5113",
+    "name": "X01 / Loading your workspace",
+    "page": "06-settings-system-states",
+    "expected_path": "02-design/screens/06-settings-system-states/x01-loading-your-workspace__7-5113.png"
+  },
+  {
+    "id": "7:5248",
+    "name": "X02 / No search results",
+    "page": "06-settings-system-states",
+    "expected_path": "02-design/screens/06-settings-system-states/x02-no-search-results__7-5248.png"
+  },
+  {
+    "id": "7:5381",
+    "name": "X03 / Read-only workspace",
+    "page": "06-settings-system-states",
+    "expected_path": "02-design/screens/06-settings-system-states/x03-read-only-workspace__7-5381.png"
+  },
+  {
+    "id": "7:5564",
+    "name": "X04 / Your drafts were recovered",
+    "page": "06-settings-system-states",
+    "expected_path": "02-design/screens/06-settings-system-states/x04-your-drafts-were-recovered__7-5564.png"
+  },
+  {
+    "id": "7:5697",
+    "name": "X05 / Local storage is almost full",
+    "page": "06-settings-system-states",
+    "expected_path": "02-design/screens/06-settings-system-states/x05-local-storage-is-almost-full__7-5697.png"
+  },
+  {
+    "id": "7:5836",
+    "name": "X06 / Server versions are incompatible",
+    "page": "06-settings-system-states",
+    "expected_path": "02-design/screens/06-settings-system-states/x06-server-versions-are-incompatible__7-5836.png"
+  },
+  {
+    "id": "7:5975",
+    "name": "X07 / Workspace trash",
+    "page": "06-settings-system-states",
+    "expected_path": "02-design/screens/06-settings-system-states/x07-workspace-trash__7-5975.png"
+  },
+  {
+    "id": "7:6117",
+    "name": "X08 / Transfer workspace ownership",
+    "page": "06-settings-system-states",
+    "expected_path": "02-design/screens/06-settings-system-states/x08-transfer-workspace-ownership__7-6117.png"
+  },
+  {
+    "id": "12:2505",
+    "name": "S13 / Server network policy",
+    "page": "06-settings-system-states",
+    "expected_path": "02-design/screens/06-settings-system-states/s13-server-network-policy__12-2505.png"
+  },
+  {
+    "id": "13:2626",
+    "name": "M01 / New collection",
+    "page": "06-settings-system-states",
+    "expected_path": "02-design/screens/06-settings-system-states/m01-new-collection__13-2626.png"
+  },
+  {
+    "id": "13:2688",
+    "name": "M02 / Choose environment",
+    "page": "06-settings-system-states",
+    "expected_path": "02-design/screens/06-settings-system-states/m02-choose-environment__13-2688.png"
+  },
+  {
+    "id": "13:2767",
+    "name": "M03 / Command palette",
+    "page": "06-settings-system-states",
+    "expected_path": "02-design/screens/06-settings-system-states/m03-command-palette__13-2767.png"
+  },
+  {
+    "id": "13:2845",
+    "name": "M04 / Delete collection?",
+    "page": "06-settings-system-states",
+    "expected_path": "02-design/screens/06-settings-system-states/m04-delete-collection__13-2845.png"
+  },
+  {
+    "id": "13:2907",
+    "name": "M05 / Review secret redaction",
+    "page": "06-settings-system-states",
+    "expected_path": "02-design/screens/06-settings-system-states/m05-review-secret-redaction__13-2907.png"
+  },
+  {
+    "id": "13:2964",
+    "name": "M06 / Sign out of Swaggen?",
+    "page": "06-settings-system-states",
+    "expected_path": "02-design/screens/06-settings-system-states/m06-sign-out-of-swaggen__13-2964.png"
+  },
+  {
+    "id": "15:5968",
+    "name": "Handoff / Read me first",
+    "page": "07-coverage-handoff",
+    "expected_path": "02-design/reference/07-coverage-handoff/handoff-read-me-first__15-5968.png"
+  },
+  {
+    "id": "15:5996",
+    "name": "Coverage / WS",
+    "page": "07-coverage-handoff",
+    "expected_path": "02-design/reference/07-coverage-handoff/coverage-ws__15-5996.png"
+  },
+  {
+    "id": "15:6048",
+    "name": "Coverage / RQ",
+    "page": "07-coverage-handoff",
+    "expected_path": "02-design/reference/07-coverage-handoff/coverage-rq__15-6048.png"
+  },
+  {
+    "id": "15:6100",
+    "name": "Coverage / AU",
+    "page": "07-coverage-handoff",
+    "expected_path": "02-design/reference/07-coverage-handoff/coverage-au__15-6100.png"
+  },
+  {
+    "id": "15:6152",
+    "name": "Coverage / EV",
+    "page": "07-coverage-handoff",
+    "expected_path": "02-design/reference/07-coverage-handoff/coverage-ev__15-6152.png"
+  },
+  {
+    "id": "15:6204",
+    "name": "Coverage / RS",
+    "page": "07-coverage-handoff",
+    "expected_path": "02-design/reference/07-coverage-handoff/coverage-rs__15-6204.png"
+  },
+  {
+    "id": "15:6256",
+    "name": "Coverage / OA",
+    "page": "07-coverage-handoff",
+    "expected_path": "02-design/reference/07-coverage-handoff/coverage-oa__15-6256.png"
+  },
+  {
+    "id": "15:6308",
+    "name": "Coverage / DC",
+    "page": "07-coverage-handoff",
+    "expected_path": "02-design/reference/07-coverage-handoff/coverage-dc__15-6308.png"
+  },
+  {
+    "id": "15:6360",
+    "name": "Coverage / CO",
+    "page": "07-coverage-handoff",
+    "expected_path": "02-design/reference/07-coverage-handoff/coverage-co__15-6360.png"
+  },
+  {
+    "id": "15:6412",
+    "name": "Coverage / SY",
+    "page": "07-coverage-handoff",
+    "expected_path": "02-design/reference/07-coverage-handoff/coverage-sy__15-6412.png"
+  },
+  {
+    "id": "15:6464",
+    "name": "Coverage / IM",
+    "page": "07-coverage-handoff",
+    "expected_path": "02-design/reference/07-coverage-handoff/coverage-im__15-6464.png"
+  },
+  {
+    "id": "15:6516",
+    "name": "Coverage / TS",
+    "page": "07-coverage-handoff",
+    "expected_path": "02-design/reference/07-coverage-handoff/coverage-ts__15-6516.png"
+  },
+  {
+    "id": "15:6568",
+    "name": "Coverage / MK",
+    "page": "07-coverage-handoff",
+    "expected_path": "02-design/reference/07-coverage-handoff/coverage-mk__15-6568.png"
+  },
+  {
+    "id": "15:6620",
+    "name": "Coverage / PR",
+    "page": "07-coverage-handoff",
+    "expected_path": "02-design/reference/07-coverage-handoff/coverage-pr__15-6620.png"
+  },
+  {
+    "id": "15:6672",
+    "name": "Coverage / UX",
+    "page": "07-coverage-handoff",
+    "expected_path": "02-design/reference/07-coverage-handoff/coverage-ux__15-6672.png"
+  },
+  {
+    "id": "15:6724",
+    "name": "Coverage / SC",
+    "page": "07-coverage-handoff",
+    "expected_path": "02-design/reference/07-coverage-handoff/coverage-sc__15-6724.png"
+  },
+  {
+    "id": "15:6776",
+    "name": "Coverage / OP",
+    "page": "07-coverage-handoff",
+    "expected_path": "02-design/reference/07-coverage-handoff/coverage-op__15-6776.png"
+  },
+  {
+    "id": "33:34",
+    "name": "Completion review / Flow directory",
+    "page": "07-coverage-handoff",
+    "expected_path": "02-design/reference/07-coverage-handoff/completion-review-flow-directory__33-34.png"
+  },
+  {
+    "id": "28:25",
+    "name": "W01 / Open a personal workspace",
+    "page": "08-workspace-collection-details",
+    "expected_path": "02-design/screens/08-workspace-collection-details/w01-open-a-personal-workspace__28-25.png"
+  },
+  {
+    "id": "28:237",
+    "name": "W02 / Move local work to your team",
+    "page": "08-workspace-collection-details",
+    "expected_path": "02-design/screens/08-workspace-collection-details/w02-move-local-work-to-your-team__28-237.png"
+  },
+  {
+    "id": "28:394",
+    "name": "W03 / Server profiles",
+    "page": "08-workspace-collection-details",
+    "expected_path": "02-design/screens/08-workspace-collection-details/w03-server-profiles__28-394.png"
+  },
+  {
+    "id": "28:548",
+    "name": "W04 / Server connection details",
+    "page": "08-workspace-collection-details",
+    "expected_path": "02-design/screens/08-workspace-collection-details/w04-server-connection-details__28-548.png"
+  },
+  {
+    "id": "28:698",
+    "name": "W05 / Invitation settings",
+    "page": "08-workspace-collection-details",
+    "expected_path": "02-design/screens/08-workspace-collection-details/w05-invitation-settings__28-698.png"
+  },
+  {
+    "id": "28:852",
+    "name": "W06 / Change a member’s role",
+    "page": "08-workspace-collection-details",
+    "expected_path": "02-design/screens/08-workspace-collection-details/w06-change-a-member-s-role__28-852.png"
+  },
+  {
+    "id": "28:1004",
+    "name": "W07 / Archive this workspace",
+    "page": "08-workspace-collection-details",
+    "expected_path": "02-design/screens/08-workspace-collection-details/w07-archive-this-workspace__28-1004.png"
+  },
+  {
+    "id": "28:1154",
+    "name": "W08 / Leave your workspace",
+    "page": "08-workspace-collection-details",
+    "expected_path": "02-design/screens/08-workspace-collection-details/w08-leave-your-workspace__28-1154.png"
+  },
+  {
+    "id": "28:1300",
+    "name": "W09 / Project defaults & conventions",
+    "page": "08-workspace-collection-details",
+    "expected_path": "02-design/screens/08-workspace-collection-details/w09-project-defaults-conventions__28-1300.png"
+  },
+  {
+    "id": "28:1456",
+    "name": "W10 / Create a nested folder",
+    "page": "08-workspace-collection-details",
+    "expected_path": "02-design/screens/08-workspace-collection-details/w10-create-a-nested-folder__28-1456.png"
+  },
+  {
+    "id": "28:1604",
+    "name": "W11 / Rename a collection",
+    "page": "08-workspace-collection-details",
+    "expected_path": "02-design/screens/08-workspace-collection-details/w11-rename-a-collection__28-1604.png"
+  },
+  {
+    "id": "28:1750",
+    "name": "W12 / Move a request",
+    "page": "08-workspace-collection-details",
+    "expected_path": "02-design/screens/08-workspace-collection-details/w12-move-a-request__28-1750.png"
+  },
+  {
+    "id": "28:1904",
+    "name": "W13 / Duplicate a request",
+    "page": "08-workspace-collection-details",
+    "expected_path": "02-design/screens/08-workspace-collection-details/w13-duplicate-a-request__28-1904.png"
+  },
+  {
+    "id": "28:2058",
+    "name": "W14 / Workspace filters & tags",
+    "page": "08-workspace-collection-details",
+    "expected_path": "02-design/screens/08-workspace-collection-details/w14-workspace-filters-tags__28-2058.png"
+  },
+  {
+    "id": "28:2214",
+    "name": "W15 / Restore a deleted folder",
+    "page": "08-workspace-collection-details",
+    "expected_path": "02-design/screens/08-workspace-collection-details/w15-restore-a-deleted-folder__28-2214.png"
+  },
+  {
+    "id": "28:2368",
+    "name": "W16 / Collection actions",
+    "page": "08-workspace-collection-details",
+    "expected_path": "02-design/screens/08-workspace-collection-details/w16-collection-actions__28-2368.png"
+  },
+  {
+    "id": "28:2546",
+    "name": "W17 / Organize collection folders",
+    "page": "08-workspace-collection-details",
+    "expected_path": "02-design/screens/08-workspace-collection-details/w17-organize-collection-folders__28-2546.png"
+  },
+  {
+    "id": "28:2773",
+    "name": "W18 / Move request with drag and drop",
+    "page": "08-workspace-collection-details",
+    "expected_path": "02-design/screens/08-workspace-collection-details/w18-move-request-with-drag-and-drop__28-2773.png"
+  },
+  {
+    "id": "28:3000",
+    "name": "W19 / Invitation expired",
+    "page": "08-workspace-collection-details",
+    "expected_path": "02-design/screens/08-workspace-collection-details/w19-invitation-expired__28-3000.png"
+  },
+  {
+    "id": "28:3157",
+    "name": "W20 / Invitation account mismatch",
+    "page": "08-workspace-collection-details",
+    "expected_path": "02-design/screens/08-workspace-collection-details/w20-invitation-account-mismatch__28-3157.png"
+  },
+  {
+    "id": "28:3311",
+    "name": "W21 / Revoke an invitation",
+    "page": "08-workspace-collection-details",
+    "expected_path": "02-design/screens/08-workspace-collection-details/w21-revoke-an-invitation__28-3311.png"
+  },
+  {
+    "id": "32:2816",
+    "name": "W22 / Confirm ownership transfer",
+    "page": "08-workspace-collection-details",
+    "expected_path": "02-design/screens/08-workspace-collection-details/w22-confirm-ownership-transfer__32-2816.png"
+  },
+  {
+    "id": "28:3551",
+    "name": "Q01 / Choose an HTTP method",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q01-choose-an-http-method__28-3551.png"
+  },
+  {
+    "id": "28:3728",
+    "name": "Q02 / Path and query parameters",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q02-path-and-query-parameters__28-3728.png"
+  },
+  {
+    "id": "28:3904",
+    "name": "Q03 / URL encoding preview",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q03-url-encoding-preview__28-3904.png"
+  },
+  {
+    "id": "28:4068",
+    "name": "Q04 / Headers and generated values",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q04-headers-and-generated-values__28-4068.png"
+  },
+  {
+    "id": "28:4237",
+    "name": "Q05 / Header validation error",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q05-header-validation-error__28-4237.png"
+  },
+  {
+    "id": "28:4400",
+    "name": "Q06 / Choose request body type",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q06-choose-request-body-type__28-4400.png"
+  },
+  {
+    "id": "28:4577",
+    "name": "Q07 / JSON request body",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q07-json-request-body__28-4577.png"
+  },
+  {
+    "id": "28:4739",
+    "name": "Q08 / Plain text request body",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q08-plain-text-request-body__28-4739.png"
+  },
+  {
+    "id": "28:4895",
+    "name": "Q09 / XML request body",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q09-xml-request-body__28-4895.png"
+  },
+  {
+    "id": "28:5057",
+    "name": "Q10 / JSON syntax error",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q10-json-syntax-error__28-5057.png"
+  },
+  {
+    "id": "28:5222",
+    "name": "Q11 / Form URL encoded body",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q11-form-url-encoded-body__28-5222.png"
+  },
+  {
+    "id": "28:5393",
+    "name": "Q12 / Binary request body",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q12-binary-request-body__28-5393.png"
+  },
+  {
+    "id": "28:5553",
+    "name": "Q13 / Request without a body",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q13-request-without-a-body__28-5553.png"
+  },
+  {
+    "id": "28:5718",
+    "name": "Q14 / Multipart field editor",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q14-multipart-field-editor__28-5718.png"
+  },
+  {
+    "id": "28:5889",
+    "name": "Q15 / Uploading an attachment",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q15-uploading-an-attachment__28-5889.png"
+  },
+  {
+    "id": "28:6046",
+    "name": "Q16 / Upload canceled",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q16-upload-canceled__28-6046.png"
+  },
+  {
+    "id": "28:6203",
+    "name": "Q17 / Local upload file is missing",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q17-local-upload-file-is-missing__28-6203.png"
+  },
+  {
+    "id": "28:6357",
+    "name": "Q18 / Downloading a large response",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q18-downloading-a-large-response__28-6357.png"
+  },
+  {
+    "id": "28:6514",
+    "name": "Q19 / Request timed out",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q19-request-timed-out__28-6514.png"
+  },
+  {
+    "id": "28:6672",
+    "name": "Q20 / Request canceled",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q20-request-canceled__28-6672.png"
+  },
+  {
+    "id": "28:6829",
+    "name": "Q21 / Server rejected the request",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q21-server-rejected-the-request__28-6829.png"
+  },
+  {
+    "id": "28:6987",
+    "name": "Q22 / Response could not be saved",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q22-response-could-not-be-saved__28-6987.png"
+  },
+  {
+    "id": "28:7145",
+    "name": "Q23 / Draft differs from the shared request",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q23-draft-differs-from-the-shared-request__28-7145.png"
+  },
+  {
+    "id": "28:7303",
+    "name": "Q24 / Close unsaved tabs",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q24-close-unsaved-tabs__28-7303.png"
+  },
+  {
+    "id": "28:7460",
+    "name": "Q25 / Request tab actions",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q25-request-tab-actions__28-7460.png"
+  },
+  {
+    "id": "28:7632",
+    "name": "Q26 / Response headers and cookies",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q26-response-headers-and-cookies__28-7632.png"
+  },
+  {
+    "id": "28:7795",
+    "name": "Q27 / Find a value in a response",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q27-find-a-value-in-a-response__28-7795.png"
+  },
+  {
+    "id": "28:7953",
+    "name": "Q28 / Binary and XML response views",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q28-binary-and-xml-response-views__28-7953.png"
+  },
+  {
+    "id": "28:8115",
+    "name": "Q29 / Response timing breakdown",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q29-response-timing-breakdown__28-8115.png"
+  },
+  {
+    "id": "28:8290",
+    "name": "Q30 / History filters and cleanup",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q30-history-filters-and-cleanup__28-8290.png"
+  },
+  {
+    "id": "28:8452",
+    "name": "Q31 / Compare JSON or raw responses",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q31-compare-json-or-raw-responses__28-8452.png"
+  },
+  {
+    "id": "28:8610",
+    "name": "Q32 / Review a shared response example",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q32-review-a-shared-response-example__28-8610.png"
+  },
+  {
+    "id": "32:7157",
+    "name": "Q33 / XML response inspector",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q33-xml-response-inspector__32-7157.png"
+  },
+  {
+    "id": "32:7317",
+    "name": "Q34 / Binary response inspector",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q34-binary-response-inspector__32-7317.png"
+  },
+  {
+    "id": "32:7478",
+    "name": "Q35 / Raw response inspector",
+    "page": "09-request-response-states",
+    "expected_path": "02-design/screens/09-request-response-states/q35-raw-response-inspector__32-7478.png"
+  },
+  {
+    "id": "29:25",
+    "name": "H01 / Choose API authorization",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/h01-choose-api-authorization__29-25.png"
+  },
+  {
+    "id": "29:275",
+    "name": "H02 / No authentication",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/h02-no-authentication__29-275.png"
+  },
+  {
+    "id": "29:424",
+    "name": "H03 / Basic authentication",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/h03-basic-authentication__29-424.png"
+  },
+  {
+    "id": "29:574",
+    "name": "H04 / API key in a header",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/h04-api-key-in-a-header__29-574.png"
+  },
+  {
+    "id": "29:726",
+    "name": "H05 / API key in the query string",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/h05-api-key-in-the-query-string__29-726.png"
+  },
+  {
+    "id": "29:878",
+    "name": "H06 / Inherited authorization",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/h06-inherited-authorization__29-878.png"
+  },
+  {
+    "id": "29:1030",
+    "name": "H07 / Override inherited authorization",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/h07-override-inherited-authorization__29-1030.png"
+  },
+  {
+    "id": "29:1178",
+    "name": "H08 / OAuth authorization code with PKCE",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/h08-oauth-authorization-code-with-pkce__29-1178.png"
+  },
+  {
+    "id": "29:1338",
+    "name": "H09 / OAuth Client Credentials",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/h09-oauth-client-credentials__29-1338.png"
+  },
+  {
+    "id": "29:1500",
+    "name": "H10 / OAuth token details",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/h10-oauth-token-details__29-1500.png"
+  },
+  {
+    "id": "29:1656",
+    "name": "H11 / Cookie editor",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/h11-cookie-editor__29-1656.png"
+  },
+  {
+    "id": "29:1816",
+    "name": "H12 / TLS exception for a local host",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/h12-tls-exception-for-a-local-host__29-1816.png"
+  },
+  {
+    "id": "29:1968",
+    "name": "H13 / Redirect policy",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/h13-redirect-policy__29-1968.png"
+  },
+  {
+    "id": "29:2124",
+    "name": "H14 / Proxy and custom certificate authority",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/h14-proxy-and-custom-certificate-authority__29-2124.png"
+  },
+  {
+    "id": "29:2286",
+    "name": "H15 / Client certificate mapping",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/h15-client-certificate-mapping__29-2286.png"
+  },
+  {
+    "id": "29:2442",
+    "name": "H16 / AWS Signature v4",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/h16-aws-signature-v4__29-2442.png"
+  },
+  {
+    "id": "29:2596",
+    "name": "H17 / Digest authentication",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/h17-digest-authentication__29-2596.png"
+  },
+  {
+    "id": "29:2748",
+    "name": "H18 / Waiting for OAuth authorization",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/h18-waiting-for-oauth-authorization__29-2748.png"
+  },
+  {
+    "id": "29:2908",
+    "name": "H19 / OAuth callback rejected",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/h19-oauth-callback-rejected__29-2908.png"
+  },
+  {
+    "id": "29:3066",
+    "name": "H20 / OAuth access token expired",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/h20-oauth-access-token-expired__29-3066.png"
+  },
+  {
+    "id": "29:3219",
+    "name": "H21 / OAuth refresh failed",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/h21-oauth-refresh-failed__29-3219.png"
+  },
+  {
+    "id": "29:3373",
+    "name": "H22 / Unsupported authorization option",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/h22-unsupported-authorization-option__29-3373.png"
+  },
+  {
+    "id": "29:3526",
+    "name": "H23 / TLS certificate verification failed",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/h23-tls-certificate-verification-failed__29-3526.png"
+  },
+  {
+    "id": "29:3684",
+    "name": "H24 / Client certificate expired",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/h24-client-certificate-expired__29-3684.png"
+  },
+  {
+    "id": "29:3842",
+    "name": "H25 / Proxy authentication required",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/h25-proxy-authentication-required__29-3842.png"
+  },
+  {
+    "id": "29:3996",
+    "name": "H26 / Redirect chain inspected",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/h26-redirect-chain-inspected__29-3996.png"
+  },
+  {
+    "id": "29:4154",
+    "name": "V01 / Inspect an effective variable",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/v01-inspect-an-effective-variable__29-4154.png"
+  },
+  {
+    "id": "29:4324",
+    "name": "V02 / Personal and shared variable values",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/v02-personal-and-shared-variable-values__29-4324.png"
+  },
+  {
+    "id": "29:4487",
+    "name": "V03 / Missing variable blocks this request",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/v03-missing-variable-blocks-this-request__29-4487.png"
+  },
+  {
+    "id": "29:4641",
+    "name": "V04 / Circular variable reference",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/v04-circular-variable-reference__29-4641.png"
+  },
+  {
+    "id": "29:4795",
+    "name": "V05 / Dynamic variable preview",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/v05-dynamic-variable-preview__29-4795.png"
+  },
+  {
+    "id": "29:4953",
+    "name": "V06 / Extract a value from a response",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/v06-extract-a-value-from-a-response__29-4953.png"
+  },
+  {
+    "id": "29:5119",
+    "name": "V07 / Team vault access policy",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/v07-team-vault-access-policy__29-5119.png"
+  },
+  {
+    "id": "29:5279",
+    "name": "V08 / Rotate a team secret",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/v08-rotate-a-team-secret__29-5279.png"
+  },
+  {
+    "id": "29:5431",
+    "name": "V09 / Reveal or export a secret",
+    "page": "10-authentication-secrets",
+    "expected_path": "02-design/screens/10-authentication-secrets/v09-reveal-or-export-a-secret__29-5431.png"
+  },
+  {
+    "id": "29:5701",
+    "name": "O01 / OpenAPI file and URL import",
+    "page": "11-openapi-contract-details",
+    "expected_path": "02-design/screens/11-openapi-contract-details/o01-openapi-file-and-url-import__29-5701.png"
+  },
+  {
+    "id": "29:5855",
+    "name": "O02 / Unsupported OpenAPI version",
+    "page": "11-openapi-contract-details",
+    "expected_path": "02-design/screens/11-openapi-contract-details/o02-unsupported-openapi-version__29-5855.png"
+  },
+  {
+    "id": "29:6008",
+    "name": "O03 / Find and replace in a specification",
+    "page": "11-openapi-contract-details",
+    "expected_path": "02-design/screens/11-openapi-contract-details/o03-find-and-replace-in-a-specification__29-6008.png"
+  },
+  {
+    "id": "29:6163",
+    "name": "O04 / Duplicate operation validation",
+    "page": "11-openapi-contract-details",
+    "expected_path": "02-design/screens/11-openapi-contract-details/o04-duplicate-operation-validation__29-6163.png"
+  },
+  {
+    "id": "29:6321",
+    "name": "O05 / Edit an operation parameter",
+    "page": "11-openapi-contract-details",
+    "expected_path": "02-design/screens/11-openapi-contract-details/o05-edit-an-operation-parameter__29-6321.png"
+  },
+  {
+    "id": "29:6485",
+    "name": "O06 / Edit request body content",
+    "page": "11-openapi-contract-details",
+    "expected_path": "02-design/screens/11-openapi-contract-details/o06-edit-request-body-content__29-6485.png"
+  },
+  {
+    "id": "29:6643",
+    "name": "O07 / Add a documented response",
+    "page": "11-openapi-contract-details",
+    "expected_path": "02-design/screens/11-openapi-contract-details/o07-add-a-documented-response__29-6643.png"
+  },
+  {
+    "id": "29:6803",
+    "name": "O08 / Edit a reusable security scheme",
+    "page": "11-openapi-contract-details",
+    "expected_path": "02-design/screens/11-openapi-contract-details/o08-edit-a-reusable-security-scheme__29-6803.png"
+  },
+  {
+    "id": "29:6961",
+    "name": "O09 / Schema property constraints",
+    "page": "11-openapi-contract-details",
+    "expected_path": "02-design/screens/11-openapi-contract-details/o09-schema-property-constraints__29-6961.png"
+  },
+  {
+    "id": "29:7127",
+    "name": "O10 / Compose schemas with allOf",
+    "page": "11-openapi-contract-details",
+    "expected_path": "02-design/screens/11-openapi-contract-details/o10-compose-schemas-with-allof__29-7127.png"
+  },
+  {
+    "id": "29:7293",
+    "name": "O11 / Choose a oneOf schema branch",
+    "page": "11-openapi-contract-details",
+    "expected_path": "02-design/screens/11-openapi-contract-details/o11-choose-a-oneof-schema-branch__29-7293.png"
+  },
+  {
+    "id": "29:7459",
+    "name": "O12 / Compose schemas with anyOf",
+    "page": "11-openapi-contract-details",
+    "expected_path": "02-design/screens/11-openapi-contract-details/o12-compose-schemas-with-anyof__29-7459.png"
+  },
+  {
+    "id": "29:7622",
+    "name": "O13 / Configure an enum discriminator",
+    "page": "11-openapi-contract-details",
+    "expected_path": "02-design/screens/11-openapi-contract-details/o13-configure-an-enum-discriminator__29-7622.png"
+  },
+  {
+    "id": "29:7780",
+    "name": "O14 / Recursive schema boundary",
+    "page": "11-openapi-contract-details",
+    "expected_path": "02-design/screens/11-openapi-contract-details/o14-recursive-schema-boundary__29-7780.png"
+  },
+  {
+    "id": "29:7998",
+    "name": "O15 / Missing reference and external reference permission",
+    "page": "11-openapi-contract-details",
+    "expected_path": "02-design/screens/11-openapi-contract-details/o15-missing-reference-and-external-reference-permission__29-7998.png"
+  },
+  {
+    "id": "29:8161",
+    "name": "O16 / Bundle a multi-file specification",
+    "page": "11-openapi-contract-details",
+    "expected_path": "02-design/screens/11-openapi-contract-details/o16-bundle-a-multi-file-specification__29-8161.png"
+  },
+  {
+    "id": "29:8319",
+    "name": "O17 / Convert Swagger 2.0",
+    "page": "11-openapi-contract-details",
+    "expected_path": "02-design/screens/11-openapi-contract-details/o17-convert-swagger-2-0__29-8319.png"
+  },
+  {
+    "id": "29:8488",
+    "name": "O18 / Configure API lint rules",
+    "page": "11-openapi-contract-details",
+    "expected_path": "02-design/screens/11-openapi-contract-details/o18-configure-api-lint-rules__29-8488.png"
+  },
+  {
+    "id": "29:8651",
+    "name": "O19 / Link request to a stable operation",
+    "page": "11-openapi-contract-details",
+    "expected_path": "02-design/screens/11-openapi-contract-details/o19-link-request-to-a-stable-operation__29-8651.png"
+  },
+  {
+    "id": "29:8814",
+    "name": "O20 / Review a contract update",
+    "page": "11-openapi-contract-details",
+    "expected_path": "02-design/screens/11-openapi-contract-details/o20-review-a-contract-update__29-8814.png"
+  },
+  {
+    "id": "29:8973",
+    "name": "O21 / Propose a spec change from a request",
+    "page": "11-openapi-contract-details",
+    "expected_path": "02-design/screens/11-openapi-contract-details/o21-propose-a-spec-change-from-a-request__29-8973.png"
+  },
+  {
+    "id": "29:9138",
+    "name": "O22 / Response schema mismatch",
+    "page": "11-openapi-contract-details",
+    "expected_path": "02-design/screens/11-openapi-contract-details/o22-response-schema-mismatch__29-9138.png"
+  },
+  {
+    "id": "29:9311",
+    "name": "O23 / Unsupported schema keyword",
+    "page": "11-openapi-contract-details",
+    "expected_path": "02-design/screens/11-openapi-contract-details/o23-unsupported-schema-keyword__29-9311.png"
+  },
+  {
+    "id": "29:9468",
+    "name": "O24 / Delete an operation with dependents",
+    "page": "11-openapi-contract-details",
+    "expected_path": "02-design/screens/11-openapi-contract-details/o24-delete-an-operation-with-dependents__29-9468.png"
+  },
+  {
+    "id": "29:9631",
+    "name": "O25 / Documentation export preview",
+    "page": "11-openapi-contract-details",
+    "expected_path": "02-design/screens/11-openapi-contract-details/o25-documentation-export-preview__29-9631.png"
+  },
+  {
+    "id": "29:9853",
+    "name": "C15 / Create a branch",
+    "page": "12-collaboration-sync-details",
+    "expected_path": "02-design/screens/12-collaboration-sync-details/c15-create-a-branch__29-9853.png"
+  },
+  {
+    "id": "29:10001",
+    "name": "C16 / Fork a collection",
+    "page": "12-collaboration-sync-details",
+    "expected_path": "02-design/screens/12-collaboration-sync-details/c16-fork-a-collection__29-10001.png"
+  },
+  {
+    "id": "29:10155",
+    "name": "C17 / Open a merge request",
+    "page": "12-collaboration-sync-details",
+    "expected_path": "02-design/screens/12-collaboration-sync-details/c17-open-a-merge-request__29-10155.png"
+  },
+  {
+    "id": "29:10315",
+    "name": "C18 / Request changes in a review",
+    "page": "12-collaboration-sync-details",
+    "expected_path": "02-design/screens/12-collaboration-sync-details/c18-request-changes-in-a-review__29-10315.png"
+  },
+  {
+    "id": "29:10463",
+    "name": "C19 / Publish review approval",
+    "page": "12-collaboration-sync-details",
+    "expected_path": "02-design/screens/12-collaboration-sync-details/c19-publish-review-approval__29-10463.png"
+  },
+  {
+    "id": "29:10611",
+    "name": "C20 / Share a sanitized test report",
+    "page": "12-collaboration-sync-details",
+    "expected_path": "02-design/screens/12-collaboration-sync-details/c20-share-a-sanitized-test-report__29-10611.png"
+  },
+  {
+    "id": "29:10763",
+    "name": "C21 / Notification preferences",
+    "page": "12-collaboration-sync-details",
+    "expected_path": "02-design/screens/12-collaboration-sync-details/c21-notification-preferences__29-10763.png"
+  },
+  {
+    "id": "29:10921",
+    "name": "C22 / Merge checks and approvals",
+    "page": "12-collaboration-sync-details",
+    "expected_path": "02-design/screens/12-collaboration-sync-details/c22-merge-checks-and-approvals__29-10921.png"
+  },
+  {
+    "id": "29:11090",
+    "name": "C23 / Merge conflict between branches",
+    "page": "12-collaboration-sync-details",
+    "expected_path": "02-design/screens/12-collaboration-sync-details/c23-merge-conflict-between-branches__29-11090.png"
+  },
+  {
+    "id": "29:11257",
+    "name": "C24 / Resolve and preview the merged schema",
+    "page": "12-collaboration-sync-details",
+    "expected_path": "02-design/screens/12-collaboration-sync-details/c24-resolve-and-preview-the-merged-schema__29-11257.png"
+  },
+  {
+    "id": "29:11409",
+    "name": "C25 / Merge completed",
+    "page": "12-collaboration-sync-details",
+    "expected_path": "02-design/screens/12-collaboration-sync-details/c25-merge-completed__29-11409.png"
+  },
+  {
+    "id": "29:11565",
+    "name": "C26 / Mention a teammate",
+    "page": "12-collaboration-sync-details",
+    "expected_path": "02-design/screens/12-collaboration-sync-details/c26-mention-a-teammate__29-11565.png"
+  },
+  {
+    "id": "29:11723",
+    "name": "C27 / Thread anchored to a previous revision",
+    "page": "12-collaboration-sync-details",
+    "expected_path": "02-design/screens/12-collaboration-sync-details/c27-thread-anchored-to-a-previous-revision__29-11723.png"
+  },
+  {
+    "id": "29:11881",
+    "name": "C28 / Notifications inbox",
+    "page": "12-collaboration-sync-details",
+    "expected_path": "02-design/screens/12-collaboration-sync-details/c28-notifications-inbox__29-11881.png"
+  },
+  {
+    "id": "29:12044",
+    "name": "C29 / Open a workspace deep link",
+    "page": "12-collaboration-sync-details",
+    "expected_path": "02-design/screens/12-collaboration-sync-details/c29-open-a-workspace-deep-link__29-12044.png"
+  },
+  {
+    "id": "29:12201",
+    "name": "C30 / Deep link access denied",
+    "page": "12-collaboration-sync-details",
+    "expected_path": "02-design/screens/12-collaboration-sync-details/c30-deep-link-access-denied__29-12201.png"
+  },
+  {
+    "id": "29:12355",
+    "name": "C31 / Collaborative editing presence",
+    "page": "12-collaboration-sync-details",
+    "expected_path": "02-design/screens/12-collaboration-sync-details/c31-collaborative-editing-presence__29-12355.png"
+  },
+  {
+    "id": "29:12519",
+    "name": "C32 / Collaborative editing lost connection",
+    "page": "12-collaboration-sync-details",
+    "expected_path": "02-design/screens/12-collaboration-sync-details/c32-collaborative-editing-lost-connection__29-12519.png"
+  },
+  {
+    "id": "29:12676",
+    "name": "Y01 / Pending, syncing, failed and conflicted changes",
+    "page": "12-collaboration-sync-details",
+    "expected_path": "02-design/screens/12-collaboration-sync-details/y01-pending-syncing-failed-and-conflicted-changes__29-12676.png"
+  },
+  {
+    "id": "29:12845",
+    "name": "Y02 / Reconnect and catch up",
+    "page": "12-collaboration-sync-details",
+    "expected_path": "02-design/screens/12-collaboration-sync-details/y02-reconnect-and-catch-up__29-12845.png"
+  },
+  {
+    "id": "29:13002",
+    "name": "Y03 / Sync cursor expired",
+    "page": "12-collaboration-sync-details",
+    "expected_path": "02-design/screens/12-collaboration-sync-details/y03-sync-cursor-expired__29-13002.png"
+  },
+  {
+    "id": "29:13159",
+    "name": "Y04 / Request deleted while you were offline",
+    "page": "12-collaboration-sync-details",
+    "expected_path": "02-design/screens/12-collaboration-sync-details/y04-request-deleted-while-you-were-offline__29-13159.png"
+  },
+  {
+    "id": "29:13323",
+    "name": "Y05 / Access revoked with pending edits",
+    "page": "12-collaboration-sync-details",
+    "expected_path": "02-design/screens/12-collaboration-sync-details/y05-access-revoked-with-pending-edits__29-13323.png"
+  },
+  {
+    "id": "29:13486",
+    "name": "Y06 / Restore revision as a new version",
+    "page": "12-collaboration-sync-details",
+    "expected_path": "02-design/screens/12-collaboration-sync-details/y06-restore-revision-as-a-new-version__29-13486.png"
+  },
+  {
+    "id": "29:13639",
+    "name": "Y07 / Device restart recovery",
+    "page": "12-collaboration-sync-details",
+    "expected_path": "02-design/screens/12-collaboration-sync-details/y07-device-restart-recovery__29-13639.png"
+  },
+  {
+    "id": "29:13864",
+    "name": "I05 / Import from an API URL",
+    "page": "13-import-testing-mock-details",
+    "expected_path": "02-design/screens/13-import-testing-mock-details/i05-import-from-an-api-url__29-13864.png"
+  },
+  {
+    "id": "29:14018",
+    "name": "I06 / Import Postman environment values",
+    "page": "13-import-testing-mock-details",
+    "expected_path": "02-design/screens/13-import-testing-mock-details/i06-import-postman-environment-values__29-14018.png"
+  },
+  {
+    "id": "29:14172",
+    "name": "I07 / Choose an import conflict strategy",
+    "page": "13-import-testing-mock-details",
+    "expected_path": "02-design/screens/13-import-testing-mock-details/i07-choose-an-import-conflict-strategy__29-14172.png"
+  },
+  {
+    "id": "29:14324",
+    "name": "I08 / Choose export files and attachments",
+    "page": "13-import-testing-mock-details",
+    "expected_path": "02-design/screens/13-import-testing-mock-details/i08-choose-export-files-and-attachments__29-14324.png"
+  },
+  {
+    "id": "29:14486",
+    "name": "I09 / Git working tree changes",
+    "page": "13-import-testing-mock-details",
+    "expected_path": "02-design/screens/13-import-testing-mock-details/i09-git-working-tree-changes__29-14486.png"
+  },
+  {
+    "id": "29:14638",
+    "name": "I10 / Paste a cURL request",
+    "page": "13-import-testing-mock-details",
+    "expected_path": "02-design/screens/13-import-testing-mock-details/i10-paste-a-curl-request__29-14638.png"
+  },
+  {
+    "id": "29:14790",
+    "name": "I11 / cURL import parse error",
+    "page": "13-import-testing-mock-details",
+    "expected_path": "02-design/screens/13-import-testing-mock-details/i11-curl-import-parse-error__29-14790.png"
+  },
+  {
+    "id": "29:14948",
+    "name": "I12 / Import compatibility report",
+    "page": "13-import-testing-mock-details",
+    "expected_path": "02-design/screens/13-import-testing-mock-details/i12-import-compatibility-report__29-14948.png"
+  },
+  {
+    "id": "29:15117",
+    "name": "I13 / Export manifest and portability check",
+    "page": "13-import-testing-mock-details",
+    "expected_path": "02-design/screens/13-import-testing-mock-details/i13-export-manifest-and-portability-check__29-15117.png"
+  },
+  {
+    "id": "29:15281",
+    "name": "I14 / Resolve a Git merge conflict",
+    "page": "13-import-testing-mock-details",
+    "expected_path": "02-design/screens/13-import-testing-mock-details/i14-resolve-a-git-merge-conflict__29-15281.png"
+  },
+  {
+    "id": "29:15434",
+    "name": "I15 / Drop a file from Windows Explorer",
+    "page": "13-import-testing-mock-details",
+    "expected_path": "02-design/screens/13-import-testing-mock-details/i15-drop-a-file-from-windows-explorer__29-15434.png"
+  },
+  {
+    "id": "29:15591",
+    "name": "T13 / Add a response assertion",
+    "page": "13-import-testing-mock-details",
+    "expected_path": "02-design/screens/13-import-testing-mock-details/t13-add-a-response-assertion__29-15591.png"
+  },
+  {
+    "id": "29:15745",
+    "name": "T14 / Run order and dependencies",
+    "page": "13-import-testing-mock-details",
+    "expected_path": "02-design/screens/13-import-testing-mock-details/t14-run-order-and-dependencies__29-15745.png"
+  },
+  {
+    "id": "29:15903",
+    "name": "T15 / Configure a response extractor",
+    "page": "13-import-testing-mock-details",
+    "expected_path": "02-design/screens/13-import-testing-mock-details/t15-configure-a-response-extractor__29-15903.png"
+  },
+  {
+    "id": "29:16063",
+    "name": "T16 / Data-driven run settings",
+    "page": "13-import-testing-mock-details",
+    "expected_path": "02-design/screens/13-import-testing-mock-details/t16-data-driven-run-settings__29-16063.png"
+  },
+  {
+    "id": "29:16219",
+    "name": "T17 / Concurrency and rate limits",
+    "page": "13-import-testing-mock-details",
+    "expected_path": "02-design/screens/13-import-testing-mock-details/t17-concurrency-and-rate-limits__29-16219.png"
+  },
+  {
+    "id": "29:16375",
+    "name": "T18 / Runner script permissions",
+    "page": "13-import-testing-mock-details",
+    "expected_path": "02-design/screens/13-import-testing-mock-details/t18-runner-script-permissions__29-16375.png"
+  },
+  {
+    "id": "29:16531",
+    "name": "T19 / Run in progress",
+    "page": "13-import-testing-mock-details",
+    "expected_path": "02-design/screens/13-import-testing-mock-details/t19-run-in-progress__29-16531.png"
+  },
+  {
+    "id": "29:16688",
+    "name": "T20 / Dependency failure and skipped steps",
+    "page": "13-import-testing-mock-details",
+    "expected_path": "02-design/screens/13-import-testing-mock-details/t20-dependency-failure-and-skipped-steps__29-16688.png"
+  },
+  {
+    "id": "29:16851",
+    "name": "T21 / Invalid data row preview",
+    "page": "13-import-testing-mock-details",
+    "expected_path": "02-design/screens/13-import-testing-mock-details/t21-invalid-data-row-preview__29-16851.png"
+  },
+  {
+    "id": "29:17014",
+    "name": "T22 / Script sandbox stopped execution",
+    "page": "13-import-testing-mock-details",
+    "expected_path": "02-design/screens/13-import-testing-mock-details/t22-script-sandbox-stopped-execution__29-17014.png"
+  },
+  {
+    "id": "29:17172",
+    "name": "T23 / Postman script migration support",
+    "page": "13-import-testing-mock-details",
+    "expected_path": "02-design/screens/13-import-testing-mock-details/t23-postman-script-migration-support__29-17172.png"
+  },
+  {
+    "id": "29:17335",
+    "name": "T24 / Reproduce a test run",
+    "page": "13-import-testing-mock-details",
+    "expected_path": "02-design/screens/13-import-testing-mock-details/t24-reproduce-a-test-run__29-17335.png"
+  },
+  {
+    "id": "29:17504",
+    "name": "K01 / Mock from a schema",
+    "page": "13-import-testing-mock-details",
+    "expected_path": "02-design/screens/13-import-testing-mock-details/k01-mock-from-a-schema__29-17504.png"
+  },
+  {
+    "id": "29:17662",
+    "name": "K02 / Edit a mock matching rule",
+    "page": "13-import-testing-mock-details",
+    "expected_path": "02-design/screens/13-import-testing-mock-details/k02-edit-a-mock-matching-rule__29-17662.png"
+  },
+  {
+    "id": "29:17822",
+    "name": "K03 / Mock access controls",
+    "page": "13-import-testing-mock-details",
+    "expected_path": "02-design/screens/13-import-testing-mock-details/k03-mock-access-controls__29-17822.png"
+  },
+  {
+    "id": "29:17980",
+    "name": "K04 / Register a self-hosted runner",
+    "page": "13-import-testing-mock-details",
+    "expected_path": "02-design/screens/13-import-testing-mock-details/k04-register-a-self-hosted-runner__29-17980.png"
+  },
+  {
+    "id": "29:18134",
+    "name": "K05 / Runner job resource limits",
+    "page": "13-import-testing-mock-details",
+    "expected_path": "02-design/screens/13-import-testing-mock-details/k05-runner-job-resource-limits__29-18134.png"
+  },
+  {
+    "id": "29:18292",
+    "name": "K06 / Scheduled run retry policy",
+    "page": "13-import-testing-mock-details",
+    "expected_path": "02-design/screens/13-import-testing-mock-details/k06-scheduled-run-retry-policy__29-18292.png"
+  },
+  {
+    "id": "29:18454",
+    "name": "K07 / Webhook notification permission",
+    "page": "13-import-testing-mock-details",
+    "expected_path": "02-design/screens/13-import-testing-mock-details/k07-webhook-notification-permission__29-18454.png"
+  },
+  {
+    "id": "29:18606",
+    "name": "K08 / Schema cannot generate a mock response",
+    "page": "13-import-testing-mock-details",
+    "expected_path": "02-design/screens/13-import-testing-mock-details/k08-schema-cannot-generate-a-mock-response__29-18606.png"
+  },
+  {
+    "id": "29:18763",
+    "name": "K09 / Mock traffic inspection",
+    "page": "13-import-testing-mock-details",
+    "expected_path": "02-design/screens/13-import-testing-mock-details/k09-mock-traffic-inspection__29-18763.png"
+  },
+  {
+    "id": "29:18920",
+    "name": "K10 / Scheduled runner is offline",
+    "page": "13-import-testing-mock-details",
+    "expected_path": "02-design/screens/13-import-testing-mock-details/k10-scheduled-runner-is-offline__29-18920.png"
+  },
+  {
+    "id": "29:19077",
+    "name": "K11 / Cancel an active runner job",
+    "page": "13-import-testing-mock-details",
+    "expected_path": "02-design/screens/13-import-testing-mock-details/k11-cancel-an-active-runner-job__29-19077.png"
+  },
+  {
+    "id": "29:19306",
+    "name": "P05 / GraphQL variables and schema source",
+    "page": "14-protocols-system-details",
+    "expected_path": "02-design/screens/14-protocols-system-details/p05-graphql-variables-and-schema-source__29-19306.png"
+  },
+  {
+    "id": "29:19462",
+    "name": "P06 / WebSocket connection options",
+    "page": "14-protocols-system-details",
+    "expected_path": "02-design/screens/14-protocols-system-details/p06-websocket-connection-options__29-19462.png"
+  },
+  {
+    "id": "29:19620",
+    "name": "P07 / gRPC metadata and proto import",
+    "page": "14-protocols-system-details",
+    "expected_path": "02-design/screens/14-protocols-system-details/p07-grpc-metadata-and-proto-import__29-19620.png"
+  },
+  {
+    "id": "29:19780",
+    "name": "P08 / HTTP protocol preference",
+    "page": "14-protocols-system-details",
+    "expected_path": "02-design/screens/14-protocols-system-details/p08-http-protocol-preference__29-19780.png"
+  },
+  {
+    "id": "29:19934",
+    "name": "P09 / SDK and server stub generator",
+    "page": "14-protocols-system-details",
+    "expected_path": "02-design/screens/14-protocols-system-details/p09-sdk-and-server-stub-generator__29-19934.png"
+  },
+  {
+    "id": "29:20092",
+    "name": "P10 / Extension permission request",
+    "page": "14-protocols-system-details",
+    "expected_path": "02-design/screens/14-protocols-system-details/p10-extension-permission-request__29-20092.png"
+  },
+  {
+    "id": "29:20248",
+    "name": "P11 / GraphQL data and errors",
+    "page": "14-protocols-system-details",
+    "expected_path": "02-design/screens/14-protocols-system-details/p11-graphql-data-and-errors__29-20248.png"
+  },
+  {
+    "id": "29:20423",
+    "name": "P12 / WebSocket disconnected",
+    "page": "14-protocols-system-details",
+    "expected_path": "02-design/screens/14-protocols-system-details/p12-websocket-disconnected__29-20423.png"
+  },
+  {
+    "id": "29:20580",
+    "name": "P13 / SSE stream event inspector",
+    "page": "14-protocols-system-details",
+    "expected_path": "02-design/screens/14-protocols-system-details/p13-sse-stream-event-inspector__29-20580.png"
+  },
+  {
+    "id": "29:20741",
+    "name": "P14 / gRPC invocation error",
+    "page": "14-protocols-system-details",
+    "expected_path": "02-design/screens/14-protocols-system-details/p14-grpc-invocation-error__29-20741.png"
+  },
+  {
+    "id": "29:20910",
+    "name": "P15 / Generator output review",
+    "page": "14-protocols-system-details",
+    "expected_path": "02-design/screens/14-protocols-system-details/p15-generator-output-review__29-20910.png"
+  },
+  {
+    "id": "29:21115",
+    "name": "P16 / Local conversion utilities",
+    "page": "14-protocols-system-details",
+    "expected_path": "02-design/screens/14-protocols-system-details/p16-local-conversion-utilities__29-21115.png"
+  },
+  {
+    "id": "29:21274",
+    "name": "Z01 / Windows installation destination",
+    "page": "14-protocols-system-details",
+    "expected_path": "02-design/screens/14-protocols-system-details/z01-windows-installation-destination__29-21274.png"
+  },
+  {
+    "id": "29:21426",
+    "name": "Z02 / First server owner setup",
+    "page": "14-protocols-system-details",
+    "expected_path": "02-design/screens/14-protocols-system-details/z02-first-server-owner-setup__29-21426.png"
+  },
+  {
+    "id": "29:21576",
+    "name": "Z03 / Coolify backend configuration",
+    "page": "14-protocols-system-details",
+    "expected_path": "02-design/screens/14-protocols-system-details/z03-coolify-backend-configuration__29-21576.png"
+  },
+  {
+    "id": "29:21730",
+    "name": "Z04 / Backup policy",
+    "page": "14-protocols-system-details",
+    "expected_path": "02-design/screens/14-protocols-system-details/z04-backup-policy__29-21730.png"
+  },
+  {
+    "id": "29:21892",
+    "name": "Z05 / Restore a verified backup",
+    "page": "14-protocols-system-details",
+    "expected_path": "02-design/screens/14-protocols-system-details/z05-restore-a-verified-backup__29-21892.png"
+  },
+  {
+    "id": "29:22050",
+    "name": "Z06 / Migration and update review",
+    "page": "14-protocols-system-details",
+    "expected_path": "02-design/screens/14-protocols-system-details/z06-migration-and-update-review__29-22050.png"
+  },
+  {
+    "id": "29:22206",
+    "name": "Z07 / Diagnostic report preview",
+    "page": "14-protocols-system-details",
+    "expected_path": "02-design/screens/14-protocols-system-details/z07-diagnostic-report-preview__29-22206.png"
+  },
+  {
+    "id": "29:22360",
+    "name": "Z08 / Local data folder migration",
+    "page": "14-protocols-system-details",
+    "expected_path": "02-design/screens/14-protocols-system-details/z08-local-data-folder-migration__29-22360.png"
+  },
+  {
+    "id": "29:22514",
+    "name": "Z09 / Accessible keyboard navigation",
+    "page": "14-protocols-system-details",
+    "expected_path": "02-design/screens/14-protocols-system-details/z09-accessible-keyboard-navigation__29-22514.png"
+  },
+  {
+    "id": "29:22674",
+    "name": "Z10 / Manage signed-in Google sessions",
+    "page": "14-protocols-system-details",
+    "expected_path": "02-design/screens/14-protocols-system-details/z10-manage-signed-in-google-sessions__29-22674.png"
+  },
+  {
+    "id": "29:22826",
+    "name": "Z11 / Backup verification result",
+    "page": "14-protocols-system-details",
+    "expected_path": "02-design/screens/14-protocols-system-details/z11-backup-verification-result__29-22826.png"
+  },
+  {
+    "id": "29:23001",
+    "name": "Z12 / Restore blocked by a missing key",
+    "page": "14-protocols-system-details",
+    "expected_path": "02-design/screens/14-protocols-system-details/z12-restore-blocked-by-a-missing-key__29-23001.png"
+  },
+  {
+    "id": "29:23159",
+    "name": "Z13 / Update signature could not be verified",
+    "page": "14-protocols-system-details",
+    "expected_path": "02-design/screens/14-protocols-system-details/z13-update-signature-could-not-be-verified__29-23159.png"
+  },
+  {
+    "id": "29:23317",
+    "name": "Z14 / Server-side destination blocked",
+    "page": "14-protocols-system-details",
+    "expected_path": "02-design/screens/14-protocols-system-details/z14-server-side-destination-blocked__29-23317.png"
+  },
+  {
+    "id": "29:23475",
+    "name": "Z15 / Privacy-safe imported content",
+    "page": "14-protocols-system-details",
+    "expected_path": "02-design/screens/14-protocols-system-details/z15-privacy-safe-imported-content__29-23475.png"
+  },
+  {
+    "id": "29:23632",
+    "name": "Z16 / Performance acceptance dashboard",
+    "page": "14-protocols-system-details",
+    "expected_path": "02-design/screens/14-protocols-system-details/z16-performance-acceptance-dashboard__29-23632.png"
+  },
+  {
+    "id": "32:11157",
+    "name": "Z17 / Audit log retention policy",
+    "page": "14-protocols-system-details",
+    "expected_path": "02-design/screens/14-protocols-system-details/z17-audit-log-retention-policy__32-11157.png"
+  },
+  {
+    "id": "32:11321",
+    "name": "Z18 / Server storage and operational quotas",
+    "page": "14-protocols-system-details",
+    "expected_path": "02-design/screens/14-protocols-system-details/z18-server-storage-and-operational-quotas__32-11321.png"
+  },
+  {
+    "id": "32:11481",
+    "name": "Z19 / Language and interface appearance",
+    "page": "14-protocols-system-details",
+    "expected_path": "02-design/screens/14-protocols-system-details/z19-language-and-interface-appearance__32-11481.png"
+  },
+  {
+    "id": "32:11640",
+    "name": "Z20 / Confirm local cache cleanup",
+    "page": "14-protocols-system-details",
+    "expected_path": "02-design/screens/14-protocols-system-details/z20-confirm-local-cache-cleanup__32-11640.png"
+  },
+  {
+    "id": "5:155",
+    "name": "Kind=Primary, State=Default",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/kind-primary-state-default__5-155.png"
+  },
+  {
+    "id": "5:157",
+    "name": "Kind=Primary, State=Hover",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/kind-primary-state-hover__5-157.png"
+  },
+  {
+    "id": "5:159",
+    "name": "Kind=Primary, State=Disabled",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/kind-primary-state-disabled__5-159.png"
+  },
+  {
+    "id": "5:161",
+    "name": "Kind=Primary, State=Loading",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/kind-primary-state-loading__5-161.png"
+  },
+  {
+    "id": "5:163",
+    "name": "Kind=Secondary, State=Default",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/kind-secondary-state-default__5-163.png"
+  },
+  {
+    "id": "5:165",
+    "name": "Kind=Secondary, State=Hover",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/kind-secondary-state-hover__5-165.png"
+  },
+  {
+    "id": "5:167",
+    "name": "Kind=Secondary, State=Disabled",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/kind-secondary-state-disabled__5-167.png"
+  },
+  {
+    "id": "5:169",
+    "name": "Kind=Secondary, State=Loading",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/kind-secondary-state-loading__5-169.png"
+  },
+  {
+    "id": "5:171",
+    "name": "Kind=Ghost, State=Default",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/kind-ghost-state-default__5-171.png"
+  },
+  {
+    "id": "5:173",
+    "name": "Kind=Ghost, State=Hover",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/kind-ghost-state-hover__5-173.png"
+  },
+  {
+    "id": "5:175",
+    "name": "Kind=Ghost, State=Disabled",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/kind-ghost-state-disabled__5-175.png"
+  },
+  {
+    "id": "5:177",
+    "name": "Kind=Ghost, State=Loading",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/kind-ghost-state-loading__5-177.png"
+  },
+  {
+    "id": "5:179",
+    "name": "Kind=Danger, State=Default",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/kind-danger-state-default__5-179.png"
+  },
+  {
+    "id": "5:181",
+    "name": "Kind=Danger, State=Hover",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/kind-danger-state-hover__5-181.png"
+  },
+  {
+    "id": "5:183",
+    "name": "Kind=Danger, State=Disabled",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/kind-danger-state-disabled__5-183.png"
+  },
+  {
+    "id": "5:185",
+    "name": "Kind=Danger, State=Loading",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/kind-danger-state-loading__5-185.png"
+  },
+  {
+    "id": "5:187",
+    "name": "Kind=Google, State=Default",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/kind-google-state-default__5-187.png"
+  },
+  {
+    "id": "5:190",
+    "name": "Kind=Google, State=Hover",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/kind-google-state-hover__5-190.png"
+  },
+  {
+    "id": "5:193",
+    "name": "Kind=Google, State=Disabled",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/kind-google-state-disabled__5-193.png"
+  },
+  {
+    "id": "5:196",
+    "name": "Kind=Google, State=Loading",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/kind-google-state-loading__5-196.png"
+  },
+  {
+    "id": "5:200",
+    "name": "State=Default",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-default__5-200.png"
+  },
+  {
+    "id": "5:202",
+    "name": "State=Focus",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-focus__5-202.png"
+  },
+  {
+    "id": "5:204",
+    "name": "State=Error",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-error__5-204.png"
+  },
+  {
+    "id": "5:206",
+    "name": "State=Disabled",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-disabled__5-206.png"
+  },
+  {
+    "id": "5:208",
+    "name": "State=Secret",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-secret__5-208.png"
+  },
+  {
+    "id": "5:211",
+    "name": "Tone=Teal",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/tone-teal__5-211.png"
+  },
+  {
+    "id": "5:213",
+    "name": "Tone=Salmon",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/tone-salmon__5-213.png"
+  },
+  {
+    "id": "5:215",
+    "name": "Tone=Warning",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/tone-warning__5-215.png"
+  },
+  {
+    "id": "5:217",
+    "name": "Tone=Neutral",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/tone-neutral__5-217.png"
+  },
+  {
+    "id": "5:219",
+    "name": "Tone=Success",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/tone-success__5-219.png"
+  },
+  {
+    "id": "5:221",
+    "name": "Tone=Danger",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/tone-danger__5-221.png"
+  },
+  {
+    "id": "5:224",
+    "name": "State=Default",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-default__5-224.png"
+  },
+  {
+    "id": "5:229",
+    "name": "State=Selected",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-selected__5-229.png"
+  },
+  {
+    "id": "5:235",
+    "name": "State=Default",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-default__5-235.png"
+  },
+  {
+    "id": "5:239",
+    "name": "State=Active",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-active__5-239.png"
+  },
+  {
+    "id": "5:243",
+    "name": "State=Dirty",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-dirty__5-243.png"
+  },
+  {
+    "id": "5:248",
+    "name": "State=Unchecked",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-unchecked__5-248.png"
+  },
+  {
+    "id": "5:250",
+    "name": "State=Checked",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-checked__5-250.png"
+  },
+  {
+    "id": "5:252",
+    "name": "State=Mixed",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-mixed__5-252.png"
+  },
+  {
+    "id": "5:254",
+    "name": "State=Disabled",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-disabled__5-254.png"
+  },
+  {
+    "id": "5:257",
+    "name": "State=On",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-on__5-257.png"
+  },
+  {
+    "id": "5:259",
+    "name": "State=Off",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-off__5-259.png"
+  },
+  {
+    "id": "5:261",
+    "name": "State=Disabled",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-disabled__5-261.png"
+  },
+  {
+    "id": "5:264",
+    "name": "Tone=Teal",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/tone-teal__5-264.png"
+  },
+  {
+    "id": "5:266",
+    "name": "Tone=Salmon",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/tone-salmon__5-266.png"
+  },
+  {
+    "id": "5:268",
+    "name": "Tone=Cream",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/tone-cream__5-268.png"
+  },
+  {
+    "id": "5:271",
+    "name": "State=Default",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-default__5-271.png"
+  },
+  {
+    "id": "5:275",
+    "name": "State=Selected",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-selected__5-275.png"
+  },
+  {
+    "id": "5:279",
+    "name": "State=Error",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-error__5-279.png"
+  },
+  {
+    "id": "5:284",
+    "name": "Tone=Default",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/tone-default__5-284.png"
+  },
+  {
+    "id": "5:287",
+    "name": "Tone=Added",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/tone-added__5-287.png"
+  },
+  {
+    "id": "5:290",
+    "name": "Tone=Removed",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/tone-removed__5-290.png"
+  },
+  {
+    "id": "5:293",
+    "name": "Tone=Warning",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/tone-warning__5-293.png"
+  },
+  {
+    "id": "5:297",
+    "name": "Method=GET",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/method-get__5-297.png"
+  },
+  {
+    "id": "5:300",
+    "name": "Method=POST",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/method-post__5-300.png"
+  },
+  {
+    "id": "5:303",
+    "name": "Method=PUT",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/method-put__5-303.png"
+  },
+  {
+    "id": "5:306",
+    "name": "Method=PATCH",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/method-patch__5-306.png"
+  },
+  {
+    "id": "5:309",
+    "name": "Method=DELETE",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/method-delete__5-309.png"
+  },
+  {
+    "id": "5:313",
+    "name": "Tone=Info",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/tone-info__5-313.png"
+  },
+  {
+    "id": "5:319",
+    "name": "Tone=Success",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/tone-success__5-319.png"
+  },
+  {
+    "id": "5:323",
+    "name": "Tone=Warning",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/tone-warning__5-323.png"
+  },
+  {
+    "id": "5:329",
+    "name": "Tone=Error",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/tone-error__5-329.png"
+  },
+  {
+    "id": "5:336",
+    "name": "Tone=Success",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/tone-success__5-336.png"
+  },
+  {
+    "id": "5:340",
+    "name": "Tone=Error",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/tone-error__5-340.png"
+  },
+  {
+    "id": "5:344",
+    "name": "Tone=Info",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/tone-info__5-344.png"
+  },
+  {
+    "id": "11:12146",
+    "name": "State=Default",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-default__11-12146.png"
+  },
+  {
+    "id": "11:12150",
+    "name": "State=Hover",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-hover__11-12150.png"
+  },
+  {
+    "id": "11:12154",
+    "name": "State=Disabled",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-disabled__11-12154.png"
+  },
+  {
+    "id": "11:12158",
+    "name": "State=Selected",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-selected__11-12158.png"
+  },
+  {
+    "id": "11:12163",
+    "name": "State=Default",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-default__11-12163.png"
+  },
+  {
+    "id": "11:12168",
+    "name": "State=Hover",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-hover__11-12168.png"
+  },
+  {
+    "id": "11:12173",
+    "name": "State=Selected",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-selected__11-12173.png"
+  },
+  {
+    "id": "11:12178",
+    "name": "State=Disabled",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-disabled__11-12178.png"
+  },
+  {
+    "id": "11:12183",
+    "name": "State=Error",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-error__11-12183.png"
+  },
+  {
+    "id": "11:12189",
+    "name": "State=Default",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-default__11-12189.png"
+  },
+  {
+    "id": "11:12192",
+    "name": "State=Default",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-default__11-12192.png"
+  },
+  {
+    "id": "11:12196",
+    "name": "State=Loading",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-loading__11-12196.png"
+  },
+  {
+    "id": "11:12200",
+    "name": "State=Error",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-error__11-12200.png"
+  },
+  {
+    "id": "11:12205",
+    "name": "State=Default",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-default__11-12205.png"
+  },
+  {
+    "id": "11:12208",
+    "name": "State=Default",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-default__11-12208.png"
+  },
+  {
+    "id": "11:12210",
+    "name": "State=Error",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-error__11-12210.png"
+  },
+  {
+    "id": "27:160",
+    "name": "State=Default",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-default__27-160.png"
+  },
+  {
+    "id": "27:164",
+    "name": "State=Open",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-open__27-164.png"
+  },
+  {
+    "id": "27:168",
+    "name": "State=Error",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-error__27-168.png"
+  },
+  {
+    "id": "27:172",
+    "name": "State=Disabled",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-disabled__27-172.png"
+  },
+  {
+    "id": "27:177",
+    "name": "State=Default",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-default__27-177.png"
+  },
+  {
+    "id": "27:179",
+    "name": "State=Selected",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-selected__27-179.png"
+  },
+  {
+    "id": "27:181",
+    "name": "State=Disabled",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-disabled__27-181.png"
+  },
+  {
+    "id": "27:184",
+    "name": "State=Default",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-default__27-184.png"
+  },
+  {
+    "id": "27:190",
+    "name": "State=Enabled",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-enabled__27-190.png"
+  },
+  {
+    "id": "27:196",
+    "name": "State=Disabled",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-disabled__27-196.png"
+  },
+  {
+    "id": "27:202",
+    "name": "State=Error",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-error__27-202.png"
+  },
+  {
+    "id": "27:208",
+    "name": "State=Selected",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-selected__27-208.png"
+  },
+  {
+    "id": "27:215",
+    "name": "State=Default",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-default__27-215.png"
+  },
+  {
+    "id": "27:229",
+    "name": "State=Selected",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-selected__27-229.png"
+  },
+  {
+    "id": "27:243",
+    "name": "State=Dragging",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-dragging__27-243.png"
+  },
+  {
+    "id": "27:257",
+    "name": "State=Drop target",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-drop-target__27-257.png"
+  },
+  {
+    "id": "27:272",
+    "name": "State=Default",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-default__27-272.png"
+  },
+  {
+    "id": "27:276",
+    "name": "State=Active",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-active__27-276.png"
+  },
+  {
+    "id": "27:280",
+    "name": "State=Dirty",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-dirty__27-280.png"
+  },
+  {
+    "id": "27:285",
+    "name": "State=Complete",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-complete__27-285.png"
+  },
+  {
+    "id": "27:289",
+    "name": "State=Current",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-current__27-289.png"
+  },
+  {
+    "id": "27:293",
+    "name": "State=Pending",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-pending__27-293.png"
+  },
+  {
+    "id": "27:298",
+    "name": "State=Secret",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-secret__27-298.png"
+  },
+  {
+    "id": "27:301",
+    "name": "State=Inherited",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-inherited__27-301.png"
+  },
+  {
+    "id": "27:304",
+    "name": "State=Dynamic",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-dynamic__27-304.png"
+  },
+  {
+    "id": "27:307",
+    "name": "State=Error",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-error__27-307.png"
+  },
+  {
+    "id": "27:311",
+    "name": "State=Default",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-default__27-311.png"
+  },
+  {
+    "id": "27:315",
+    "name": "State=Warning",
+    "page": "01-component-library",
+    "expected_path": "02-design/components/01-component-library/state-warning__27-315.png"
+  }
+]

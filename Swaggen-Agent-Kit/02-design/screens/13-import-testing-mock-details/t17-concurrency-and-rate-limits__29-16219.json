@@ -1,0 +1,55 @@
+{
+  "node": {
+    "page": "13-import-testing-mock-details",
+    "page_id": "27:324",
+    "id": "29:16219",
+    "name": "T17 / Concurrency and rate limits",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/13-import-testing-mock-details/t17-concurrency-and-rate-limits__29-16219",
+    "requirements": [
+      "MK10",
+      "TS09"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:16220",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:16223",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:16371",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Concurrency and rate limits",
+    "DisNote API / tools / T17",
+    "Parallel requests",
+    "Maximum rate",
+    "Dependency safety",
+    "Only independent requests run in parallel",
+    "Queue capacity",
+    "Rate-limit response"
+  ]
+}

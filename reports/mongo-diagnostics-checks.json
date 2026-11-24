@@ -1,0 +1,26 @@
+﻿[
+    {
+        "name":  "mongo-diagnostics-unit",
+        "command":  "cargo +stable test --manifest-path spikes/p00/Cargo.toml --offline --locked --features mongo --lib mongo_diagnostics::tests",
+        "status":  "PASS",
+        "exit_code":  0,
+        "timestamp":  "2026-11-24T05:14:13.0162669Z",
+        "artifact_path":  "reports/raw/mongo-diagnostics-unit.txt"
+    },
+    {
+        "name":  "mongo-diagnostics-build",
+        "command":  "cargo +stable build --manifest-path spikes/p00/Cargo.toml --offline --locked --features mongo --bin mongo-smoke",
+        "status":  "PASS",
+        "exit_code":  0,
+        "timestamp":  "2026-11-24T05:14:41.5397230Z",
+        "artifact_path":  "reports/raw/mongo-diagnostics-build.txt"
+    },
+    {
+        "name":  "mongo-diagnostics-clippy",
+        "command":  "cargo +stable clippy --manifest-path spikes/p00/Cargo.toml --offline --locked --features mongo,fault-injection --all-targets -- -D warnings",
+        "status":  "PASS",
+        "exit_code":  0,
+        "timestamp":  "2026-11-24T05:14:49.8059033Z",
+        "artifact_path":  "reports/raw/mongo-diagnostics-clippy.txt"
+    }
+]

@@ -1,0 +1,43 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:256",
+    "name": "Switch",
+    "type": "frame",
+    "width": "220",
+    "height": "116",
+    "path": "02-design/components/01-component-library/switch__5-256",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "5:257",
+      "name": "State=On",
+      "type": "symbol",
+      "x": "24",
+      "y": "56",
+      "width": "44",
+      "height": "24"
+    },
+    {
+      "id": "5:259",
+      "name": "State=Off",
+      "type": "symbol",
+      "x": "88",
+      "y": "56",
+      "width": "44",
+      "height": "24"
+    },
+    {
+      "id": "5:261",
+      "name": "State=Disabled",
+      "type": "symbol",
+      "x": "152",
+      "y": "56",
+      "width": "44",
+      "height": "24"
+    }
+  ],
+  "text_layer_names": []
+}

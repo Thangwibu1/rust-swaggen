@@ -1,0 +1,8 @@
+{
+  "recorded_at": "2026-11-24T05:49:05.621912+00:00",
+  "path": "spikes/p00-egui/target/x86_64-pc-windows-msvc/debug/swaggen-p00-egui.exe",
+  "sha256": "964e28b20e61afee4ad8069538365fb6649936504029cb7547919d9e20c725c5",
+  "profile": "debug",
+  "target": "x86_64-pc-windows-msvc",
+  "scope": "Final corrected binary observed interactively, not a release signature"
+}

@@ -1,0 +1,63 @@
+{
+  "node": {
+    "page": "03-api-workbench",
+    "page_id": "4:91",
+    "id": "6:5343",
+    "name": "E02 / Edit Development",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/03-api-workbench/e02-edit-development__6-5343",
+    "requirements": [
+      "EV02",
+      "EV03",
+      "EV05",
+      "EV08",
+      "EV09"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "6:5344",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "6:5347",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "6:5505",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Edit Development",
+    "DisNote API / Team workspace",
+    "Configuration",
+    "base_url",
+    "Workspace configuration",
+    "token",
+    "Private to this device",
+    "workspace_id",
+    "Workspace configuration",
+    "request_id",
+    "Workspace configuration",
+    "Access & sharing",
+    "Changes are saved locally before they are published to your team."
+  ]
+}

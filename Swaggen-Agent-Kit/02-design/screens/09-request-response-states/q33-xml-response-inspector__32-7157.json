@@ -1,0 +1,50 @@
+{
+  "node": {
+    "page": "09-request-response-states",
+    "page_id": "27:320",
+    "id": "32:7157",
+    "name": "Q33 / XML response inspector",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/09-request-response-states/q33-xml-response-inspector__32-7157",
+    "requirements": [
+      "RS02",
+      "RS04"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "32:7158",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "32:7161",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "32:7313",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "XML response inspector",
+    "DisNote API / request / Q33",
+    "XML · Pretty · 200 OK · 142 ms"
+  ]
+}

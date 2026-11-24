@@ -1,0 +1,54 @@
+{
+  "node": {
+    "page": "14-protocols-system-details",
+    "page_id": "27:325",
+    "id": "29:19620",
+    "name": "P07 / gRPC metadata and proto import",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/14-protocols-system-details/p07-grpc-metadata-and-proto-import__29-19620",
+    "requirements": [
+      "PR05"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:19621",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:19624",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:19776",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "gRPC metadata and proto import",
+    "DisNote API / system / P07",
+    "Proto file",
+    "Include directories",
+    "Service / method",
+    "Metadata",
+    "TLS",
+    "Enabled"
+  ]
+}

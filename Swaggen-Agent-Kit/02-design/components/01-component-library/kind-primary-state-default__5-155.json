@@ -1,0 +1,15 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:155",
+    "name": "Kind=Primary, State=Default",
+    "type": "symbol",
+    "width": "176",
+    "height": "40",
+    "path": "02-design/components/01-component-library/kind-primary-state-default__5-155",
+    "requirements": []
+  },
+  "direct_children": [],
+  "text_layer_names": []
+}

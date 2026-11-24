@@ -1,0 +1,15 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:243",
+    "name": "State=Dirty",
+    "type": "symbol",
+    "width": "180",
+    "height": "40",
+    "path": "02-design/components/01-component-library/state-dirty__5-243",
+    "requirements": []
+  },
+  "direct_children": [],
+  "text_layer_names": []
+}

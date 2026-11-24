@@ -1,0 +1,18 @@
+{
+  "timestamp": "2026-11-24T07:40:18.736295+00:00",
+  "scope": "Read-only inspection of journals actually written by the interactive Windows app; no values copied into report",
+  "files": [
+    {
+      "name": "draft.journal",
+      "bytes": 410,
+      "sha256": "da55a049d58a0089af388602f2a1f8c3bbf9caae31eed469b3735ec0f3a8c2d9",
+      "disposable_secret_plaintext_present": false
+    },
+    {
+      "name": "secrets.journal",
+      "bytes": 915,
+      "sha256": "b90567ce4278b02245c188889ce064b3b62fc5178b0b72461b5f7ea620a9f321",
+      "disposable_secret_plaintext_present": false
+    }
+  ]
+}

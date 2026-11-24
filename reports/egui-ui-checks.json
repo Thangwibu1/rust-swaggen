@@ -1,0 +1,82 @@
+[
+  {
+    "name": "egui-windows-control-semantics",
+    "status": "PASS",
+    "timestamp": "2026-11-24T05:49:05.621912+00:00",
+    "exit_code": null,
+    "command": "Observed native Windows tool interactions; see egui-comparison.md",
+    "artifact_path": "reports/egui-comparison.md",
+    "detail": "Labelled search/body fields, request buttons, separator and dialog exposed by Windows accessibility tree; no full Narrator acceptance",
+    "timestamp_scope": "recorded after interactive observations, not a benchmark timestamp"
+  },
+  {
+    "name": "egui-unicode-font-fallback",
+    "status": "PASS",
+    "timestamp": "2026-11-24T05:49:05.621912+00:00",
+    "exit_code": null,
+    "command": "Observed native Windows tool interactions; see egui-comparison.md",
+    "artifact_path": "reports/egui-comparison.md",
+    "detail": "Corrected build preserved accented fixture in both Value and Document text; screenshots displayed Vietnamese glyphs; clipboard only",
+    "timestamp_scope": "recorded after interactive observations, not a benchmark timestamp"
+  },
+  {
+    "name": "egui-search-and-selected-tab-focus",
+    "status": "PASS",
+    "timestamp": "2026-11-24T05:49:05.621912+00:00",
+    "exit_code": null,
+    "command": "Observed native Windows tool interactions; see egui-comparison.md",
+    "artifact_path": "reports/egui-comparison.md",
+    "detail": "UIA SetValue search Viet with accent reported 1 match; Tab focused body; Ctrl+P/Tab/Escape restored body focus with draft retained",
+    "timestamp_scope": "recorded after interactive observations, not a benchmark timestamp"
+  },
+  {
+    "name": "egui-virtual-list",
+    "status": "PASS",
+    "timestamp": "2026-11-24T05:49:05.621912+00:00",
+    "exit_code": null,
+    "command": "Observed native Windows tool interactions; see egui-comparison.md",
+    "artifact_path": "reports/egui-comparison.md",
+    "detail": "Windows tree reached GET /fixture/1000 with 45 rows drawn, 44 near top; no latency or full keyboard navigation acceptance",
+    "timestamp_scope": "recorded after interactive observations, not a benchmark timestamp"
+  },
+  {
+    "name": "egui-first-build-undo-redo",
+    "status": "PASS",
+    "timestamp": "2026-11-24T05:49:05.621912+00:00",
+    "exit_code": null,
+    "command": "Observed native Windows tool interactions; see egui-comparison.md",
+    "artifact_path": "reports/egui-comparison.md",
+    "detail": "Ctrl+Z restored initial JSON and Ctrl+Y restored pasted fixture on first build before system_fonts addition",
+    "timestamp_scope": "recorded after interactive observations, not a benchmark timestamp"
+  },
+  {
+    "name": "egui-index-click",
+    "status": "FAIL",
+    "timestamp": "2026-11-24T05:49:05.621912+00:00",
+    "exit_code": null,
+    "command": "Observed native Windows tool interactions; see egui-comparison.md",
+    "artifact_path": "reports/egui-comparison.md",
+    "detail": "First-build indexed editor click returned coordinate input geometry is unavailable; screenshot-coordinate click worked; cause not assigned to framework",
+    "timestamp_scope": "recorded after interactive observations, not a benchmark timestamp"
+  },
+  {
+    "name": "egui-splitter-drag",
+    "status": "FAIL",
+    "timestamp": "2026-11-24T05:49:05.621912+00:00",
+    "exit_code": null,
+    "command": "Observed native Windows tool interactions; see egui-comparison.md",
+    "artifact_path": "reports/egui-comparison.md",
+    "detail": "Corrected-build drag produced no measurable separator value/layout change; helper geometry and candidate resizing need diagnosis",
+    "timestamp_scope": "recorded after interactive observations, not a benchmark timestamp"
+  },
+  {
+    "name": "egui-ime-narrator-osdpi",
+    "status": "BLOCKED",
+    "timestamp": "2026-11-24T05:49:05.621912+00:00",
+    "exit_code": null,
+    "command": "Observed native Windows tool interactions; see egui-comparison.md",
+    "artifact_path": "reports/egui-comparison.md",
+    "detail": "Real IME preedit/commit/cancel, Narrator, OS DPI and multiple monitors not tested",
+    "timestamp_scope": "recorded after interactive observations, not a benchmark timestamp"
+  }
+]

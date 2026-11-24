@@ -1,0 +1,57 @@
+{
+  "node": {
+    "page": "14-protocols-system-details",
+    "page_id": "27:325",
+    "id": "32:11321",
+    "name": "Z18 / Server storage and operational quotas",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/14-protocols-system-details/z18-server-storage-and-operational-quotas__32-11321",
+    "requirements": [
+      "MK10",
+      "OP10"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "32:11322",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "32:11325",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "32:11477",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Server storage and operational quotas",
+    "DisNote API / system / Z18",
+    "Workspace storage limit",
+    "Current usage",
+    "4.2 GB · 42%",
+    "Concurrent runner jobs",
+    "Artifact retention",
+    "Warning threshold",
+    "When quota is reached",
+    "Block new uploads · retain existing data"
+  ]
+}

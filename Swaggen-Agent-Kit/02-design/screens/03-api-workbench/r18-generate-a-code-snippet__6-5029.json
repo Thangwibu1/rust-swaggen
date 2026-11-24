@@ -1,0 +1,49 @@
+{
+  "node": {
+    "page": "03-api-workbench",
+    "page_id": "4:91",
+    "id": "6:5029",
+    "name": "R18 / Generate a code snippet",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/03-api-workbench/r18-generate-a-code-snippet__6-5029",
+    "requirements": [
+      "PR07"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "6:5030",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "6:5033",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "6:5193",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Generate a code snippet",
+    "DisNote API / Team workspace",
+    "Editor"
+  ]
+}

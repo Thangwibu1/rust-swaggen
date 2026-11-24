@@ -1,0 +1,13 @@
+{
+  "name": "p00-egui-artifact-integrity",
+  "status": "PASS",
+  "timestamp": "2026-11-24T06:48:57.287242+00:00",
+  "exit_code": 0,
+  "scope": "Every HTTP body byte/hash and CRC-framed saved fixture verified; no product acceptance",
+  "body_path": ".local/p00-egui/body-12652-1795501049944882800.bin",
+  "body_bytes": 20971520,
+  "body_sha256": "6adfa0775cbd16a3f50d1fda1d7bd7f375dd1f9af5e6dfb751a87d3dff68699c",
+  "journal_batches": 1,
+  "draft_bytes": 86,
+  "outbox_bytes": 0
+}

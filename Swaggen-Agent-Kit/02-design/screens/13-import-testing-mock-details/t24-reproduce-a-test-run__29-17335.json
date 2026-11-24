@@ -1,0 +1,51 @@
+{
+  "node": {
+    "page": "13-import-testing-mock-details",
+    "page_id": "27:324",
+    "id": "29:17335",
+    "name": "T24 / Reproduce a test run",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/13-import-testing-mock-details/t24-reproduce-a-test-run__29-17335",
+    "requirements": [
+      "TS10"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:17336",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:17339",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:17500",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Reproduce a test run",
+    "DisNote API / tools / T24",
+    "REPRODUCTION INPUT",
+    "PINNED VALUE",
+    "AVAILABILITY"
+  ]
+}

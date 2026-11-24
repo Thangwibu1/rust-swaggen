@@ -1,0 +1,50 @@
+{
+  "node": {
+    "page": "05-testing-developer-tools",
+    "page_id": "4:93",
+    "id": "7:837",
+    "name": "T06 / Script editor",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/05-testing-developer-tools/t06-script-editor__7-837",
+    "requirements": [
+      "TS07",
+      "TS08"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "7:838",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "7:841",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "7:1002",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Script editor",
+    "DisNote API / Developer tools",
+    "Editor"
+  ]
+}

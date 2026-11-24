@@ -1,0 +1,258 @@
+{
+  "node": {
+    "page": "00-brand-foundations",
+    "page_id": "0:1",
+    "id": "4:139",
+    "name": "Foundations / Semantic colors",
+    "type": "frame",
+    "width": "1120",
+    "height": "1122",
+    "path": "02-design/reference/00-brand-foundations/foundations-semantic-colors__4-139",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "4:140",
+      "name": "02 / SEMANTIC COLOR ROLES",
+      "type": "text",
+      "x": "40",
+      "y": "40",
+      "width": "360",
+      "height": "34"
+    },
+    {
+      "id": "4:141",
+      "name": "bg/page",
+      "type": "frame",
+      "x": "40",
+      "y": "90",
+      "width": "206",
+      "height": "32"
+    },
+    {
+      "id": "4:145",
+      "name": "bg/surface",
+      "type": "frame",
+      "x": "40",
+      "y": "138",
+      "width": "231",
+      "height": "32"
+    },
+    {
+      "id": "4:149",
+      "name": "bg/sidebar",
+      "type": "frame",
+      "x": "40",
+      "y": "186",
+      "width": "231",
+      "height": "32"
+    },
+    {
+      "id": "4:153",
+      "name": "bg/selected",
+      "type": "frame",
+      "x": "40",
+      "y": "234",
+      "width": "240",
+      "height": "32"
+    },
+    {
+      "id": "4:157",
+      "name": "bg/brand",
+      "type": "frame",
+      "x": "40",
+      "y": "282",
+      "width": "215",
+      "height": "32"
+    },
+    {
+      "id": "4:161",
+      "name": "bg/brand-strong",
+      "type": "frame",
+      "x": "40",
+      "y": "330",
+      "width": "273",
+      "height": "32"
+    },
+    {
+      "id": "4:165",
+      "name": "bg/danger",
+      "type": "frame",
+      "x": "40",
+      "y": "378",
+      "width": "223",
+      "height": "32"
+    },
+    {
+      "id": "4:169",
+      "name": "bg/warning",
+      "type": "frame",
+      "x": "40",
+      "y": "426",
+      "width": "231",
+      "height": "32"
+    },
+    {
+      "id": "4:173",
+      "name": "bg/disabled",
+      "type": "frame",
+      "x": "40",
+      "y": "474",
+      "width": "240",
+      "height": "32"
+    },
+    {
+      "id": "4:177",
+      "name": "text/primary",
+      "type": "frame",
+      "x": "40",
+      "y": "522",
+      "width": "248",
+      "height": "32"
+    },
+    {
+      "id": "4:181",
+      "name": "text/secondary",
+      "type": "frame",
+      "x": "40",
+      "y": "570",
+      "width": "265",
+      "height": "32"
+    },
+    {
+      "id": "4:185",
+      "name": "text/brand",
+      "type": "frame",
+      "x": "40",
+      "y": "618",
+      "width": "231",
+      "height": "32"
+    },
+    {
+      "id": "4:189",
+      "name": "text/on-brand",
+      "type": "frame",
+      "x": "40",
+      "y": "666",
+      "width": "257",
+      "height": "32"
+    },
+    {
+      "id": "4:193",
+      "name": "text/danger",
+      "type": "frame",
+      "x": "40",
+      "y": "714",
+      "width": "240",
+      "height": "32"
+    },
+    {
+      "id": "4:197",
+      "name": "text/warning",
+      "type": "frame",
+      "x": "40",
+      "y": "762",
+      "width": "248",
+      "height": "32"
+    },
+    {
+      "id": "4:201",
+      "name": "border/default",
+      "type": "frame",
+      "x": "40",
+      "y": "810",
+      "width": "265",
+      "height": "32"
+    },
+    {
+      "id": "4:205",
+      "name": "border/focus",
+      "type": "frame",
+      "x": "40",
+      "y": "858",
+      "width": "248",
+      "height": "32"
+    },
+    {
+      "id": "4:209",
+      "name": "status/success",
+      "type": "frame",
+      "x": "40",
+      "y": "906",
+      "width": "265",
+      "height": "32"
+    },
+    {
+      "id": "4:213",
+      "name": "status/info",
+      "type": "frame",
+      "x": "40",
+      "y": "954",
+      "width": "240",
+      "height": "32"
+    },
+    {
+      "id": "4:217",
+      "name": "accent/salmon",
+      "type": "frame",
+      "x": "40",
+      "y": "1002",
+      "width": "257",
+      "height": "32"
+    },
+    {
+      "id": "4:221",
+      "name": "accent/yellow",
+      "type": "frame",
+      "x": "40",
+      "y": "1050",
+      "width": "257",
+      "height": "32"
+    }
+  ],
+  "text_layer_names": [
+    "02 / SEMANTIC COLOR ROLES",
+    "bg/page",
+    "#FBFCFA",
+    "bg/surface",
+    "#FFFFFF",
+    "bg/sidebar",
+    "#FFEFD2",
+    "bg/selected",
+    "#E8F4F0",
+    "bg/brand",
+    "#6AB0AF",
+    "bg/brand-strong",
+    "#245C59",
+    "bg/danger",
+    "#FFF0EC",
+    "bg/warning",
+    "#FFF2A5",
+    "bg/disabled",
+    "#EDF0ED",
+    "text/primary",
+    "#203735",
+    "text/secondary",
+    "#607572",
+    "text/brand",
+    "#245C59",
+    "text/on-brand",
+    "#FFFFFF",
+    "text/danger",
+    "#A23F3F",
+    "text/warning",
+    "#7B5B1C",
+    "border/default",
+    "#DCE6E1",
+    "border/focus",
+    "#245C59",
+    "status/success",
+    "#286649",
+    "status/info",
+    "#345D8E",
+    "accent/salmon",
+    "#F5A89A",
+    "accent/yellow",
+    "#FFF2A5"
+  ]
+}

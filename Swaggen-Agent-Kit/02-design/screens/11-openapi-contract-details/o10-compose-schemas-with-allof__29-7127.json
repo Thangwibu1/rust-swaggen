@@ -1,0 +1,59 @@
+{
+  "node": {
+    "page": "11-openapi-contract-details",
+    "page_id": "27:322",
+    "id": "29:7127",
+    "name": "O10 / Compose schemas with allOf",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/11-openapi-contract-details/o10-compose-schemas-with-allof__29-7127",
+    "requirements": [
+      "OA07"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:7128",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:7131",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:7289",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Compose schemas with allOf",
+    "DisNote API / openapi / O10",
+    "Schema definition",
+    "Composition inspector",
+    "Keyword",
+    "allOf",
+    "Composition",
+    "Branch 1",
+    "Base schema / email task",
+    "Expand branch",
+    "Branch 2",
+    "Additional fields / webhook task",
+    "Expand branch"
+  ]
+}

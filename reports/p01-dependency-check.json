@@ -1,0 +1,28 @@
+{
+  "name": "p01-dependencies",
+  "status": "PASS",
+  "timestamp": "2026-11-24T10:50:19.670729+00:00",
+  "exit_code": 0,
+  "command": "D:\\code\\potmen\\.local\\p00-audit-tools\\bin\\cargo-audit.exe audit --json --file D:\\code\\potmen\\reports\\raw\\p01-windows.lock --db D:\\code\\potmen\\.local\\p00-advisory-db --deny warnings --no-fetch",
+  "artifact_path": "reports/raw/p01-audit.json",
+  "windows_packages": 200,
+  "database": {
+    "advisory-count": 1563,
+    "last-commit": null,
+    "last-updated": null
+  },
+  "database_git_commit": "52384ab5581a4487b62c549eef95cf7ba7e8bad5",
+  "database_commit_date": "2026-11-23T17:01:22+01:00",
+  "input_sha256": {
+    "Cargo.lock": "d8989c45dcc5a732661f4780e60a1bb17ff37f7772bb371777daa11522b7b9b1",
+    "Cargo.toml": "9274d881485634b8c020247df5ae69d0a7320b33b78e33238d0714ca6b53bd95",
+    "apps/desktop/Cargo.toml": "e0c8b22c99bc1bec1545c902a164bd22e36dc54ca8103e54e1f7ced05885239e",
+    "apps/server/Cargo.toml": "d0fcb6c4345f0b8c35f4e3e7e1a11bcd6f6e468d56194751902758604a1213f9",
+    "crates/api-contract/Cargo.toml": "25ad3446b05faf3f20e94636a1cfe5bd4ef5a263517a8df797fbdf9ecb32b7e5",
+    "crates/domain/Cargo.toml": "1065eecc8c46d13412dca1785a5fd23d1236c2c8538c29cab52ada7677fb5bbc",
+    "crates/local-store/Cargo.toml": "21165fd848ec9f69e26e1e47cc46bb9f87ce4f14a29e3c6d51d80721bd04dcdf",
+    "crates/secret-store/Cargo.toml": "0ee0b8bb2c6fc37d0005c8ecc80001e3a84fa74964f0c74f0cc418ba307343a3",
+    "crates/ui-kit/Cargo.toml": "0ce459415c8edef18d7d9f7b2577c1847a63b7e827591511123532dfdef29621"
+  },
+  "detail": "Complete Windows graph with warnings denied and no advisory ignores; all exact external versions already source-reviewed in P00. New DPAPI API features reviewed from windows-sys 0.61.2 and Microsoft documentation."
+}

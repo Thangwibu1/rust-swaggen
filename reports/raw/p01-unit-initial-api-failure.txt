@@ -1,0 +1,40 @@
+   Compiling swaggen-local-store v0.1.0 (D:\code\potmen\crates\local-store)
+   Compiling swaggen-ui-kit v0.1.0 (D:\code\potmen\crates\ui-kit)
+   Compiling swaggen-secret-store v0.1.0 (D:\code\potmen\crates\secret-store)
+   Compiling swaggen-desktop v0.1.0 (D:\code\potmen\apps\desktop)
+error[E0433]: cannot find `TopBottomPanel` in `egui`
+   --> apps\desktop\src\main.rs:160:15
+    |
+160 |         egui::TopBottomPanel::top("header").show_inside(ui, |ui| {
+    |               ^^^^^^^^^^^^^^ could not find `TopBottomPanel` in `egui`
+
+error[E0433]: cannot find `TopBottomPanel` in `egui`
+   --> apps\desktop\src\main.rs:168:15
+    |
+168 |         egui::TopBottomPanel::bottom("status").show_inside(ui, |ui| {
+    |               ^^^^^^^^^^^^^^ could not find `TopBottomPanel` in `egui`
+
+error[E0433]: cannot find `SidePanel` in `egui`
+   --> apps\desktop\src\main.rs:184:15
+    |
+184 |         egui::SidePanel::left("navigation")
+    |               ^^^^^^^^^ could not find `SidePanel` in `egui`
+
+warning: use of deprecated method `eframe::egui::CentralPanel::show_inside`: Renamed to `show`
+   --> apps\desktop\src\main.rs:149:43
+    |
+149 |             egui::CentralPanel::default().show_inside(ui,|ui| {
+    |                                           ^^^^^^^^^^^
+    |
+    = note: `#[warn(deprecated)]` on by default
+
+warning: use of deprecated method `eframe::egui::CentralPanel::show_inside`: Renamed to `show`
+   --> apps\desktop\src\main.rs:207:39
+    |
+207 |         egui::CentralPanel::default().show_inside(ui,|ui| match self.page {
+    |                                       ^^^^^^^^^^^
+
+For more information about this error, try `rustc --explain E0433`.
+warning: `swaggen-desktop` (bin "swaggen-desktop" test) generated 2 warnings
+error: could not compile `swaggen-desktop` (bin "swaggen-desktop" test) due to 3 previous errors; 2 warnings emitted
+warning: build failed, waiting for other jobs to finish...

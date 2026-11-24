@@ -1,0 +1,43 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "27:176",
+    "name": "Radio",
+    "type": "frame",
+    "width": "124",
+    "height": "168",
+    "path": "02-design/components/01-component-library/radio__27-176",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "27:177",
+      "name": "State=Default",
+      "type": "symbol",
+      "x": "24",
+      "y": "56",
+      "width": "26",
+      "height": "24"
+    },
+    {
+      "id": "27:179",
+      "name": "State=Selected",
+      "type": "symbol",
+      "x": "74",
+      "y": "56",
+      "width": "26",
+      "height": "24"
+    },
+    {
+      "id": "27:181",
+      "name": "State=Disabled",
+      "type": "symbol",
+      "x": "24",
+      "y": "100",
+      "width": "26",
+      "height": "24"
+    }
+  ],
+  "text_layer_names": []
+}

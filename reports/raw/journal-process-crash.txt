@@ -1,0 +1,5 @@
+﻿   Compiling swaggen-p00 v0.0.0 (D:\code\potmen\spikes\p00)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 7.29s
+     Running `spikes\p00\target\debug\journal-smoke.exe`
+PASS: acknowledged draft+outbox survived forced process termination (not a power-loss test)
+

@@ -1,0 +1,34 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:223",
+    "name": "Navigation item",
+    "type": "frame",
+    "width": "500",
+    "height": "132",
+    "path": "02-design/components/01-component-library/navigation-item__5-223",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "5:224",
+      "name": "State=Default",
+      "type": "symbol",
+      "x": "24",
+      "y": "56",
+      "width": "216",
+      "height": "40"
+    },
+    {
+      "id": "5:229",
+      "name": "State=Selected",
+      "type": "symbol",
+      "x": "260",
+      "y": "56",
+      "width": "216",
+      "height": "40"
+    }
+  ],
+  "text_layer_names": []
+}

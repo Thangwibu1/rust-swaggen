@@ -1,0 +1,24 @@
+[package]
+name = "swaggen-desktop"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[dependencies]
+eframe.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+swaggen-api-contract.workspace = true
+swaggen-domain.workspace = true
+swaggen-http-engine.workspace = true
+swaggen-local-store.workspace = true
+swaggen-runner.workspace = true
+swaggen-secret-store.workspace = true
+swaggen-spec-engine.workspace = true
+swaggen-sync.workspace = true
+swaggen-ui-kit.workspace = true
+time.workspace = true
+tokio.workspace = true
+tokio-util.workspace = true
+uuid.workspace = true

@@ -1,0 +1,24 @@
+[package]
+name = "swaggen-runner"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[dependencies]
+axum.workspace = true
+base64.workspace = true
+hex.workspace = true
+hmac.workspace = true
+rand.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+swaggen-domain.workspace = true
+swaggen-http-engine.workspace = true
+swaggen-spec-engine.workspace = true
+time.workspace = true
+tokio.workspace = true
+tokio-util.workspace = true
+url.workspace = true
+yaml-rust2.workspace = true

@@ -1,0 +1,54 @@
+{
+  "node": {
+    "page": "13-import-testing-mock-details",
+    "page_id": "27:324",
+    "id": "29:17662",
+    "name": "K02 / Edit a mock matching rule",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/13-import-testing-mock-details/k02-edit-a-mock-matching-rule__29-17662",
+    "requirements": [
+      "MK03"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:17663",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:17666",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:17818",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Edit a mock matching rule",
+    "DisNote API / tools / K02",
+    "Method and path",
+    "Query condition",
+    "Header condition",
+    "Response example",
+    "Delay",
+    "Priority"
+  ]
+}

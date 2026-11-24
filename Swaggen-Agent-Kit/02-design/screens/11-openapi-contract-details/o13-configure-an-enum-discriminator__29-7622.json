@@ -1,0 +1,52 @@
+{
+  "node": {
+    "page": "11-openapi-contract-details",
+    "page_id": "27:322",
+    "id": "29:7622",
+    "name": "O13 / Configure an enum discriminator",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/11-openapi-contract-details/o13-configure-an-enum-discriminator__29-7622",
+    "requirements": [
+      "OA07"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:7623",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:7626",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:7776",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Configure an enum discriminator",
+    "DisNote API / openapi / O13",
+    "DISCRIMINATOR VALUE",
+    "TARGET SCHEMA",
+    "VALIDATION",
+    "Discriminator property: task_type · required string enum"
+  ]
+}

@@ -1,0 +1,197 @@
+{
+  "node": {
+    "page": "00-brand-foundations",
+    "page_id": "0:1",
+    "id": "4:120",
+    "name": "Foundations / Typography & layout",
+    "type": "frame",
+    "width": "1440",
+    "height": "1016",
+    "path": "02-design/reference/00-brand-foundations/foundations-typography-layout__4-120",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "4:121",
+      "name": "01 / TYPOGRAPHY",
+      "type": "text",
+      "x": "48",
+      "y": "48",
+      "width": "216",
+      "height": "34"
+    },
+    {
+      "id": "4:122",
+      "name": "JetBrains Mono",
+      "type": "text",
+      "x": "48",
+      "y": "106",
+      "width": "403",
+      "height": "60"
+    },
+    {
+      "id": "4:123",
+      "name": "H1 / Build APIs with clarity. { \"status\": \"ready\" ",
+      "type": "text",
+      "x": "48",
+      "y": "190",
+      "width": "979",
+      "height": "44"
+    },
+    {
+      "id": "4:124",
+      "name": "H2 / Build APIs with clarity. { \"status\": \"ready\" ",
+      "type": "text",
+      "x": "48",
+      "y": "258",
+      "width": "734",
+      "height": "34"
+    },
+    {
+      "id": "4:125",
+      "name": "H3 / Build APIs with clarity. { \"status\": \"ready\" ",
+      "type": "text",
+      "x": "48",
+      "y": "316",
+      "width": "551",
+      "height": "28"
+    },
+    {
+      "id": "4:126",
+      "name": "Body / Build APIs with clarity. { \"status\": \"ready",
+      "type": "text",
+      "x": "48",
+      "y": "368",
+      "width": "445",
+      "height": "22"
+    },
+    {
+      "id": "4:127",
+      "name": "Body small / Build APIs with clarity. { \"status\": ",
+      "type": "text",
+      "x": "48",
+      "y": "414",
+      "width": "425",
+      "height": "20"
+    },
+    {
+      "id": "4:128",
+      "name": "Label / Build APIs with clarity. { \"status\": \"read",
+      "type": "text",
+      "x": "48",
+      "y": "458",
+      "width": "421",
+      "height": "20"
+    },
+    {
+      "id": "4:129",
+      "name": "Caption / Build APIs with clarity. { \"status\": \"re",
+      "type": "text",
+      "x": "48",
+      "y": "502",
+      "width": "370",
+      "height": "16"
+    },
+    {
+      "id": "4:130",
+      "name": "Code / Build APIs with clarity. { \"status\": \"ready",
+      "type": "text",
+      "x": "48",
+      "y": "542",
+      "width": "414",
+      "height": "20"
+    },
+    {
+      "id": "4:131",
+      "name": "Button / Build APIs with clarity. { \"status\": \"rea",
+      "type": "text",
+      "x": "48",
+      "y": "586",
+      "width": "429",
+      "height": "20"
+    },
+    {
+      "id": "4:132",
+      "name": "Layout / 1440 × 900 desktop · 8 px rhythm",
+      "type": "text",
+      "x": "48",
+      "y": "630",
+      "width": "591",
+      "height": "34"
+    },
+    {
+      "id": "4:133",
+      "name": "Rail 64 · Sidebar 248 · Main workspace 1128 · Insp",
+      "type": "text",
+      "x": "48",
+      "y": "688",
+      "width": "1280",
+      "height": "22"
+    },
+    {
+      "id": "4:134",
+      "name": "Space / 2 4 6 8 12 16 20 24 32 40 48 64",
+      "type": "text",
+      "x": "48",
+      "y": "734",
+      "width": "328",
+      "height": "22"
+    },
+    {
+      "id": "4:135",
+      "name": "Radius / 6 controls · 10 panels · 16 dialogs · 24 ",
+      "type": "text",
+      "x": "48",
+      "y": "780",
+      "width": "462",
+      "height": "22"
+    },
+    {
+      "id": "4:136",
+      "name": "Motion / 120 ms hover · 180 ms panel · reduced-mot",
+      "type": "text",
+      "x": "48",
+      "y": "826",
+      "width": "529",
+      "height": "22"
+    },
+    {
+      "id": "4:137",
+      "name": "Color rule / pastel surfaces + dark ink",
+      "type": "text",
+      "x": "48",
+      "y": "872",
+      "width": "508",
+      "height": "28"
+    },
+    {
+      "id": "4:138",
+      "name": "Never place white body text on light teal, salmon ",
+      "type": "text",
+      "x": "48",
+      "y": "924",
+      "width": "1250",
+      "height": "44"
+    }
+  ],
+  "text_layer_names": [
+    "01 / TYPOGRAPHY",
+    "JetBrains Mono",
+    "H1 / Build APIs with clarity. { \"status\": \"ready\" ",
+    "H2 / Build APIs with clarity. { \"status\": \"ready\" ",
+    "H3 / Build APIs with clarity. { \"status\": \"ready\" ",
+    "Body / Build APIs with clarity. { \"status\": \"ready",
+    "Body small / Build APIs with clarity. { \"status\": ",
+    "Label / Build APIs with clarity. { \"status\": \"read",
+    "Caption / Build APIs with clarity. { \"status\": \"re",
+    "Code / Build APIs with clarity. { \"status\": \"ready",
+    "Button / Build APIs with clarity. { \"status\": \"rea",
+    "Layout / 1440 × 900 desktop · 8 px rhythm",
+    "Rail 64 · Sidebar 248 · Main workspace 1128 · Insp",
+    "Space / 2 4 6 8 12 16 20 24 32 40 48 64",
+    "Radius / 6 controls · 10 panels · 16 dialogs · 24 ",
+    "Motion / 120 ms hover · 180 ms panel · reduced-mot",
+    "Color rule / pastel surfaces + dark ink",
+    "Never place white body text on light teal, salmon "
+  ]
+}

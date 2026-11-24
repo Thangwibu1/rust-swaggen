@@ -1,0 +1,52 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "27:297",
+    "name": "Token chip",
+    "type": "frame",
+    "width": "592",
+    "height": "184",
+    "path": "02-design/components/01-component-library/token-chip__27-297",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "27:298",
+      "name": "State=Secret",
+      "type": "symbol",
+      "x": "24",
+      "y": "56",
+      "width": "260",
+      "height": "32"
+    },
+    {
+      "id": "27:301",
+      "name": "State=Inherited",
+      "type": "symbol",
+      "x": "308",
+      "y": "56",
+      "width": "260",
+      "height": "32"
+    },
+    {
+      "id": "27:304",
+      "name": "State=Dynamic",
+      "type": "symbol",
+      "x": "24",
+      "y": "108",
+      "width": "260",
+      "height": "32"
+    },
+    {
+      "id": "27:307",
+      "name": "State=Error",
+      "type": "symbol",
+      "x": "308",
+      "y": "108",
+      "width": "260",
+      "height": "32"
+    }
+  ],
+  "text_layer_names": []
+}

@@ -1,0 +1,15 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:221",
+    "name": "Tone=Danger",
+    "type": "symbol",
+    "width": "53",
+    "height": "28",
+    "path": "02-design/components/01-component-library/tone-danger__5-221",
+    "requirements": []
+  },
+  "direct_children": [],
+  "text_layer_names": []
+}

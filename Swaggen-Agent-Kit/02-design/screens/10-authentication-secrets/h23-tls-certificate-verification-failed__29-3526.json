@@ -1,0 +1,56 @@
+{
+  "node": {
+    "page": "10-authentication-secrets",
+    "page_id": "27:321",
+    "id": "29:3526",
+    "name": "H23 / TLS certificate verification failed",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/10-authentication-secrets/h23-tls-certificate-verification-failed__29-3526",
+    "requirements": [
+      "AU05",
+      "RS05"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:3527",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:3530",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:3680",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "TLS certificate verification failed",
+    "DisNote API / auth / H23",
+    "Action required",
+    "Host",
+    "api.internal.dev",
+    "Reason",
+    "Unknown certificate authority",
+    "Next step",
+    "Install the team CA or review a host-specific exception"
+  ]
+}

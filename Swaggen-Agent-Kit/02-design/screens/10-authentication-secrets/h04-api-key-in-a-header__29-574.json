@@ -1,0 +1,53 @@
+{
+  "node": {
+    "page": "10-authentication-secrets",
+    "page_id": "27:321",
+    "id": "29:574",
+    "name": "H04 / API key in a header",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/10-authentication-secrets/h04-api-key-in-a-header__29-574",
+    "requirements": [
+      "AU02"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:575",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:578",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:722",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "API key in a header",
+    "DisNote API / auth / H04",
+    "Key name",
+    "Value",
+    "Add to",
+    "Wire preview",
+    "X-API-Key: ••••••••"
+  ]
+}

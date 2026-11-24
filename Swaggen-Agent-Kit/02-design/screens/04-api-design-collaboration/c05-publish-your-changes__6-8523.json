@@ -1,0 +1,56 @@
+{
+  "node": {
+    "page": "04-api-design-collaboration",
+    "page_id": "4:92",
+    "id": "6:8523",
+    "name": "C05 / Publish your changes",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/04-api-design-collaboration/c05-publish-your-changes__6-8523",
+    "requirements": [
+      "CO02",
+      "SY03",
+      "SY06"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "6:8524",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "6:8527",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "6:8673",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Publish your changes",
+    "DisNote API / Team workspace",
+    "Changes to share",
+    "NAME / OPERATION",
+    "VALUE / DETAILS",
+    "STATUS",
+    "Publish note",
+    "Personal secrets will never be published."
+  ]
+}

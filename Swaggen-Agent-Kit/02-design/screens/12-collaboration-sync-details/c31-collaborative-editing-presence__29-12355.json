@@ -1,0 +1,51 @@
+{
+  "node": {
+    "page": "12-collaboration-sync-details",
+    "page_id": "27:323",
+    "id": "29:12355",
+    "name": "C31 / Collaborative editing presence",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/12-collaboration-sync-details/c31-collaborative-editing-presence__29-12355",
+    "requirements": [
+      "CO07",
+      "CO10"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:12356",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:12359",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:12515",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Collaborative editing presence",
+    "DisNote API / collab / C31",
+    "YAML",
+    "Presence indicates activity; revision checks still prevent accid"
+  ]
+}

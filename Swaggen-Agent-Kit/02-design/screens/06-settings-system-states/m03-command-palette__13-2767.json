@@ -1,0 +1,65 @@
+{
+  "node": {
+    "page": "06-settings-system-states",
+    "page_id": "4:94",
+    "id": "13:2767",
+    "name": "M03 / Command palette",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/06-settings-system-states/m03-command-palette__13-2767",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "13:2768",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "13:2769",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "13:2812",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    },
+    {
+      "id": "13:2813",
+      "name": "Overlay / Command palette",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    }
+  ],
+  "text_layer_names": [
+    "Good morning, Ha Giang",
+    "DisNote API / Team workspace",
+    "Continue where you left off",
+    "NAME / OPERATION",
+    "VALUE / DETAILS",
+    "STATUS",
+    "Team activity",
+    "Tina published a new Task schema",
+    "Added due_at and clarified the status enum · 2 minutes ago",
+    "Minh added a response example",
+    "List tasks · Success response · 8 minutes ago",
+    "Command palette"
+  ]
+}

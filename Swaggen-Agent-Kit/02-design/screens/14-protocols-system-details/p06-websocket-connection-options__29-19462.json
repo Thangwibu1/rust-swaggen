@@ -1,0 +1,53 @@
+{
+  "node": {
+    "page": "14-protocols-system-details",
+    "page_id": "27:325",
+    "id": "29:19462",
+    "name": "P06 / WebSocket connection options",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/14-protocols-system-details/p06-websocket-connection-options__29-19462",
+    "requirements": [
+      "PR03"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:19463",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:19466",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:19616",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "WebSocket connection options",
+    "DisNote API / system / P06",
+    "URL",
+    "Authorization",
+    "Subprotocol",
+    "Maximum message history",
+    "Reconnect"
+  ]
+}

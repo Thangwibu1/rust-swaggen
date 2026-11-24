@@ -1,0 +1,52 @@
+{
+  "node": {
+    "page": "12-collaboration-sync-details",
+    "page_id": "27:323",
+    "id": "29:13323",
+    "name": "Y05 / Access revoked with pending edits",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/12-collaboration-sync-details/y05-access-revoked-with-pending-edits__29-13323",
+    "requirements": [
+      "SC04",
+      "SY09"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:13324",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:13327",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:13482",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Access revoked with pending edits",
+    "DisNote API / collab / Y05",
+    "LOCAL DRAFT",
+    "TEAM PUBLISH",
+    "AVAILABLE ACTION"
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "node": {
+    "page": "08-workspace-collection-details",
+    "page_id": "27:319",
+    "id": "28:3157",
+    "name": "W20 / Invitation account mismatch",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/08-workspace-collection-details/w20-invitation-account-mismatch__28-3157",
+    "requirements": [
+      "SC04",
+      "WS05"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "28:3158",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "28:3161",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "28:3307",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Invitation account mismatch",
+    "DisNote API / workspace / W20",
+    "Action required",
+    "Access",
+    "Not granted",
+    "Your drafts",
+    "Unaffected"
+  ]
+}

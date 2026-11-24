@@ -1,0 +1,52 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "27:214",
+    "name": "Tree row",
+    "type": "frame",
+    "width": "1432",
+    "height": "200",
+    "path": "02-design/components/01-component-library/tree-row__27-214",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "27:215",
+      "name": "State=Default",
+      "type": "symbol",
+      "x": "24",
+      "y": "56",
+      "width": "680",
+      "height": "40"
+    },
+    {
+      "id": "27:229",
+      "name": "State=Selected",
+      "type": "symbol",
+      "x": "728",
+      "y": "56",
+      "width": "680",
+      "height": "40"
+    },
+    {
+      "id": "27:243",
+      "name": "State=Dragging",
+      "type": "symbol",
+      "x": "24",
+      "y": "116",
+      "width": "680",
+      "height": "40"
+    },
+    {
+      "id": "27:257",
+      "name": "State=Drop target",
+      "type": "symbol",
+      "x": "728",
+      "y": "116",
+      "width": "680",
+      "height": "40"
+    }
+  ],
+  "text_layer_names": []
+}

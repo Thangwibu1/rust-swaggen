@@ -1,0 +1,14 @@
+[package]
+name = "swaggen-p00-egui"
+version = "0.0.0"
+edition = "2024"
+rust-version = "1.100"
+publish = false
+
+[dependencies]
+# Native comparison fixture, not the product framework decision.
+eframe = { version = "=0.37.0", default-features = false, features = ["accesskit", "clipboard", "default_fonts", "system_fonts", "wgpu"] }
+swaggen-p00 = { path = "../p00" }
+swaggen-p00-transport = { path = "../p00-transport" }
+tokio = { version = "=1.54.1", features = ["rt-multi-thread", "net", "time", "sync"] }
+

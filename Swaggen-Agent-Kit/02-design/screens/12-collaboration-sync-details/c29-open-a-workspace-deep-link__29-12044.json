@@ -1,0 +1,57 @@
+{
+  "node": {
+    "page": "12-collaboration-sync-details",
+    "page_id": "27:323",
+    "id": "29:12044",
+    "name": "C29 / Open a workspace deep link",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/12-collaboration-sync-details/c29-open-a-workspace-deep-link__29-12044",
+    "requirements": [
+      "CO09",
+      "SC04",
+      "UX08"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:12045",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:12048",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:12197",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Open a workspace deep link",
+    "DisNote API / collab / C29",
+    "Review details",
+    "Target",
+    "DisNote API / List tasks / comment_42",
+    "Action",
+    "Open editor only; do not send request",
+    "Account",
+    "hagiang@gmail.com"
+  ]
+}

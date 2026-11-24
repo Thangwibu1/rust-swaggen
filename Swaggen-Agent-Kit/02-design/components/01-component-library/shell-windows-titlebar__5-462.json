@@ -1,0 +1,15 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:462",
+    "name": "Shell/Windows titlebar",
+    "type": "symbol",
+    "width": "1440",
+    "height": "36",
+    "path": "02-design/components/01-component-library/shell-windows-titlebar__5-462",
+    "requirements": []
+  },
+  "direct_children": [],
+  "text_layer_names": []
+}

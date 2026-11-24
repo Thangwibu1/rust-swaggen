@@ -1,0 +1,20 @@
+{
+  "requirement_id": "<existing ID>",
+  "phase": "<Pxx>",
+  "status": "not_started",
+  "code_paths": [],
+  "screen_ids": [],
+  "test_evidence": [
+    {
+      "command": "<exact command>",
+      "platform": "<real platform>",
+      "result": "NOT_RUN",
+      "exit_code": null,
+      "artifact_path": null
+    }
+  ],
+  "benchmark": null,
+  "commit": null,
+  "blockers": [],
+  "last_updated": null
+}

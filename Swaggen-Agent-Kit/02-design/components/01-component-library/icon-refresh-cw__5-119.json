@@ -1,0 +1,15 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:119",
+    "name": "Icon/refresh-cw",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-refresh-cw__5-119",
+    "requirements": []
+  },
+  "direct_children": [],
+  "text_layer_names": []
+}

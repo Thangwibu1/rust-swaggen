@@ -1,0 +1,55 @@
+{
+  "node": {
+    "page": "14-protocols-system-details",
+    "page_id": "27:325",
+    "id": "29:22206",
+    "name": "Z07 / Diagnostic report preview",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/14-protocols-system-details/z07-diagnostic-report-preview__29-22206",
+    "requirements": [
+      "OP09",
+      "SC07"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:22207",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:22210",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:22356",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Diagnostic report preview",
+    "DisNote API / system / Z07",
+    "Include",
+    "Exclude",
+    "Tokens, request bodies, file paths with personal data",
+    "Upload",
+    "No automatic upload",
+    "Destination"
+  ]
+}

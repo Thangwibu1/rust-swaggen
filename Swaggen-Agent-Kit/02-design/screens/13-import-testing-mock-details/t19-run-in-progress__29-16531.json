@@ -1,0 +1,56 @@
+{
+  "node": {
+    "page": "13-import-testing-mock-details",
+    "page_id": "27:324",
+    "id": "29:16531",
+    "name": "T19 / Run in progress",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/13-import-testing-mock-details/t19-run-in-progress__29-16531",
+    "requirements": [
+      "TS02",
+      "TS05"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:16532",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:16535",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:16684",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Run in progress",
+    "DisNote API / tools / T19",
+    "58%",
+    "Requests completed",
+    "35 / 60",
+    "Passed / failed / skipped",
+    "33 / 1 / 1",
+    "Environment",
+    "Staging · revision 15"
+  ]
+}

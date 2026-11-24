@@ -1,0 +1,52 @@
+{
+  "node": {
+    "page": "11-openapi-contract-details",
+    "page_id": "27:322",
+    "id": "29:8651",
+    "name": "O19 / Link request to a stable operation",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/11-openapi-contract-details/o19-link-request-to-a-stable-operation__29-8651",
+    "requirements": [
+      "DC04",
+      "DC05"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:8652",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:8655",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:8810",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Link request to a stable operation",
+    "DisNote API / openapi / O19",
+    "IDENTITY",
+    "VALUE",
+    "BEHAVIOR"
+  ]
+}

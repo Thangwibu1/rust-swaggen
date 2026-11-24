@@ -1,0 +1,55 @@
+{
+  "node": {
+    "page": "10-authentication-secrets",
+    "page_id": "27:321",
+    "id": "29:1178",
+    "name": "H08 / OAuth authorization code with PKCE",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/10-authentication-secrets/h08-oauth-authorization-code-with-pkce__29-1178",
+    "requirements": [
+      "AU08"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:1179",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:1182",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:1334",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "OAuth authorization code with PKCE",
+    "DisNote API / auth / H08",
+    "Grant type",
+    "Authorization URL",
+    "Token URL",
+    "Client ID",
+    "Redirect URI",
+    "http://127.0.0.1:48123/callback",
+    "Scopes"
+  ]
+}

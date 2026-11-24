@@ -1,0 +1,39 @@
+{
+  "phase": "P00",
+  "status": "blocked",
+  "product_requirements_promoted": [],
+  "product_screens_promoted": [],
+  "slices": [
+    {
+      "name": "explicit Windows software drawing path",
+      "status": "PASS",
+      "code_paths": ["spikes/p00-native/Cargo.toml", "tools/p00-renderer-check.ps1", "tools/p00-software-evidence.py"],
+      "evidence": ["reports/software-checks.json", "reports/software-renderer-evidence-debug.json", "reports/software-ui-checks.json", "reports/software-renderer.md"],
+      "limits": ["debug build and selected input only", "accessibility still fails", "no automatic device-loss or release benchmark acceptance"]
+    },
+    {
+      "name": "secret-safe Mongo probe diagnostics",
+      "status": "PASS",
+      "code_paths": ["spikes/p00/src/mongo_diagnostics.rs", "spikes/p00/src/bin/mongo-smoke.rs"],
+      "evidence": ["reports/mongo-diagnostics-checks.json", "reports/raw/mongo-diagnostics-unit.txt", "reports/mongo-check.json"],
+      "limits": ["diagnostic cases only", "latest real configured probe remains BLOCKED at topology; no transaction acceptance"]
+    },
+    {
+      "name": "compaction process-crash boundaries",
+      "status": "PASS",
+      "code_paths": ["spikes/p00/src/journal.rs", "spikes/p00/src/bin/journal-crash-matrix.rs"],
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/p00-check.ps1 -NativeLibrary -Durability",
+      "evidence": ["reports/p00-checks.json", "reports/raw/journal-crash-matrix.txt", "reports/compaction-crash-results.csv", "reports/durability-evidence.json"],
+      "limits": ["process termination only", "no power-loss or physical disk-full acceptance"]
+    },
+    {
+      "name": "partial-write failure recovery",
+      "status": "PASS",
+      "code_paths": ["spikes/p00/src/journal.rs"],
+      "evidence": ["reports/raw/journal-unit.txt", "reports/p00-checks.json"],
+      "limits": ["StorageFull and WriteZero are injected", "production storage adoption still pending"]
+    },
+    {"name": "native accessibility and framework selection", "status": "BLOCKED", "evidence": ["reports/native-ui.md", "reports/ADR-0001-ui.md"]},
+    {"name": "MongoDB transaction gate", "status": "BLOCKED", "evidence": ["reports/transaction-smoke.md", "reports/mongo-check.json", "reports/network-checks.json"]}
+  ]
+}

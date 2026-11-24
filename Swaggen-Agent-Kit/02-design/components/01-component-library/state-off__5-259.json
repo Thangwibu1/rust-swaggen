@@ -1,0 +1,15 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:259",
+    "name": "State=Off",
+    "type": "symbol",
+    "width": "44",
+    "height": "24",
+    "path": "02-design/components/01-component-library/state-off__5-259",
+    "requirements": []
+  },
+  "direct_children": [],
+  "text_layer_names": []
+}

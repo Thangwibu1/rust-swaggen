@@ -1,0 +1,57 @@
+{
+  "node": {
+    "page": "04-api-design-collaboration",
+    "page_id": "4:92",
+    "id": "6:6814",
+    "name": "D07 / Try List tasks",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/04-api-design-collaboration/d07-try-list-tasks__6-6814",
+    "requirements": [
+      "DC03",
+      "DC05"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "6:6815",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "6:6818",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "6:7004",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Try List tasks",
+    "DisNote API / Team workspace",
+    "Request configuration",
+    "NAME / OPERATION",
+    "VALUE / DETAILS",
+    "STATUS",
+    "Response",
+    "142 ms",
+    "1.24 KB",
+    "Saved locally · not shared"
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "node": {
+    "page": "11-openapi-contract-details",
+    "page_id": "27:322",
+    "id": "29:7998",
+    "name": "O15 / Missing reference and external reference permission",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/11-openapi-contract-details/o15-missing-reference-and-external-reference-permission__29-7998",
+    "requirements": [
+      "OA06"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:7999",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:8002",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:8157",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Missing reference and external reference permission",
+    "DisNote API / openapi / O15",
+    "REFERENCE",
+    "RESOLUTION",
+    "NEXT ACTION"
+  ]
+}

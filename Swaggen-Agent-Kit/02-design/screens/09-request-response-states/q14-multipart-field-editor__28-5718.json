@@ -1,0 +1,53 @@
+{
+  "node": {
+    "page": "09-request-response-states",
+    "page_id": "27:320",
+    "id": "28:5718",
+    "name": "Q14 / Multipart field editor",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/09-request-response-states/q14-multipart-field-editor__28-5718",
+    "requirements": [
+      "RQ04",
+      "RQ05"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "28:5719",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "28:5722",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "28:5885",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Multipart field editor",
+    "DisNote API / request / Q14",
+    "{{base_url}}/v1/tasks",
+    "FIELD",
+    "VALUE",
+    "TYPE"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "27:293",
+    "name": "State=Pending",
+    "type": "symbol",
+    "width": "300",
+    "height": "40",
+    "path": "02-design/components/01-component-library/state-pending__27-293",
+    "requirements": []
+  },
+  "direct_children": [],
+  "text_layer_names": []
+}

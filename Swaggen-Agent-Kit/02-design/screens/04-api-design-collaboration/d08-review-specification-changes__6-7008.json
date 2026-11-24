@@ -1,0 +1,56 @@
+{
+  "node": {
+    "page": "04-api-design-collaboration",
+    "page_id": "4:92",
+    "id": "6:7008",
+    "name": "D08 / Review specification changes",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/04-api-design-collaboration/d08-review-specification-changes__6-7008",
+    "requirements": [
+      "DC06",
+      "DC07",
+      "DC09"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "6:7009",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "6:7012",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "6:7200",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Review specification changes",
+    "DisNote API / Team workspace",
+    "Published · v12",
+    "Revision 12",
+    "Draft · v13",
+    "Revision 13",
+    "Merge decision",
+    "Keep my request overrides and personal token"
+  ]
+}

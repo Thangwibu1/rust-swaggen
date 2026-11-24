@@ -1,0 +1,18 @@
+[
+  {
+    "name": "evidence-store-regression-ps51",
+    "status": "PASS",
+    "exit_code": 0,
+    "timestamp": "2026-11-24T06:57:30.920325+00:00",
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/tests/test-p00-evidence-store.ps1",
+    "artifact_path": "reports/raw/evidence-store-regression-ps51.txt"
+  },
+  {
+    "name": "foundation-python-regression",
+    "status": "PASS",
+    "exit_code": 0,
+    "timestamp": "2026-11-24T07:15:46.154233+00:00",
+    "command": "\"C:\\Users\\Ngoc Thang\\AppData\\Local\\Programs\\Python\\Python312\\python.exe\" -X utf8 -m unittest discover -s tools/tests -p test_p00*.py",
+    "artifact_path": "reports/raw/foundation-python-regression.txt"
+  }
+]

@@ -1,0 +1,59 @@
+{
+  "node": {
+    "page": "11-openapi-contract-details",
+    "page_id": "27:322",
+    "id": "29:7293",
+    "name": "O11 / Choose a oneOf schema branch",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/11-openapi-contract-details/o11-choose-a-oneof-schema-branch__29-7293",
+    "requirements": [
+      "OA07"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:7294",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:7297",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:7455",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Choose a oneOf schema branch",
+    "DisNote API / openapi / O11",
+    "Schema definition",
+    "Composition inspector",
+    "Keyword",
+    "oneOf",
+    "Composition",
+    "Branch 1",
+    "Base schema / email task",
+    "Expand branch",
+    "Branch 2",
+    "Additional fields / webhook task",
+    "Expand branch"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:183",
+    "name": "Kind=Danger, State=Disabled",
+    "type": "symbol",
+    "width": "176",
+    "height": "40",
+    "path": "02-design/components/01-component-library/kind-danger-state-disabled__5-183",
+    "requirements": []
+  },
+  "direct_children": [],
+  "text_layer_names": []
+}

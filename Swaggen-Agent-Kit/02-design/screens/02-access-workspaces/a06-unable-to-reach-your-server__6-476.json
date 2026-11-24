@@ -1,0 +1,49 @@
+{
+  "node": {
+    "page": "02-access-workspaces",
+    "page_id": "4:90",
+    "id": "6:476",
+    "name": "A06 / Unable to reach your server",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/02-access-workspaces/a06-unable-to-reach-your-server__6-476",
+    "requirements": [
+      "UX09",
+      "WS02"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "6:477",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "6:480",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "6:611",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Unable to reach your server",
+    "DisNote API / Team workspace"
+  ]
+}

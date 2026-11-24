@@ -1,0 +1,53 @@
+{
+  "node": {
+    "page": "13-import-testing-mock-details",
+    "page_id": "27:324",
+    "id": "29:15591",
+    "name": "T13 / Add a response assertion",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/13-import-testing-mock-details/t13-add-a-response-assertion__29-15591",
+    "requirements": [
+      "TS01"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:15592",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:15595",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:15741",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Add a response assertion",
+    "DisNote API / tools / T13",
+    "Assertion type",
+    "Path",
+    "Operator",
+    "Expected value",
+    "Not required for this operator"
+  ]
+}

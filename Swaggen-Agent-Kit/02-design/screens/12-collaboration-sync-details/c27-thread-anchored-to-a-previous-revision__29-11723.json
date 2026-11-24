@@ -1,0 +1,55 @@
+{
+  "node": {
+    "page": "12-collaboration-sync-details",
+    "page_id": "27:323",
+    "id": "29:11723",
+    "name": "C27 / Thread anchored to a previous revision",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/12-collaboration-sync-details/c27-thread-anchored-to-a-previous-revision__29-11723",
+    "requirements": [
+      "CO04",
+      "CO09"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:11724",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:11727",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:11877",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Thread anchored to a previous revision",
+    "DisNote API / collab / C27",
+    "Tina · revision 12",
+    "Should status be optional?",
+    "Ha Giang · revision 13",
+    "Added the required status field.",
+    "Current contract · revision 15",
+    "This thread refers to an older revision."
+  ]
+}

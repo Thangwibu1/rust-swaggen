@@ -1,0 +1,157 @@
+{
+  "node": {
+    "page": "07-coverage-handoff",
+    "page_id": "4:95",
+    "id": "15:6516",
+    "name": "Coverage / TS",
+    "type": "frame",
+    "width": "1440",
+    "height": "716",
+    "path": "02-design/reference/07-coverage-handoff/coverage-ts__15-6516",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "15:6517",
+      "name": "TS / REQUIREMENT COVERAGE",
+      "type": "text",
+      "x": "41",
+      "y": "41",
+      "width": "360",
+      "height": "34"
+    },
+    {
+      "id": "15:6518",
+      "name": "TS01",
+      "type": "frame",
+      "x": "41",
+      "y": "91",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6523",
+      "name": "TS02",
+      "type": "frame",
+      "x": "41",
+      "y": "151",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6528",
+      "name": "TS03",
+      "type": "frame",
+      "x": "41",
+      "y": "211",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6533",
+      "name": "TS04",
+      "type": "frame",
+      "x": "41",
+      "y": "271",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6538",
+      "name": "TS05",
+      "type": "frame",
+      "x": "41",
+      "y": "331",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6543",
+      "name": "TS06",
+      "type": "frame",
+      "x": "41",
+      "y": "391",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6548",
+      "name": "TS07",
+      "type": "frame",
+      "x": "41",
+      "y": "451",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6553",
+      "name": "TS08",
+      "type": "frame",
+      "x": "41",
+      "y": "511",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6558",
+      "name": "TS09",
+      "type": "frame",
+      "x": "41",
+      "y": "571",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6563",
+      "name": "TS10",
+      "type": "frame",
+      "x": "41",
+      "y": "631",
+      "width": "1360",
+      "height": "44"
+    }
+  ],
+  "text_layer_names": [
+    "TS / REQUIREMENT COVERAGE",
+    "TS01",
+    "Assertion cơ bản",
+    "Stage A",
+    "T01",
+    "TS02",
+    "Collection runner",
+    "Stage B",
+    "T02",
+    "TS03",
+    "Chuỗi phụ thuộc",
+    "Stage B",
+    "T02",
+    "TS04",
+    "Chạy theo dữ liệu",
+    "Stage B",
+    "T03",
+    "TS05",
+    "Báo cáo kết quả",
+    "Stage B",
+    "T04",
+    "TS06",
+    "Kiểm thử hợp đồng",
+    "Stage B",
+    "T05",
+    "TS07",
+    "Pre request và test script",
+    "Stage C",
+    "T06",
+    "TS08",
+    "Tương thích script Postman",
+    "Stage C",
+    "T06 · I02",
+    "TS09",
+    "Chạy song song có giới hạn",
+    "Stage C",
+    "T02",
+    "TS10",
+    "Kết quả tái hiện",
+    "Stage B",
+    "T04"
+  ]
+}

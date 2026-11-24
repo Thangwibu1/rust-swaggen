@@ -1,0 +1,53 @@
+{
+  "node": {
+    "page": "08-workspace-collection-details",
+    "page_id": "27:319",
+    "id": "28:1604",
+    "name": "W11 / Rename a collection",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/08-workspace-collection-details/w11-rename-a-collection__28-1604",
+    "requirements": [
+      "WS06"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "28:1605",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "28:1608",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "28:1746",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Rename a collection",
+    "DisNote API / workspace / W11",
+    "Current name",
+    "Tasks",
+    "New name",
+    "Shared change",
+    "Rename is published to your workspace"
+  ]
+}

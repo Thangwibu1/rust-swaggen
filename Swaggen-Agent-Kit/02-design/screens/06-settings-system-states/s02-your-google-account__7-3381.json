@@ -1,0 +1,61 @@
+{
+  "node": {
+    "page": "06-settings-system-states",
+    "page_id": "4:94",
+    "id": "7:3381",
+    "name": "S02 / Your Google account",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/06-settings-system-states/s02-your-google-account__7-3381",
+    "requirements": [
+      "SC03",
+      "SC09",
+      "WS03"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "7:3382",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "7:3385",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "7:3543",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Your Google account",
+    "DisNote API / Settings",
+    "Configuration",
+    "Account",
+    "Workspace configuration",
+    "Display name",
+    "Workspace configuration",
+    "Active session",
+    "Workspace configuration",
+    "Security",
+    "Workspace configuration",
+    "Access & sharing",
+    "Changes are saved locally before they are published to your team."
+  ]
+}

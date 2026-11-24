@@ -1,0 +1,8 @@
+﻿rustup.exe : info: component clippy is up to date
+At D:\code\potmen\tools\install-p00-deps.ps1:16 char:20
++         $output = (& $Executable @Arguments 2>&1 | Out-String)
++                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (info: component clippy is up to date:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+

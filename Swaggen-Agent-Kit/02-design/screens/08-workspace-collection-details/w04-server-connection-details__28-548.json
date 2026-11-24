@@ -1,0 +1,57 @@
+{
+  "node": {
+    "page": "08-workspace-collection-details",
+    "page_id": "27:319",
+    "id": "28:548",
+    "name": "W04 / Server connection details",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/08-workspace-collection-details/w04-server-connection-details__28-548",
+    "requirements": [
+      "SY05",
+      "WS02"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "28:549",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "28:552",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "28:694",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Server connection details",
+    "DisNote API / workspace / W04",
+    "Server",
+    "https://api.swaggen.team",
+    "Certificate",
+    "Valid · expires in 82 days",
+    "Client / server",
+    "1.1.0 / 1.1.0 · Compatible",
+    "Latency",
+    "42 ms · Last checked now"
+  ]
+}

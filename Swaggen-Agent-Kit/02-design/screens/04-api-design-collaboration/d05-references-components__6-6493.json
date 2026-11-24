@@ -1,0 +1,56 @@
+{
+  "node": {
+    "page": "04-api-design-collaboration",
+    "page_id": "4:92",
+    "id": "6:6493",
+    "name": "D05 / References & components",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/04-api-design-collaboration/d05-references-components__6-6493",
+    "requirements": [
+      "OA06",
+      "OA07",
+      "OA08"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "6:6494",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "6:6497",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "6:6639",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "References & components",
+    "DisNote API / Team workspace",
+    "Overview",
+    "NAME / OPERATION",
+    "VALUE / DETAILS",
+    "STATUS",
+    "Showing 4 items",
+    "All changes saved locally"
+  ]
+}

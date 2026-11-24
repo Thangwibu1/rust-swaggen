@@ -1,0 +1,55 @@
+{
+  "node": {
+    "page": "13-import-testing-mock-details",
+    "page_id": "27:324",
+    "id": "29:18606",
+    "name": "K08 / Schema cannot generate a mock response",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/13-import-testing-mock-details/k08-schema-cannot-generate-a-mock-response__29-18606",
+    "requirements": [
+      "MK02"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:18607",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:18610",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:18759",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Schema cannot generate a mock response",
+    "DisNote API / tools / K08",
+    "Review details",
+    "Schema",
+    "Recursive Task graph",
+    "Result",
+    "Mock not started",
+    "Fallback",
+    "Use a reviewed response example"
+  ]
+}

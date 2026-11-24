@@ -1,0 +1,17 @@
+{
+  "name": "native-ui-http-artifact",
+  "status": "PASS",
+  "exit_code": 0,
+  "command": "python -X utf8 tools/p00-native-evidence.py",
+  "timestamp": "2026-11-24T04:46:34.473935+00:00",
+  "artifact_path": "reports/native-ui-http-artifact.json",
+  "files": [
+    {
+      "fixture_file": ".local/p00-native/body-41436-1795495445157780500.bin",
+      "bytes": 20971520,
+      "sha256": "6adfa0775cbd16a3f50d1fda1d7bd7f375dd1f9af5e6dfb751a87d3dff68699c",
+      "all_bytes_verified": true
+    }
+  ],
+  "limits": "Artifact integrity only; manual UI displayed 64KiB preview. No p95/RAM/IME/accessibility acceptance."
+}

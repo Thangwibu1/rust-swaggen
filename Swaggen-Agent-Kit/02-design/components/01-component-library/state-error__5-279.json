@@ -1,0 +1,15 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:279",
+    "name": "State=Error",
+    "type": "symbol",
+    "width": "1032",
+    "height": "48",
+    "path": "02-design/components/01-component-library/state-error__5-279",
+    "requirements": []
+  },
+  "direct_children": [],
+  "text_layer_names": []
+}

@@ -1,0 +1,51 @@
+{
+  "node": {
+    "page": "09-request-response-states",
+    "page_id": "27:320",
+    "id": "28:3551",
+    "name": "Q01 / Choose an HTTP method",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/09-request-response-states/q01-choose-an-http-method__28-3551",
+    "requirements": [
+      "RQ01"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "28:3552",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "28:3555",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "28:3724",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Choose an HTTP method",
+    "DisNote API / request / Q01",
+    "Available actions",
+    "Selection details",
+    "Choose an action from the menu. Your current draft stays availab"
+  ]
+}

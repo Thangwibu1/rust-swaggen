@@ -1,0 +1,55 @@
+{
+  "node": {
+    "page": "13-import-testing-mock-details",
+    "page_id": "27:324",
+    "id": "29:14172",
+    "name": "I07 / Choose an import conflict strategy",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/13-import-testing-mock-details/i07-choose-an-import-conflict-strategy__29-14172",
+    "requirements": [
+      "IM06"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:14173",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:14176",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:14320",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Choose an import conflict strategy",
+    "DisNote API / tools / I07",
+    "Duplicate request",
+    "List tasks · already exists",
+    "Strategy",
+    "Existing links",
+    "Preserve current operation links",
+    "Unsupported fields",
+    "Keep in compatibility report"
+  ]
+}

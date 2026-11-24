@@ -1,0 +1,57 @@
+{
+  "node": {
+    "page": "02-access-workspaces",
+    "page_id": "4:90",
+    "id": "6:187",
+    "name": "A02 / Continue in your browser",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/02-access-workspaces/a02-continue-in-your-browser__6-187",
+    "requirements": [
+      "SC03",
+      "WS03"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "6:188",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "6:191",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "6:226",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "swaggen",
+    "Continue in your browser",
+    "A shared home for your requests, API contracts and team conversat",
+    "YOUR SERVER. YOUR WORKFLOW.",
+    "Check your browser",
+    "Complete Google sign-in in your default browser. Return here when",
+    "Google is the only sign-in method.",
+    "Your tokens stay on your device.",
+    "Team server  api.swaggen.team",
+    "By continuing, you agree to your team’s workspace policy."
+  ]
+}

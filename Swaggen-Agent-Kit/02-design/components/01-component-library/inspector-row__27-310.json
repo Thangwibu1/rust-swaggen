@@ -1,0 +1,34 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "27:310",
+    "name": "Inspector row",
+    "type": "frame",
+    "width": "2136",
+    "height": "144",
+    "path": "02-design/components/01-component-library/inspector-row__27-310",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "27:311",
+      "name": "State=Default",
+      "type": "symbol",
+      "x": "24",
+      "y": "56",
+      "width": "1032",
+      "height": "44"
+    },
+    {
+      "id": "27:315",
+      "name": "State=Warning",
+      "type": "symbol",
+      "x": "1080",
+      "y": "56",
+      "width": "1032",
+      "height": "44"
+    }
+  ],
+  "text_layer_names": []
+}

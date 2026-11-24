@@ -1,0 +1,56 @@
+{
+  "node": {
+    "page": "09-request-response-states",
+    "page_id": "27:320",
+    "id": "28:5393",
+    "name": "Q12 / Binary request body",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/09-request-response-states/q12-binary-request-body__28-5393",
+    "requirements": [
+      "RQ04",
+      "RQ05"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "28:5394",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "28:5397",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "28:5549",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Binary request body",
+    "DisNote API / request / Q12",
+    "{{base_url}}/v1/tasks",
+    "Body type",
+    "Selected file",
+    "release-notes.pdf · 2.4 MB",
+    "Content type",
+    "Upload policy",
+    "Stream from disk; do not load whole file into UI"
+  ]
+}

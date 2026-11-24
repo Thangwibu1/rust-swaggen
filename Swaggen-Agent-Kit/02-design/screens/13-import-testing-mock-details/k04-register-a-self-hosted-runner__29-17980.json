@@ -1,0 +1,52 @@
+{
+  "node": {
+    "page": "13-import-testing-mock-details",
+    "page_id": "27:324",
+    "id": "29:17980",
+    "name": "K04 / Register a self-hosted runner",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/13-import-testing-mock-details/k04-register-a-self-hosted-runner__29-17980",
+    "requirements": [
+      "MK07"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:17981",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:17984",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:18130",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Register a self-hosted runner",
+    "DisNote API / tools / K04",
+    "Runner name",
+    "Workspace",
+    "Enrollment token",
+    "Network scope"
+  ]
+}

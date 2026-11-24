@@ -1,0 +1,60 @@
+{
+  "node": {
+    "page": "04-api-design-collaboration",
+    "page_id": "4:92",
+    "id": "6:6643",
+    "name": "D06 / API documentation",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/04-api-design-collaboration/d06-api-documentation__6-6643",
+    "requirements": [
+      "DC01",
+      "DC02",
+      "DC03",
+      "DC05"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "6:6644",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "6:6647",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "6:6810",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "API documentation",
+    "DisNote API / Team workspace",
+    "DisNote API",
+    "Published by Tina · 2 min ago",
+    "Tasks / List tasks",
+    "/v1/tasks",
+    "Retrieve paginated tasks in the current workspace.",
+    "NAME / OPERATION",
+    "VALUE / DETAILS",
+    "STATUS",
+    "application/json · TaskListResponse"
+  ]
+}

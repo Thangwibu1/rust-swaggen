@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package
+    Name="Swaggen Desktop (Unsigned)"
+    Manufacturer="Swaggen Project"
+    Version="0.1.0.0"
+    UpgradeCode="B947E19C-4E12-4F55-A1D2-7E5A9034B201"
+    Scope="perUser">
+    <MajorUpgrade DowngradeErrorMessage="A newer version of Swaggen Desktop is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+    <Feature Id="ProductFeature" Title="Swaggen Desktop" Level="1">
+      <ComponentGroupRef Id="AppComponents" />
+    </Feature>
+    <StandardDirectory Id="LocalAppDataFolder">
+      <Directory Id="INSTALLFOLDER" Name="Swaggen">
+        <Directory Id="AppBinFolder" Name="bin" />
+      </Directory>
+    </StandardDirectory>
+    <ComponentGroup Id="AppComponents" Directory="AppBinFolder">
+      <Component Id="SwaggenDesktopExe" Guid="*">
+        <File Id="SwaggenDesktopExeFile" Source="swaggen-desktop.exe" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+  </Package>
+</Wix>

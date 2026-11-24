@@ -1,0 +1,5 @@
+PASS: product workspace adapter recovered acknowledged revision after forced process termination
+   Compiling swaggen-domain v0.1.0 (D:\code\potmen\crates\domain)
+   Compiling swaggen-local-store v0.1.0 (D:\code\potmen\crates\local-store)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 5.04s
+     Running `target\x86_64-pc-windows-msvc\debug\store-crash-probe.exe`

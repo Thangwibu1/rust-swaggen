@@ -1,0 +1,55 @@
+{
+  "node": {
+    "page": "14-protocols-system-details",
+    "page_id": "27:325",
+    "id": "29:23317",
+    "name": "Z14 / Server-side destination blocked",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/14-protocols-system-details/z14-server-side-destination-blocked__29-23317",
+    "requirements": [
+      "SC08"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:23318",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:23321",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:23471",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Server-side destination blocked",
+    "DisNote API / system / Z14",
+    "Action required",
+    "Requested URL",
+    "https://allowed-host.example/redirect",
+    "Resolved destination",
+    "Private address not on the allowlist",
+    "Desktop requests",
+    "Local API access is controlled separately"
+  ]
+}

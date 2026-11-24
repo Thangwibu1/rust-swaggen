@@ -1,0 +1,51 @@
+{
+  "node": {
+    "page": "09-request-response-states",
+    "page_id": "27:320",
+    "id": "28:4237",
+    "name": "Q05 / Header validation error",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/09-request-response-states/q05-header-validation-error__28-4237",
+    "requirements": [
+      "RQ03"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "28:4238",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "28:4241",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "28:4396",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Header validation error",
+    "DisNote API / request / Q05",
+    "HEADER",
+    "VALUE",
+    "VALIDATION"
+  ]
+}

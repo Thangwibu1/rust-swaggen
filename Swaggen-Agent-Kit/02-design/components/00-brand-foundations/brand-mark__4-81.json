@@ -1,0 +1,15 @@
+{
+  "node": {
+    "page": "00-brand-foundations",
+    "page_id": "0:1",
+    "id": "4:81",
+    "name": "Brand/Mark",
+    "type": "symbol",
+    "width": "32",
+    "height": "32",
+    "path": "02-design/components/00-brand-foundations/brand-mark__4-81",
+    "requirements": []
+  },
+  "direct_children": [],
+  "text_layer_names": []
+}

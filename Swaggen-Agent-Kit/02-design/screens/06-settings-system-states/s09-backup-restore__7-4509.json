@@ -1,0 +1,55 @@
+{
+  "node": {
+    "page": "06-settings-system-states",
+    "page_id": "4:94",
+    "id": "7:4509",
+    "name": "S09 / Backup & restore",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/06-settings-system-states/s09-backup-restore__7-4509",
+    "requirements": [
+      "OP05",
+      "OP06"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "7:4510",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "7:4513",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "7:4651",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Backup & restore",
+    "DisNote API / Settings",
+    "Overview",
+    "NAME / OPERATION",
+    "VALUE / DETAILS",
+    "STATUS",
+    "Showing 3 items",
+    "All changes saved locally"
+  ]
+}

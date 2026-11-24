@@ -1,0 +1,157 @@
+{
+  "node": {
+    "page": "07-coverage-handoff",
+    "page_id": "4:95",
+    "id": "15:6776",
+    "name": "Coverage / OP",
+    "type": "frame",
+    "width": "1440",
+    "height": "716",
+    "path": "02-design/reference/07-coverage-handoff/coverage-op__15-6776",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "15:6777",
+      "name": "OP / REQUIREMENT COVERAGE",
+      "type": "text",
+      "x": "41",
+      "y": "41",
+      "width": "360",
+      "height": "34"
+    },
+    {
+      "id": "15:6778",
+      "name": "OP01",
+      "type": "frame",
+      "x": "41",
+      "y": "91",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6783",
+      "name": "OP02",
+      "type": "frame",
+      "x": "41",
+      "y": "151",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6788",
+      "name": "OP03",
+      "type": "frame",
+      "x": "41",
+      "y": "211",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6793",
+      "name": "OP04",
+      "type": "frame",
+      "x": "41",
+      "y": "271",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6798",
+      "name": "OP05",
+      "type": "frame",
+      "x": "41",
+      "y": "331",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6803",
+      "name": "OP06",
+      "type": "frame",
+      "x": "41",
+      "y": "391",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6808",
+      "name": "OP07",
+      "type": "frame",
+      "x": "41",
+      "y": "451",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6813",
+      "name": "OP08",
+      "type": "frame",
+      "x": "41",
+      "y": "511",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6818",
+      "name": "OP09",
+      "type": "frame",
+      "x": "41",
+      "y": "571",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6823",
+      "name": "OP10",
+      "type": "frame",
+      "x": "41",
+      "y": "631",
+      "width": "1360",
+      "height": "44"
+    }
+  ],
+  "text_layer_names": [
+    "OP / REQUIREMENT COVERAGE",
+    "OP01",
+    "Bộ cài Windows",
+    "Stage A",
+    "S10",
+    "OP02",
+    "Chế độ không có cloud",
+    "Stage A",
+    "A08 · C08",
+    "OP03",
+    "Khởi tạo trên Coolify",
+    "Stage A",
+    "A05 · S08",
+    "OP04",
+    "Cấu hình VPS Coolify",
+    "Stage A",
+    "A05 · S08",
+    "OP05",
+    "Sao lưu MongoDB và file",
+    "Stage A",
+    "S09",
+    "OP06",
+    "Khôi phục dữ liệu",
+    "Stage A",
+    "S09",
+    "OP07",
+    "Nâng cấp và migration",
+    "Stage A",
+    "S10 · X06",
+    "OP08",
+    "Phân phối cập nhật",
+    "Stage B",
+    "S10",
+    "OP09",
+    "Theo dõi sức khỏe",
+    "Stage A",
+    "S08",
+    "OP10",
+    "Quota vận hành",
+    "Stage B",
+    "S08"
+  ]
+}

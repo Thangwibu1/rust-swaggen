@@ -1,0 +1,56 @@
+[
+  {
+    "name": "p01-toolchain",
+    "status": "PASS",
+    "exit_code": 0,
+    "timestamp": "2026-11-24T10:49:32.990349+00:00",
+    "duration_seconds": 0.09400000001187436,
+    "command": "\"C:\\Users\\Ngoc Thang\\.cargo\\bin\\rustc.exe\" +stable --version",
+    "artifact_path": "reports/raw/p01-toolchain.txt"
+  },
+  {
+    "name": "p01-format",
+    "status": "PASS",
+    "exit_code": 0,
+    "timestamp": "2026-11-24T10:49:33.559363+00:00",
+    "duration_seconds": 0.5779999999940628,
+    "command": "\"C:\\Users\\Ngoc Thang\\.cargo\\bin\\cargo.exe\" +stable fmt --all -- --check",
+    "artifact_path": "reports/raw/p01-format.txt"
+  },
+  {
+    "name": "p01-unit",
+    "status": "PASS",
+    "exit_code": 0,
+    "timestamp": "2026-11-24T10:49:41.666915+00:00",
+    "duration_seconds": 8.110000000000582,
+    "command": "\"C:\\Users\\Ngoc Thang\\.cargo\\bin\\cargo.exe\" +stable test --workspace --all-targets --offline --locked --target x86_64-pc-windows-msvc",
+    "artifact_path": "reports/raw/p01-unit.txt"
+  },
+  {
+    "name": "p01-clippy",
+    "status": "PASS",
+    "exit_code": 0,
+    "timestamp": "2026-11-24T10:49:46.190970+00:00",
+    "duration_seconds": 4.514999999999418,
+    "command": "\"C:\\Users\\Ngoc Thang\\.cargo\\bin\\cargo.exe\" +stable clippy --workspace --all-targets --offline --locked --target x86_64-pc-windows-msvc -- -D warnings",
+    "artifact_path": "reports/raw/p01-clippy.txt"
+  },
+  {
+    "name": "p01-build",
+    "status": "PASS",
+    "exit_code": 0,
+    "timestamp": "2026-11-24T10:50:02.741060+00:00",
+    "duration_seconds": 16.547000000005937,
+    "command": "\"C:\\Users\\Ngoc Thang\\.cargo\\bin\\cargo.exe\" +stable build -p swaggen-desktop --offline --locked --target x86_64-pc-windows-msvc",
+    "artifact_path": "reports/raw/p01-build.txt"
+  },
+  {
+    "name": "p01-process-crash",
+    "status": "PASS",
+    "exit_code": 0,
+    "timestamp": "2026-11-24T10:50:08.178010+00:00",
+    "duration_seconds": 5.452999999994063,
+    "command": "\"C:\\Users\\Ngoc Thang\\.cargo\\bin\\cargo.exe\" +stable run -p swaggen-local-store --bin store-crash-probe --offline --locked --target x86_64-pc-windows-msvc",
+    "artifact_path": "reports/raw/p01-process-crash.txt"
+  }
+]

@@ -1,0 +1,6 @@
+﻿    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.07s
+     Running `spikes\p00-native\target\debug\http-gate.exe`
+FAIL: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013)
+System.Management.Automation.RemoteException
+error: process didn't exit successfully: `spikes\p00-native\target\debug\http-gate.exe` (exit code: 2)
+

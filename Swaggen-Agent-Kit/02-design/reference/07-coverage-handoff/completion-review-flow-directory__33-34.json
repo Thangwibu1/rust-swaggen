@@ -1,0 +1,214 @@
+{
+  "node": {
+    "page": "07-coverage-handoff",
+    "page_id": "4:95",
+    "id": "33:34",
+    "name": "Completion review / Flow directory",
+    "type": "frame",
+    "width": "1440",
+    "height": "1406",
+    "path": "02-design/reference/07-coverage-handoff/completion-review-flow-directory__33-34",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "33:35",
+      "name": "SWAGGEN / COMPLETE DESKTOP DESIGN",
+      "type": "text",
+      "x": "49",
+      "y": "49",
+      "width": "1300",
+      "height": "44"
+    },
+    {
+      "id": "33:36",
+      "name": "316 screens and UI states · 160 mapped requirements · Windows desktop",
+      "type": "text",
+      "x": "49",
+      "y": "117",
+      "width": "1300",
+      "height": "28"
+    },
+    {
+      "id": "33:37",
+      "name": "208 detailed screens supplement the 108 core screens. Reusable controls remain in the component library. Application sign-in uses Google only; API credentials are configured separately.",
+      "type": "text",
+      "x": "49",
+      "y": "169",
+      "width": "1300",
+      "height": "40"
+    },
+    {
+      "id": "33:38",
+      "name": "08 • Workspace & collection details",
+      "type": "frame",
+      "x": "49",
+      "y": "233",
+      "width": "1344",
+      "height": "80"
+    },
+    {
+      "id": "33:41",
+      "name": "09 • Request & response states",
+      "type": "frame",
+      "x": "49",
+      "y": "337",
+      "width": "1344",
+      "height": "80"
+    },
+    {
+      "id": "33:44",
+      "name": "10 • Authentication & secrets",
+      "type": "frame",
+      "x": "49",
+      "y": "441",
+      "width": "1344",
+      "height": "80"
+    },
+    {
+      "id": "33:47",
+      "name": "11 • OpenAPI & contract details",
+      "type": "frame",
+      "x": "49",
+      "y": "545",
+      "width": "1344",
+      "height": "80"
+    },
+    {
+      "id": "33:50",
+      "name": "12 • Collaboration & sync details",
+      "type": "frame",
+      "x": "49",
+      "y": "649",
+      "width": "1344",
+      "height": "80"
+    },
+    {
+      "id": "33:53",
+      "name": "13 • Import, testing & mock details",
+      "type": "frame",
+      "x": "49",
+      "y": "753",
+      "width": "1344",
+      "height": "80"
+    },
+    {
+      "id": "33:56",
+      "name": "14 • Protocols & system details",
+      "type": "frame",
+      "x": "49",
+      "y": "857",
+      "width": "1344",
+      "height": "80"
+    },
+    {
+      "id": "33:59",
+      "name": "Scope overrides",
+      "type": "text",
+      "x": "49",
+      "y": "961",
+      "width": "1300",
+      "height": "28"
+    },
+    {
+      "id": "33:60",
+      "name": "WS03 / Google-only application sign-in (supersedes internal passwords)",
+      "type": "text",
+      "x": "49",
+      "y": "1013",
+      "width": "1300",
+      "height": "20"
+    },
+    {
+      "id": "33:61",
+      "name": "SC03 / Google OAuth sign-in and revocable sessions",
+      "type": "text",
+      "x": "49",
+      "y": "1057",
+      "width": "1300",
+      "height": "20"
+    },
+    {
+      "id": "33:62",
+      "name": "SC09 / Account recovery and MFA managed by Google",
+      "type": "text",
+      "x": "49",
+      "y": "1101",
+      "width": "1300",
+      "height": "20"
+    },
+    {
+      "id": "33:63",
+      "name": "UX06 / White interface and language preference (supersedes dark mode)",
+      "type": "text",
+      "x": "49",
+      "y": "1145",
+      "width": "1300",
+      "height": "20"
+    },
+    {
+      "id": "33:64",
+      "name": "Performance acceptance",
+      "type": "text",
+      "x": "49",
+      "y": "1189",
+      "width": "1300",
+      "height": "28"
+    },
+    {
+      "id": "33:65",
+      "name": "Z16 records benchmark gates, not measured results. Validate cold/warm startup, memory, UI latency, streaming, sync and soak behavior on a defined Windows machine before release.",
+      "type": "text",
+      "x": "49",
+      "y": "1241",
+      "width": "1300",
+      "height": "20"
+    },
+    {
+      "id": "33:66",
+      "name": "Prototype scope",
+      "type": "text",
+      "x": "49",
+      "y": "1285",
+      "width": "1300",
+      "height": "28"
+    },
+    {
+      "id": "33:67",
+      "name": "Each detail page has an entry point. Primary buttons connect representative state transitions; Back returns to the previous frame. This design is not an executable application.",
+      "type": "text",
+      "x": "49",
+      "y": "1337",
+      "width": "1300",
+      "height": "20"
+    }
+  ],
+  "text_layer_names": [
+    "SWAGGEN / COMPLETE DESKTOP DESIGN",
+    "316 screens and UI states · 160 mapped requirements · Windows desktop",
+    "208 detailed screens supplement the 108 core screens. Reusable controls remain in the component library. Application sign-in uses Google only; API credentials are configured separately.",
+    "08 • Workspace & collection details / 22 screens",
+    "Collections, folders and team administration",
+    "09 • Request & response states / 35 screens",
+    "Request bodies, response formats and errors",
+    "10 • Authentication & secrets / 35 screens",
+    "API authorization, TLS, token lifecycle and variables",
+    "11 • OpenAPI & contract details / 25 screens",
+    "Schema composition, references and contract changes",
+    "12 • Collaboration & sync details / 25 screens",
+    "Branch review, merge conflicts and offline recovery",
+    "13 • Import, testing & mock details / 34 screens",
+    "Import compatibility, testing, mock and scheduled jobs",
+    "14 • Protocols & system details / 32 screens",
+    "Protocols, Windows, MongoDB/Coolify and operations",
+    "Scope overrides",
+    "WS03 / Google-only application sign-in (supersedes internal passwords)",
+    "SC03 / Google OAuth sign-in and revocable sessions",
+    "SC09 / Account recovery and MFA managed by Google",
+    "UX06 / White interface and language preference (supersedes dark mode)",
+    "Performance acceptance",
+    "Z16 records benchmark gates, not measured results. Validate cold/warm startup, memory, UI latency, streaming, sync and soak behavior on a defined Windows machine before release.",
+    "Prototype scope",
+    "Each detail page has an entry point. Primary buttons connect representative state transitions; Back returns to the previous frame. This design is not an executable application."
+  ]
+}

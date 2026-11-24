@@ -1,0 +1,56 @@
+{
+  "node": {
+    "page": "04-api-design-collaboration",
+    "page_id": "4:92",
+    "id": "6:7204",
+    "name": "D09 / Update linked requests",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/04-api-design-collaboration/d09-update-linked-requests__6-7204",
+    "requirements": [
+      "DC04",
+      "DC06",
+      "DC09"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "6:7205",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "6:7208",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "6:7352",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Update linked requests",
+    "DisNote API / Team workspace",
+    "Overview",
+    "NAME / OPERATION",
+    "VALUE / DETAILS",
+    "STATUS",
+    "Showing 3 items",
+    "All changes saved locally"
+  ]
+}

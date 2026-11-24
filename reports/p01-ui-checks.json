@@ -1,0 +1,38 @@
+[
+  {
+    "name": "p01-ui-offline-start-restart",
+    "status": "PASS",
+    "exit_code": null,
+    "timestamp": "2026-11-24T07:40:18.736295+00:00",
+    "command": "Actual Windows app interaction through native UI automation",
+    "artifact_path": "reports/P01-progress.md",
+    "scope": "Interactive Windows Swaggen opened with no account/backend connection, saved actual accented plain text using Ctrl+S at revision 1, restarted and restored it. After close-warning test saved revision 2; final rebuilt binary restored the exact 117-byte draft at revision 2."
+  },
+  {
+    "name": "p01-ui-secret-save-mask-reveal-hide",
+    "status": "PASS",
+    "exit_code": null,
+    "timestamp": "2026-11-24T07:40:18.736295+00:00",
+    "command": "Actual Windows app interaction through native UI automation",
+    "artifact_path": "reports/P01-progress.md",
+    "scope": "Disposable, non-credential value entered in masked field; UIA exposed only bullets. Tab/Enter saved. After restart typed only saved reference name and explicitly revealed matching value. Final binary repeated retrieval; Hide removed the value from tree and displayed Secret value hidden."
+  },
+  {
+    "name": "p01-ui-unsaved-close-warning",
+    "status": "PASS",
+    "exit_code": null,
+    "timestamp": "2026-11-24T07:40:18.736295+00:00",
+    "command": "Actual Windows app interaction through native UI automation",
+    "artifact_path": "reports/P01-progress.md",
+    "scope": "Editing saved draft then Alt+F4 showed only Return to editor / Close without saving, with background controls absent. Tab/Enter returned with the edit intact; Ctrl+S durably saved revision 2. Discard path not invoked."
+  },
+  {
+    "name": "p01-ui-literal-content-and-privacy",
+    "status": "PASS",
+    "exit_code": null,
+    "timestamp": "2026-11-24T07:40:18.736295+00:00",
+    "command": "Actual Windows app interaction through native UI automation",
+    "artifact_path": "reports/P01-progress.md",
+    "scope": "Script-looking text remained literal in draft editor across restarts. Privacy screen reported analytics/crash upload off and honestly named unimplemented network/export/team features; no script engine, HTML renderer or telemetry transmitter is linked by application code."
+  }
+]

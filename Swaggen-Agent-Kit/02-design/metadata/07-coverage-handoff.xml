@@ -1,0 +1,1065 @@
+<canvas id="4:95" name="07 • Coverage &amp; handoff" x="0" y="0" width="0" height="0">
+  <frame id="15:5968" name="Handoff / Read me first" x="0" y="0" width="1440" height="750">
+    <instance id="15:5969" name="Brand/Wordmark" x="48" y="48" width="145" height="100" />
+    <text id="15:5986" name="DESIGN HANDOFF / SWAGGEN" x="48" y="172" width="461" height="44" />
+    <text id="15:5987" name="108 desktop screens &amp; states · 160 requirement references" x="48" y="240" width="616" height="28" />
+    <text id="15:5988" name="Start here → 00 Brand &amp; foundations → 01 Component library →" x="48" y="292" width="1300" height="22" />
+    <text id="15:5989" name="Desktop only / 1440 × 900 / Light theme / JetBrains Mono" x="48" y="338" width="484" height="20" />
+    <text id="15:5990" name="Google-only authentication supersedes local passwords and re" x="48" y="382" width="1300" height="44" />
+    <text id="15:5991" name="A = initial team release · B = extended workflows · C = adva" x="48" y="450" width="1300" height="20" />
+    <text id="15:5992" name="Backend: Rust + MongoDB on the existing Coolify VPS. Desktop" x="48" y="494" width="1300" height="40" />
+    <text id="15:5993" name="Prototype flows: Access, Workbench, API design + collaborati" x="48" y="558" width="1300" height="40" />
+    <text id="15:5994" name="Reuse component instances and semantic variables. Do not det" x="48" y="622" width="1300" height="40" />
+    <text id="15:5995" name="Assets: editable Swaggen vector mark; Lucide icons (ISC), Go" x="48" y="686" width="1300" height="16" />
+  </frame>
+  <frame id="15:5996" name="Coverage / WS" x="0" y="850" width="1440" height="716">
+    <text id="15:5997" name="WS / REQUIREMENT COVERAGE" x="41" y="41" width="360" height="34" />
+    <frame id="15:5998" name="WS01" x="41" y="91" width="1360" height="44">
+      <text id="15:5999" name="WS01" x="0" y="12" width="68" height="20" />
+      <text id="15:6000" name="Chế độ cá nhân" x="88" y="12" width="650" height="20" />
+      <text id="15:6001" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6002" name="A07 · A08" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6003" name="WS02" x="41" y="151" width="1360" height="44">
+      <text id="15:6004" name="WS02" x="0" y="12" width="68" height="20" />
+      <text id="15:6005" name="Kết nối server" x="88" y="12" width="650" height="20" />
+      <text id="15:6006" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6007" name="A05 · A06" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6008" name="WS03" x="41" y="211" width="1360" height="44">
+      <text id="15:6009" name="WS03" x="0" y="12" width="68" height="20" />
+      <text id="15:6010" name="Tài khoản nội bộ" x="88" y="12" width="650" height="20" />
+      <text id="15:6011" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6012" name="A01 · A02 · A03 · A04 · S02 · M06" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6013" name="WS04" x="41" y="271" width="1360" height="44">
+      <text id="15:6014" name="WS04" x="0" y="12" width="68" height="20" />
+      <text id="15:6015" name="Quản lý workspace" x="88" y="12" width="650" height="20" />
+      <text id="15:6016" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6017" name="A07 · A08 · A09 · A11" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6018" name="WS05" x="41" y="331" width="1360" height="44">
+      <text id="15:6019" name="WS05" x="0" y="12" width="68" height="20" />
+      <text id="15:6020" name="Thành viên và vai trò" x="88" y="12" width="650" height="20" />
+      <text id="15:6021" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6022" name="A10 · C01 · C02 · X03" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6023" name="WS06" x="41" y="391" width="1360" height="44">
+      <text id="15:6024" name="WS06" x="0" y="12" width="68" height="20" />
+      <text id="15:6025" name="Collection và folder" x="88" y="12" width="650" height="20" />
+      <text id="15:6026" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6027" name="A12 · M01" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6028" name="WS07" x="41" y="451" width="1360" height="44">
+      <text id="15:6029" name="WS07" x="0" y="12" width="68" height="20" />
+      <text id="15:6030" name="Tìm kiếm và nhãn" x="88" y="12" width="650" height="20" />
+      <text id="15:6031" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6032" name="A13 · X02" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6033" name="WS08" x="41" y="511" width="1360" height="44">
+      <text id="15:6034" name="WS08" x="0" y="12" width="68" height="20" />
+      <text id="15:6035" name="Thiết lập dự án" x="88" y="12" width="650" height="20" />
+      <text id="15:6036" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6037" name="A07 · A09 · S01" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6038" name="WS09" x="41" y="571" width="1360" height="44">
+      <text id="15:6039" name="WS09" x="0" y="12" width="68" height="20" />
+      <text id="15:6040" name="Quản lý vòng đời" x="88" y="12" width="650" height="20" />
+      <text id="15:6041" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6042" name="A08 · S01 · X07 · M04" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6043" name="WS10" x="41" y="631" width="1360" height="44">
+      <text id="15:6044" name="WS10" x="0" y="12" width="68" height="20" />
+      <text id="15:6045" name="Chuyển chủ sở hữu" x="88" y="12" width="650" height="20" />
+      <text id="15:6046" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6047" name="S01 · X08" x="858" y="12" width="480" height="20" />
+    </frame>
+  </frame>
+  <frame id="15:6048" name="Coverage / RQ" x="1520" y="850" width="1440" height="716">
+    <text id="15:6049" name="RQ / REQUIREMENT COVERAGE" x="41" y="41" width="360" height="34" />
+    <frame id="15:6050" name="RQ01" x="41" y="91" width="1360" height="44">
+      <text id="15:6051" name="RQ01" x="0" y="12" width="68" height="20" />
+      <text id="15:6052" name="Method và URL" x="88" y="12" width="650" height="20" />
+      <text id="15:6053" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6054" name="A14 · R01" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6055" name="RQ02" x="41" y="151" width="1360" height="44">
+      <text id="15:6056" name="RQ02" x="0" y="12" width="68" height="20" />
+      <text id="15:6057" name="Query chính xác" x="88" y="12" width="650" height="20" />
+      <text id="15:6058" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6059" name="R01" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6060" name="RQ03" x="41" y="211" width="1360" height="44">
+      <text id="15:6061" name="RQ03" x="0" y="12" width="68" height="20" />
+      <text id="15:6062" name="Headers" x="88" y="12" width="650" height="20" />
+      <text id="15:6063" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6064" name="R02" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6065" name="RQ04" x="41" y="271" width="1360" height="44">
+      <text id="15:6066" name="RQ04" x="0" y="12" width="68" height="20" />
+      <text id="15:6067" name="Các loại body" x="88" y="12" width="650" height="20" />
+      <text id="15:6068" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6069" name="R03" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6070" name="RQ05" x="41" y="331" width="1360" height="44">
+      <text id="15:6071" name="RQ05" x="0" y="12" width="68" height="20" />
+      <text id="15:6072" name="Tải file lên" x="88" y="12" width="650" height="20" />
+      <text id="15:6073" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6074" name="R04" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6075" name="RQ06" x="41" y="391" width="1360" height="44">
+      <text id="15:6076" name="RQ06" x="0" y="12" width="68" height="20" />
+      <text id="15:6077" name="Gửi và hủy" x="88" y="12" width="650" height="20" />
+      <text id="15:6078" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6079" name="R08 · R11" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6080" name="RQ07" x="41" y="451" width="1360" height="44">
+      <text id="15:6081" name="RQ07" x="0" y="12" width="68" height="20" />
+      <text id="15:6082" name="Request đã phân giải" x="88" y="12" width="650" height="20" />
+      <text id="15:6083" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6084" name="R01 · R10" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6085" name="RQ08" x="41" y="511" width="1360" height="44">
+      <text id="15:6086" name="RQ08" x="0" y="12" width="68" height="20" />
+      <text id="15:6087" name="Nháp và lưu" x="88" y="12" width="650" height="20" />
+      <text id="15:6088" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6089" name="A12 · A14" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6090" name="RQ09" x="41" y="571" width="1360" height="44">
+      <text id="15:6091" name="RQ09" x="0" y="12" width="68" height="20" />
+      <text id="15:6092" name="Sao chép nhanh" x="88" y="12" width="650" height="20" />
+      <text id="15:6093" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6094" name="A14 · R14" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6095" name="RQ10" x="41" y="631" width="1360" height="44">
+      <text id="15:6096" name="RQ10" x="0" y="12" width="68" height="20" />
+      <text id="15:6097" name="Stream khi truyền" x="88" y="12" width="650" height="20" />
+      <text id="15:6098" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6099" name="R04 · R09" x="858" y="12" width="480" height="20" />
+    </frame>
+  </frame>
+  <frame id="15:6100" name="Coverage / AU" x="3040" y="850" width="1440" height="716">
+    <text id="15:6101" name="AU / REQUIREMENT COVERAGE" x="41" y="41" width="360" height="34" />
+    <frame id="15:6102" name="AU01" x="41" y="91" width="1360" height="44">
+      <text id="15:6103" name="AU01" x="0" y="12" width="68" height="20" />
+      <text id="15:6104" name="No Auth và Bearer" x="88" y="12" width="650" height="20" />
+      <text id="15:6105" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6106" name="R05" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6107" name="AU02" x="41" y="151" width="1360" height="44">
+      <text id="15:6108" name="AU02" x="0" y="12" width="68" height="20" />
+      <text id="15:6109" name="Basic và API key" x="88" y="12" width="650" height="20" />
+      <text id="15:6110" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6111" name="R05" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6112" name="AU03" x="41" y="211" width="1360" height="44">
+      <text id="15:6113" name="AU03" x="0" y="12" width="68" height="20" />
+      <text id="15:6114" name="Kế thừa xác thực" x="88" y="12" width="650" height="20" />
+      <text id="15:6115" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6116" name="R05" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6117" name="AU04" x="41" y="271" width="1360" height="44">
+      <text id="15:6118" name="AU04" x="0" y="12" width="68" height="20" />
+      <text id="15:6119" name="Cookie jar" x="88" y="12" width="650" height="20" />
+      <text id="15:6120" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6121" name="R12" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6122" name="AU05" x="41" y="331" width="1360" height="44">
+      <text id="15:6123" name="AU05" x="0" y="12" width="68" height="20" />
+      <text id="15:6124" name="TLS mặc định" x="88" y="12" width="650" height="20" />
+      <text id="15:6125" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6126" name="R13" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6127" name="AU06" x="41" y="391" width="1360" height="44">
+      <text id="15:6128" name="AU06" x="0" y="12" width="68" height="20" />
+      <text id="15:6129" name="Redirect" x="88" y="12" width="650" height="20" />
+      <text id="15:6130" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6131" name="R13" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6132" name="AU07" x="41" y="451" width="1360" height="44">
+      <text id="15:6133" name="AU07" x="0" y="12" width="68" height="20" />
+      <text id="15:6134" name="Proxy và CA riêng" x="88" y="12" width="650" height="20" />
+      <text id="15:6135" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6136" name="R13" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6137" name="AU08" x="41" y="511" width="1360" height="44">
+      <text id="15:6138" name="AU08" x="0" y="12" width="68" height="20" />
+      <text id="15:6139" name="OAuth 2 PKCE" x="88" y="12" width="650" height="20" />
+      <text id="15:6140" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6141" name="R06" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6142" name="AU09" x="41" y="571" width="1360" height="44">
+      <text id="15:6143" name="AU09" x="0" y="12" width="68" height="20" />
+      <text id="15:6144" name="Chứng chỉ client" x="88" y="12" width="650" height="20" />
+      <text id="15:6145" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6146" name="R13" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6147" name="AU10" x="41" y="631" width="1360" height="44">
+      <text id="15:6148" name="AU10" x="0" y="12" width="68" height="20" />
+      <text id="15:6149" name="Xác thực bổ sung" x="88" y="12" width="650" height="20" />
+      <text id="15:6150" name="Stage C" x="758" y="14" width="80" height="16" />
+      <text id="15:6151" name="R13" x="858" y="12" width="480" height="20" />
+    </frame>
+  </frame>
+  <frame id="15:6152" name="Coverage / EV" x="0" y="1662" width="1440" height="716">
+    <text id="15:6153" name="EV / REQUIREMENT COVERAGE" x="41" y="41" width="360" height="34" />
+    <frame id="15:6154" name="EV01" x="41" y="91" width="1360" height="44">
+      <text id="15:6155" name="EV01" x="0" y="12" width="68" height="20" />
+      <text id="15:6156" name="Môi trường" x="88" y="12" width="650" height="20" />
+      <text id="15:6157" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6158" name="E01 · M02" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6159" name="EV02" x="41" y="151" width="1360" height="44">
+      <text id="15:6160" name="EV02" x="0" y="12" width="68" height="20" />
+      <text id="15:6161" name="Biến theo cấp" x="88" y="12" width="650" height="20" />
+      <text id="15:6162" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6163" name="E01 · E02" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6164" name="EV03" x="41" y="211" width="1360" height="44">
+      <text id="15:6165" name="EV03" x="0" y="12" width="68" height="20" />
+      <text id="15:6166" name="Giá trị cá nhân" x="88" y="12" width="650" height="20" />
+      <text id="15:6167" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6168" name="E01 · E02" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6169" name="EV04" x="41" y="271" width="1360" height="44">
+      <text id="15:6170" name="EV04" x="0" y="12" width="68" height="20" />
+      <text id="15:6171" name="Thay biến" x="88" y="12" width="650" height="20" />
+      <text id="15:6172" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6173" name="R10 · E01" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6174" name="EV05" x="41" y="331" width="1360" height="44">
+      <text id="15:6175" name="EV05" x="0" y="12" width="68" height="20" />
+      <text id="15:6176" name="Đánh dấu secret" x="88" y="12" width="650" height="20" />
+      <text id="15:6177" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6178" name="E02 · E03" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6179" name="EV06" x="41" y="391" width="1360" height="44">
+      <text id="15:6180" name="EV06" x="0" y="12" width="68" height="20" />
+      <text id="15:6181" name="Quy tắc xuất" x="88" y="12" width="650" height="20" />
+      <text id="15:6182" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6183" name="M05 · I03" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6184" name="EV07" x="41" y="451" width="1360" height="44">
+      <text id="15:6185" name="EV07" x="0" y="12" width="68" height="20" />
+      <text id="15:6186" name="Bảo vệ production" x="88" y="12" width="650" height="20" />
+      <text id="15:6187" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6188" name="R16 · M02" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6189" name="EV08" x="41" y="511" width="1360" height="44">
+      <text id="15:6190" name="EV08" x="0" y="12" width="68" height="20" />
+      <text id="15:6191" name="Biến động" x="88" y="12" width="650" height="20" />
+      <text id="15:6192" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6193" name="E02" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6194" name="EV09" x="41" y="571" width="1360" height="44">
+      <text id="15:6195" name="EV09" x="0" y="12" width="68" height="20" />
+      <text id="15:6196" name="Trích xuất giá trị" x="88" y="12" width="650" height="20" />
+      <text id="15:6197" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6198" name="E02" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6199" name="EV10" x="41" y="631" width="1360" height="44">
+      <text id="15:6200" name="EV10" x="0" y="12" width="68" height="20" />
+      <text id="15:6201" name="Vault nhóm" x="88" y="12" width="650" height="20" />
+      <text id="15:6202" name="Stage C" x="758" y="14" width="80" height="16" />
+      <text id="15:6203" name="S12" x="858" y="12" width="480" height="20" />
+    </frame>
+  </frame>
+  <frame id="15:6204" name="Coverage / RS" x="1520" y="1662" width="1440" height="716">
+    <text id="15:6205" name="RS / REQUIREMENT COVERAGE" x="41" y="41" width="360" height="34" />
+    <frame id="15:6206" name="RS01" x="41" y="91" width="1360" height="44">
+      <text id="15:6207" name="RS01" x="0" y="12" width="68" height="20" />
+      <text id="15:6208" name="Thông tin tổng quan" x="88" y="12" width="650" height="20" />
+      <text id="15:6209" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6210" name="R07" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6211" name="RS02" x="41" y="151" width="1360" height="44">
+      <text id="15:6212" name="RS02" x="0" y="12" width="68" height="20" />
+      <text id="15:6213" name="Hiển thị body" x="88" y="12" width="650" height="20" />
+      <text id="15:6214" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6215" name="R07" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6216" name="RS03" x="41" y="211" width="1360" height="44">
+      <text id="15:6217" name="RS03" x="0" y="12" width="68" height="20" />
+      <text id="15:6218" name="Response headers" x="88" y="12" width="650" height="20" />
+      <text id="15:6219" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6220" name="R07" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6221" name="RS04" x="41" y="271" width="1360" height="44">
+      <text id="15:6222" name="RS04" x="0" y="12" width="68" height="20" />
+      <text id="15:6223" name="Tìm và sao chép" x="88" y="12" width="650" height="20" />
+      <text id="15:6224" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6225" name="R07" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6226" name="RS05" x="41" y="331" width="1360" height="44">
+      <text id="15:6227" name="RS05" x="0" y="12" width="68" height="20" />
+      <text id="15:6228" name="Thông báo lỗi" x="88" y="12" width="650" height="20" />
+      <text id="15:6229" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6230" name="R08" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6231" name="RS06" x="41" y="391" width="1360" height="44">
+      <text id="15:6232" name="RS06" x="0" y="12" width="68" height="20" />
+      <text id="15:6233" name="Response lớn" x="88" y="12" width="650" height="20" />
+      <text id="15:6234" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6235" name="R09" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6236" name="RS07" x="41" y="451" width="1360" height="44">
+      <text id="15:6237" name="RS07" x="0" y="12" width="68" height="20" />
+      <text id="15:6238" name="Lịch sử riêng" x="88" y="12" width="650" height="20" />
+      <text id="15:6239" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6240" name="R14 · S05" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6241" name="RS08" x="41" y="511" width="1360" height="44">
+      <text id="15:6242" name="RS08" x="0" y="12" width="68" height="20" />
+      <text id="15:6243" name="Ví dụ chia sẻ" x="88" y="12" width="650" height="20" />
+      <text id="15:6244" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6245" name="R17" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6246" name="RS09" x="41" y="571" width="1360" height="44">
+      <text id="15:6247" name="RS09" x="0" y="12" width="68" height="20" />
+      <text id="15:6248" name="So sánh response" x="88" y="12" width="650" height="20" />
+      <text id="15:6249" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6250" name="R15" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6251" name="RS10" x="41" y="631" width="1360" height="44">
+      <text id="15:6252" name="RS10" x="0" y="12" width="68" height="20" />
+      <text id="15:6253" name="Đo thời gian chi tiết" x="88" y="12" width="650" height="20" />
+      <text id="15:6254" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6255" name="R15" x="858" y="12" width="480" height="20" />
+    </frame>
+  </frame>
+  <frame id="15:6256" name="Coverage / OA" x="3040" y="1662" width="1440" height="716">
+    <text id="15:6257" name="OA / REQUIREMENT COVERAGE" x="41" y="41" width="360" height="34" />
+    <frame id="15:6258" name="OA01" x="41" y="91" width="1360" height="44">
+      <text id="15:6259" name="OA01" x="0" y="12" width="68" height="20" />
+      <text id="15:6260" name="Import đặc tả" x="88" y="12" width="650" height="20" />
+      <text id="15:6261" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6262" name="D01 · I01" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6263" name="OA02" x="41" y="151" width="1360" height="44">
+      <text id="15:6264" name="OA02" x="0" y="12" width="68" height="20" />
+      <text id="15:6265" name="Editor đặc tả" x="88" y="12" width="650" height="20" />
+      <text id="15:6266" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6267" name="D01" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6268" name="OA03" x="41" y="211" width="1360" height="44">
+      <text id="15:6269" name="OA03" x="0" y="12" width="68" height="20" />
+      <text id="15:6270" name="Kiểm tra cấu trúc" x="88" y="12" width="650" height="20" />
+      <text id="15:6271" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6272" name="D02" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6273" name="OA04" x="41" y="271" width="1360" height="44">
+      <text id="15:6274" name="OA04" x="0" y="12" width="68" height="20" />
+      <text id="15:6275" name="Quản lý endpoint" x="88" y="12" width="650" height="20" />
+      <text id="15:6276" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6277" name="D01 · D03 · D12" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6278" name="OA05" x="41" y="331" width="1360" height="44">
+      <text id="15:6279" name="OA05" x="0" y="12" width="68" height="20" />
+      <text id="15:6280" name="Định nghĩa dữ liệu" x="88" y="12" width="650" height="20" />
+      <text id="15:6281" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6282" name="D01 · D03 · D04" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6283" name="OA06" x="41" y="391" width="1360" height="44">
+      <text id="15:6284" name="OA06" x="0" y="12" width="68" height="20" />
+      <text id="15:6285" name="Components dùng lại" x="88" y="12" width="650" height="20" />
+      <text id="15:6286" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6287" name="D01 · D04 · D05" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6288" name="OA07" x="41" y="451" width="1360" height="44">
+      <text id="15:6289" name="OA07" x="0" y="12" width="68" height="20" />
+      <text id="15:6290" name="Schema phức tạp" x="88" y="12" width="650" height="20" />
+      <text id="15:6291" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6292" name="D02 · D04 · D05" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6293" name="OA08" x="41" y="511" width="1360" height="44">
+      <text id="15:6294" name="OA08" x="0" y="12" width="68" height="20" />
+      <text id="15:6295" name="Tham chiếu nhiều file" x="88" y="12" width="650" height="20" />
+      <text id="15:6296" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6297" name="D02 · D05" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6298" name="OA09" x="41" y="571" width="1360" height="44">
+      <text id="15:6299" name="OA09" x="0" y="12" width="68" height="20" />
+      <text id="15:6300" name="Swagger 2 và phiên bản mới" x="88" y="12" width="650" height="20" />
+      <text id="15:6301" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6302" name="D02" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6303" name="OA10" x="41" y="631" width="1360" height="44">
+      <text id="15:6304" name="OA10" x="0" y="12" width="68" height="20" />
+      <text id="15:6305" name="Lint quy ước nhóm" x="88" y="12" width="650" height="20" />
+      <text id="15:6306" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6307" name="D10" x="858" y="12" width="480" height="20" />
+    </frame>
+  </frame>
+  <frame id="15:6308" name="Coverage / DC" x="0" y="2474" width="1440" height="716">
+    <text id="15:6309" name="DC / REQUIREMENT COVERAGE" x="41" y="41" width="360" height="34" />
+    <frame id="15:6310" name="DC01" x="41" y="91" width="1360" height="44">
+      <text id="15:6311" name="DC01" x="0" y="12" width="68" height="20" />
+      <text id="15:6312" name="Tài liệu tự sinh" x="88" y="12" width="650" height="20" />
+      <text id="15:6313" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6314" name="D06" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6315" name="DC02" x="41" y="151" width="1360" height="44">
+      <text id="15:6316" name="DC02" x="0" y="12" width="68" height="20" />
+      <text id="15:6317" name="Chi tiết hợp đồng" x="88" y="12" width="650" height="20" />
+      <text id="15:6318" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6319" name="D06" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6320" name="DC03" x="41" y="211" width="1360" height="44">
+      <text id="15:6321" name="DC03" x="0" y="12" width="68" height="20" />
+      <text id="15:6322" name="Chạy từ tài liệu" x="88" y="12" width="650" height="20" />
+      <text id="15:6323" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6324" name="D06 · D07" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6325" name="DC04" x="41" y="271" width="1360" height="44">
+      <text id="15:6326" name="DC04" x="0" y="12" width="68" height="20" />
+      <text id="15:6327" name="Liên kết định danh" x="88" y="12" width="650" height="20" />
+      <text id="15:6328" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6329" name="D03 · D09" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6330" name="DC05" x="41" y="331" width="1360" height="44">
+      <text id="15:6331" name="DC05" x="0" y="12" width="68" height="20" />
+      <text id="15:6332" name="Sinh request mẫu" x="88" y="12" width="650" height="20" />
+      <text id="15:6333" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6334" name="D06 · D07" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6335" name="DC06" x="41" y="391" width="1360" height="44">
+      <text id="15:6336" name="DC06" x="0" y="12" width="68" height="20" />
+      <text id="15:6337" name="Cập nhật từ đặc tả" x="88" y="12" width="650" height="20" />
+      <text id="15:6338" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6339" name="D08 · D09" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6340" name="DC07" x="41" y="451" width="1360" height="44">
+      <text id="15:6341" name="DC07" x="0" y="12" width="68" height="20" />
+      <text id="15:6342" name="Đề xuất sửa hợp đồng" x="88" y="12" width="650" height="20" />
+      <text id="15:6343" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6344" name="D08 · C13" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6345" name="DC08" x="41" y="511" width="1360" height="44">
+      <text id="15:6346" name="DC08" x="0" y="12" width="68" height="20" />
+      <text id="15:6347" name="Kiểm tra response theo schema" x="88" y="12" width="650" height="20" />
+      <text id="15:6348" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6349" name="D10 · T05" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6350" name="DC09" x="41" y="571" width="1360" height="44">
+      <text id="15:6351" name="DC09" x="0" y="12" width="68" height="20" />
+      <text id="15:6352" name="Chênh lệch hợp đồng" x="88" y="12" width="650" height="20" />
+      <text id="15:6353" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6354" name="D08 · D09 · D12" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6355" name="DC10" x="41" y="631" width="1360" height="44">
+      <text id="15:6356" name="DC10" x="0" y="12" width="68" height="20" />
+      <text id="15:6357" name="Xuất tài liệu" x="88" y="12" width="650" height="20" />
+      <text id="15:6358" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6359" name="D11" x="858" y="12" width="480" height="20" />
+    </frame>
+  </frame>
+  <frame id="15:6360" name="Coverage / CO" x="1520" y="2474" width="1440" height="716">
+    <text id="15:6361" name="CO / REQUIREMENT COVERAGE" x="41" y="41" width="360" height="34" />
+    <frame id="15:6362" name="CO01" x="41" y="91" width="1360" height="44">
+      <text id="15:6363" name="CO01" x="0" y="12" width="68" height="20" />
+      <text id="15:6364" name="Workspace chung" x="88" y="12" width="650" height="20" />
+      <text id="15:6365" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6366" name="A11 · C02" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6367" name="CO02" x="41" y="151" width="1360" height="44">
+      <text id="15:6368" name="CO02" x="0" y="12" width="68" height="20" />
+      <text id="15:6369" name="Publish thay đổi" x="88" y="12" width="650" height="20" />
+      <text id="15:6370" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6371" name="C05" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6372" name="CO03" x="41" y="211" width="1360" height="44">
+      <text id="15:6373" name="CO03" x="0" y="12" width="68" height="20" />
+      <text id="15:6374" name="Thông báo thay đổi" x="88" y="12" width="650" height="20" />
+      <text id="15:6375" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6376" name="C03" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6377" name="CO04" x="41" y="271" width="1360" height="44">
+      <text id="15:6378" name="CO04" x="0" y="12" width="68" height="20" />
+      <text id="15:6379" name="Bình luận theo đối tượng" x="88" y="12" width="650" height="20" />
+      <text id="15:6380" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6381" name="C04" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6382" name="CO05" x="41" y="331" width="1360" height="44">
+      <text id="15:6383" name="CO05" x="0" y="12" width="68" height="20" />
+      <text id="15:6384" name="Nhắc thành viên" x="88" y="12" width="650" height="20" />
+      <text id="15:6385" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6386" name="C03 · C04" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6387" name="CO06" x="41" y="391" width="1360" height="44">
+      <text id="15:6388" name="CO06" x="0" y="12" width="68" height="20" />
+      <text id="15:6389" name="Luồng hoạt động" x="88" y="12" width="650" height="20" />
+      <text id="15:6390" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6391" name="A11 · C03" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6392" name="CO07" x="41" y="451" width="1360" height="44">
+      <text id="15:6393" name="CO07" x="0" y="12" width="68" height="20" />
+      <text id="15:6394" name="Trạng thái chỉnh sửa" x="88" y="12" width="650" height="20" />
+      <text id="15:6395" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6396" name="C14" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6397" name="CO08" x="41" y="511" width="1360" height="44">
+      <text id="15:6398" name="CO08" x="0" y="12" width="68" height="20" />
+      <text id="15:6399" name="Chia sẻ kết quả chạy" x="88" y="12" width="650" height="20" />
+      <text id="15:6400" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6401" name="R17 · T04" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6402" name="CO09" x="41" y="571" width="1360" height="44">
+      <text id="15:6403" name="CO09" x="0" y="12" width="68" height="20" />
+      <text id="15:6404" name="Liên kết nội bộ" x="88" y="12" width="650" height="20" />
+      <text id="15:6405" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6406" name="C04" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6407" name="CO10" x="41" y="631" width="1360" height="44">
+      <text id="15:6408" name="CO10" x="0" y="12" width="68" height="20" />
+      <text id="15:6409" name="Đồng biên tập" x="88" y="12" width="650" height="20" />
+      <text id="15:6410" name="Stage C" x="758" y="14" width="80" height="16" />
+      <text id="15:6411" name="C14" x="858" y="12" width="480" height="20" />
+    </frame>
+  </frame>
+  <frame id="15:6412" name="Coverage / SY" x="3040" y="2474" width="1440" height="736">
+    <text id="15:6413" name="SY / REQUIREMENT COVERAGE" x="41" y="41" width="360" height="34" />
+    <frame id="15:6414" name="SY01" x="41" y="91" width="1360" height="44">
+      <text id="15:6415" name="SY01" x="0" y="12" width="68" height="20" />
+      <text id="15:6416" name="Lưu cục bộ trước" x="88" y="12" width="650" height="20" />
+      <text id="15:6417" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6418" name="C07 · C08 · X04" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6419" name="SY02" x="41" y="151" width="1360" height="44">
+      <text id="15:6420" name="SY02" x="0" y="12" width="68" height="20" />
+      <text id="15:6421" name="Hàng đợi đồng bộ" x="88" y="12" width="650" height="20" />
+      <text id="15:6422" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6423" name="C07 · C08" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6424" name="SY03" x="41" y="211" width="1360" height="44">
+      <text id="15:6425" name="SY03" x="0" y="12" width="68" height="20" />
+      <text id="15:6426" name="Phiên bản đối tượng" x="88" y="12" width="650" height="20" />
+      <text id="15:6427" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6428" name="C05 · C06" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6429" name="SY04" x="41" y="271" width="1360" height="44">
+      <text id="15:6430" name="SY04" x="0" y="12" width="68" height="20" />
+      <text id="15:6431" name="Giải quyết xung đột" x="88" y="12" width="650" height="20" />
+      <text id="15:6432" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6433" name="C06" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6434" name="SY05" x="41" y="331" width="1360" height="44">
+      <text id="15:6435" name="SY05" x="0" y="12" width="68" height="20" />
+      <text id="15:6436" name="Sự kiện lấy bù" x="88" y="12" width="650" height="20" />
+      <text id="15:6437" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6438" name="C07 · X06" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6439" name="SY06" x="41" y="391" width="1360" height="44">
+      <text id="15:6440" name="SY06" x="0" y="12" width="68" height="20" />
+      <text id="15:6441" name="Chống nhân đôi" x="88" y="12" width="650" height="20" />
+      <text id="15:6442" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6443" name="C05 · C07" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6444" name="SY07" x="41" y="451" width="1360" height="44">
+      <text id="15:6445" name="SY07" x="0" y="12" width="68" height="20" />
+      <text id="15:6446" name="Xóa và sửa đồng thời" x="88" y="12" width="650" height="20" />
+      <text id="15:6447" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6448" name="C06 · X07 · M04" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6449" name="SY08" x="41" y="511" width="1360" height="44">
+      <text id="15:6450" name="SY08" x="0" y="12" width="68" height="20" />
+      <text id="15:6451" name="Lịch sử phiên bản" x="88" y="12" width="650" height="20" />
+      <text id="15:6452" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6453" name="C10 · C11" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6454" name="SY09" x="41" y="571" width="1360" height="44">
+      <text id="15:6455" name="SY09" x="0" y="12" width="68" height="20" />
+      <text id="15:6456" name="Thu hồi quyền khi offline" x="88" y="12" width="650" height="20" />
+      <text id="15:6457" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6458" name="C09" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6459" name="SY10" x="41" y="631" width="1360" height="64">
+      <text id="15:6460" name="SY10" x="0" y="22" width="68" height="20" />
+      <text id="15:6461" name="Nhánh và review" x="88" y="22" width="650" height="20" />
+      <text id="15:6462" name="Stage B" x="758" y="24" width="80" height="16" />
+      <text id="15:6463" name="C12 · C13 · I04" x="858" y="12" width="480" height="40" />
+    </frame>
+  </frame>
+  <frame id="15:6464" name="Coverage / IM" x="0" y="3306" width="1440" height="716">
+    <text id="15:6465" name="IM / REQUIREMENT COVERAGE" x="41" y="41" width="360" height="34" />
+    <frame id="15:6466" name="IM01" x="41" y="91" width="1360" height="44">
+      <text id="15:6467" name="IM01" x="0" y="12" width="68" height="20" />
+      <text id="15:6468" name="Định dạng project mở" x="88" y="12" width="650" height="20" />
+      <text id="15:6469" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6470" name="I01 · I03" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6471" name="IM02" x="41" y="151" width="1360" height="44">
+      <text id="15:6472" name="IM02" x="0" y="12" width="68" height="20" />
+      <text id="15:6473" name="Postman Collection" x="88" y="12" width="650" height="20" />
+      <text id="15:6474" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6475" name="I01 · I02" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6476" name="IM03" x="41" y="211" width="1360" height="44">
+      <text id="15:6477" name="IM03" x="0" y="12" width="68" height="20" />
+      <text id="15:6478" name="Postman Environment" x="88" y="12" width="650" height="20" />
+      <text id="15:6479" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6480" name="I01" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6481" name="IM04" x="41" y="271" width="1360" height="44">
+      <text id="15:6482" name="IM04" x="0" y="12" width="68" height="20" />
+      <text id="15:6483" name="OpenAPI import export" x="88" y="12" width="650" height="20" />
+      <text id="15:6484" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6485" name="D11 · I01" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6486" name="IM05" x="41" y="331" width="1360" height="44">
+      <text id="15:6487" name="IM05" x="0" y="12" width="68" height="20" />
+      <text id="15:6488" name="cURL hai chiều" x="88" y="12" width="650" height="20" />
+      <text id="15:6489" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6490" name="I01" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6491" name="IM06" x="41" y="391" width="1360" height="44">
+      <text id="15:6492" name="IM06" x="0" y="12" width="68" height="20" />
+      <text id="15:6493" name="Xem trước import" x="88" y="12" width="650" height="20" />
+      <text id="15:6494" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6495" name="I02" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6496" name="IM07" x="41" y="451" width="1360" height="44">
+      <text id="15:6497" name="IM07" x="0" y="12" width="68" height="20" />
+      <text id="15:6498" name="File đính kèm" x="88" y="12" width="650" height="20" />
+      <text id="15:6499" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6500" name="I03" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6501" name="IM08" x="41" y="511" width="1360" height="44">
+      <text id="15:6502" name="IM08" x="0" y="12" width="68" height="20" />
+      <text id="15:6503" name="Xuất dữ liệu đã làm sạch" x="88" y="12" width="650" height="20" />
+      <text id="15:6504" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6505" name="I03 · M05" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6506" name="IM09" x="41" y="571" width="1360" height="44">
+      <text id="15:6507" name="IM09" x="0" y="12" width="68" height="20" />
+      <text id="15:6508" name="Tích hợp Git" x="88" y="12" width="650" height="20" />
+      <text id="15:6509" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6510" name="I04" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6511" name="IM10" x="41" y="631" width="1360" height="44">
+      <text id="15:6512" name="IM10" x="0" y="12" width="68" height="20" />
+      <text id="15:6513" name="Định dạng bổ sung" x="88" y="12" width="650" height="20" />
+      <text id="15:6514" name="Stage C" x="758" y="14" width="80" height="16" />
+      <text id="15:6515" name="I01" x="858" y="12" width="480" height="20" />
+    </frame>
+  </frame>
+  <frame id="15:6516" name="Coverage / TS" x="1520" y="3306" width="1440" height="716">
+    <text id="15:6517" name="TS / REQUIREMENT COVERAGE" x="41" y="41" width="360" height="34" />
+    <frame id="15:6518" name="TS01" x="41" y="91" width="1360" height="44">
+      <text id="15:6519" name="TS01" x="0" y="12" width="68" height="20" />
+      <text id="15:6520" name="Assertion cơ bản" x="88" y="12" width="650" height="20" />
+      <text id="15:6521" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6522" name="T01" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6523" name="TS02" x="41" y="151" width="1360" height="44">
+      <text id="15:6524" name="TS02" x="0" y="12" width="68" height="20" />
+      <text id="15:6525" name="Collection runner" x="88" y="12" width="650" height="20" />
+      <text id="15:6526" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6527" name="T02" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6528" name="TS03" x="41" y="211" width="1360" height="44">
+      <text id="15:6529" name="TS03" x="0" y="12" width="68" height="20" />
+      <text id="15:6530" name="Chuỗi phụ thuộc" x="88" y="12" width="650" height="20" />
+      <text id="15:6531" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6532" name="T02" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6533" name="TS04" x="41" y="271" width="1360" height="44">
+      <text id="15:6534" name="TS04" x="0" y="12" width="68" height="20" />
+      <text id="15:6535" name="Chạy theo dữ liệu" x="88" y="12" width="650" height="20" />
+      <text id="15:6536" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6537" name="T03" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6538" name="TS05" x="41" y="331" width="1360" height="44">
+      <text id="15:6539" name="TS05" x="0" y="12" width="68" height="20" />
+      <text id="15:6540" name="Báo cáo kết quả" x="88" y="12" width="650" height="20" />
+      <text id="15:6541" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6542" name="T04" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6543" name="TS06" x="41" y="391" width="1360" height="44">
+      <text id="15:6544" name="TS06" x="0" y="12" width="68" height="20" />
+      <text id="15:6545" name="Kiểm thử hợp đồng" x="88" y="12" width="650" height="20" />
+      <text id="15:6546" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6547" name="T05" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6548" name="TS07" x="41" y="451" width="1360" height="44">
+      <text id="15:6549" name="TS07" x="0" y="12" width="68" height="20" />
+      <text id="15:6550" name="Pre request và test script" x="88" y="12" width="650" height="20" />
+      <text id="15:6551" name="Stage C" x="758" y="14" width="80" height="16" />
+      <text id="15:6552" name="T06" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6553" name="TS08" x="41" y="511" width="1360" height="44">
+      <text id="15:6554" name="TS08" x="0" y="12" width="68" height="20" />
+      <text id="15:6555" name="Tương thích script Postman" x="88" y="12" width="650" height="20" />
+      <text id="15:6556" name="Stage C" x="758" y="14" width="80" height="16" />
+      <text id="15:6557" name="T06 · I02" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6558" name="TS09" x="41" y="571" width="1360" height="44">
+      <text id="15:6559" name="TS09" x="0" y="12" width="68" height="20" />
+      <text id="15:6560" name="Chạy song song có giới hạn" x="88" y="12" width="650" height="20" />
+      <text id="15:6561" name="Stage C" x="758" y="14" width="80" height="16" />
+      <text id="15:6562" name="T02" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6563" name="TS10" x="41" y="631" width="1360" height="44">
+      <text id="15:6564" name="TS10" x="0" y="12" width="68" height="20" />
+      <text id="15:6565" name="Kết quả tái hiện" x="88" y="12" width="650" height="20" />
+      <text id="15:6566" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6567" name="T04" x="858" y="12" width="480" height="20" />
+    </frame>
+  </frame>
+  <frame id="15:6568" name="Coverage / MK" x="3040" y="3306" width="1440" height="716">
+    <text id="15:6569" name="MK / REQUIREMENT COVERAGE" x="41" y="41" width="360" height="34" />
+    <frame id="15:6570" name="MK01" x="41" y="91" width="1360" height="44">
+      <text id="15:6571" name="MK01" x="0" y="12" width="68" height="20" />
+      <text id="15:6572" name="Mock từ example" x="88" y="12" width="650" height="20" />
+      <text id="15:6573" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6574" name="T07 · T08" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6575" name="MK02" x="41" y="151" width="1360" height="44">
+      <text id="15:6576" name="MK02" x="0" y="12" width="68" height="20" />
+      <text id="15:6577" name="Mock từ schema" x="88" y="12" width="650" height="20" />
+      <text id="15:6578" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6579" name="T07 · T08" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6580" name="MK03" x="41" y="211" width="1360" height="44">
+      <text id="15:6581" name="MK03" x="0" y="12" width="68" height="20" />
+      <text id="15:6582" name="Kịch bản mock" x="88" y="12" width="650" height="20" />
+      <text id="15:6583" name="Stage C" x="758" y="14" width="80" height="16" />
+      <text id="15:6584" name="T08 · T09" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6585" name="MK04" x="41" y="271" width="1360" height="44">
+      <text id="15:6586" name="MK04" x="0" y="12" width="68" height="20" />
+      <text id="15:6587" name="Mock dùng chung" x="88" y="12" width="650" height="20" />
+      <text id="15:6588" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6589" name="T07 · T08" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6590" name="MK05" x="41" y="331" width="1360" height="44">
+      <text id="15:6591" name="MK05" x="0" y="12" width="68" height="20" />
+      <text id="15:6592" name="CLI Rust" x="88" y="12" width="650" height="20" />
+      <text id="15:6593" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6594" name="T10" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6595" name="MK06" x="41" y="391" width="1360" height="44">
+      <text id="15:6596" name="MK06" x="0" y="12" width="68" height="20" />
+      <text id="15:6597" name="Kết quả cho CI" x="88" y="12" width="650" height="20" />
+      <text id="15:6598" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6599" name="T04 · T10" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6600" name="MK07" x="41" y="451" width="1360" height="44">
+      <text id="15:6601" name="MK07" x="0" y="12" width="68" height="20" />
+      <text id="15:6602" name="Runner tự host" x="88" y="12" width="650" height="20" />
+      <text id="15:6603" name="Stage C" x="758" y="14" width="80" height="16" />
+      <text id="15:6604" name="T11" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6605" name="MK08" x="41" y="511" width="1360" height="44">
+      <text id="15:6606" name="MK08" x="0" y="12" width="68" height="20" />
+      <text id="15:6607" name="Lịch chạy kiểm tra" x="88" y="12" width="650" height="20" />
+      <text id="15:6608" name="Stage C" x="758" y="14" width="80" height="16" />
+      <text id="15:6609" name="T12" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6610" name="MK09" x="41" y="571" width="1360" height="44">
+      <text id="15:6611" name="MK09" x="0" y="12" width="68" height="20" />
+      <text id="15:6612" name="Thông báo lỗi chạy" x="88" y="12" width="650" height="20" />
+      <text id="15:6613" name="Stage C" x="758" y="14" width="80" height="16" />
+      <text id="15:6614" name="T12" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6615" name="MK10" x="41" y="631" width="1360" height="44">
+      <text id="15:6616" name="MK10" x="0" y="12" width="68" height="20" />
+      <text id="15:6617" name="Quản lý tài nguyên" x="88" y="12" width="650" height="20" />
+      <text id="15:6618" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6619" name="T11" x="858" y="12" width="480" height="20" />
+    </frame>
+  </frame>
+  <frame id="15:6620" name="Coverage / PR" x="0" y="4118" width="1440" height="716">
+    <text id="15:6621" name="PR / REQUIREMENT COVERAGE" x="41" y="41" width="360" height="34" />
+    <frame id="15:6622" name="PR01" x="41" y="91" width="1360" height="44">
+      <text id="15:6623" name="PR01" x="0" y="12" width="68" height="20" />
+      <text id="15:6624" name="GraphQL cơ bản" x="88" y="12" width="650" height="20" />
+      <text id="15:6625" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6626" name="P01" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6627" name="PR02" x="41" y="151" width="1360" height="44">
+      <text id="15:6628" name="PR02" x="0" y="12" width="68" height="20" />
+      <text id="15:6629" name="GraphQL schema" x="88" y="12" width="650" height="20" />
+      <text id="15:6630" name="Stage C" x="758" y="14" width="80" height="16" />
+      <text id="15:6631" name="P01" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6632" name="PR03" x="41" y="211" width="1360" height="44">
+      <text id="15:6633" name="PR03" x="0" y="12" width="68" height="20" />
+      <text id="15:6634" name="WebSocket" x="88" y="12" width="650" height="20" />
+      <text id="15:6635" name="Stage C" x="758" y="14" width="80" height="16" />
+      <text id="15:6636" name="P02" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6637" name="PR04" x="41" y="271" width="1360" height="44">
+      <text id="15:6638" name="PR04" x="0" y="12" width="68" height="20" />
+      <text id="15:6639" name="Server Sent Events" x="88" y="12" width="650" height="20" />
+      <text id="15:6640" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6641" name="R11" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6642" name="PR05" x="41" y="331" width="1360" height="44">
+      <text id="15:6643" name="PR05" x="0" y="12" width="68" height="20" />
+      <text id="15:6644" name="gRPC" x="88" y="12" width="650" height="20" />
+      <text id="15:6645" name="Stage C" x="758" y="14" width="80" height="16" />
+      <text id="15:6646" name="P03" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6647" name="PR06" x="41" y="391" width="1360" height="44">
+      <text id="15:6648" name="PR06" x="0" y="12" width="68" height="20" />
+      <text id="15:6649" name="HTTP nâng cao" x="88" y="12" width="650" height="20" />
+      <text id="15:6650" name="Stage C" x="758" y="14" width="80" height="16" />
+      <text id="15:6651" name="R13" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6652" name="PR07" x="41" y="451" width="1360" height="44">
+      <text id="15:6653" name="PR07" x="0" y="12" width="68" height="20" />
+      <text id="15:6654" name="Sinh code gọi API" x="88" y="12" width="650" height="20" />
+      <text id="15:6655" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6656" name="R18" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6657" name="PR08" x="41" y="511" width="1360" height="44">
+      <text id="15:6658" name="PR08" x="0" y="12" width="68" height="20" />
+      <text id="15:6659" name="Sinh SDK và stub" x="88" y="12" width="650" height="20" />
+      <text id="15:6660" name="Stage C" x="758" y="14" width="80" height="16" />
+      <text id="15:6661" name="P04" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6662" name="PR09" x="41" y="571" width="1360" height="44">
+      <text id="15:6663" name="PR09" x="0" y="12" width="68" height="20" />
+      <text id="15:6664" name="Giải mã và chuyển đổi" x="88" y="12" width="650" height="20" />
+      <text id="15:6665" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6666" name="P04" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6667" name="PR10" x="41" y="631" width="1360" height="44">
+      <text id="15:6668" name="PR10" x="0" y="12" width="68" height="20" />
+      <text id="15:6669" name="Extension có quyền" x="88" y="12" width="650" height="20" />
+      <text id="15:6670" name="Stage C" x="758" y="14" width="80" height="16" />
+      <text id="15:6671" name="S11" x="858" y="12" width="480" height="20" />
+    </frame>
+  </frame>
+  <frame id="15:6672" name="Coverage / UX" x="1520" y="4118" width="1440" height="716">
+    <text id="15:6673" name="UX / REQUIREMENT COVERAGE" x="41" y="41" width="360" height="34" />
+    <frame id="15:6674" name="UX01" x="41" y="91" width="1360" height="44">
+      <text id="15:6675" name="UX01" x="0" y="12" width="68" height="20" />
+      <text id="15:6676" name="Bố cục làm việc" x="88" y="12" width="650" height="20" />
+      <text id="15:6677" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6678" name="R01 · A11" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6679" name="UX02" x="41" y="151" width="1360" height="44">
+      <text id="15:6680" name="UX02" x="0" y="12" width="68" height="20" />
+      <text id="15:6681" name="Tab và khôi phục" x="88" y="12" width="650" height="20" />
+      <text id="15:6682" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6683" name="X01 · X04" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6684" name="UX03" x="41" y="211" width="1360" height="44">
+      <text id="15:6685" name="UX03" x="0" y="12" width="68" height="20" />
+      <text id="15:6686" name="Phím tắt" x="88" y="12" width="650" height="20" />
+      <text id="15:6687" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6688" name="S04 · M03" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6689" name="UX04" x="41" y="271" width="1360" height="44">
+      <text id="15:6690" name="UX04" x="0" y="12" width="68" height="20" />
+      <text id="15:6691" name="Command palette" x="88" y="12" width="650" height="20" />
+      <text id="15:6692" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6693" name="A13 · S04 · M03" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6694" name="UX05" x="41" y="331" width="1360" height="44">
+      <text id="15:6695" name="UX05" x="0" y="12" width="68" height="20" />
+      <text id="15:6696" name="Hiển thị Windows" x="88" y="12" width="650" height="20" />
+      <text id="15:6697" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6698" name="S03" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6699" name="UX06" x="41" y="391" width="1360" height="44">
+      <text id="15:6700" name="UX06" x="0" y="12" width="68" height="20" />
+      <text id="15:6701" name="Theme và ngôn ngữ" x="88" y="12" width="650" height="20" />
+      <text id="15:6702" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6703" name="S03" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6704" name="UX07" x="41" y="451" width="1360" height="44">
+      <text id="15:6705" name="UX07" x="0" y="12" width="68" height="20" />
+      <text id="15:6706" name="Khả năng truy cập" x="88" y="12" width="650" height="20" />
+      <text id="15:6707" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6708" name="S03" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6709" name="UX08" x="41" y="511" width="1360" height="44">
+      <text id="15:6710" name="UX08" x="0" y="12" width="68" height="20" />
+      <text id="15:6711" name="Mở file và liên kết" x="88" y="12" width="650" height="20" />
+      <text id="15:6712" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6713" name="I01 · C04" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6714" name="UX09" x="41" y="571" width="1360" height="44">
+      <text id="15:6715" name="UX09" x="0" y="12" width="68" height="20" />
+      <text id="15:6716" name="Trạng thái kết nối" x="88" y="12" width="650" height="20" />
+      <text id="15:6717" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6718" name="A06 · C08" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6719" name="UX10" x="41" y="631" width="1360" height="44">
+      <text id="15:6720" name="UX10" x="0" y="12" width="68" height="20" />
+      <text id="15:6721" name="Quản lý dữ liệu máy" x="88" y="12" width="650" height="20" />
+      <text id="15:6722" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6723" name="S05 · X05" x="858" y="12" width="480" height="20" />
+    </frame>
+  </frame>
+  <frame id="15:6724" name="Coverage / SC" x="3040" y="4118" width="1440" height="716">
+    <text id="15:6725" name="SC / REQUIREMENT COVERAGE" x="41" y="41" width="360" height="34" />
+    <frame id="15:6726" name="SC01" x="41" y="91" width="1360" height="44">
+      <text id="15:6727" name="SC01" x="0" y="12" width="68" height="20" />
+      <text id="15:6728" name="Kho bảo mật Windows" x="88" y="12" width="650" height="20" />
+      <text id="15:6729" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6730" name="E03 · S12" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6731" name="SC02" x="41" y="151" width="1360" height="44">
+      <text id="15:6732" name="SC02" x="0" y="12" width="68" height="20" />
+      <text id="15:6733" name="Làm sạch dữ liệu" x="88" y="12" width="650" height="20" />
+      <text id="15:6734" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6735" name="S06 · M05" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6736" name="SC03" x="41" y="211" width="1360" height="44">
+      <text id="15:6737" name="SC03" x="0" y="12" width="68" height="20" />
+      <text id="15:6738" name="Đăng nhập máy chủ" x="88" y="12" width="650" height="20" />
+      <text id="15:6739" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6740" name="A01 · A02 · A03 · A04 · S02 · M06" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6741" name="SC04" x="41" y="271" width="1360" height="44">
+      <text id="15:6742" name="SC04" x="0" y="12" width="68" height="20" />
+      <text id="15:6743" name="Cách ly workspace" x="88" y="12" width="650" height="20" />
+      <text id="15:6744" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6745" name="C01 · C09 · S07 · X03" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6746" name="SC05" x="41" y="331" width="1360" height="44">
+      <text id="15:6747" name="SC05" x="0" y="12" width="68" height="20" />
+      <text id="15:6748" name="Nội dung không tin cậy" x="88" y="12" width="650" height="20" />
+      <text id="15:6749" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6750" name="S06" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6751" name="SC06" x="41" y="391" width="1360" height="44">
+      <text id="15:6752" name="SC06" x="0" y="12" width="68" height="20" />
+      <text id="15:6753" name="Quyền ứng dụng desktop" x="88" y="12" width="650" height="20" />
+      <text id="15:6754" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6755" name="S06 · S11 · S13" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6756" name="SC07" x="41" y="451" width="1360" height="44">
+      <text id="15:6757" name="SC07" x="0" y="12" width="68" height="20" />
+      <text id="15:6758" name="Không tự gửi telemetry" x="88" y="12" width="650" height="20" />
+      <text id="15:6759" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6760" name="S06" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6761" name="SC08" x="41" y="511" width="1360" height="44">
+      <text id="15:6762" name="SC08" x="0" y="12" width="68" height="20" />
+      <text id="15:6763" name="Chặn SSRF trên server" x="88" y="12" width="650" height="20" />
+      <text id="15:6764" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6765" name="S13" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6766" name="SC09" x="41" y="571" width="1360" height="44">
+      <text id="15:6767" name="SC09" x="0" y="12" width="68" height="20" />
+      <text id="15:6768" name="Phục hồi tài khoản và MFA" x="88" y="12" width="650" height="20" />
+      <text id="15:6769" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6770" name="S02" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6771" name="SC10" x="41" y="631" width="1360" height="44">
+      <text id="15:6772" name="SC10" x="0" y="12" width="68" height="20" />
+      <text id="15:6773" name="Audit và giới hạn lưu" x="88" y="12" width="650" height="20" />
+      <text id="15:6774" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6775" name="S07" x="858" y="12" width="480" height="20" />
+    </frame>
+  </frame>
+  <frame id="15:6776" name="Coverage / OP" x="0" y="4930" width="1440" height="716">
+    <text id="15:6777" name="OP / REQUIREMENT COVERAGE" x="41" y="41" width="360" height="34" />
+    <frame id="15:6778" name="OP01" x="41" y="91" width="1360" height="44">
+      <text id="15:6779" name="OP01" x="0" y="12" width="68" height="20" />
+      <text id="15:6780" name="Bộ cài Windows" x="88" y="12" width="650" height="20" />
+      <text id="15:6781" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6782" name="S10" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6783" name="OP02" x="41" y="151" width="1360" height="44">
+      <text id="15:6784" name="OP02" x="0" y="12" width="68" height="20" />
+      <text id="15:6785" name="Chế độ không có cloud" x="88" y="12" width="650" height="20" />
+      <text id="15:6786" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6787" name="A08 · C08" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6788" name="OP03" x="41" y="211" width="1360" height="44">
+      <text id="15:6789" name="OP03" x="0" y="12" width="68" height="20" />
+      <text id="15:6790" name="Khởi tạo trên Coolify" x="88" y="12" width="650" height="20" />
+      <text id="15:6791" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6792" name="A05 · S08" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6793" name="OP04" x="41" y="271" width="1360" height="44">
+      <text id="15:6794" name="OP04" x="0" y="12" width="68" height="20" />
+      <text id="15:6795" name="Cấu hình VPS Coolify" x="88" y="12" width="650" height="20" />
+      <text id="15:6796" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6797" name="A05 · S08" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6798" name="OP05" x="41" y="331" width="1360" height="44">
+      <text id="15:6799" name="OP05" x="0" y="12" width="68" height="20" />
+      <text id="15:6800" name="Sao lưu MongoDB và file" x="88" y="12" width="650" height="20" />
+      <text id="15:6801" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6802" name="S09" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6803" name="OP06" x="41" y="391" width="1360" height="44">
+      <text id="15:6804" name="OP06" x="0" y="12" width="68" height="20" />
+      <text id="15:6805" name="Khôi phục dữ liệu" x="88" y="12" width="650" height="20" />
+      <text id="15:6806" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6807" name="S09" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6808" name="OP07" x="41" y="451" width="1360" height="44">
+      <text id="15:6809" name="OP07" x="0" y="12" width="68" height="20" />
+      <text id="15:6810" name="Nâng cấp và migration" x="88" y="12" width="650" height="20" />
+      <text id="15:6811" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6812" name="S10 · X06" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6813" name="OP08" x="41" y="511" width="1360" height="44">
+      <text id="15:6814" name="OP08" x="0" y="12" width="68" height="20" />
+      <text id="15:6815" name="Phân phối cập nhật" x="88" y="12" width="650" height="20" />
+      <text id="15:6816" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6817" name="S10" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6818" name="OP09" x="41" y="571" width="1360" height="44">
+      <text id="15:6819" name="OP09" x="0" y="12" width="68" height="20" />
+      <text id="15:6820" name="Theo dõi sức khỏe" x="88" y="12" width="650" height="20" />
+      <text id="15:6821" name="Stage A" x="758" y="14" width="80" height="16" />
+      <text id="15:6822" name="S08" x="858" y="12" width="480" height="20" />
+    </frame>
+    <frame id="15:6823" name="OP10" x="41" y="631" width="1360" height="44">
+      <text id="15:6824" name="OP10" x="0" y="12" width="68" height="20" />
+      <text id="15:6825" name="Quota vận hành" x="88" y="12" width="650" height="20" />
+      <text id="15:6826" name="Stage B" x="758" y="14" width="80" height="16" />
+      <text id="15:6827" name="S08" x="858" y="12" width="480" height="20" />
+    </frame>
+  </frame>
+  <frame id="33:34" name="Completion review / Flow directory" x="4600" y="0" width="1440" height="1406">
+    <text id="33:35" name="SWAGGEN / COMPLETE DESKTOP DESIGN" x="49" y="49" width="1300" height="44" />
+    <text id="33:36" name="316 screens and UI states · 160 mapped requirements · Windows desktop" x="49" y="117" width="1300" height="28" />
+    <text id="33:37" name="208 detailed screens supplement the 108 core screens. Reusable controls remain in the component library. Application sign-in uses Google only; API credentials are configured separately." x="49" y="169" width="1300" height="40" />
+    <frame id="33:38" name="08 • Workspace &amp; collection details" x="49" y="233" width="1344" height="80">
+      <text id="33:39" name="08 • Workspace &amp; collection details / 22 screens" x="0" y="12" width="1300" height="28" />
+      <text id="33:40" name="Collections, folders and team administration" x="0" y="48" width="1300" height="20" />
+    </frame>
+    <frame id="33:41" name="09 • Request &amp; response states" x="49" y="337" width="1344" height="80">
+      <text id="33:42" name="09 • Request &amp; response states / 35 screens" x="0" y="12" width="1300" height="28" />
+      <text id="33:43" name="Request bodies, response formats and errors" x="0" y="48" width="1300" height="20" />
+    </frame>
+    <frame id="33:44" name="10 • Authentication &amp; secrets" x="49" y="441" width="1344" height="80">
+      <text id="33:45" name="10 • Authentication &amp; secrets / 35 screens" x="0" y="12" width="1300" height="28" />
+      <text id="33:46" name="API authorization, TLS, token lifecycle and variables" x="0" y="48" width="1300" height="20" />
+    </frame>
+    <frame id="33:47" name="11 • OpenAPI &amp; contract details" x="49" y="545" width="1344" height="80">
+      <text id="33:48" name="11 • OpenAPI &amp; contract details / 25 screens" x="0" y="12" width="1300" height="28" />
+      <text id="33:49" name="Schema composition, references and contract changes" x="0" y="48" width="1300" height="20" />
+    </frame>
+    <frame id="33:50" name="12 • Collaboration &amp; sync details" x="49" y="649" width="1344" height="80">
+      <text id="33:51" name="12 • Collaboration &amp; sync details / 25 screens" x="0" y="12" width="1300" height="28" />
+      <text id="33:52" name="Branch review, merge conflicts and offline recovery" x="0" y="48" width="1300" height="20" />
+    </frame>
+    <frame id="33:53" name="13 • Import, testing &amp; mock details" x="49" y="753" width="1344" height="80">
+      <text id="33:54" name="13 • Import, testing &amp; mock details / 34 screens" x="0" y="12" width="1300" height="28" />
+      <text id="33:55" name="Import compatibility, testing, mock and scheduled jobs" x="0" y="48" width="1300" height="20" />
+    </frame>
+    <frame id="33:56" name="14 • Protocols &amp; system details" x="49" y="857" width="1344" height="80">
+      <text id="33:57" name="14 • Protocols &amp; system details / 32 screens" x="0" y="12" width="1300" height="28" />
+      <text id="33:58" name="Protocols, Windows, MongoDB/Coolify and operations" x="0" y="48" width="1300" height="20" />
+    </frame>
+    <text id="33:59" name="Scope overrides" x="49" y="961" width="1300" height="28" />
+    <text id="33:60" name="WS03 / Google-only application sign-in (supersedes internal passwords)" x="49" y="1013" width="1300" height="20" />
+    <text id="33:61" name="SC03 / Google OAuth sign-in and revocable sessions" x="49" y="1057" width="1300" height="20" />
+    <text id="33:62" name="SC09 / Account recovery and MFA managed by Google" x="49" y="1101" width="1300" height="20" />
+    <text id="33:63" name="UX06 / White interface and language preference (supersedes dark mode)" x="49" y="1145" width="1300" height="20" />
+    <text id="33:64" name="Performance acceptance" x="49" y="1189" width="1300" height="28" />
+    <text id="33:65" name="Z16 records benchmark gates, not measured results. Validate cold/warm startup, memory, UI latency, streaming, sync and soak behavior on a defined Windows machine before release." x="49" y="1241" width="1300" height="20" />
+    <text id="33:66" name="Prototype scope" x="49" y="1285" width="1300" height="28" />
+    <text id="33:67" name="Each detail page has an entry point. Primary buttons connect representative state transitions; Back returns to the previous frame. This design is not an executable application." x="49" y="1337" width="1300" height="20" />
+  </frame>
+</canvas>

@@ -1,0 +1,15 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:83",
+    "name": "Icon/shield-check",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-shield-check__5-83",
+    "requirements": []
+  },
+  "direct_children": [],
+  "text_layer_names": []
+}

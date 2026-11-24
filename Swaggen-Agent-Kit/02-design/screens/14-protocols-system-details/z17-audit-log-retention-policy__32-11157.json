@@ -1,0 +1,56 @@
+{
+  "node": {
+    "page": "14-protocols-system-details",
+    "page_id": "27:325",
+    "id": "32:11157",
+    "name": "Z17 / Audit log retention policy",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/14-protocols-system-details/z17-audit-log-retention-policy__32-11157",
+    "requirements": [
+      "SC10"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "32:11158",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "32:11161",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "32:11317",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Audit log retention policy",
+    "DisNote API / system / Z17",
+    "Workspace",
+    "DisNote API",
+    "Audit retention",
+    "Eligible events",
+    "Member changes, publishing, secrets access",
+    "Export format",
+    "Expired log deletion",
+    "Daily at 02:00 Asia/Ho_Chi_Minh"
+  ]
+}

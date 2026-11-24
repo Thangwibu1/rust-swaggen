@@ -1,0 +1,34 @@
+﻿[
+    {
+        "name":  "windows-target",
+        "command":  "rustup target list --installed --toolchain stable",
+        "exit_code":  0,
+        "status":  "PASS",
+        "timestamp":  "2026-11-24T05:27:23.8106142Z",
+        "artifact_path":  "reports/raw/install-windows-target.txt"
+    },
+    {
+        "name":  "rustfmt",
+        "command":  "rustup component add rustfmt --toolchain stable",
+        "exit_code":  0,
+        "status":  "PASS",
+        "timestamp":  "2026-11-24T05:27:23.8991336Z",
+        "artifact_path":  "reports/raw/install-rustfmt.txt"
+    },
+    {
+        "name":  "clippy",
+        "command":  "rustup component add clippy --toolchain stable",
+        "exit_code":  0,
+        "status":  "PASS",
+        "timestamp":  "2026-11-24T05:27:24.0889327Z",
+        "artifact_path":  "reports/raw/install-clippy.txt"
+    },
+    {
+        "name":  "candidate-crates",
+        "command":  "cargo +stable fetch --manifest-path .local/p00-dependencies/Cargo.toml --target x86_64-pc-windows-msvc",
+        "exit_code":  0,
+        "status":  "PASS",
+        "timestamp":  "2026-11-24T05:27:24.1912563Z",
+        "artifact_path":  "reports/raw/install-candidate-crates.txt"
+    }
+]

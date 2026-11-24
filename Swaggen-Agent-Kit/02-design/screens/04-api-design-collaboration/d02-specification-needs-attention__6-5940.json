@@ -1,0 +1,59 @@
+{
+  "node": {
+    "page": "04-api-design-collaboration",
+    "page_id": "4:92",
+    "id": "6:5940",
+    "name": "D02 / Specification needs attention",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/04-api-design-collaboration/d02-specification-needs-attention__6-5940",
+    "requirements": [
+      "OA03",
+      "OA07",
+      "OA08",
+      "OA09"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "6:5941",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "6:5944",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "6:6142",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Specification needs attention",
+    "DisNote API / Team workspace",
+    "openapi.yaml",
+    "Live documentation",
+    "DisNote API",
+    "Everything your team needs to build with confidence.",
+    "/v1/tasks",
+    "List workspace tasks",
+    "Parameters",
+    "page   integer   optional limit  integer   optional"
+  ]
+}

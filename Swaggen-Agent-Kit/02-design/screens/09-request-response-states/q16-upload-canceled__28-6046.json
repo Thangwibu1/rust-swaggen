@@ -1,0 +1,56 @@
+{
+  "node": {
+    "page": "09-request-response-states",
+    "page_id": "27:320",
+    "id": "28:6046",
+    "name": "Q16 / Upload canceled",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/09-request-response-states/q16-upload-canceled__28-6046",
+    "requirements": [
+      "RQ06",
+      "RQ10"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "28:6047",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "28:6050",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "28:6199",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Upload canceled",
+    "DisNote API / request / Q16",
+    "Review details",
+    "Upload",
+    "Stopped at 68%",
+    "Temporary data",
+    "Cleaned up",
+    "Server effects",
+    "Check API behavior before retrying non-idempotent requests"
+  ]
+}

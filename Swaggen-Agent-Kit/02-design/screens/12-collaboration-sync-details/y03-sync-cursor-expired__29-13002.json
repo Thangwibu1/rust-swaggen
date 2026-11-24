@@ -1,0 +1,55 @@
+{
+  "node": {
+    "page": "12-collaboration-sync-details",
+    "page_id": "27:323",
+    "id": "29:13002",
+    "name": "Y03 / Sync cursor expired",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/12-collaboration-sync-details/y03-sync-cursor-expired__29-13002",
+    "requirements": [
+      "SY05"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:13003",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:13006",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:13155",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Sync cursor expired",
+    "DisNote API / collab / Y03",
+    "Review details",
+    "Your drafts",
+    "3 preserved",
+    "Team data",
+    "Refresh from current snapshot",
+    "Conflicts",
+    "Shown before publishing"
+  ]
+}

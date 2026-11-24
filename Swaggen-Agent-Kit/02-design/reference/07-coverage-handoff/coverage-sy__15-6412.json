@@ -1,0 +1,157 @@
+{
+  "node": {
+    "page": "07-coverage-handoff",
+    "page_id": "4:95",
+    "id": "15:6412",
+    "name": "Coverage / SY",
+    "type": "frame",
+    "width": "1440",
+    "height": "736",
+    "path": "02-design/reference/07-coverage-handoff/coverage-sy__15-6412",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "15:6413",
+      "name": "SY / REQUIREMENT COVERAGE",
+      "type": "text",
+      "x": "41",
+      "y": "41",
+      "width": "360",
+      "height": "34"
+    },
+    {
+      "id": "15:6414",
+      "name": "SY01",
+      "type": "frame",
+      "x": "41",
+      "y": "91",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6419",
+      "name": "SY02",
+      "type": "frame",
+      "x": "41",
+      "y": "151",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6424",
+      "name": "SY03",
+      "type": "frame",
+      "x": "41",
+      "y": "211",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6429",
+      "name": "SY04",
+      "type": "frame",
+      "x": "41",
+      "y": "271",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6434",
+      "name": "SY05",
+      "type": "frame",
+      "x": "41",
+      "y": "331",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6439",
+      "name": "SY06",
+      "type": "frame",
+      "x": "41",
+      "y": "391",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6444",
+      "name": "SY07",
+      "type": "frame",
+      "x": "41",
+      "y": "451",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6449",
+      "name": "SY08",
+      "type": "frame",
+      "x": "41",
+      "y": "511",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6454",
+      "name": "SY09",
+      "type": "frame",
+      "x": "41",
+      "y": "571",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6459",
+      "name": "SY10",
+      "type": "frame",
+      "x": "41",
+      "y": "631",
+      "width": "1360",
+      "height": "64"
+    }
+  ],
+  "text_layer_names": [
+    "SY / REQUIREMENT COVERAGE",
+    "SY01",
+    "Lưu cục bộ trước",
+    "Stage A",
+    "C07 · C08 · X04",
+    "SY02",
+    "Hàng đợi đồng bộ",
+    "Stage A",
+    "C07 · C08",
+    "SY03",
+    "Phiên bản đối tượng",
+    "Stage A",
+    "C05 · C06",
+    "SY04",
+    "Giải quyết xung đột",
+    "Stage A",
+    "C06",
+    "SY05",
+    "Sự kiện lấy bù",
+    "Stage A",
+    "C07 · X06",
+    "SY06",
+    "Chống nhân đôi",
+    "Stage A",
+    "C05 · C07",
+    "SY07",
+    "Xóa và sửa đồng thời",
+    "Stage A",
+    "C06 · X07 · M04",
+    "SY08",
+    "Lịch sử phiên bản",
+    "Stage A",
+    "C10 · C11",
+    "SY09",
+    "Thu hồi quyền khi offline",
+    "Stage A",
+    "C09",
+    "SY10",
+    "Nhánh và review",
+    "Stage B",
+    "C12 · C13 · I04"
+  ]
+}

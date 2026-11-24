@@ -1,0 +1,56 @@
+{
+  "node": {
+    "page": "13-import-testing-mock-details",
+    "page_id": "27:324",
+    "id": "29:15434",
+    "name": "I15 / Drop a file from Windows Explorer",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/13-import-testing-mock-details/i15-drop-a-file-from-windows-explorer__29-15434",
+    "requirements": [
+      "IM01",
+      "UX08"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:15435",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:15438",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:15587",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Drop a file from Windows Explorer",
+    "DisNote API / tools / I15",
+    "Review details",
+    "File type",
+    "Swaggen project",
+    "Destination",
+    "Choose workspace after preview",
+    "Attached secrets",
+    "Review before import"
+  ]
+}

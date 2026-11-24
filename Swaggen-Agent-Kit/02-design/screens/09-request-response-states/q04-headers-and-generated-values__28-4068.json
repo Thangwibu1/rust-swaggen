@@ -1,0 +1,52 @@
+{
+  "node": {
+    "page": "09-request-response-states",
+    "page_id": "27:320",
+    "id": "28:4068",
+    "name": "Q04 / Headers and generated values",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/09-request-response-states/q04-headers-and-generated-values__28-4068",
+    "requirements": [
+      "AU03",
+      "RQ03"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "28:4069",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "28:4072",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "28:4233",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Headers and generated values",
+    "DisNote API / request / Q04",
+    "HEADER",
+    "VALUE",
+    "SOURCE"
+  ]
+}

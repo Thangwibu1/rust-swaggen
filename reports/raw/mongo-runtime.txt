@@ -1,0 +1,8 @@
+﻿    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.24s
+     Running `spikes\p00\target\debug\mongo-smoke.exe`
+{"check":"topology","status":"PASS","server_version":"7.0.48","fcv":"7.0","replica_set":true,"writable_primary":true}
+{"check":"multi_document_commit_and_invisibility","status":"PASS"}
+{"check":"explicit_multi_document_rollback","status":"PASS"}
+{"check":"duplicate_key_error_rollback","status":"PASS"}
+{"check":"isolated_fixture_cleanup","status":"PASS"}
+

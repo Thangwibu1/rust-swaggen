@@ -1,0 +1,51 @@
+{
+  "node": {
+    "page": "13-import-testing-mock-details",
+    "page_id": "27:324",
+    "id": "29:16851",
+    "name": "T21 / Invalid data row preview",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/13-import-testing-mock-details/t21-invalid-data-row-preview__29-16851",
+    "requirements": [
+      "TS04"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:16852",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:16855",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:17010",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Invalid data row preview",
+    "DisNote API / tools / T21",
+    "ROW",
+    "MAPPED VALUES",
+    "VALIDATION"
+  ]
+}

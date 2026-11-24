@@ -1,0 +1,52 @@
+{
+  "node": {
+    "page": "09-request-response-states",
+    "page_id": "27:320",
+    "id": "28:7632",
+    "name": "Q26 / Response headers and cookies",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/09-request-response-states/q26-response-headers-and-cookies__28-7632",
+    "requirements": [
+      "AU04",
+      "RS03"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "28:7633",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "28:7636",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "28:7791",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Response headers and cookies",
+    "DisNote API / request / Q26",
+    "RESPONSE HEADER",
+    "VALUE",
+    "DETAILS"
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "node": {
+    "page": "10-authentication-secrets",
+    "page_id": "27:321",
+    "id": "29:726",
+    "name": "H05 / API key in the query string",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/10-authentication-secrets/h05-api-key-in-the-query-string__29-726",
+    "requirements": [
+      "AU02",
+      "SC02"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:727",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:730",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:874",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "API key in the query string",
+    "DisNote API / auth / H05",
+    "Key name",
+    "Value",
+    "Add to",
+    "URL preview",
+    "/v1/tasks?api_key=<redacted>"
+  ]
+}

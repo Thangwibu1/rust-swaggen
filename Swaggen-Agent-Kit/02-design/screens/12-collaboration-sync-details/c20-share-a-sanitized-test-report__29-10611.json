@@ -1,0 +1,57 @@
+{
+  "node": {
+    "page": "12-collaboration-sync-details",
+    "page_id": "27:323",
+    "id": "29:10611",
+    "name": "C20 / Share a sanitized test report",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/12-collaboration-sync-details/c20-share-a-sanitized-test-report__29-10611",
+    "requirements": [
+      "CO08",
+      "SC02",
+      "TS10"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:10612",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:10615",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:10759",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Share a sanitized test report",
+    "DisNote API / collab / C20",
+    "Run",
+    "Tasks smoke tests · run_8421",
+    "Revision",
+    "v13 · Rust engine 1.1",
+    "Share with",
+    "Redaction",
+    "Tokens, cookies and email removed"
+  ]
+}

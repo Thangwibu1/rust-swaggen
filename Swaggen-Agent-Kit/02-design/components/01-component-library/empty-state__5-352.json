@@ -1,0 +1,15 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:352",
+    "name": "Empty state",
+    "type": "symbol",
+    "width": "700",
+    "height": "260",
+    "path": "02-design/components/01-component-library/empty-state__5-352",
+    "requirements": []
+  },
+  "direct_children": [],
+  "text_layer_names": []
+}

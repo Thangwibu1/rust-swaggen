@@ -1,0 +1,157 @@
+{
+  "node": {
+    "page": "07-coverage-handoff",
+    "page_id": "4:95",
+    "id": "15:6360",
+    "name": "Coverage / CO",
+    "type": "frame",
+    "width": "1440",
+    "height": "716",
+    "path": "02-design/reference/07-coverage-handoff/coverage-co__15-6360",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "15:6361",
+      "name": "CO / REQUIREMENT COVERAGE",
+      "type": "text",
+      "x": "41",
+      "y": "41",
+      "width": "360",
+      "height": "34"
+    },
+    {
+      "id": "15:6362",
+      "name": "CO01",
+      "type": "frame",
+      "x": "41",
+      "y": "91",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6367",
+      "name": "CO02",
+      "type": "frame",
+      "x": "41",
+      "y": "151",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6372",
+      "name": "CO03",
+      "type": "frame",
+      "x": "41",
+      "y": "211",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6377",
+      "name": "CO04",
+      "type": "frame",
+      "x": "41",
+      "y": "271",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6382",
+      "name": "CO05",
+      "type": "frame",
+      "x": "41",
+      "y": "331",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6387",
+      "name": "CO06",
+      "type": "frame",
+      "x": "41",
+      "y": "391",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6392",
+      "name": "CO07",
+      "type": "frame",
+      "x": "41",
+      "y": "451",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6397",
+      "name": "CO08",
+      "type": "frame",
+      "x": "41",
+      "y": "511",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6402",
+      "name": "CO09",
+      "type": "frame",
+      "x": "41",
+      "y": "571",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6407",
+      "name": "CO10",
+      "type": "frame",
+      "x": "41",
+      "y": "631",
+      "width": "1360",
+      "height": "44"
+    }
+  ],
+  "text_layer_names": [
+    "CO / REQUIREMENT COVERAGE",
+    "CO01",
+    "Workspace chung",
+    "Stage A",
+    "A11 · C02",
+    "CO02",
+    "Publish thay đổi",
+    "Stage A",
+    "C05",
+    "CO03",
+    "Thông báo thay đổi",
+    "Stage A",
+    "C03",
+    "CO04",
+    "Bình luận theo đối tượng",
+    "Stage A",
+    "C04",
+    "CO05",
+    "Nhắc thành viên",
+    "Stage B",
+    "C03 · C04",
+    "CO06",
+    "Luồng hoạt động",
+    "Stage A",
+    "A11 · C03",
+    "CO07",
+    "Trạng thái chỉnh sửa",
+    "Stage B",
+    "C14",
+    "CO08",
+    "Chia sẻ kết quả chạy",
+    "Stage B",
+    "R17 · T04",
+    "CO09",
+    "Liên kết nội bộ",
+    "Stage B",
+    "C04",
+    "CO10",
+    "Đồng biên tập",
+    "Stage C",
+    "C14"
+  ]
+}

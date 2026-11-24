@@ -1,0 +1,56 @@
+{
+  "node": {
+    "page": "11-openapi-contract-details",
+    "page_id": "27:322",
+    "id": "29:6163",
+    "name": "O04 / Duplicate operation validation",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/11-openapi-contract-details/o04-duplicate-operation-validation__29-6163",
+    "requirements": [
+      "OA03",
+      "OA04"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:6164",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:6167",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:6317",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Duplicate operation validation",
+    "DisNote API / openapi / O04",
+    "Action required",
+    "Duplicate path",
+    "/v1/tasks",
+    "Duplicate method",
+    "GET",
+    "Existing operation",
+    "listTasks"
+  ]
+}

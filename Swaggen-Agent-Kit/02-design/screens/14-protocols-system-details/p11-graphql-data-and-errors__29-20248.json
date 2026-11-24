@@ -1,0 +1,60 @@
+{
+  "node": {
+    "page": "14-protocols-system-details",
+    "page_id": "27:325",
+    "id": "29:20248",
+    "name": "P11 / GraphQL data and errors",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/14-protocols-system-details/p11-graphql-data-and-errors__29-20248",
+    "requirements": [
+      "PR01",
+      "PR02"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:20249",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:20252",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:20419",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "GraphQL data and errors",
+    "DisNote API / system / P11",
+    "Schema definition",
+    "Composition inspector",
+    "data.tasks[0]",
+    "Task object",
+    "Partial data received",
+    "errors[0].path",
+    "tasks[1].title",
+    "Permission denied",
+    "HTTP status",
+    "200",
+    "GraphQL errors are separate"
+  ]
+}

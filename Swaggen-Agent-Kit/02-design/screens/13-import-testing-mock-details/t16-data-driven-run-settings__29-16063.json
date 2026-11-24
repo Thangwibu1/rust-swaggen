@@ -1,0 +1,52 @@
+{
+  "node": {
+    "page": "13-import-testing-mock-details",
+    "page_id": "27:324",
+    "id": "29:16063",
+    "name": "T16 / Data-driven run settings",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/13-import-testing-mock-details/t16-data-driven-run-settings__29-16063",
+    "requirements": [
+      "TS04"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:16064",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:16067",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:16215",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Data-driven run settings",
+    "DisNote API / tools / T16",
+    "Data file",
+    "Row range",
+    "Column mapping",
+    "Invalid rows"
+  ]
+}

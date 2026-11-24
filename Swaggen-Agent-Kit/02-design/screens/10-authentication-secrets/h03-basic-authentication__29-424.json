@@ -1,0 +1,54 @@
+{
+  "node": {
+    "page": "10-authentication-secrets",
+    "page_id": "27:321",
+    "id": "29:424",
+    "name": "H03 / Basic authentication",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/10-authentication-secrets/h03-basic-authentication__29-424",
+    "requirements": [
+      "AU02"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:425",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:428",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:570",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Basic authentication",
+    "DisNote API / auth / H03",
+    "Username",
+    "Password",
+    "Credential storage",
+    "Windows secure storage · personal values",
+    "Header preview",
+    "Authorization: Basic ••••••••"
+  ]
+}

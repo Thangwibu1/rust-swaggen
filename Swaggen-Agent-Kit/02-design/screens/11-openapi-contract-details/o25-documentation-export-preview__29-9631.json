@@ -1,0 +1,60 @@
+{
+  "node": {
+    "page": "11-openapi-contract-details",
+    "page_id": "27:322",
+    "id": "29:9631",
+    "name": "O25 / Documentation export preview",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/11-openapi-contract-details/o25-documentation-export-preview__29-9631",
+    "requirements": [
+      "DC10",
+      "IM08"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:9632",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:9635",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:9796",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Documentation export preview",
+    "DisNote API / openapi / O25",
+    "Schema definition",
+    "Composition inspector",
+    "Format",
+    "Markdown or self-contained HTML",
+    "Choose output",
+    "Revision",
+    "v13",
+    "Pinned snapshot",
+    "Secrets",
+    "Placeholders only",
+    "Sanitized"
+  ]
+}

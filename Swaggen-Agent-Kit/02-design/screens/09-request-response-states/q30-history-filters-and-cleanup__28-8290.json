@@ -1,0 +1,55 @@
+{
+  "node": {
+    "page": "09-request-response-states",
+    "page_id": "27:320",
+    "id": "28:8290",
+    "name": "Q30 / History filters and cleanup",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/09-request-response-states/q30-history-filters-and-cleanup__28-8290",
+    "requirements": [
+      "RS07",
+      "UX10"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "28:8291",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "28:8294",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "28:8448",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "History filters and cleanup",
+    "DisNote API / request / Q30",
+    "Filter by request",
+    "Date range",
+    "Status",
+    "Keep history",
+    "Delete scope",
+    "Matching history only; preserve request templates"
+  ]
+}

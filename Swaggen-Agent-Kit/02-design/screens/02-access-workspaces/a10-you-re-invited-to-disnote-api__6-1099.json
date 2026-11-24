@@ -1,0 +1,57 @@
+{
+  "node": {
+    "page": "02-access-workspaces",
+    "page_id": "4:90",
+    "id": "6:1099",
+    "name": "A10 / You’re invited to DisNote API",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/02-access-workspaces/a10-you-re-invited-to-disnote-api__6-1099",
+    "requirements": [
+      "WS05"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "6:1100",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "6:1103",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "6:1255",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "You’re invited to DisNote API",
+    "DisNote API / Team workspace",
+    "Configuration",
+    "Invited by",
+    "Workspace configuration",
+    "Your role",
+    "Workspace configuration",
+    "Signed in as",
+    "Workspace configuration",
+    "Access & sharing",
+    "Changes are saved locally before they are published to your team."
+  ]
+}

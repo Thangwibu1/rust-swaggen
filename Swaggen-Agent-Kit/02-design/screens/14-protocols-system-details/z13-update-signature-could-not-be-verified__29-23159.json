@@ -1,0 +1,55 @@
+{
+  "node": {
+    "page": "14-protocols-system-details",
+    "page_id": "27:325",
+    "id": "29:23159",
+    "name": "Z13 / Update signature could not be verified",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/14-protocols-system-details/z13-update-signature-could-not-be-verified__29-23159",
+    "requirements": [
+      "OP08"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:23160",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:23163",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:23313",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Update signature could not be verified",
+    "DisNote API / system / Z13",
+    "Action required",
+    "Installed version",
+    "1.1.0 · unchanged",
+    "Package",
+    "1.1.1",
+    "Next step",
+    "Get a trusted package from the team server"
+  ]
+}

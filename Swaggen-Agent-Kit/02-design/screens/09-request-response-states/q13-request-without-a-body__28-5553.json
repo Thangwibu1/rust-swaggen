@@ -1,0 +1,57 @@
+{
+  "node": {
+    "page": "09-request-response-states",
+    "page_id": "27:320",
+    "id": "28:5553",
+    "name": "Q13 / Request without a body",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/09-request-response-states/q13-request-without-a-body__28-5553",
+    "requirements": [
+      "RQ01",
+      "RQ04"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "28:5554",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "28:5557",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "28:5714",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Request without a body",
+    "DisNote API / request / Q13",
+    "{{base_url}}/v1/tasks",
+    "Review details",
+    "Method",
+    "HEAD",
+    "URL",
+    "{{base_url}}/v1/tasks",
+    "Expected result",
+    "Response headers without a body"
+  ]
+}

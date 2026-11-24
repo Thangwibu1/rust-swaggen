@@ -1,0 +1,15 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:32",
+    "name": "Icon/users",
+    "type": "symbol",
+    "width": "20",
+    "height": "20",
+    "path": "02-design/components/01-component-library/icon-users__5-32",
+    "requirements": []
+  },
+  "direct_children": [],
+  "text_layer_names": []
+}

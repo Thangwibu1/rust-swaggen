@@ -1,0 +1,54 @@
+{
+  "node": {
+    "page": "10-authentication-secrets",
+    "page_id": "27:321",
+    "id": "29:4487",
+    "name": "V03 / Missing variable blocks this request",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/10-authentication-secrets/v03-missing-variable-blocks-this-request__29-4487",
+    "requirements": [
+      "EV04",
+      "RQ07"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:4488",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:4491",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:4637",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Missing variable blocks this request",
+    "DisNote API / auth / V03",
+    "Action required",
+    "Reference",
+    "URL /v1/workspaces/{{workspace_id}}/tasks",
+    "Checked scopes",
+    "Request, environment, collection, workspace"
+  ]
+}

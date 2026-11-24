@@ -1,0 +1,52 @@
+{
+  "node": {
+    "page": "12-collaboration-sync-details",
+    "page_id": "27:323",
+    "id": "29:13639",
+    "name": "Y07 / Device restart recovery",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/12-collaboration-sync-details/y07-device-restart-recovery__29-13639",
+    "requirements": [
+      "SY01",
+      "UX02"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:13640",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:13643",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:13792",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Device restart recovery",
+    "DisNote API / collab / Y07",
+    "RECOVERED ITEM",
+    "LAST LOCAL SAVE",
+    "NEXT STEP"
+  ]
+}

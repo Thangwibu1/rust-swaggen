@@ -1,0 +1,157 @@
+{
+  "node": {
+    "page": "07-coverage-handoff",
+    "page_id": "4:95",
+    "id": "15:6152",
+    "name": "Coverage / EV",
+    "type": "frame",
+    "width": "1440",
+    "height": "716",
+    "path": "02-design/reference/07-coverage-handoff/coverage-ev__15-6152",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "15:6153",
+      "name": "EV / REQUIREMENT COVERAGE",
+      "type": "text",
+      "x": "41",
+      "y": "41",
+      "width": "360",
+      "height": "34"
+    },
+    {
+      "id": "15:6154",
+      "name": "EV01",
+      "type": "frame",
+      "x": "41",
+      "y": "91",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6159",
+      "name": "EV02",
+      "type": "frame",
+      "x": "41",
+      "y": "151",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6164",
+      "name": "EV03",
+      "type": "frame",
+      "x": "41",
+      "y": "211",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6169",
+      "name": "EV04",
+      "type": "frame",
+      "x": "41",
+      "y": "271",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6174",
+      "name": "EV05",
+      "type": "frame",
+      "x": "41",
+      "y": "331",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6179",
+      "name": "EV06",
+      "type": "frame",
+      "x": "41",
+      "y": "391",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6184",
+      "name": "EV07",
+      "type": "frame",
+      "x": "41",
+      "y": "451",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6189",
+      "name": "EV08",
+      "type": "frame",
+      "x": "41",
+      "y": "511",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6194",
+      "name": "EV09",
+      "type": "frame",
+      "x": "41",
+      "y": "571",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6199",
+      "name": "EV10",
+      "type": "frame",
+      "x": "41",
+      "y": "631",
+      "width": "1360",
+      "height": "44"
+    }
+  ],
+  "text_layer_names": [
+    "EV / REQUIREMENT COVERAGE",
+    "EV01",
+    "Môi trường",
+    "Stage A",
+    "E01 · M02",
+    "EV02",
+    "Biến theo cấp",
+    "Stage A",
+    "E01 · E02",
+    "EV03",
+    "Giá trị cá nhân",
+    "Stage A",
+    "E01 · E02",
+    "EV04",
+    "Thay biến",
+    "Stage A",
+    "R10 · E01",
+    "EV05",
+    "Đánh dấu secret",
+    "Stage A",
+    "E02 · E03",
+    "EV06",
+    "Quy tắc xuất",
+    "Stage A",
+    "M05 · I03",
+    "EV07",
+    "Bảo vệ production",
+    "Stage A",
+    "R16 · M02",
+    "EV08",
+    "Biến động",
+    "Stage B",
+    "E02",
+    "EV09",
+    "Trích xuất giá trị",
+    "Stage B",
+    "E02",
+    "EV10",
+    "Vault nhóm",
+    "Stage C",
+    "S12"
+  ]
+}

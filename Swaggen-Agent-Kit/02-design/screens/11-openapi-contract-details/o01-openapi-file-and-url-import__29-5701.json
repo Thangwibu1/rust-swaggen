@@ -1,0 +1,54 @@
+{
+  "node": {
+    "page": "11-openapi-contract-details",
+    "page_id": "27:322",
+    "id": "29:5701",
+    "name": "O01 / OpenAPI file and URL import",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/11-openapi-contract-details/o01-openapi-file-and-url-import__29-5701",
+    "requirements": [
+      "IM04",
+      "OA01"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:5702",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:5705",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:5851",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "OpenAPI file and URL import",
+    "DisNote API / openapi / O01",
+    "Import source",
+    "URL",
+    "Authentication",
+    "Detected version",
+    "OpenAPI 3.1 · YAML"
+  ]
+}

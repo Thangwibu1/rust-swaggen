@@ -1,0 +1,51 @@
+{
+  "node": {
+    "page": "09-request-response-states",
+    "page_id": "27:320",
+    "id": "28:5057",
+    "name": "Q10 / JSON syntax error",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/09-request-response-states/q10-json-syntax-error__28-5057",
+    "requirements": [
+      "RQ04",
+      "RQ06"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "28:5058",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "28:5061",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "28:5218",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "JSON syntax error",
+    "DisNote API / request / Q10",
+    "{{base_url}}/v1/tasks",
+    "JSON"
+  ]
+}

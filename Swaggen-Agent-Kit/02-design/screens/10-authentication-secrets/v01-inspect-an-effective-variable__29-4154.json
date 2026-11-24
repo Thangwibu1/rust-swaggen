@@ -1,0 +1,53 @@
+{
+  "node": {
+    "page": "10-authentication-secrets",
+    "page_id": "27:321",
+    "id": "29:4154",
+    "name": "V01 / Inspect an effective variable",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/10-authentication-secrets/v01-inspect-an-effective-variable__29-4154",
+    "requirements": [
+      "EV02",
+      "EV03"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:4155",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:4158",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:4320",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Inspect an effective variable",
+    "DisNote API / auth / V01",
+    "NAME",
+    "VALUE",
+    "DETAILS",
+    "Variable: base_url · request > environment > collection > worksp"
+  ]
+}

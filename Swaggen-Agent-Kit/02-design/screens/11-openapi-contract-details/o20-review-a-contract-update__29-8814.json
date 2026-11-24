@@ -1,0 +1,52 @@
+{
+  "node": {
+    "page": "11-openapi-contract-details",
+    "page_id": "27:322",
+    "id": "29:8814",
+    "name": "O20 / Review a contract update",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/11-openapi-contract-details/o20-review-a-contract-update__29-8814",
+    "requirements": [
+      "DC06",
+      "DC09"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:8815",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:8818",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:8969",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Review a contract update",
+    "DisNote API / openapi / O20",
+    "Published contract",
+    "Incoming change",
+    "2 requests have local overrides. 1 test still references the old"
+  ]
+}

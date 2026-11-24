@@ -1,0 +1,53 @@
+{
+  "node": {
+    "page": "10-authentication-secrets",
+    "page_id": "27:321",
+    "id": "29:2442",
+    "name": "H16 / AWS Signature v4",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/10-authentication-secrets/h16-aws-signature-v4__29-2442",
+    "requirements": [
+      "AU10"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:2443",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:2446",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:2592",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "AWS Signature v4",
+    "DisNote API / auth / H16",
+    "Access key ID",
+    "Secret access key",
+    "Region",
+    "Service",
+    "Session token"
+  ]
+}

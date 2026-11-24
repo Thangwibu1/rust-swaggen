@@ -1,0 +1,43 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:270",
+    "name": "Table row",
+    "type": "frame",
+    "width": "3184",
+    "height": "140",
+    "path": "02-design/components/01-component-library/table-row__5-270",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "5:271",
+      "name": "State=Default",
+      "type": "symbol",
+      "x": "24",
+      "y": "56",
+      "width": "1032",
+      "height": "48"
+    },
+    {
+      "id": "5:275",
+      "name": "State=Selected",
+      "type": "symbol",
+      "x": "1076",
+      "y": "56",
+      "width": "1032",
+      "height": "48"
+    },
+    {
+      "id": "5:279",
+      "name": "State=Error",
+      "type": "symbol",
+      "x": "2128",
+      "y": "56",
+      "width": "1032",
+      "height": "48"
+    }
+  ],
+  "text_layer_names": []
+}

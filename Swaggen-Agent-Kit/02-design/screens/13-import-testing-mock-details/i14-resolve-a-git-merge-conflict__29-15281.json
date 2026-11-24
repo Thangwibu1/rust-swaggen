@@ -1,0 +1,52 @@
+{
+  "node": {
+    "page": "13-import-testing-mock-details",
+    "page_id": "27:324",
+    "id": "29:15281",
+    "name": "I14 / Resolve a Git merge conflict",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/13-import-testing-mock-details/i14-resolve-a-git-merge-conflict__29-15281",
+    "requirements": [
+      "IM09",
+      "SY10"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:15282",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:15285",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:15430",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Resolve a Git merge conflict",
+    "DisNote API / tools / I14",
+    "Local file",
+    "Remote file",
+    "Resolve the text conflict before committing. Never silently over"
+  ]
+}

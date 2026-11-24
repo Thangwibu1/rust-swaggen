@@ -1,0 +1,55 @@
+{
+  "node": {
+    "page": "14-protocols-system-details",
+    "page_id": "27:325",
+    "id": "29:19934",
+    "name": "P09 / SDK and server stub generator",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/14-protocols-system-details/p09-sdk-and-server-stub-generator__29-19934",
+    "requirements": [
+      "PR08"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:19935",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:19938",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:20088",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "SDK and server stub generator",
+    "DisNote API / system / P09",
+    "Generator",
+    "Input",
+    "OpenAPI revision 15",
+    "Language",
+    "Output folder",
+    "Execution policy",
+    "Review command; no unapproved installation"
+  ]
+}

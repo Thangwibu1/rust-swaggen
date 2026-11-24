@@ -1,0 +1,59 @@
+{
+  "node": {
+    "page": "02-access-workspaces",
+    "page_id": "4:90",
+    "id": "6:615",
+    "name": "A07 / Let’s build together",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/02-access-workspaces/a07-let-s-build-together__6-615",
+    "requirements": [
+      "WS01",
+      "WS04",
+      "WS08"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "6:616",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "6:619",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "6:765",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Let’s build together",
+    "DisNote API / Team workspace",
+    "Configuration",
+    "Display name",
+    "Workspace configuration",
+    "Your team",
+    "Workspace configuration",
+    "Server",
+    "Workspace configuration",
+    "Access & sharing",
+    "Changes are saved locally before they are published to your team."
+  ]
+}

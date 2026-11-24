@@ -1,0 +1,238 @@
+<canvas id="4:89" name="01 • Component library" x="0" y="0" width="0" height="0">
+  <symbol id="5:4" name="Icon/folder" x="1800" y="100" width="20" height="20" />
+  <symbol id="5:8" name="Icon/search" x="1864" y="100" width="20" height="20" />
+  <symbol id="5:12" name="Icon/plus" x="1928" y="100" width="20" height="20" />
+  <symbol id="5:15" name="Icon/chevron-down" x="1992" y="100" width="20" height="20" />
+  <symbol id="5:18" name="Icon/chevron-right" x="2056" y="100" width="20" height="20" />
+  <symbol id="5:22" name="Icon/arrow-right" x="2120" y="100" width="20" height="20" />
+  <symbol id="5:26" name="Icon/settings" x="2184" y="100" width="20" height="20" />
+  <symbol id="5:32" name="Icon/users" x="2248" y="100" width="20" height="20" />
+  <symbol id="5:38" name="Icon/file-code" x="2312" y="100" width="20" height="20" />
+  <symbol id="5:42" name="Icon/book-open" x="2376" y="100" width="20" height="20" />
+  <symbol id="5:46" name="Icon/send" x="1800" y="172" width="20" height="20" />
+  <symbol id="5:49" name="Icon/play" x="1864" y="172" width="20" height="20" />
+  <symbol id="5:52" name="Icon/check" x="1928" y="172" width="20" height="20" />
+  <symbol id="5:56" name="Icon/x" x="1992" y="172" width="20" height="20" />
+  <symbol id="5:60" name="Icon/bell" x="2056" y="172" width="20" height="20" />
+  <symbol id="5:65" name="Icon/history" x="2120" y="172" width="20" height="20" />
+  <symbol id="5:71" name="Icon/git-branch" x="2184" y="172" width="20" height="20" />
+  <symbol id="5:74" name="Icon/cloud" x="2248" y="172" width="20" height="20" />
+  <symbol id="5:79" name="Icon/cloud-off" x="2312" y="172" width="20" height="20" />
+  <symbol id="5:83" name="Icon/shield-check" x="2376" y="172" width="20" height="20" />
+  <symbol id="5:87" name="Icon/key-round" x="1800" y="244" width="20" height="20" />
+  <symbol id="5:91" name="Icon/copy" x="1864" y="244" width="20" height="20" />
+  <symbol id="5:96" name="Icon/download" x="1928" y="244" width="20" height="20" />
+  <symbol id="5:101" name="Icon/upload" x="1992" y="244" width="20" height="20" />
+  <symbol id="5:105" name="Icon/terminal" x="2056" y="244" width="20" height="20" />
+  <symbol id="5:108" name="Icon/zap" x="2120" y="244" width="20" height="20" />
+  <symbol id="5:113" name="Icon/circle-alert" x="2184" y="244" width="20" height="20" />
+  <symbol id="5:119" name="Icon/refresh-cw" x="2248" y="244" width="20" height="20" />
+  <symbol id="5:123" name="Icon/eye" x="2312" y="244" width="20" height="20" />
+  <symbol id="5:130" name="Icon/trash-2" x="2376" y="244" width="20" height="20" />
+  <symbol id="5:138" name="Icon/grip-vertical" x="1800" y="316" width="20" height="20" />
+  <symbol id="5:143" name="Icon/globe" x="1864" y="316" width="20" height="20" />
+  <symbol id="5:147" name="Icon/blocks" x="1928" y="316" width="20" height="20" />
+  <symbol id="5:153" name="Icon/arrow-left-right" x="1992" y="316" width="20" height="20" />
+  <frame id="5:154" name="Button" x="0" y="120" width="812" height="372">
+    <symbol id="5:155" name="Kind=Primary, State=Default" x="24" y="56" width="176" height="40" />
+    <symbol id="5:157" name="Kind=Primary, State=Hover" x="220" y="56" width="176" height="40" />
+    <symbol id="5:159" name="Kind=Primary, State=Disabled" x="416" y="56" width="176" height="40" />
+    <symbol id="5:161" name="Kind=Primary, State=Loading" x="612" y="56" width="176" height="40" />
+    <symbol id="5:163" name="Kind=Secondary, State=Default" x="24" y="116" width="176" height="40" />
+    <symbol id="5:165" name="Kind=Secondary, State=Hover" x="220" y="116" width="176" height="40" />
+    <symbol id="5:167" name="Kind=Secondary, State=Disabled" x="416" y="116" width="176" height="40" />
+    <symbol id="5:169" name="Kind=Secondary, State=Loading" x="612" y="116" width="176" height="40" />
+    <symbol id="5:171" name="Kind=Ghost, State=Default" x="24" y="176" width="176" height="40" />
+    <symbol id="5:173" name="Kind=Ghost, State=Hover" x="220" y="176" width="176" height="40" />
+    <symbol id="5:175" name="Kind=Ghost, State=Disabled" x="416" y="176" width="176" height="40" />
+    <symbol id="5:177" name="Kind=Ghost, State=Loading" x="612" y="176" width="176" height="40" />
+    <symbol id="5:179" name="Kind=Danger, State=Default" x="24" y="236" width="176" height="40" />
+    <symbol id="5:181" name="Kind=Danger, State=Hover" x="220" y="236" width="176" height="40" />
+    <symbol id="5:183" name="Kind=Danger, State=Disabled" x="416" y="236" width="176" height="40" />
+    <symbol id="5:185" name="Kind=Danger, State=Loading" x="612" y="236" width="176" height="40" />
+    <symbol id="5:187" name="Kind=Google, State=Default" x="24" y="296" width="176" height="40" />
+    <symbol id="5:190" name="Kind=Google, State=Hover" x="220" y="296" width="176" height="40" />
+    <symbol id="5:193" name="Kind=Google, State=Disabled" x="416" y="296" width="176" height="40" />
+    <symbol id="5:196" name="Kind=Google, State=Loading" x="612" y="296" width="176" height="40" />
+  </frame>
+  <frame id="5:199" name="Input" x="0" y="572" width="1168" height="196">
+    <symbol id="5:200" name="State=Default" x="24" y="56" width="360" height="42" />
+    <symbol id="5:202" name="State=Focus" x="404" y="56" width="360" height="42" />
+    <symbol id="5:204" name="State=Error" x="784" y="56" width="360" height="42" />
+    <symbol id="5:206" name="State=Disabled" x="24" y="118" width="360" height="42" />
+    <symbol id="5:208" name="State=Secret" x="404" y="118" width="360" height="42" />
+  </frame>
+  <frame id="5:210" name="Badge" x="0" y="848" width="424" height="168">
+    <symbol id="5:211" name="Tone=Teal" x="24" y="56" width="53" height="28" />
+    <symbol id="5:213" name="Tone=Salmon" x="156" y="56" width="53" height="28" />
+    <symbol id="5:215" name="Tone=Warning" x="288" y="56" width="53" height="28" />
+    <symbol id="5:217" name="Tone=Neutral" x="24" y="104" width="53" height="28" />
+    <symbol id="5:219" name="Tone=Success" x="156" y="104" width="53" height="28" />
+    <symbol id="5:221" name="Tone=Danger" x="288" y="104" width="53" height="28" />
+  </frame>
+  <frame id="5:223" name="Navigation item" x="0" y="1096" width="500" height="132">
+    <symbol id="5:224" name="State=Default" x="24" y="56" width="216" height="40" />
+    <symbol id="5:229" name="State=Selected" x="260" y="56" width="216" height="40" />
+  </frame>
+  <frame id="5:234" name="Tab" x="0" y="1308" width="628" height="132">
+    <symbol id="5:235" name="State=Default" x="24" y="56" width="180" height="40" />
+    <symbol id="5:239" name="State=Active" x="224" y="56" width="180" height="40" />
+    <symbol id="5:243" name="State=Dirty" x="424" y="56" width="180" height="40" />
+  </frame>
+  <frame id="5:247" name="Checkbox" x="0" y="1520" width="160" height="160">
+    <symbol id="5:248" name="State=Unchecked" x="24" y="56" width="24" height="24" />
+    <symbol id="5:250" name="State=Checked" x="68" y="56" width="24" height="24" />
+    <symbol id="5:252" name="State=Mixed" x="112" y="56" width="24" height="24" />
+    <symbol id="5:254" name="State=Disabled" x="24" y="100" width="24" height="24" />
+  </frame>
+  <frame id="5:256" name="Switch" x="0" y="1760" width="220" height="116">
+    <symbol id="5:257" name="State=On" x="24" y="56" width="44" height="24" />
+    <symbol id="5:259" name="State=Off" x="88" y="56" width="44" height="24" />
+    <symbol id="5:261" name="State=Disabled" x="152" y="56" width="44" height="24" />
+  </frame>
+  <frame id="5:263" name="Avatar" x="0" y="1956" width="184" height="124">
+    <symbol id="5:264" name="Tone=Teal" x="24" y="56" width="32" height="32" />
+    <symbol id="5:266" name="Tone=Salmon" x="76" y="56" width="32" height="32" />
+    <symbol id="5:268" name="Tone=Cream" x="128" y="56" width="32" height="32" />
+  </frame>
+  <frame id="5:270" name="Table row" x="0" y="2160" width="3184" height="140">
+    <symbol id="5:271" name="State=Default" x="24" y="56" width="1032" height="48" />
+    <symbol id="5:275" name="State=Selected" x="1076" y="56" width="1032" height="48" />
+    <symbol id="5:279" name="State=Error" x="2128" y="56" width="1032" height="48" />
+  </frame>
+  <frame id="5:283" name="Code line" x="0" y="2380" width="3136" height="164">
+    <symbol id="5:284" name="Tone=Default" x="24" y="56" width="1016" height="26" />
+    <symbol id="5:287" name="Tone=Added" x="1060" y="56" width="1016" height="26" />
+    <symbol id="5:290" name="Tone=Removed" x="2096" y="56" width="1016" height="26" />
+    <symbol id="5:293" name="Tone=Warning" x="24" y="102" width="1016" height="26" />
+  </frame>
+  <frame id="5:296" name="Endpoint" x="0" y="2624" width="736" height="184">
+    <symbol id="5:297" name="Method=GET" x="24" y="56" width="216" height="36" />
+    <symbol id="5:300" name="Method=POST" x="260" y="56" width="216" height="36" />
+    <symbol id="5:303" name="Method=PUT" x="496" y="56" width="216" height="36" />
+    <symbol id="5:306" name="Method=PATCH" x="24" y="112" width="216" height="36" />
+    <symbol id="5:309" name="Method=DELETE" x="260" y="112" width="216" height="36" />
+  </frame>
+  <frame id="5:312" name="Notice" x="0" y="2888" width="3184" height="216">
+    <symbol id="5:313" name="Tone=Info" x="24" y="56" width="1032" height="52" />
+    <symbol id="5:319" name="Tone=Success" x="1076" y="56" width="1032" height="52" />
+    <symbol id="5:323" name="Tone=Warning" x="2128" y="56" width="1032" height="52" />
+    <symbol id="5:329" name="Tone=Error" x="24" y="128" width="1032" height="52" />
+  </frame>
+  <frame id="5:335" name="Toast" x="0" y="3184" width="1288" height="148">
+    <symbol id="5:336" name="Tone=Success" x="24" y="56" width="400" height="56" />
+    <symbol id="5:340" name="Tone=Error" x="444" y="56" width="400" height="56" />
+    <symbol id="5:344" name="Tone=Info" x="864" y="56" width="400" height="56" />
+  </frame>
+  <symbol id="5:348" name="Metric" x="3650" y="600" width="240" height="116" />
+  <symbol id="5:352" name="Empty state" x="3650" y="780" width="700" height="260" />
+  <symbol id="5:360" name="Dialog" x="3650" y="1104" width="560" height="264" />
+  <symbol id="5:370" name="Shell/Activity rail" x="3650" y="1432" width="64" height="836" />
+  <symbol id="5:405" name="Shell/Project sidebar" x="3650" y="2332" width="248" height="836" />
+  <symbol id="5:462" name="Shell/Windows titlebar" x="3650" y="3232" width="1440" height="36" />
+  <symbol id="5:465" name="Shell/Statusbar" x="3650" y="3332" width="1440" height="28" />
+  <symbol id="5:468" name="Shell/Workspace header" x="3650" y="3424" width="1128" height="64" />
+  <frame id="5:491" name="Library / Introduction" x="0" y="0" width="1520" height="74">
+    <text id="5:492" name="SWAGGEN / COMPONENT LIBRARY" x="0" y="0" width="519" height="44" />
+    <text id="5:493" name="Editable variants + properties + semantic tokens. " x="0" y="52" width="832" height="22" />
+  </frame>
+  <frame id="6:79" name="Library / Component specimen" x="4579" y="910" width="1440" height="874">
+    <text id="6:80" name="SWAGGEN / UI LIBRARY" x="48" y="48" width="384" height="44" />
+    <frame id="6:81" name="Frame" x="48" y="124" width="1008" height="40">
+      <instance id="6:82" name="Button" x="0" y="0" width="176" height="40" />
+      <instance id="6:84" name="Button" x="192" y="0" width="176" height="40" />
+      <instance id="6:86" name="Button" x="384" y="0" width="176" height="40" />
+      <instance id="6:88" name="Button" x="576" y="0" width="176" height="40" />
+      <instance id="6:90" name="Button" x="768" y="0" width="240" height="40" />
+    </frame>
+    <frame id="6:92" name="Frame" x="48" y="196" width="1112" height="42">
+      <instance id="6:93" name="Input" x="0" y="0" width="360" height="42" />
+      <instance id="6:95" name="Input" x="376" y="0" width="360" height="42" />
+      <instance id="6:97" name="Input" x="752" y="0" width="360" height="42" />
+    </frame>
+    <frame id="6:99" name="Frame" x="48" y="270" width="395" height="28">
+      <instance id="6:100" name="Badge" x="0" y="0" width="53" height="28" />
+      <instance id="6:102" name="Badge" x="69" y="0" width="66" height="28" />
+      <instance id="6:104" name="Badge" x="151" y="0" width="73" height="28" />
+      <instance id="6:106" name="Badge" x="240" y="0" width="73" height="28" />
+      <instance id="6:108" name="Badge" x="329" y="0" width="66" height="28" />
+    </frame>
+    <instance id="6:110" name="Notice" x="48" y="330" width="1032" height="52" />
+    <instance id="6:116" name="Metric" x="48" y="414" width="240" height="116" />
+    <instance id="6:120" name="Dialog" x="48" y="562" width="560" height="264" />
+  </frame>
+  <symbol id="11:12128" name="Brand/Google" x="1800" y="500" width="20" height="20" />
+  <frame id="11:12145" name="Icon button" x="5416" y="2072" width="268" height="128">
+    <symbol id="11:12146" name="State=Default" x="24" y="48" width="40" height="40" />
+    <symbol id="11:12150" name="State=Hover" x="84" y="48" width="40" height="40" />
+    <symbol id="11:12154" name="State=Disabled" x="144" y="48" width="40" height="40" />
+    <symbol id="11:12158" name="State=Selected" x="204" y="48" width="40" height="40" />
+  </frame>
+  <frame id="11:12162" name="Menu item" x="5416" y="2272" width="1728" height="128">
+    <symbol id="11:12163" name="State=Default" x="24" y="48" width="320" height="40" />
+    <symbol id="11:12168" name="State=Hover" x="364" y="48" width="320" height="40" />
+    <symbol id="11:12173" name="State=Selected" x="704" y="48" width="320" height="40" />
+    <symbol id="11:12178" name="State=Disabled" x="1044" y="48" width="320" height="40" />
+    <symbol id="11:12183" name="State=Error" x="1384" y="48" width="320" height="40" />
+  </frame>
+  <frame id="11:12188" name="Tooltip" x="5416" y="2472" width="288" height="120">
+    <symbol id="11:12189" name="State=Default" x="24" y="48" width="240" height="32" />
+  </frame>
+  <frame id="11:12191" name="Progress" x="5416" y="2664" width="868" height="124">
+    <symbol id="11:12192" name="State=Default" x="24" y="48" width="260" height="36" />
+    <symbol id="11:12196" name="State=Loading" x="304" y="48" width="260" height="36" />
+    <symbol id="11:12200" name="State=Error" x="584" y="48" width="260" height="36" />
+  </frame>
+  <frame id="11:12204" name="Skeleton" x="5416" y="2860" width="368" height="120">
+    <symbol id="11:12205" name="State=Default" x="24" y="48" width="320" height="32" />
+  </frame>
+  <frame id="11:12207" name="Field help" x="5416" y="3052" width="788" height="116">
+    <symbol id="11:12208" name="State=Default" x="24" y="48" width="360" height="28" />
+    <symbol id="11:12210" name="State=Error" x="404" y="48" width="360" height="28" />
+  </frame>
+  <symbol id="11:12302" name="Brand/Wordmark" x="5487" y="3488" width="145" height="100" />
+  <frame id="27:159" name="Select" x="7610" y="1140" width="1352" height="208">
+    <symbol id="27:160" name="State=Default" x="24" y="56" width="640" height="44" />
+    <symbol id="27:164" name="State=Open" x="688" y="56" width="640" height="44" />
+    <symbol id="27:168" name="State=Error" x="24" y="120" width="640" height="44" />
+    <symbol id="27:172" name="State=Disabled" x="688" y="120" width="640" height="44" />
+  </frame>
+  <frame id="27:176" name="Radio" x="7610" y="1428" width="124" height="168">
+    <symbol id="27:177" name="State=Default" x="24" y="56" width="26" height="24" />
+    <symbol id="27:179" name="State=Selected" x="74" y="56" width="26" height="24" />
+    <symbol id="27:181" name="State=Disabled" x="24" y="100" width="26" height="24" />
+  </frame>
+  <frame id="27:183" name="Data row" x="7610" y="1676" width="2136" height="272">
+    <symbol id="27:184" name="State=Default" x="24" y="56" width="1032" height="44" />
+    <symbol id="27:190" name="State=Enabled" x="1080" y="56" width="1032" height="44" />
+    <symbol id="27:196" name="State=Disabled" x="24" y="120" width="1032" height="44" />
+    <symbol id="27:202" name="State=Error" x="1080" y="120" width="1032" height="44" />
+    <symbol id="27:208" name="State=Selected" x="24" y="184" width="1032" height="44" />
+  </frame>
+  <frame id="27:214" name="Tree row" x="7610" y="2028" width="1432" height="200">
+    <symbol id="27:215" name="State=Default" x="24" y="56" width="680" height="40" />
+    <symbol id="27:229" name="State=Selected" x="728" y="56" width="680" height="40" />
+    <symbol id="27:243" name="State=Dragging" x="24" y="116" width="680" height="40" />
+    <symbol id="27:257" name="State=Drop target" x="728" y="116" width="680" height="40" />
+  </frame>
+  <frame id="27:271" name="Request tab" x="7610" y="2308" width="552" height="192">
+    <symbol id="27:272" name="State=Default" x="24" y="56" width="240" height="36" />
+    <symbol id="27:276" name="State=Active" x="288" y="56" width="240" height="36" />
+    <symbol id="27:280" name="State=Dirty" x="24" y="112" width="240" height="36" />
+  </frame>
+  <frame id="27:284" name="Step" x="7610" y="2580" width="672" height="200">
+    <symbol id="27:285" name="State=Complete" x="24" y="56" width="300" height="40" />
+    <symbol id="27:289" name="State=Current" x="348" y="56" width="300" height="40" />
+    <symbol id="27:293" name="State=Pending" x="24" y="116" width="300" height="40" />
+  </frame>
+  <frame id="27:297" name="Token chip" x="7610" y="2860" width="592" height="184">
+    <symbol id="27:298" name="State=Secret" x="24" y="56" width="260" height="32" />
+    <symbol id="27:301" name="State=Inherited" x="308" y="56" width="260" height="32" />
+    <symbol id="27:304" name="State=Dynamic" x="24" y="108" width="260" height="32" />
+    <symbol id="27:307" name="State=Error" x="308" y="108" width="260" height="32" />
+  </frame>
+  <frame id="27:310" name="Inspector row" x="7610" y="3124" width="2136" height="144">
+    <symbol id="27:311" name="State=Default" x="24" y="56" width="1032" height="44" />
+    <symbol id="27:315" name="State=Warning" x="1080" y="56" width="1032" height="44" />
+  </frame>
+</canvas>

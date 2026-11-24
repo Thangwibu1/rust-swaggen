@@ -1,0 +1,43 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:335",
+    "name": "Toast",
+    "type": "frame",
+    "width": "1288",
+    "height": "148",
+    "path": "02-design/components/01-component-library/toast__5-335",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "5:336",
+      "name": "Tone=Success",
+      "type": "symbol",
+      "x": "24",
+      "y": "56",
+      "width": "400",
+      "height": "56"
+    },
+    {
+      "id": "5:340",
+      "name": "Tone=Error",
+      "type": "symbol",
+      "x": "444",
+      "y": "56",
+      "width": "400",
+      "height": "56"
+    },
+    {
+      "id": "5:344",
+      "name": "Tone=Info",
+      "type": "symbol",
+      "x": "864",
+      "y": "56",
+      "width": "400",
+      "height": "56"
+    }
+  ],
+  "text_layer_names": []
+}

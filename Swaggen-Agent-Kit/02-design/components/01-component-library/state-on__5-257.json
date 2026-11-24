@@ -1,0 +1,15 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:257",
+    "name": "State=On",
+    "type": "symbol",
+    "width": "44",
+    "height": "24",
+    "path": "02-design/components/01-component-library/state-on__5-257",
+    "requirements": []
+  },
+  "direct_children": [],
+  "text_layer_names": []
+}

@@ -1,0 +1,1122 @@
+[
+  {
+    "id": "WS01",
+    "priority": "A",
+    "title": "Chế độ cá nhân",
+    "description": "Mở ứng dụng và làm việc offline không cần tạo tài khoản; tạo workspace cục bộ và chuyển sang workspace nhóm khi muốn.",
+    "source_section": "03"
+  },
+  {
+    "id": "WS02",
+    "priority": "A",
+    "title": "Kết nối server",
+    "description": "Nhập địa chỉ máy chủ tự host, kiểm tra TLS và phiên bản giao thức; lưu nhiều cấu hình server và chuyển đổi rõ ràng.",
+    "source_section": "03"
+  },
+  {
+    "id": "WS03",
+    "priority": "A",
+    "title": "Tài khoản nội bộ",
+    "description": "Owner tạo lời mời một lần có hạn dùng; thành viên đăng ký, đăng nhập, đổi mật khẩu và đăng xuất thiết bị mà không cần tài khoản dịch vụ ngoài.",
+    "source_section": "03"
+  },
+  {
+    "id": "WS04",
+    "priority": "A",
+    "title": "Quản lý workspace",
+    "description": "Tạo, đổi tên, mô tả, lưu trữ workspace; phân tách dự án cá nhân và nhóm trên cùng ứng dụng.",
+    "source_section": "03"
+  },
+  {
+    "id": "WS05",
+    "priority": "A",
+    "title": "Thành viên và vai trò",
+    "description": "Mời, chấp nhận, thu hồi lời mời; gán vai trò theo ma trận quyền và xem danh sách thành viên.",
+    "source_section": "03"
+  },
+  {
+    "id": "WS06",
+    "priority": "A",
+    "title": "Collection và folder",
+    "description": "Tạo cây collection, folder lồng nhau, kéo thả thứ tự; sao chép hoặc chuyển request với xác nhận đích.",
+    "source_section": "03"
+  },
+  {
+    "id": "WS07",
+    "priority": "A",
+    "title": "Tìm kiếm và nhãn",
+    "description": "Tìm theo tên, method, URL, tag và nội dung mô tả; lọc trong workspace hiện tại.",
+    "source_section": "03"
+  },
+  {
+    "id": "WS08",
+    "priority": "A",
+    "title": "Thiết lập dự án",
+    "description": "Đặt server API mặc định, môi trường, quy ước đặt tên và hướng dẫn bắt đầu cho thành viên mới.",
+    "source_section": "03"
+  },
+  {
+    "id": "WS09",
+    "priority": "B",
+    "title": "Quản lý vòng đời",
+    "description": "Lưu trữ hoặc đưa dữ liệu chung vào thùng rác; khôi phục theo thời hạn lưu giữ và quyền thao tác.",
+    "source_section": "03"
+  },
+  {
+    "id": "WS10",
+    "priority": "B",
+    "title": "Chuyển chủ sở hữu",
+    "description": "Owner chuyển quyền cho thành viên phù hợp; không cho rời workspace khi chưa có người nhận quyền.",
+    "source_section": "03"
+  },
+  {
+    "id": "RQ01",
+    "priority": "A",
+    "title": "Method và URL",
+    "description": "Hỗ trợ GET POST PUT PATCH DELETE HEAD OPTIONS; nhập URL, path params và query params, xem URL thực tế trước khi gửi.",
+    "source_section": "04"
+  },
+  {
+    "id": "RQ02",
+    "priority": "A",
+    "title": "Query chính xác",
+    "description": "Bật tắt từng tham số, giữ thứ tự và tham số trùng tên; kiểm soát encoding để không làm thay đổi ý nghĩa request.",
+    "source_section": "04"
+  },
+  {
+    "id": "RQ03",
+    "priority": "A",
+    "title": "Headers",
+    "description": "Thêm, sửa, bật tắt header; xem header tự sinh, xử lý giá trị trùng theo quy tắc HTTP và báo giá trị không hợp lệ.",
+    "source_section": "04"
+  },
+  {
+    "id": "RQ04",
+    "priority": "A",
+    "title": "Các loại body",
+    "description": "Soạn JSON, text, XML, form URL encoded, multipart và binary; chọn Content Type và báo lỗi JSON trước khi gửi.",
+    "source_section": "04"
+  },
+  {
+    "id": "RQ05",
+    "priority": "A",
+    "title": "Tải file lên",
+    "description": "Chọn file từ máy, nhập trường multipart và tên file; đường dẫn riêng không đồng bộ thành file của người khác.",
+    "source_section": "04"
+  },
+  {
+    "id": "RQ06",
+    "priority": "A",
+    "title": "Gửi và hủy",
+    "description": "Gửi bất đồng bộ, đặt timeout, hủy request; phân biệt hủy bởi người dùng, lỗi mạng và HTTP trả lỗi.",
+    "source_section": "04"
+  },
+  {
+    "id": "RQ07",
+    "priority": "A",
+    "title": "Request đã phân giải",
+    "description": "Xem method URL headers body sau khi thay biến; che secret theo mặc định và cảnh báo thiếu biến.",
+    "source_section": "04"
+  },
+  {
+    "id": "RQ08",
+    "priority": "A",
+    "title": "Nháp và lưu",
+    "description": "Tự lưu bản nháp riêng, đánh dấu khác biệt so với bản chung; Publish mới tạo thay đổi cho nhóm.",
+    "source_section": "04"
+  },
+  {
+    "id": "RQ09",
+    "priority": "A",
+    "title": "Sao chép nhanh",
+    "description": "Nhân bản request, lưu thành mẫu mới và mở request từ lịch sử mà không sửa bản chung ngoài ý muốn.",
+    "source_section": "04"
+  },
+  {
+    "id": "RQ10",
+    "priority": "B",
+    "title": "Stream khi truyền",
+    "description": "Hiển thị tiến độ upload download, giữ UI phản hồi; ghi dữ liệu lớn xuống file thay vì đưa toàn bộ vào RAM.",
+    "source_section": "04"
+  },
+  {
+    "id": "AU01",
+    "priority": "A",
+    "title": "No Auth và Bearer",
+    "description": "Chọn không xác thực hoặc Bearer token bằng biến cá nhân; token được che trong giao diện và log.",
+    "source_section": "05"
+  },
+  {
+    "id": "AU02",
+    "priority": "A",
+    "title": "Basic và API key",
+    "description": "Basic Auth, API key trong header hoặc query; cảnh báo URL có secret và loại bỏ secret khi xuất mặc định.",
+    "source_section": "05"
+  },
+  {
+    "id": "AU03",
+    "priority": "A",
+    "title": "Kế thừa xác thực",
+    "description": "Request kế thừa từ folder hoặc collection; có thể ghi đè hoặc tắt và xem nguồn cấu hình đang áp dụng.",
+    "source_section": "05"
+  },
+  {
+    "id": "AU04",
+    "priority": "A",
+    "title": "Cookie jar",
+    "description": "Lưu, xem, sửa, xóa cookie theo domain path và expiry; tách theo workspace hoặc môi trường cá nhân.",
+    "source_section": "05"
+  },
+  {
+    "id": "AU05",
+    "priority": "A",
+    "title": "TLS mặc định",
+    "description": "Kiểm tra chứng chỉ theo mặc định; cho phép ngoại lệ riêng theo host với cảnh báo rõ và không áp dụng toàn cục.",
+    "source_section": "05"
+  },
+  {
+    "id": "AU06",
+    "priority": "A",
+    "title": "Redirect",
+    "description": "Cấu hình theo hoặc dừng redirect, giới hạn số lần; không chuyển Authorization sang host khác ngoài chính sách cho phép.",
+    "source_section": "05"
+  },
+  {
+    "id": "AU07",
+    "priority": "B",
+    "title": "Proxy và CA riêng",
+    "description": "Cấu hình proxy, bypass, CA của tổ chức; không ghi mật khẩu proxy vào dữ liệu chung.",
+    "source_section": "05"
+  },
+  {
+    "id": "AU08",
+    "priority": "B",
+    "title": "OAuth 2 PKCE",
+    "description": "Authorization Code với PKCE, Client Credentials, scope và token refresh; callback loopback được xác thực trạng thái.",
+    "source_section": "05"
+  },
+  {
+    "id": "AU09",
+    "priority": "B",
+    "title": "Chứng chỉ client",
+    "description": "Cấu hình mTLS theo host và port; khóa riêng giữ trên máy, hỗ trợ xóa liên kết và báo hết hạn.",
+    "source_section": "05"
+  },
+  {
+    "id": "AU10",
+    "priority": "C",
+    "title": "Xác thực bổ sung",
+    "description": "Đánh giá Digest, AWS Signature và cơ chế khác theo nhu cầu; hiển thị rõ loại nào chưa được hỗ trợ.",
+    "source_section": "05"
+  },
+  {
+    "id": "EV01",
+    "priority": "A",
+    "title": "Môi trường",
+    "description": "Tạo local dev staging prod; hiển thị môi trường đang dùng cạnh nút gửi request.",
+    "source_section": "06"
+  },
+  {
+    "id": "EV02",
+    "priority": "A",
+    "title": "Biến theo cấp",
+    "description": "Hỗ trợ workspace, collection, environment và request; trình kiểm tra chỉ rõ giá trị hiệu lực và nguồn.",
+    "source_section": "06"
+  },
+  {
+    "id": "EV03",
+    "priority": "A",
+    "title": "Giá trị cá nhân",
+    "description": "Đặt local override cho biến chung; bạn A và B có token khác nhau nhưng dùng cùng request template.",
+    "source_section": "06"
+  },
+  {
+    "id": "EV04",
+    "priority": "A",
+    "title": "Thay biến",
+    "description": "Dùng cú pháp {{ten_bien}} trong URL header body auth; phát hiện thiếu biến và vòng tham chiếu.",
+    "source_section": "06"
+  },
+  {
+    "id": "EV05",
+    "priority": "A",
+    "title": "Đánh dấu secret",
+    "description": "Đánh dấu nhạy cảm, che giá trị và lưu bằng cơ chế bảo vệ Windows; chỉ Rust core truy xuất khi cần gửi.",
+    "source_section": "06"
+  },
+  {
+    "id": "EV06",
+    "priority": "A",
+    "title": "Quy tắc xuất",
+    "description": "Mặc định xuất placeholder và tên biến; có bước xem trước nếu người dùng chủ động đưa giá trị nhạy cảm vào file.",
+    "source_section": "06"
+  },
+  {
+    "id": "EV07",
+    "priority": "A",
+    "title": "Bảo vệ production",
+    "description": "Màu môi trường khác biệt; yêu cầu xác nhận khi gửi request thay đổi dữ liệu đến môi trường đánh dấu production.",
+    "source_section": "06"
+  },
+  {
+    "id": "EV08",
+    "priority": "B",
+    "title": "Biến động",
+    "description": "Sinh UUID timestamp và giá trị ngẫu nhiên có quy tắc; preview trước khi gửi để dễ tái hiện.",
+    "source_section": "06"
+  },
+  {
+    "id": "EV09",
+    "priority": "B",
+    "title": "Trích xuất giá trị",
+    "description": "Lấy trường JSON hoặc header từ response để điền biến cục bộ cho request tiếp theo; không tự publish token.",
+    "source_section": "06"
+  },
+  {
+    "id": "EV10",
+    "priority": "C",
+    "title": "Vault nhóm",
+    "description": "Kho secret riêng có quyền truy cập, luân chuyển khóa, nhật ký; thiết kế và nghiệm thu riêng trước khi bật.",
+    "source_section": "06"
+  },
+  {
+    "id": "RS01",
+    "priority": "A",
+    "title": "Thông tin tổng quan",
+    "description": "Hiển thị status code, thời gian tổng, kích thước và thời điểm chạy; phân biệt body nén và giải nén nếu có số đo.",
+    "source_section": "07"
+  },
+  {
+    "id": "RS02",
+    "priority": "A",
+    "title": "Hiển thị body",
+    "description": "Raw text, JSON có tô màu và gấp nhánh, XML text; nhận diện binary và cho tải file xuống.",
+    "source_section": "07"
+  },
+  {
+    "id": "RS03",
+    "priority": "A",
+    "title": "Response headers",
+    "description": "Xem toàn bộ header, gồm các header lặp; xem cookie do server trả về.",
+    "source_section": "07"
+  },
+  {
+    "id": "RS04",
+    "priority": "A",
+    "title": "Tìm và sao chép",
+    "description": "Tìm kiếm trong body, sao chép giá trị hoặc JSON path, format và lưu response thành file.",
+    "source_section": "07"
+  },
+  {
+    "id": "RS05",
+    "priority": "A",
+    "title": "Thông báo lỗi",
+    "description": "Phân loại DNS, connection refused, TLS, timeout, hủy và lỗi parse; hướng dẫn xử lý theo tình huống.",
+    "source_section": "07"
+  },
+  {
+    "id": "RS06",
+    "priority": "A",
+    "title": "Response lớn",
+    "description": "Giới hạn phần preview, phân trang hoặc render ảo; vẫn cho lưu raw file và thông báo khi nội dung bị cắt hiển thị.",
+    "source_section": "07"
+  },
+  {
+    "id": "RS07",
+    "priority": "A",
+    "title": "Lịch sử riêng",
+    "description": "Lưu lần chạy trên máy với bộ lọc và thời hạn giữ; xóa theo request hoặc toàn bộ mà không xóa template.",
+    "source_section": "07"
+  },
+  {
+    "id": "RS08",
+    "priority": "A",
+    "title": "Ví dụ chia sẻ",
+    "description": "Lưu response thành example sau khi xem trước và làm sạch dữ liệu; liên kết với endpoint và status tương ứng.",
+    "source_section": "07"
+  },
+  {
+    "id": "RS09",
+    "priority": "B",
+    "title": "So sánh response",
+    "description": "Diff JSON hoặc text giữa hai lần chạy, bỏ qua trường biến động theo cấu hình của người dùng.",
+    "source_section": "07"
+  },
+  {
+    "id": "RS10",
+    "priority": "B",
+    "title": "Đo thời gian chi tiết",
+    "description": "Đo DNS TCP TLS TTFB khi transport cung cấp được; ghi không khả dụng thay vì ước đoán thành số đo thật.",
+    "source_section": "07"
+  },
+  {
+    "id": "OA01",
+    "priority": "A",
+    "title": "Import đặc tả",
+    "description": "Mở JSON YAML từ file hoặc URL; ưu tiên OpenAPI 3.0 và 3.1, báo phiên bản không hỗ trợ; URL riêng lấy từ máy người dùng.",
+    "source_section": "08"
+  },
+  {
+    "id": "OA02",
+    "priority": "A",
+    "title": "Editor đặc tả",
+    "description": "Tô màu, format, tìm thay thế, đánh dấu dòng lỗi; giữ nguyên bản nháp khi validation thất bại.",
+    "source_section": "08"
+  },
+  {
+    "id": "OA03",
+    "priority": "A",
+    "title": "Kiểm tra cấu trúc",
+    "description": "Kiểm tra cú pháp, trường bắt buộc, path params và operationId; không báo đạt khi thư viện không hiểu keyword.",
+    "source_section": "08"
+  },
+  {
+    "id": "OA04",
+    "priority": "A",
+    "title": "Quản lý endpoint",
+    "description": "Thêm method path summary description tags và deprecated; có kiểm tra trùng method cùng path.",
+    "source_section": "08"
+  },
+  {
+    "id": "OA05",
+    "priority": "A",
+    "title": "Định nghĩa dữ liệu",
+    "description": "Khai báo parameters requestBody responses content types và examples; phân biệt required nullable và optional theo phiên bản.",
+    "source_section": "08"
+  },
+  {
+    "id": "OA06",
+    "priority": "A",
+    "title": "Components dùng lại",
+    "description": "Quản lý schema parameters responses và security schemes; giải tham chiếu nội bộ và phát hiện tham chiếu không tồn tại.",
+    "source_section": "08"
+  },
+  {
+    "id": "OA07",
+    "priority": "B",
+    "title": "Schema phức tạp",
+    "description": "Hiển thị allOf oneOf anyOf enum discriminator và đệ quy với giới hạn; không render vô hạn khi có vòng tham chiếu.",
+    "source_section": "08"
+  },
+  {
+    "id": "OA08",
+    "priority": "B",
+    "title": "Tham chiếu nhiều file",
+    "description": "Giải relative reference trong project, bundle khi export; tham chiếu URL ngoài cần cho phép rõ và giới hạn tài nguyên.",
+    "source_section": "08"
+  },
+  {
+    "id": "OA09",
+    "priority": "B",
+    "title": "Swagger 2 và phiên bản mới",
+    "description": "Chuyển Swagger 2.0 bằng công cụ phù hợp, đánh dấu phần mất mát; đánh giá OpenAPI 3.2 riêng, không mặc định coi tương thích.",
+    "source_section": "08"
+  },
+  {
+    "id": "OA10",
+    "priority": "B",
+    "title": "Lint quy ước nhóm",
+    "description": "Quy tắc đặt operationId, mô tả, error schema và security; phân biệt lỗi đặc tả với cảnh báo quy ước.",
+    "source_section": "08"
+  },
+  {
+    "id": "DC01",
+    "priority": "A",
+    "title": "Tài liệu tự sinh",
+    "description": "Hiển thị endpoint theo tag, method, path và mô tả từ đặc tả; mở được offline trong app.",
+    "source_section": "09"
+  },
+  {
+    "id": "DC02",
+    "priority": "A",
+    "title": "Chi tiết hợp đồng",
+    "description": "Hiển thị params required type default enum, body schema, status và ví dụ; tìm theo endpoint hoặc schema.",
+    "source_section": "09"
+  },
+  {
+    "id": "DC03",
+    "priority": "A",
+    "title": "Chạy từ tài liệu",
+    "description": "Try request mở request builder cùng environment auth và path params; gọi bằng Rust engine trên máy.",
+    "source_section": "09"
+  },
+  {
+    "id": "DC04",
+    "priority": "A",
+    "title": "Liên kết định danh",
+    "description": "Lưu ID endpoint ổn định và ánh xạ operationId khi có; đổi path không tự tạo request trùng hoặc làm mất liên kết.",
+    "source_section": "09"
+  },
+  {
+    "id": "DC05",
+    "priority": "A",
+    "title": "Sinh request mẫu",
+    "description": "Tạo request từ operation và example; đánh dấu trường do spec quản lý và phần override của người dùng.",
+    "source_section": "09"
+  },
+  {
+    "id": "DC06",
+    "priority": "A",
+    "title": "Cập nhật từ đặc tả",
+    "description": "Khi spec đổi, hiển thị diff và đề xuất cập nhật request; giữ token cục bộ và báo override không còn phù hợp.",
+    "source_section": "09"
+  },
+  {
+    "id": "DC07",
+    "priority": "B",
+    "title": "Đề xuất sửa hợp đồng",
+    "description": "Từ request thủ công, tạo draft patch cho spec; người dùng review trước publish, không tự suy ra hợp đồng đầy đủ từ một response.",
+    "source_section": "09"
+  },
+  {
+    "id": "DC08",
+    "priority": "B",
+    "title": "Kiểm tra response theo schema",
+    "description": "Đối chiếu status content type và schema; báo vị trí dữ liệu sai, keyword chưa hỗ trợ và phiên bản schema.",
+    "source_section": "09"
+  },
+  {
+    "id": "DC09",
+    "priority": "B",
+    "title": "Chênh lệch hợp đồng",
+    "description": "Phát hiện request hoặc test còn tham chiếu endpoint cũ; liệt kê phần cần sửa khi xóa hoặc đổi operation.",
+    "source_section": "09"
+  },
+  {
+    "id": "DC10",
+    "priority": "B",
+    "title": "Xuất tài liệu",
+    "description": "Xuất HTML tự chứa hoặc Markdown, có bước làm sạch secret; tạo snapshot gắn version để chia sẻ ngoài app.",
+    "source_section": "09"
+  },
+  {
+    "id": "CO01",
+    "priority": "A",
+    "title": "Workspace chung",
+    "description": "Thành viên xem cùng collection spec và cấu hình công khai qua server tự host; không có giới hạn số ghế do mô hình tính phí của app.",
+    "source_section": "10"
+  },
+  {
+    "id": "CO02",
+    "priority": "A",
+    "title": "Publish thay đổi",
+    "description": "Lưu nháp riêng rồi publish nội dung chung với ghi chú; người khác nhận đúng phiên bản đã công bố.",
+    "source_section": "10"
+  },
+  {
+    "id": "CO03",
+    "priority": "A",
+    "title": "Thông báo thay đổi",
+    "description": "Hiện endpoint hoặc request vừa được sửa, tác giả và thời gian; refresh bằng sự kiện server cùng cơ chế lấy bù.",
+    "source_section": "10"
+  },
+  {
+    "id": "CO04",
+    "priority": "A",
+    "title": "Bình luận theo đối tượng",
+    "description": "Thread tại endpoint request hoặc schema, trả lời và đánh dấu đã xử lý; lưu liên kết tới revision được thảo luận.",
+    "source_section": "10"
+  },
+  {
+    "id": "CO05",
+    "priority": "B",
+    "title": "Nhắc thành viên",
+    "description": "Mention thành viên tạo thông báo trong app; không bắt buộc email hay dịch vụ nhắn tin ngoài.",
+    "source_section": "10"
+  },
+  {
+    "id": "CO06",
+    "priority": "A",
+    "title": "Luồng hoạt động",
+    "description": "Xem ai tạo sửa xóa publish và thay quyền; lọc theo người hoặc đối tượng trong workspace.",
+    "source_section": "10"
+  },
+  {
+    "id": "CO07",
+    "priority": "B",
+    "title": "Trạng thái chỉnh sửa",
+    "description": "Hiện ai đang mở hoặc sửa đối tượng khi online; đây là tín hiệu hỗ trợ, không thay thế kiểm soát xung đột.",
+    "source_section": "10"
+  },
+  {
+    "id": "CO08",
+    "priority": "B",
+    "title": "Chia sẻ kết quả chạy",
+    "description": "Chủ động gửi báo cáo hoặc example đã làm sạch vào workspace; người nhận không thấy token cá nhân.",
+    "source_section": "10"
+  },
+  {
+    "id": "CO09",
+    "priority": "B",
+    "title": "Liên kết nội bộ",
+    "description": "Copy deep link tới workspace endpoint và comment; mở trong app, luôn yêu cầu đăng nhập và kiểm tra quyền.",
+    "source_section": "10"
+  },
+  {
+    "id": "CO10",
+    "priority": "C",
+    "title": "Đồng biên tập",
+    "description": "Cùng sửa một nội dung với CRDT hoặc OT, con trỏ và undo phù hợp; phải hỗ trợ offline và thu hồi quyền trước phát hành.",
+    "source_section": "10"
+  },
+  {
+    "id": "SY01",
+    "priority": "A",
+    "title": "Lưu cục bộ trước",
+    "description": "Ghi nháp và thao tác chờ bằng transaction SQLite; crash không được làm mất thay đổi đã báo lưu thành công.",
+    "source_section": "11"
+  },
+  {
+    "id": "SY02",
+    "priority": "A",
+    "title": "Hàng đợi đồng bộ",
+    "description": "Có pending syncing synced conflict failed; cho retry và xem nguyên nhân, không dùng một biểu tượng xanh mơ hồ.",
+    "source_section": "11"
+  },
+  {
+    "id": "SY03",
+    "priority": "A",
+    "title": "Phiên bản đối tượng",
+    "description": "Publish gửi base revision; server chỉ chấp nhận khi revision hợp lệ và trả conflict nếu dữ liệu đã đổi.",
+    "source_section": "11"
+  },
+  {
+    "id": "SY04",
+    "priority": "A",
+    "title": "Giải quyết xung đột",
+    "description": "Hiện bản gốc bản của tôi và bản server; chọn giữ hoặc ghép, preview rồi publish lại; giữ bản thua làm bản nháp.",
+    "source_section": "11"
+  },
+  {
+    "id": "SY05",
+    "priority": "A",
+    "title": "Sự kiện lấy bù",
+    "description": "Client giữ cursor; reconnect lấy thay đổi bỏ lỡ, cursor hết hạn thì lấy snapshot rồi áp lại thao tác còn chờ.",
+    "source_section": "11"
+  },
+  {
+    "id": "SY06",
+    "priority": "A",
+    "title": "Chống nhân đôi",
+    "description": "Mỗi thao tác có idempotency key; retry hoặc mất ACK không tạo request comment hay revision trùng.",
+    "source_section": "11"
+  },
+  {
+    "id": "SY07",
+    "priority": "A",
+    "title": "Xóa và sửa đồng thời",
+    "description": "Tombstone cho xóa; không tự hồi sinh dữ liệu khi thiết bị offline đẩy bản sửa cũ lên.",
+    "source_section": "11"
+  },
+  {
+    "id": "SY08",
+    "priority": "A",
+    "title": "Lịch sử phiên bản",
+    "description": "Xem diff tác giả thời gian và ghi chú; restore bằng revision mới, không xóa lịch sử đã công bố.",
+    "source_section": "11"
+  },
+  {
+    "id": "SY09",
+    "priority": "A",
+    "title": "Thu hồi quyền khi offline",
+    "description": "Server từ chối publish sau khi bị gỡ quyền; cho giữ nháp riêng. Không hứa xóa được mọi bản sao đã tải xuống máy.",
+    "source_section": "11"
+  },
+  {
+    "id": "SY10",
+    "priority": "B",
+    "title": "Nhánh và review",
+    "description": "Fork hoặc branch dự án, gửi đề nghị hợp nhất, review và kiểm tra xung đột trước merge.",
+    "source_section": "11"
+  },
+  {
+    "id": "IM01",
+    "priority": "A",
+    "title": "Định dạng project mở",
+    "description": "Xuất project theo schema có version, ID ổn định và manifest; nêu rõ các file chứa spec request và môi trường công khai.",
+    "source_section": "12"
+  },
+  {
+    "id": "IM02",
+    "priority": "A",
+    "title": "Postman Collection",
+    "description": "Import Collection v2.1 với folder request variables auth và examples; xuất phần hỗ trợ được và kèm báo cáo tương thích.",
+    "source_section": "12"
+  },
+  {
+    "id": "IM03",
+    "priority": "A",
+    "title": "Postman Environment",
+    "description": "Import tên và cấu trúc biến, cho xem trước giá trị; không tự đồng bộ token được nhập vào server nhóm.",
+    "source_section": "12"
+  },
+  {
+    "id": "IM04",
+    "priority": "A",
+    "title": "OpenAPI import export",
+    "description": "Giữ JSON YAML và các extension chưa hiểu khi có thể; mọi chuyển đổi mất dữ liệu phải báo rõ.",
+    "source_section": "12"
+  },
+  {
+    "id": "IM05",
+    "priority": "A",
+    "title": "cURL hai chiều",
+    "description": "Dán lệnh để tạo request, sinh lệnh cURL từ request; parse không thực thi shell và xử lý khác biệt quoting Windows.",
+    "source_section": "12"
+  },
+  {
+    "id": "IM06",
+    "priority": "A",
+    "title": "Xem trước import",
+    "description": "Liệt kê đối tượng mới, trùng, bị bỏ qua và phần không hỗ trợ; chọn tạo project mới hoặc nhập vào project có sẵn.",
+    "source_section": "12"
+  },
+  {
+    "id": "IM07",
+    "priority": "B",
+    "title": "File đính kèm",
+    "description": "Chọn đóng gói file dùng chung, giới hạn kích thước và hash; không tự thu thập file từ đường dẫn riêng của thành viên.",
+    "source_section": "12"
+  },
+  {
+    "id": "IM08",
+    "priority": "A",
+    "title": "Xuất dữ liệu đã làm sạch",
+    "description": "Preview tên biến giá trị auth examples và file; mặc định loại secret cùng lịch sử cá nhân.",
+    "source_section": "12"
+  },
+  {
+    "id": "IM09",
+    "priority": "B",
+    "title": "Tích hợp Git",
+    "description": "Lưu project dạng text có thứ tự ổn định, xem diff và merge; cho dùng Git server tự host hoặc Git cục bộ.",
+    "source_section": "12"
+  },
+  {
+    "id": "IM10",
+    "priority": "C",
+    "title": "Định dạng bổ sung",
+    "description": "Đánh giá HAR HTTP files và công cụ khác; chỉ ghi tương thích cho tập tính năng đã kiểm thử.",
+    "source_section": "12"
+  },
+  {
+    "id": "TS01",
+    "priority": "A",
+    "title": "Assertion cơ bản",
+    "description": "Kiểm tra status header thời gian và JSON path bằng form; lưu expected values với request.",
+    "source_section": "13"
+  },
+  {
+    "id": "TS02",
+    "priority": "B",
+    "title": "Collection runner",
+    "description": "Chạy tuần tự request trong folder hoặc collection, chọn environment số vòng và khoảng nghỉ; dừng khi người dùng hủy.",
+    "source_section": "13"
+  },
+  {
+    "id": "TS03",
+    "priority": "B",
+    "title": "Chuỗi phụ thuộc",
+    "description": "Trích token hoặc ID từ response cho bước kế; quy tắc fail fast hoặc tiếp tục được cấu hình rõ.",
+    "source_section": "13"
+  },
+  {
+    "id": "TS04",
+    "priority": "B",
+    "title": "Chạy theo dữ liệu",
+    "description": "Nhập CSV JSON làm data set, xem trước kiểu và dòng lỗi; dữ liệu nhạy cảm không tự publish.",
+    "source_section": "13"
+  },
+  {
+    "id": "TS05",
+    "priority": "B",
+    "title": "Báo cáo kết quả",
+    "description": "Hiển thị pass fail skipped cùng assertion và thời gian; chỉ rõ lỗi hạ tầng khác với assertion thất bại.",
+    "source_section": "13"
+  },
+  {
+    "id": "TS06",
+    "priority": "B",
+    "title": "Kiểm thử hợp đồng",
+    "description": "Chạy validation OpenAPI với status media type và schema tương ứng; liệt kê giới hạn validator.",
+    "source_section": "13"
+  },
+  {
+    "id": "TS07",
+    "priority": "C",
+    "title": "Pre request và test script",
+    "description": "Runtime JavaScript cách ly, giới hạn thời gian bộ nhớ và API; không cho script đọc file hay chạy shell mặc định.",
+    "source_section": "13"
+  },
+  {
+    "id": "TS08",
+    "priority": "C",
+    "title": "Tương thích script Postman",
+    "description": "Công bố tập pm API hỗ trợ, migration report và case lỗi; không tuyên bố tương thích toàn bộ chỉ vì chạy được JavaScript.",
+    "source_section": "13"
+  },
+  {
+    "id": "TS09",
+    "priority": "C",
+    "title": "Chạy song song có giới hạn",
+    "description": "Giới hạn concurrency và rate, chỉ chạy request độc lập; không coi đây là công cụ load test chuyên dụng.",
+    "source_section": "13"
+  },
+  {
+    "id": "TS10",
+    "priority": "B",
+    "title": "Kết quả tái hiện",
+    "description": "Gắn run với revision project, môi trường công khai và phiên bản engine; không lưu token thật vào báo cáo.",
+    "source_section": "13"
+  },
+  {
+    "id": "MK01",
+    "priority": "B",
+    "title": "Mock từ example",
+    "description": "Sinh response mẫu theo endpoint status và media type; chạy local bằng cổng được chọn.",
+    "source_section": "14"
+  },
+  {
+    "id": "MK02",
+    "priority": "B",
+    "title": "Mock từ schema",
+    "description": "Sinh dữ liệu mẫu có seed; báo schema không sinh được và cho thay bằng example thủ công.",
+    "source_section": "14"
+  },
+  {
+    "id": "MK03",
+    "priority": "C",
+    "title": "Kịch bản mock",
+    "description": "Match query header body, giả lập độ trễ và lỗi; ưu tiên rule rõ ràng, có log đã làm sạch.",
+    "source_section": "14"
+  },
+  {
+    "id": "MK04",
+    "priority": "B",
+    "title": "Mock dùng chung",
+    "description": "Host mock ở server nhóm, đặt quyền hoặc token truy cập; không tự mở cổng máy cá nhân ra Internet.",
+    "source_section": "14"
+  },
+  {
+    "id": "MK05",
+    "priority": "B",
+    "title": "CLI Rust",
+    "description": "Chạy collection từ project export trên Windows, tham số môi trường và biến từ secret store hoặc biến tiến trình.",
+    "source_section": "14"
+  },
+  {
+    "id": "MK06",
+    "priority": "B",
+    "title": "Kết quả cho CI",
+    "description": "Exit code theo thành công thất bại, xuất JSON JUnit; che secret trong stdout stderr và report.",
+    "source_section": "14"
+  },
+  {
+    "id": "MK07",
+    "priority": "C",
+    "title": "Runner tự host",
+    "description": "Đăng ký runner với workspace và quyền hạn tối thiểu; tách mạng runner khỏi quyền quản trị server.",
+    "source_section": "14"
+  },
+  {
+    "id": "MK08",
+    "priority": "C",
+    "title": "Lịch chạy kiểm tra",
+    "description": "Lịch chạy múi giờ cấu hình, retry có giới hạn; chỉ hoạt động khi runner được chỉ định online.",
+    "source_section": "14"
+  },
+  {
+    "id": "MK09",
+    "priority": "C",
+    "title": "Thông báo lỗi chạy",
+    "description": "Thông báo trong app từ runner; webhook tới hệ thống nhóm tự chọn là tùy chọn.",
+    "source_section": "14"
+  },
+  {
+    "id": "MK10",
+    "priority": "B",
+    "title": "Quản lý tài nguyên",
+    "description": "Giới hạn số job body retention và log; owner có thể hủy lịch hoặc job để tránh quá tải server.",
+    "source_section": "14"
+  },
+  {
+    "id": "PR01",
+    "priority": "B",
+    "title": "GraphQL cơ bản",
+    "description": "Editor query variables và headers; hiển thị data errors, lưu request trong collection.",
+    "source_section": "15"
+  },
+  {
+    "id": "PR02",
+    "priority": "C",
+    "title": "GraphQL schema",
+    "description": "Import SDL hoặc introspection được cho phép; gợi ý trường và kiểm tra query theo schema.",
+    "source_section": "15"
+  },
+  {
+    "id": "PR03",
+    "priority": "C",
+    "title": "WebSocket",
+    "description": "Kết nối URL auth, gửi nhận message, ngắt kết nối; lưu message mẫu và giới hạn bộ nhớ lịch sử.",
+    "source_section": "15"
+  },
+  {
+    "id": "PR04",
+    "priority": "B",
+    "title": "Server Sent Events",
+    "description": "Hiển thị event stream theo thời gian, hủy và cấu hình reconnect; không giữ vô hạn nội dung trong UI.",
+    "source_section": "15"
+  },
+  {
+    "id": "PR05",
+    "priority": "C",
+    "title": "gRPC",
+    "description": "Import proto, gọi unary trước; hiển thị metadata status và lỗi; streaming là khả năng phát hành riêng.",
+    "source_section": "15"
+  },
+  {
+    "id": "PR06",
+    "priority": "C",
+    "title": "HTTP nâng cao",
+    "description": "Chọn policy HTTP 1.1 hoặc 2 khi transport hỗ trợ; HTTP 3 cần đánh giá và không nằm trong bản A.",
+    "source_section": "15"
+  },
+  {
+    "id": "PR07",
+    "priority": "B",
+    "title": "Sinh code gọi API",
+    "description": "Sinh snippet cURL Rust reqwest JavaScript fetch Dart và Go; placeholder thay cho secret và không tự thực thi.",
+    "source_section": "15"
+  },
+  {
+    "id": "PR08",
+    "priority": "C",
+    "title": "Sinh SDK và stub",
+    "description": "Gọi generator theo phiên bản được ghim, chọn ngôn ngữ và xem output; dependency ngoài phải được thông báo.",
+    "source_section": "15"
+  },
+  {
+    "id": "PR09",
+    "priority": "B",
+    "title": "Giải mã và chuyển đổi",
+    "description": "URL encode decode Base64 JSON format và chuyển JSON YAML; chạy cục bộ và không gửi dữ liệu ra dịch vụ ngoài.",
+    "source_section": "15"
+  },
+  {
+    "id": "PR10",
+    "priority": "C",
+    "title": "Extension có quyền",
+    "description": "Plugin được bật theo quyền mạng file secret, cách ly và có thể gỡ; không cho plugin chạy với mọi quyền mặc định.",
+    "source_section": "15"
+  },
+  {
+    "id": "UX01",
+    "priority": "A",
+    "title": "Bố cục làm việc",
+    "description": "Sidebar project, tab request hoặc spec, vùng response; kéo đổi kích thước và nhớ bố cục từng máy.",
+    "source_section": "16"
+  },
+  {
+    "id": "UX02",
+    "priority": "A",
+    "title": "Tab và khôi phục",
+    "description": "Mở nhiều tab, ghim và đóng nhóm; khôi phục nháp và tab sau restart hoặc crash.",
+    "source_section": "16"
+  },
+  {
+    "id": "UX03",
+    "priority": "A",
+    "title": "Phím tắt",
+    "description": "Ctrl Enter gửi, Ctrl S lưu nháp, Ctrl P tìm nhanh; xem danh sách phím và tránh xung đột khi đang gõ trong editor.",
+    "source_section": "16"
+  },
+  {
+    "id": "UX04",
+    "priority": "B",
+    "title": "Command palette",
+    "description": "Tìm hành động, đổi environment, mở request và chuyển workspace qua bàn phím.",
+    "source_section": "16"
+  },
+  {
+    "id": "UX05",
+    "priority": "A",
+    "title": "Hiển thị Windows",
+    "description": "Hỗ trợ DPI scaling nhiều màn hình, resize và cửa sổ nhỏ; chữ và control không bị cắt ở mức zoom thông dụng.",
+    "source_section": "16"
+  },
+  {
+    "id": "UX06",
+    "priority": "B",
+    "title": "Theme và ngôn ngữ",
+    "description": "Theme sáng tối, lựa chọn tiếng Việt hoặc tiếng Anh; giữ nguyên tên biến và nội dung API của người dùng.",
+    "source_section": "16"
+  },
+  {
+    "id": "UX07",
+    "priority": "B",
+    "title": "Khả năng truy cập",
+    "description": "Focus rõ, điều hướng bàn phím và nhãn control; prototype kiểm tra screen reader trên UI được chọn.",
+    "source_section": "16"
+  },
+  {
+    "id": "UX08",
+    "priority": "B",
+    "title": "Mở file và liên kết",
+    "description": "Mở file project hoặc đặc tả từ Explorer, kéo thả import; deep link không tự chạy request hay lệnh hệ thống.",
+    "source_section": "16"
+  },
+  {
+    "id": "UX09",
+    "priority": "A",
+    "title": "Trạng thái kết nối",
+    "description": "Hiện server đang dùng, offline và số thay đổi chờ; lỗi sync không chặn soạn request cục bộ.",
+    "source_section": "16"
+  },
+  {
+    "id": "UX10",
+    "priority": "A",
+    "title": "Quản lý dữ liệu máy",
+    "description": "Xem dung lượng history cache downloads, đổi thư mục dữ liệu và đặt retention; dọn cache không xóa project hoặc secret.",
+    "source_section": "16"
+  },
+  {
+    "id": "SC01",
+    "priority": "A",
+    "title": "Kho bảo mật Windows",
+    "description": "Lưu token khóa và session bằng cơ chế Windows phù hợp; không coi SQLite thường là kho bí mật đã mã hóa.",
+    "source_section": "17"
+  },
+  {
+    "id": "SC02",
+    "priority": "A",
+    "title": "Làm sạch dữ liệu",
+    "description": "Che auth cookie password và trường được chỉ định trong log report export; preview lại vì không thể nhận diện mọi secret tự động.",
+    "source_section": "17"
+  },
+  {
+    "id": "SC03",
+    "priority": "A",
+    "title": "Đăng nhập máy chủ",
+    "description": "Hash mật khẩu bằng thuật toán phù hợp, TLS, session có hạn và thu hồi; rate limit đăng nhập và token mời một lần.",
+    "source_section": "17"
+  },
+  {
+    "id": "SC04",
+    "priority": "A",
+    "title": "Cách ly workspace",
+    "description": "Kiểm tra quyền ở mọi API tài nguyên file và kênh sự kiện; ID bị đoán được cũng không cho vượt workspace.",
+    "source_section": "17"
+  },
+  {
+    "id": "SC05",
+    "priority": "A",
+    "title": "Nội dung không tin cậy",
+    "description": "Không thực thi HTML hoặc script từ response Markdown hay example; khử nội dung nguy hiểm trong renderer.",
+    "source_section": "17"
+  },
+  {
+    "id": "SC06",
+    "priority": "A",
+    "title": "Quyền ứng dụng desktop",
+    "description": "Giới hạn IPC command và phạm vi file; không cấp quyền Rust hoặc hệ thống cho trang remote trong WebView. [3]",
+    "source_section": "17"
+  },
+  {
+    "id": "SC07",
+    "priority": "A",
+    "title": "Không tự gửi telemetry",
+    "description": "Mặc định tắt analytics và báo crash qua dịch vụ ngoài; diagnostic bundle được xem trước và gửi chủ động.",
+    "source_section": "17"
+  },
+  {
+    "id": "SC08",
+    "priority": "B",
+    "title": "Chặn SSRF trên server",
+    "description": "Mock runner fetch spec hoặc webhook ở server phải có allowlist và kiểm tra IP DNS redirect; client cá nhân vẫn gọi localhost theo chủ đích.",
+    "source_section": "17"
+  },
+  {
+    "id": "SC09",
+    "priority": "B",
+    "title": "Phục hồi tài khoản và MFA",
+    "description": "Owner quản lý reset an toàn; bổ sung TOTP hoặc giải pháp nội bộ, có recovery code và thu hồi session.",
+    "source_section": "17"
+  },
+  {
+    "id": "SC10",
+    "priority": "B",
+    "title": "Audit và giới hạn lưu",
+    "description": "Ghi thao tác quản trị publish restore và quyền; đặt retention, export audit và không hứa log bất biến nếu chưa có cơ chế chống sửa.",
+    "source_section": "17"
+  },
+  {
+    "id": "OP01",
+    "priority": "A",
+    "title": "Bộ cài Windows",
+    "description": "Đóng gói MSI hoặc EXE, kiểm tra prerequisite gồm WebView2 nếu dùng Tauri; bản đầu nhắm Windows 11 x64.",
+    "source_section": "18"
+  },
+  {
+    "id": "OP02",
+    "priority": "A",
+    "title": "Chế độ không có cloud",
+    "description": "App cá nhân chạy offline; bản nhóm chỉ kết nối địa chỉ self host được cấu hình, không cần activation server bên ngoài.",
+    "source_section": "18"
+  },
+  {
+    "id": "OP03",
+    "priority": "A",
+    "title": "Khởi tạo server",
+    "description": "Cung cấp cấu hình Docker Compose hoặc binary, tạo Owner lần đầu và vô hiệu cơ chế bootstrap sau khi xong.",
+    "source_section": "18"
+  },
+  {
+    "id": "OP04",
+    "priority": "A",
+    "title": "Cấu hình triển khai",
+    "description": "Biến cấu hình domain TLS DB data path và giới hạn tải; hỗ trợ reverse proxy và volume bền vững.",
+    "source_section": "18"
+  },
+  {
+    "id": "OP05",
+    "priority": "A",
+    "title": "Sao lưu server",
+    "description": "Backup nhất quán database file và metadata phiên bản; xuất manifest kiểm tra và cấu hình lịch backup do nhóm quản lý.",
+    "source_section": "18"
+  },
+  {
+    "id": "OP06",
+    "priority": "A",
+    "title": "Khôi phục dữ liệu",
+    "description": "Restore sang server sạch, kiểm tra liên kết attachment và version; quy trình xử lý mất key hoặc thiếu file được ghi rõ.",
+    "source_section": "18"
+  },
+  {
+    "id": "OP07",
+    "priority": "A",
+    "title": "Nâng cấp và migration",
+    "description": "Migration có version và backup trước nâng cấp; kiểm tra tương thích client server, không hạ DB bằng thao tác thiếu kiểm soát.",
+    "source_section": "18"
+  },
+  {
+    "id": "OP08",
+    "priority": "B",
+    "title": "Phân phối cập nhật",
+    "description": "Bản đầu cập nhật thủ công; bản sau hỗ trợ feed tự host và xác minh chữ ký, không tin file cập nhật không được kiểm tra.",
+    "source_section": "18"
+  },
+  {
+    "id": "OP09",
+    "priority": "A",
+    "title": "Theo dõi sức khỏe",
+    "description": "Health endpoint, log có request ID, dung lượng DB file và hàng đợi; log không chứa body hoặc secret mặc định.",
+    "source_section": "18"
+  },
+  {
+    "id": "OP10",
+    "priority": "B",
+    "title": "Quota vận hành",
+    "description": "Đặt giới hạn upload retention và số job theo năng lực máy chủ; đây là giới hạn tài nguyên do nhóm quản trị, không phải phí theo ghế.",
+    "source_section": "18"
+  }
+]

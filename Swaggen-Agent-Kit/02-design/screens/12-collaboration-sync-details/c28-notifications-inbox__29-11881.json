@@ -1,0 +1,53 @@
+{
+  "node": {
+    "page": "12-collaboration-sync-details",
+    "page_id": "27:323",
+    "id": "29:11881",
+    "name": "C28 / Notifications inbox",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/12-collaboration-sync-details/c28-notifications-inbox__29-11881",
+    "requirements": [
+      "CO03",
+      "CO05",
+      "MK09"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:11882",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:11885",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:12040",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Notifications inbox",
+    "DisNote API / collab / C28",
+    "NOTIFICATION",
+    "WORKSPACE OBJECT",
+    "STATE"
+  ]
+}

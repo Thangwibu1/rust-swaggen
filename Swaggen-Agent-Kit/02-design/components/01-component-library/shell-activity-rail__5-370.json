@@ -1,0 +1,15 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:370",
+    "name": "Shell/Activity rail",
+    "type": "symbol",
+    "width": "64",
+    "height": "836",
+    "path": "02-design/components/01-component-library/shell-activity-rail__5-370",
+    "requirements": []
+  },
+  "direct_children": [],
+  "text_layer_names": []
+}

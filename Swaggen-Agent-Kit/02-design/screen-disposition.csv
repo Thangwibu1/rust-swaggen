@@ -1,0 +1,317 @@
+node_id,screen,requirements,mapping_basis,phases,disposition,reason
+6:144,A01 / Welcome to Swaggen,SC03 WS03,Figma annotation,P04,pending_auth_decision,Figma Google-only conflicts with PRD internal authentication
+6:187,A02 / Continue in your browser,SC03 WS03,Figma annotation,P04,pending_auth_decision,Figma Google-only conflicts with PRD internal authentication
+6:230,A03 / Google sign-in was interrupted,SC03 WS03,Figma annotation,P04,pending_auth_decision,Figma Google-only conflicts with PRD internal authentication
+6:273,A04 / Your session has expired,SC03 WS03,Figma annotation,P04,pending_auth_decision,Figma Google-only conflicts with PRD internal authentication
+6:316,A05 / Connect your team server,OP03 OP04 WS02,Figma annotation,P04 P06,planned,Implement and verify linked behavior
+6:476,A06 / Unable to reach your server,UX09 WS02,Figma annotation,P02 P04,planned,Implement and verify linked behavior
+6:615,A07 / Let’s build together,WS01 WS04 WS08,Figma annotation,P02,planned,Implement and verify linked behavior
+6:769,A08 / Your workspaces,WS01 WS04 WS09,Figma annotation,P02 P09,planned,Implement and verify linked behavior
+6:939,A09 / Create a workspace,WS04 WS08,Figma annotation,P02,planned,Implement and verify linked behavior
+6:1099,A10 / You’re invited to DisNote API,WS05,Figma annotation,P04,planned,Implement and verify linked behavior
+6:1259,"A11 / Good morning, Ha Giang",CO01 CO06 WS04,Figma annotation,P02 P05,planned,Implement and verify linked behavior
+6:1436,A12 / Your API workspace starts here,RQ08 WS06,Figma annotation,P02,planned,Implement and verify linked behavior
+6:1569,A13 / Find anything in your workspace,UX04 WS07,Figma annotation,P02 P09,planned,Implement and verify linked behavior
+6:1717,A14 / Create a new request,RQ01 RQ08 RQ09,Figma annotation,P02,planned,Implement and verify linked behavior
+6:1908,R01 / List tasks,RQ01 RQ02 RQ07,Figma annotation,P02,planned,Implement and verify linked behavior
+6:2102,R02 / Request headers,RQ03,Figma annotation,P02,planned,Implement and verify linked behavior
+6:2296,R03 / Create a task,RQ04,Figma annotation,P02,planned,Implement and verify linked behavior
+6:2492,R04 / Upload an attachment,RQ05 RQ10,Figma annotation,P02 P07,planned,Implement and verify linked behavior
+6:2686,R05 / Request authorization,AU01 AU02 AU03,Figma annotation,P02,planned,Implement and verify linked behavior
+6:2875,R06 / OAuth 2.0 authorization,AU08,Figma annotation,P07,planned,Implement and verify linked behavior
+6:3066,R07 / Inspect the response,RS01 RS02 RS03 RS04,Figma annotation,P02,planned,Implement and verify linked behavior
+6:3260,R08 / Request failed,RQ06 RS05,Figma annotation,P02,planned,Implement and verify linked behavior
+6:3446,R09 / Large response preview,RQ10 RS06,Figma annotation,P02 P07,planned,Implement and verify linked behavior
+6:3649,R10 / Resolved request preview,EV04 RQ07,Figma annotation,P02,planned,Implement and verify linked behavior
+6:3839,R11 / Streaming response,PR04 RQ06,Figma annotation,P02 P08,planned,Implement and verify linked behavior
+6:4033,R12 / Cookies for this workspace,AU04,Figma annotation,P02,planned,Implement and verify linked behavior
+6:4185,R13 / Connection settings,AU05 AU06 AU07 AU09 AU10 PR06,Figma annotation,P02 P07 P11,planned,Implement and verify linked behavior
+6:4351,R14 / Your request history,RQ09 RS07,Figma annotation,P02,planned,Implement and verify linked behavior
+6:4501,R15 / Compare responses,RS09 RS10,Figma annotation,P07,planned,Implement and verify linked behavior
+6:4697,R16 / Confirm production request,EV07,Figma annotation,P02,planned,Implement and verify linked behavior
+6:4863,R17 / Save a response example,CO08 RS08,Figma annotation,P02 P09,planned,Implement and verify linked behavior
+6:5029,R18 / Generate a code snippet,PR07,Figma annotation,P08,planned,Implement and verify linked behavior
+6:5197,E01 / Environments,EV01 EV02 EV03 EV04,Figma annotation,P02,planned,Implement and verify linked behavior
+6:5343,E02 / Edit Development,EV02 EV03 EV05 EV08 EV09,Figma annotation,P02 P07,planned,Implement and verify linked behavior
+6:5509,E03 / Personal secrets,EV05 SC01,Figma annotation,P01 P02,planned,Implement and verify linked behavior
+6:5746,D01 / DisNote OpenAPI,OA01 OA02 OA04 OA05 OA06,Figma annotation,P03,planned,Implement and verify linked behavior
+6:5940,D02 / Specification needs attention,OA03 OA07 OA08 OA09,Figma annotation,P03 P07,planned,Implement and verify linked behavior
+6:6146,D03 / Design an endpoint,DC04 OA04 OA05,Figma annotation,P03,planned,Implement and verify linked behavior
+6:6312,D04 / Task schema,OA05 OA06 OA07,Figma annotation,P03 P07,planned,Implement and verify linked behavior
+6:6493,D05 / References & components,OA06 OA07 OA08,Figma annotation,P03 P07,planned,Implement and verify linked behavior
+6:6643,D06 / API documentation,DC01 DC02 DC03 DC05,Figma annotation,P03,planned,Implement and verify linked behavior
+6:6814,D07 / Try List tasks,DC03 DC05,Figma annotation,P03,planned,Implement and verify linked behavior
+6:7008,D08 / Review specification changes,DC06 DC07 DC09,Figma annotation,P03 P07,planned,Implement and verify linked behavior
+6:7204,D09 / Update linked requests,DC04 DC06 DC09,Figma annotation,P03 P07,planned,Implement and verify linked behavior
+6:7356,D10 / API quality checks,DC08 OA10,Figma annotation,P07,planned,Implement and verify linked behavior
+6:7502,D11 / Export API documentation,DC10 IM04,Figma annotation,P03 P07,planned,Implement and verify linked behavior
+6:7662,D12 / Deprecated operation,DC09 OA04,Figma annotation,P03 P07,planned,Implement and verify linked behavior
+6:7879,C01 / Workspace members,SC04 WS05,Figma annotation,P04,planned,Implement and verify linked behavior
+6:8029,C02 / Invite teammates,CO01 WS05,Figma annotation,P04 P05,planned,Implement and verify linked behavior
+6:8189,C03 / Workspace activity,CO03 CO05 CO06,Figma annotation,P05 P09,planned,Implement and verify linked behavior
+6:8335,C04 / Discuss List tasks,CO04 CO05 CO09,Figma annotation,P05 P09,planned,Implement and verify linked behavior
+6:8523,C05 / Publish your changes,CO02 SY03 SY06,Figma annotation,P05,planned,Implement and verify linked behavior
+6:8677,C06 / Resolve a sync conflict,SY03 SY04 SY07,Figma annotation,P05,planned,Implement and verify linked behavior
+6:8899,C07 / Sync queue,SY01 SY02 SY05 SY06,Figma annotation,P05,planned,Implement and verify linked behavior
+6:9049,C08 / Working offline,SY01 SY02 UX09,Figma annotation,P02 P05,planned,Implement and verify linked behavior
+6:9232,C09 / Workspace access removed,SC04 SY09,Figma annotation,P04 P05,planned,Implement and verify linked behavior
+6:9371,C10 / Version history,SY08,Figma annotation,P05,planned,Implement and verify linked behavior
+6:9517,C11 / Restore revision 12,SY08,Figma annotation,P05,planned,Implement and verify linked behavior
+6:9671,C12 / Branches,SY10,Figma annotation,P09,planned,Implement and verify linked behavior
+6:9817,C13 / Review proposed changes,DC07 SY10,Figma annotation,P07 P09,planned,Implement and verify linked behavior
+6:9977,C14 / Live specification editing,CO07 CO10,Figma annotation,P09 P11,planned,Implement and verify linked behavior
+7:2,T01 / Request assertions,TS01,Figma annotation,P03,planned,Implement and verify linked behavior
+7:206,T02 / Run a collection,TS02 TS03 TS09,Figma annotation,P08 P11,planned,Implement and verify linked behavior
+7:372,T03 / Runner data preview,TS04,Figma annotation,P08,planned,Implement and verify linked behavior
+7:518,T04 / Run results,CO08 MK06 TS05 TS10,Figma annotation,P08 P09,planned,Implement and verify linked behavior
+7:691,T05 / Contract validation,DC08 TS06,Figma annotation,P07 P08,planned,Implement and verify linked behavior
+7:837,T06 / Script editor,TS07 TS08,Figma annotation,P10,planned,Implement and verify linked behavior
+7:1006,T07 / Mock servers,MK01 MK02 MK04,Figma annotation,P08,planned,Implement and verify linked behavior
+7:1148,T08 / Configure a mock,MK01 MK02 MK03 MK04,Figma annotation,P08 P11,planned,Implement and verify linked behavior
+7:1314,T09 / Mock rules & traffic,MK03,Figma annotation,P11,planned,Implement and verify linked behavior
+7:1460,T10 / CLI & CI configuration,MK05 MK06,Figma annotation,P08,planned,Implement and verify linked behavior
+7:1623,T11 / Self-hosted runners,MK07 MK10,Figma annotation,P08 P11,planned,Implement and verify linked behavior
+7:1765,T12 / Scheduled checks,MK08 MK09,Figma annotation,P11,planned,Implement and verify linked behavior
+7:1931,I01 / Import APIs & collections,IM01 IM02 IM03 IM04 IM05,Figma annotation,P03,planned,Implement and verify linked behavior
+7:2085,I02 / Review import compatibility,IM02 IM06 TS08,Figma annotation,P03 P10,planned,Implement and verify linked behavior
+7:2237,I03 / Export your project,IM01 IM07 IM08,Figma annotation,P03 P07,planned,Implement and verify linked behavior
+7:2397,I04 / Connect a Git repository,IM09 SY10,Figma annotation,P07 P09,planned,Implement and verify linked behavior
+7:2557,P01 / GraphQL explorer,PR01 PR02,Figma annotation,P08 P11,planned,Implement and verify linked behavior
+7:2723,P02 / WebSocket session,PR03,Figma annotation,P11,planned,Implement and verify linked behavior
+7:2869,P03 / gRPC request,PR05,Figma annotation,P11,planned,Implement and verify linked behavior
+7:3035,P04 / Developer utilities,PR08 PR09,Figma annotation,P08 P11,planned,Implement and verify linked behavior
+7:3221,S01 / Workspace settings,WS08 WS09 WS10,Figma annotation,P02 P09,planned,Implement and verify linked behavior
+7:3381,S02 / Your Google account,SC03 SC09 WS03,Figma annotation,P04 P09,pending_auth_decision,Figma Google-only conflicts with PRD internal authentication
+7:3547,S03 / Personal preferences,UX05 UX06 UX07,Figma annotation,P02 P09,planned,Implement and verify linked behavior
+7:3713,S04 / Keyboard shortcuts,UX03 UX04,Figma annotation,P02 P09,planned,Implement and verify linked behavior
+7:3867,S05 / Storage & retention,RS07 UX10,Figma annotation,P02,planned,Implement and verify linked behavior
+7:4033,S06 / Privacy & permissions,SC02 SC05 SC06 SC07,Figma annotation,P01,planned,Implement and verify linked behavior
+7:4193,S07 / Audit log,SC04 SC10,Figma annotation,P04 P09,planned,Implement and verify linked behavior
+7:4339,S08 / Server health,OP03 OP04 OP09 OP10,Figma annotation,P06 P09,planned,Implement and verify linked behavior
+7:4509,S09 / Backup & restore,OP05 OP06,Figma annotation,P06,planned,Implement and verify linked behavior
+7:4655,S10 / Application updates,OP01 OP07 OP08,Figma annotation,P06 P09,planned,Implement and verify linked behavior
+7:4815,S11 / Extensions & permissions,PR10 SC06,Figma annotation,P01 P10,planned,Implement and verify linked behavior
+7:4961,S12 / Team secret vault,EV10 SC01,Figma annotation,P01 P10,planned,Implement and verify linked behavior
+7:5113,X01 / Loading your workspace,UX02,Figma annotation,P02,planned,Implement and verify linked behavior
+7:5248,X02 / No search results,WS07,Figma annotation,P02,planned,Implement and verify linked behavior
+7:5381,X03 / Read-only workspace,SC04 WS05,Figma annotation,P04,planned,Implement and verify linked behavior
+7:5564,X04 / Your drafts were recovered,SY01 UX02,Figma annotation,P02 P05,planned,Implement and verify linked behavior
+7:5697,X05 / Local storage is almost full,UX10,Figma annotation,P02,planned,Implement and verify linked behavior
+7:5836,X06 / Server versions are incompatible,OP07 SY05,Figma annotation,P05 P06,planned,Implement and verify linked behavior
+7:5975,X07 / Workspace trash,SY07 WS09,Figma annotation,P05 P09,planned,Implement and verify linked behavior
+7:6117,X08 / Transfer workspace ownership,WS10,Figma annotation,P09,planned,Implement and verify linked behavior
+12:2505,S13 / Server network policy,SC06 SC08,Figma annotation,P01 P08,planned,Implement and verify linked behavior
+13:2626,M01 / New collection,WS06,inferred,P02,planned,Implement and verify linked behavior
+13:2688,M02 / Choose environment,EV01,inferred,P02,planned,Implement and verify linked behavior
+13:2767,M03 / Command palette,UX04,inferred,P09,planned,Implement and verify linked behavior
+13:2845,M04 / Delete collection?,WS06 WS09,inferred,P02 P09,planned,Implement and verify linked behavior
+13:2907,M05 / Review secret redaction,SC02 EV06 IM08,inferred,P01 P02 P03,planned,Implement and verify linked behavior
+13:2964,M06 / Sign out of Swaggen?,WS03 SC03,inferred,P04,planned,Implement and verify linked behavior
+28:25,W01 / Open a personal workspace,OP02 WS01,Figma annotation,P02 P06,planned,Implement and verify linked behavior
+28:237,W02 / Move local work to your team,CO01 WS01 WS04,Figma annotation,P02 P05,planned,Implement and verify linked behavior
+28:394,W03 / Server profiles,WS02,Figma annotation,P04,planned,Implement and verify linked behavior
+28:548,W04 / Server connection details,SY05 WS02,Figma annotation,P04 P05,planned,Implement and verify linked behavior
+28:698,W05 / Invitation settings,WS05,Figma annotation,P04,planned,Implement and verify linked behavior
+28:852,W06 / Change a member’s role,SC04 WS05,Figma annotation,P04,planned,Implement and verify linked behavior
+28:1004,W07 / Archive this workspace,WS04 WS09,Figma annotation,P02 P09,planned,Implement and verify linked behavior
+28:1154,W08 / Leave your workspace,WS10,Figma annotation,P09,planned,Implement and verify linked behavior
+28:1300,W09 / Project defaults & conventions,WS08,Figma annotation,P02,planned,Implement and verify linked behavior
+28:1456,W10 / Create a nested folder,WS06,Figma annotation,P02,planned,Implement and verify linked behavior
+28:1604,W11 / Rename a collection,WS06,Figma annotation,P02,planned,Implement and verify linked behavior
+28:1750,W12 / Move a request,RQ09 WS06,Figma annotation,P02,planned,Implement and verify linked behavior
+28:1904,W13 / Duplicate a request,RQ09 WS06,Figma annotation,P02,planned,Implement and verify linked behavior
+28:2058,W14 / Workspace filters & tags,WS07,Figma annotation,P02,planned,Implement and verify linked behavior
+28:2214,W15 / Restore a deleted folder,SY07 WS09,Figma annotation,P05 P09,planned,Implement and verify linked behavior
+28:2368,W16 / Collection actions,RQ09 WS06,Figma annotation,P02,planned,Implement and verify linked behavior
+28:2546,W17 / Organize collection folders,UX01 WS06,Figma annotation,P02,planned,Implement and verify linked behavior
+28:2773,W18 / Move request with drag and drop,WS06,Figma annotation,P02,planned,Implement and verify linked behavior
+28:3000,W19 / Invitation expired,WS03 WS05,Figma annotation,P04,planned,Implement and verify linked behavior
+28:3157,W20 / Invitation account mismatch,SC04 WS05,Figma annotation,P04,planned,Implement and verify linked behavior
+28:3311,W21 / Revoke an invitation,SC04 WS05,Figma annotation,P04,planned,Implement and verify linked behavior
+32:2816,W22 / Confirm ownership transfer,SC04 WS10,Figma annotation,P04 P09,planned,Implement and verify linked behavior
+28:3551,Q01 / Choose an HTTP method,RQ01,Figma annotation,P02,planned,Implement and verify linked behavior
+28:3728,Q02 / Path and query parameters,RQ01 RQ02,Figma annotation,P02,planned,Implement and verify linked behavior
+28:3904,Q03 / URL encoding preview,RQ02 RQ07,Figma annotation,P02,planned,Implement and verify linked behavior
+28:4068,Q04 / Headers and generated values,AU03 RQ03,Figma annotation,P02,planned,Implement and verify linked behavior
+28:4237,Q05 / Header validation error,RQ03,Figma annotation,P02,planned,Implement and verify linked behavior
+28:4400,Q06 / Choose request body type,RQ04,Figma annotation,P02,planned,Implement and verify linked behavior
+28:4577,Q07 / JSON request body,RQ04,Figma annotation,P02,planned,Implement and verify linked behavior
+28:4739,Q08 / Plain text request body,RQ04,Figma annotation,P02,planned,Implement and verify linked behavior
+28:4895,Q09 / XML request body,RQ04,Figma annotation,P02,planned,Implement and verify linked behavior
+28:5057,Q10 / JSON syntax error,RQ04 RQ06,Figma annotation,P02,planned,Implement and verify linked behavior
+28:5222,Q11 / Form URL encoded body,RQ04,Figma annotation,P02,planned,Implement and verify linked behavior
+28:5393,Q12 / Binary request body,RQ04 RQ05,Figma annotation,P02,planned,Implement and verify linked behavior
+28:5553,Q13 / Request without a body,RQ01 RQ04,Figma annotation,P02,planned,Implement and verify linked behavior
+28:5718,Q14 / Multipart field editor,RQ04 RQ05,Figma annotation,P02,planned,Implement and verify linked behavior
+28:5889,Q15 / Uploading an attachment,RQ05 RQ06 RQ10,Figma annotation,P02 P07,planned,Implement and verify linked behavior
+28:6046,Q16 / Upload canceled,RQ06 RQ10,Figma annotation,P02 P07,planned,Implement and verify linked behavior
+28:6203,Q17 / Local upload file is missing,RQ05,Figma annotation,P02,planned,Implement and verify linked behavior
+28:6357,Q18 / Downloading a large response,RQ10 RS06,Figma annotation,P02 P07,planned,Implement and verify linked behavior
+28:6514,Q19 / Request timed out,RQ06 RS05 RS06,Figma annotation,P02,planned,Implement and verify linked behavior
+28:6672,Q20 / Request canceled,RQ06 RS05 RS06,Figma annotation,P02,planned,Implement and verify linked behavior
+28:6829,Q21 / Server rejected the request,RQ06 RS05 RS06,Figma annotation,P02,planned,Implement and verify linked behavior
+28:6987,Q22 / Response could not be saved,RQ06 RS05 RS06,Figma annotation,P02,planned,Implement and verify linked behavior
+28:7145,Q23 / Draft differs from the shared request,CO02 RQ08 SY01,Figma annotation,P02 P05,planned,Implement and verify linked behavior
+28:7303,Q24 / Close unsaved tabs,RQ08 UX02,Figma annotation,P02,planned,Implement and verify linked behavior
+28:7460,Q25 / Request tab actions,RQ09 UX01 UX02,Figma annotation,P02,planned,Implement and verify linked behavior
+28:7632,Q26 / Response headers and cookies,AU04 RS03,Figma annotation,P02,planned,Implement and verify linked behavior
+28:7795,Q27 / Find a value in a response,RS02 RS04,Figma annotation,P02,planned,Implement and verify linked behavior
+28:7953,Q28 / Binary and XML response views,RS02 RS04,Figma annotation,P02,planned,Implement and verify linked behavior
+28:8115,Q29 / Response timing breakdown,RS01 RS10,Figma annotation,P02 P07,planned,Implement and verify linked behavior
+28:8290,Q30 / History filters and cleanup,RS07 UX10,Figma annotation,P02,planned,Implement and verify linked behavior
+28:8452,Q31 / Compare JSON or raw responses,RS09,Figma annotation,P07,planned,Implement and verify linked behavior
+28:8610,Q32 / Review a shared response example,CO08 RS08 SC02,Figma annotation,P01 P02 P09,planned,Implement and verify linked behavior
+32:7157,Q33 / XML response inspector,RS02 RS04,Figma annotation,P02,planned,Implement and verify linked behavior
+32:7317,Q34 / Binary response inspector,RS02 RS06,Figma annotation,P02,planned,Implement and verify linked behavior
+32:7478,Q35 / Raw response inspector,RS02 RS04,Figma annotation,P02,planned,Implement and verify linked behavior
+29:25,H01 / Choose API authorization,AU01 AU02 AU03 AU08 AU10,Figma annotation,P02 P07 P11,planned,Implement and verify linked behavior
+29:275,H02 / No authentication,AU01,Figma annotation,P02,planned,Implement and verify linked behavior
+29:424,H03 / Basic authentication,AU02,Figma annotation,P02,planned,Implement and verify linked behavior
+29:574,H04 / API key in a header,AU02,Figma annotation,P02,planned,Implement and verify linked behavior
+29:726,H05 / API key in the query string,AU02 SC02,Figma annotation,P01 P02,planned,Implement and verify linked behavior
+29:878,H06 / Inherited authorization,AU03,Figma annotation,P02,planned,Implement and verify linked behavior
+29:1030,H07 / Override inherited authorization,AU03,Figma annotation,P02,planned,Implement and verify linked behavior
+29:1178,H08 / OAuth authorization code with PKCE,AU08,Figma annotation,P07,planned,Implement and verify linked behavior
+29:1338,H09 / OAuth Client Credentials,AU08,Figma annotation,P07,planned,Implement and verify linked behavior
+29:1500,H10 / OAuth token details,AU08,Figma annotation,P07,planned,Implement and verify linked behavior
+29:1656,H11 / Cookie editor,AU04,Figma annotation,P02,planned,Implement and verify linked behavior
+29:1816,H12 / TLS exception for a local host,AU05,Figma annotation,P02,planned,Implement and verify linked behavior
+29:1968,H13 / Redirect policy,AU06,Figma annotation,P02,planned,Implement and verify linked behavior
+29:2124,H14 / Proxy and custom certificate authority,AU07,Figma annotation,P07,planned,Implement and verify linked behavior
+29:2286,H15 / Client certificate mapping,AU09,Figma annotation,P07,planned,Implement and verify linked behavior
+29:2442,H16 / AWS Signature v4,AU10,Figma annotation,P11,planned,Implement and verify linked behavior
+29:2596,H17 / Digest authentication,AU10,Figma annotation,P11,planned,Implement and verify linked behavior
+29:2748,H18 / Waiting for OAuth authorization,AU08,Figma annotation,P07,planned,Implement and verify linked behavior
+29:2908,H19 / OAuth callback rejected,AU08,Figma annotation,P07,planned,Implement and verify linked behavior
+29:3066,H20 / OAuth access token expired,AU08,Figma annotation,P07,planned,Implement and verify linked behavior
+29:3219,H21 / OAuth refresh failed,AU08,Figma annotation,P07,planned,Implement and verify linked behavior
+29:3373,H22 / Unsupported authorization option,AU10,Figma annotation,P11,planned,Implement and verify linked behavior
+29:3526,H23 / TLS certificate verification failed,AU05 RS05,Figma annotation,P02,planned,Implement and verify linked behavior
+29:3684,H24 / Client certificate expired,AU09,Figma annotation,P07,planned,Implement and verify linked behavior
+29:3842,H25 / Proxy authentication required,AU07 RS05,Figma annotation,P02 P07,planned,Implement and verify linked behavior
+29:3996,H26 / Redirect chain inspected,AU06,Figma annotation,P02,planned,Implement and verify linked behavior
+29:4154,V01 / Inspect an effective variable,EV02 EV03,Figma annotation,P02,planned,Implement and verify linked behavior
+29:4324,V02 / Personal and shared variable values,EV03 EV05,Figma annotation,P02,planned,Implement and verify linked behavior
+29:4487,V03 / Missing variable blocks this request,EV04 RQ07,Figma annotation,P02,planned,Implement and verify linked behavior
+29:4641,V04 / Circular variable reference,EV04,Figma annotation,P02,planned,Implement and verify linked behavior
+29:4795,V05 / Dynamic variable preview,EV08,Figma annotation,P07,planned,Implement and verify linked behavior
+29:4953,V06 / Extract a value from a response,EV09 TS03,Figma annotation,P07 P08,planned,Implement and verify linked behavior
+29:5119,V07 / Team vault access policy,EV10 SC01,Figma annotation,P01 P10,planned,Implement and verify linked behavior
+29:5279,V08 / Rotate a team secret,EV10,Figma annotation,P10,planned,Implement and verify linked behavior
+29:5431,V09 / Reveal or export a secret,EV05 EV06 SC02,Figma annotation,P01 P02,planned,Implement and verify linked behavior
+29:5701,O01 / OpenAPI file and URL import,IM04 OA01,Figma annotation,P03,planned,Implement and verify linked behavior
+29:5855,O02 / Unsupported OpenAPI version,OA01 OA09,Figma annotation,P03 P07,planned,Implement and verify linked behavior
+29:6008,O03 / Find and replace in a specification,OA02,Figma annotation,P03,planned,Implement and verify linked behavior
+29:6163,O04 / Duplicate operation validation,OA03 OA04,Figma annotation,P03,planned,Implement and verify linked behavior
+29:6321,O05 / Edit an operation parameter,OA05,Figma annotation,P03,planned,Implement and verify linked behavior
+29:6485,O06 / Edit request body content,OA05,Figma annotation,P03,planned,Implement and verify linked behavior
+29:6643,O07 / Add a documented response,DC02 OA05,Figma annotation,P03,planned,Implement and verify linked behavior
+29:6803,O08 / Edit a reusable security scheme,OA06,Figma annotation,P03,planned,Implement and verify linked behavior
+29:6961,O09 / Schema property constraints,OA05 OA07,Figma annotation,P03 P07,planned,Implement and verify linked behavior
+29:7127,O10 / Compose schemas with allOf,OA07,Figma annotation,P07,planned,Implement and verify linked behavior
+29:7293,O11 / Choose a oneOf schema branch,OA07,Figma annotation,P07,planned,Implement and verify linked behavior
+29:7459,O12 / Compose schemas with anyOf,OA07,Figma annotation,P07,planned,Implement and verify linked behavior
+29:7622,O13 / Configure an enum discriminator,OA07,Figma annotation,P07,planned,Implement and verify linked behavior
+29:7780,O14 / Recursive schema boundary,OA07,Figma annotation,P07,planned,Implement and verify linked behavior
+29:7998,O15 / Missing reference and external reference permission,OA06,Figma annotation,P03,planned,Implement and verify linked behavior
+29:8161,O16 / Bundle a multi-file specification,IM04 OA08,Figma annotation,P03 P07,planned,Implement and verify linked behavior
+29:8319,O17 / Convert Swagger 2.0,IM04 OA09,Figma annotation,P03 P07,planned,Implement and verify linked behavior
+29:8488,O18 / Configure API lint rules,OA10,Figma annotation,P07,planned,Implement and verify linked behavior
+29:8651,O19 / Link request to a stable operation,DC04 DC05,Figma annotation,P03,planned,Implement and verify linked behavior
+29:8814,O20 / Review a contract update,DC06 DC09,Figma annotation,P03 P07,planned,Implement and verify linked behavior
+29:8973,O21 / Propose a spec change from a request,DC07,Figma annotation,P07,planned,Implement and verify linked behavior
+29:9138,O22 / Response schema mismatch,DC08 TS06,Figma annotation,P07 P08,planned,Implement and verify linked behavior
+29:9311,O23 / Unsupported schema keyword,DC08 OA03,Figma annotation,P03 P07,planned,Implement and verify linked behavior
+29:9468,O24 / Delete an operation with dependents,DC09,Figma annotation,P07,planned,Implement and verify linked behavior
+29:9631,O25 / Documentation export preview,DC10 IM08,Figma annotation,P03 P07,planned,Implement and verify linked behavior
+29:9853,C15 / Create a branch,SY10,Figma annotation,P09,planned,Implement and verify linked behavior
+29:10001,C16 / Fork a collection,SY10 WS06,Figma annotation,P02 P09,planned,Implement and verify linked behavior
+29:10155,C17 / Open a merge request,DC07 SY10,Figma annotation,P07 P09,planned,Implement and verify linked behavior
+29:10315,C18 / Request changes in a review,CO04 SY10,Figma annotation,P05 P09,planned,Implement and verify linked behavior
+29:10463,C19 / Publish review approval,SY10,Figma annotation,P09,planned,Implement and verify linked behavior
+29:10611,C20 / Share a sanitized test report,CO08 SC02 TS10,Figma annotation,P01 P08 P09,planned,Implement and verify linked behavior
+29:10763,C21 / Notification preferences,CO05 MK09,Figma annotation,P09 P11,planned,Implement and verify linked behavior
+29:10921,C22 / Merge checks and approvals,SY10,Figma annotation,P09,planned,Implement and verify linked behavior
+29:11090,C23 / Merge conflict between branches,SY04 SY10,Figma annotation,P05 P09,planned,Implement and verify linked behavior
+29:11257,C24 / Resolve and preview the merged schema,SY04 SY10,Figma annotation,P05 P09,planned,Implement and verify linked behavior
+29:11409,C25 / Merge completed,SY08 SY10,Figma annotation,P05 P09,planned,Implement and verify linked behavior
+29:11565,C26 / Mention a teammate,CO04 CO05,Figma annotation,P05 P09,planned,Implement and verify linked behavior
+29:11723,C27 / Thread anchored to a previous revision,CO04 CO09,Figma annotation,P05 P09,planned,Implement and verify linked behavior
+29:11881,C28 / Notifications inbox,CO03 CO05 MK09,Figma annotation,P05 P09 P11,planned,Implement and verify linked behavior
+29:12044,C29 / Open a workspace deep link,CO09 SC04 UX08,Figma annotation,P04 P09,planned,Implement and verify linked behavior
+29:12201,C30 / Deep link access denied,CO09 SC04,Figma annotation,P04 P09,planned,Implement and verify linked behavior
+29:12355,C31 / Collaborative editing presence,CO07 CO10,Figma annotation,P09 P11,planned,Implement and verify linked behavior
+29:12519,C32 / Collaborative editing lost connection,CO10 SY01 SY09,Figma annotation,P05 P11,planned,Implement and verify linked behavior
+29:12676,"Y01 / Pending, syncing, failed and conflicted changes",SY01,Figma annotation,P05,planned,Implement and verify linked behavior
+29:12845,Y02 / Reconnect and catch up,SY05 SY06,Figma annotation,P05,planned,Implement and verify linked behavior
+29:13002,Y03 / Sync cursor expired,SY05,Figma annotation,P05,planned,Implement and verify linked behavior
+29:13159,Y04 / Request deleted while you were offline,SY04 SY07,Figma annotation,P05,planned,Implement and verify linked behavior
+29:13323,Y05 / Access revoked with pending edits,SC04 SY09,Figma annotation,P04 P05,planned,Implement and verify linked behavior
+29:13486,Y06 / Restore revision as a new version,SY08,Figma annotation,P05,planned,Implement and verify linked behavior
+29:13639,Y07 / Device restart recovery,SY01 UX02,Figma annotation,P02 P05,planned,Implement and verify linked behavior
+29:13864,I05 / Import from an API URL,IM04 OA01,Figma annotation,P03,planned,Implement and verify linked behavior
+29:14018,I06 / Import Postman environment values,EV03 IM03,Figma annotation,P02 P03,planned,Implement and verify linked behavior
+29:14172,I07 / Choose an import conflict strategy,IM06,Figma annotation,P03,planned,Implement and verify linked behavior
+29:14324,I08 / Choose export files and attachments,IM01 IM07 IM08,Figma annotation,P03 P07,planned,Implement and verify linked behavior
+29:14486,I09 / Git working tree changes,IM09,Figma annotation,P07,planned,Implement and verify linked behavior
+29:14638,I10 / Paste a cURL request,IM05,Figma annotation,P03,planned,Implement and verify linked behavior
+29:14790,I11 / cURL import parse error,IM05 IM06,Figma annotation,P03,planned,Implement and verify linked behavior
+29:14948,I12 / Import compatibility report,IM02 IM06 IM10 TS08,Figma annotation,P03 P10 P11,planned,Implement and verify linked behavior
+29:15117,I13 / Export manifest and portability check,IM01 IM04 IM07,Figma annotation,P03 P07,planned,Implement and verify linked behavior
+29:15281,I14 / Resolve a Git merge conflict,IM09 SY10,Figma annotation,P07 P09,planned,Implement and verify linked behavior
+29:15434,I15 / Drop a file from Windows Explorer,IM01 UX08,Figma annotation,P03 P09,planned,Implement and verify linked behavior
+29:15591,T13 / Add a response assertion,TS01,Figma annotation,P03,planned,Implement and verify linked behavior
+29:15745,T14 / Run order and dependencies,TS02 TS03,Figma annotation,P08,planned,Implement and verify linked behavior
+29:15903,T15 / Configure a response extractor,EV09 TS03,Figma annotation,P07 P08,planned,Implement and verify linked behavior
+29:16063,T16 / Data-driven run settings,TS04,Figma annotation,P08,planned,Implement and verify linked behavior
+29:16219,T17 / Concurrency and rate limits,MK10 TS09,Figma annotation,P08 P11,planned,Implement and verify linked behavior
+29:16375,T18 / Runner script permissions,SC06 TS07,Figma annotation,P01 P10,planned,Implement and verify linked behavior
+29:16531,T19 / Run in progress,TS02 TS05,Figma annotation,P08,planned,Implement and verify linked behavior
+29:16688,T20 / Dependency failure and skipped steps,TS03 TS05,Figma annotation,P08,planned,Implement and verify linked behavior
+29:16851,T21 / Invalid data row preview,TS04,Figma annotation,P08,planned,Implement and verify linked behavior
+29:17014,T22 / Script sandbox stopped execution,TS07,Figma annotation,P10,planned,Implement and verify linked behavior
+29:17172,T23 / Postman script migration support,IM02 TS08,Figma annotation,P03 P10,planned,Implement and verify linked behavior
+29:17335,T24 / Reproduce a test run,TS10,Figma annotation,P08,planned,Implement and verify linked behavior
+29:17504,K01 / Mock from a schema,MK02,Figma annotation,P08,planned,Implement and verify linked behavior
+29:17662,K02 / Edit a mock matching rule,MK03,Figma annotation,P11,planned,Implement and verify linked behavior
+29:17822,K03 / Mock access controls,MK04,Figma annotation,P08,planned,Implement and verify linked behavior
+29:17980,K04 / Register a self-hosted runner,MK07,Figma annotation,P11,planned,Implement and verify linked behavior
+29:18134,K05 / Runner job resource limits,MK10,Figma annotation,P08,planned,Implement and verify linked behavior
+29:18292,K06 / Scheduled run retry policy,MK08 MK09,Figma annotation,P11,planned,Implement and verify linked behavior
+29:18454,K07 / Webhook notification permission,MK09 SC08,Figma annotation,P08 P11,planned,Implement and verify linked behavior
+29:18606,K08 / Schema cannot generate a mock response,MK02,Figma annotation,P08,planned,Implement and verify linked behavior
+29:18763,K09 / Mock traffic inspection,MK03 MK04,Figma annotation,P08 P11,planned,Implement and verify linked behavior
+29:18920,K10 / Scheduled runner is offline,MK07 MK08 MK09,Figma annotation,P11,planned,Implement and verify linked behavior
+29:19077,K11 / Cancel an active runner job,MK10,Figma annotation,P08,planned,Implement and verify linked behavior
+29:19306,P05 / GraphQL variables and schema source,PR01 PR02,Figma annotation,P08 P11,planned,Implement and verify linked behavior
+29:19462,P06 / WebSocket connection options,PR03,Figma annotation,P11,planned,Implement and verify linked behavior
+29:19620,P07 / gRPC metadata and proto import,PR05,Figma annotation,P11,planned,Implement and verify linked behavior
+29:19780,P08 / HTTP protocol preference,PR06,Figma annotation,P11,planned,Implement and verify linked behavior
+29:19934,P09 / SDK and server stub generator,PR08,Figma annotation,P11,planned,Implement and verify linked behavior
+29:20092,P10 / Extension permission request,PR10 SC06,Figma annotation,P01 P10,planned,Implement and verify linked behavior
+29:20248,P11 / GraphQL data and errors,PR01 PR02,Figma annotation,P08 P11,planned,Implement and verify linked behavior
+29:20423,P12 / WebSocket disconnected,PR03,Figma annotation,P11,planned,Implement and verify linked behavior
+29:20580,P13 / SSE stream event inspector,PR04,Figma annotation,P08,planned,Implement and verify linked behavior
+29:20741,P14 / gRPC invocation error,PR05,Figma annotation,P11,planned,Implement and verify linked behavior
+29:20910,P15 / Generator output review,PR08,Figma annotation,P11,planned,Implement and verify linked behavior
+29:21115,P16 / Local conversion utilities,PR09,Figma annotation,P08,planned,Implement and verify linked behavior
+29:21274,Z01 / Windows installation destination,OP01,Figma annotation,P06,planned,Implement and verify linked behavior
+29:21426,Z02 / First server owner setup,OP03 SC03,Figma annotation,P04 P06,planned,Implement and verify linked behavior
+29:21576,Z03 / Coolify backend configuration,OP03 OP04,Figma annotation,P06,planned,Implement and verify linked behavior
+29:21730,Z04 / Backup policy,OP05,Figma annotation,P06,planned,Implement and verify linked behavior
+29:21892,Z05 / Restore a verified backup,OP06,Figma annotation,P06,planned,Implement and verify linked behavior
+29:22050,Z06 / Migration and update review,OP07 OP08,Figma annotation,P06 P09,planned,Implement and verify linked behavior
+29:22206,Z07 / Diagnostic report preview,OP09 SC07,Figma annotation,P01 P06,planned,Implement and verify linked behavior
+29:22360,Z08 / Local data folder migration,UX10,Figma annotation,P02,planned,Implement and verify linked behavior
+29:22514,Z09 / Accessible keyboard navigation,UX03 UX05 UX07,Figma annotation,P02 P09,planned,Implement and verify linked behavior
+29:22674,Z10 / Manage signed-in Google sessions,SC03 SC09 WS03,Figma annotation,P04 P09,pending_auth_decision,Figma Google-only conflicts with PRD internal authentication
+29:22826,Z11 / Backup verification result,OP05 OP06,Figma annotation,P06,planned,Implement and verify linked behavior
+29:23001,Z12 / Restore blocked by a missing key,OP06,Figma annotation,P06,planned,Implement and verify linked behavior
+29:23159,Z13 / Update signature could not be verified,OP08,Figma annotation,P09,planned,Implement and verify linked behavior
+29:23317,Z14 / Server-side destination blocked,SC08,Figma annotation,P08,planned,Implement and verify linked behavior
+29:23475,Z15 / Privacy-safe imported content,SC05,Figma annotation,P01,planned,Implement and verify linked behavior
+29:23632,Z16 / Performance acceptance dashboard,RS06 UX05 UX09,inferred,P02,planned,Implement and verify linked behavior
+32:11157,Z17 / Audit log retention policy,SC10,Figma annotation,P09,planned,Implement and verify linked behavior
+32:11321,Z18 / Server storage and operational quotas,MK10 OP10,Figma annotation,P08 P09,planned,Implement and verify linked behavior
+32:11481,Z19 / Language and interface appearance,UX05 UX06,Figma annotation,P02 P09,planned,Implement and verify linked behavior
+32:11640,Z20 / Confirm local cache cleanup,RS07 UX10,Figma annotation,P02,planned,Implement and verify linked behavior

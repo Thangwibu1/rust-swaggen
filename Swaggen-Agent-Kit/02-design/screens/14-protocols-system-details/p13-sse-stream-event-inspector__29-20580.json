@@ -1,0 +1,50 @@
+{
+  "node": {
+    "page": "14-protocols-system-details",
+    "page_id": "27:325",
+    "id": "29:20580",
+    "name": "P13 / SSE stream event inspector",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/14-protocols-system-details/p13-sse-stream-event-inspector__29-20580",
+    "requirements": [
+      "PR04"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:20581",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:20584",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:20737",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "SSE stream event inspector",
+    "DisNote API / system / P13",
+    "Event stream",
+    "Latest 500 events retained · reconnect policy configured per req"
+  ]
+}

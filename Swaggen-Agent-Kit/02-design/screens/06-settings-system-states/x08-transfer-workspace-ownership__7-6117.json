@@ -1,0 +1,57 @@
+{
+  "node": {
+    "page": "06-settings-system-states",
+    "page_id": "4:94",
+    "id": "7:6117",
+    "name": "X08 / Transfer workspace ownership",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/06-settings-system-states/x08-transfer-workspace-ownership__7-6117",
+    "requirements": [
+      "WS10"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "7:6118",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "7:6121",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "7:6267",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Transfer workspace ownership",
+    "DisNote API / Settings",
+    "Configuration",
+    "Current owner",
+    "Workspace configuration",
+    "New owner",
+    "Workspace configuration",
+    "Confirmation",
+    "Workspace configuration",
+    "Access & sharing",
+    "Review this change carefully before continuing."
+  ]
+}

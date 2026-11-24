@@ -1,0 +1,52 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:312",
+    "name": "Notice",
+    "type": "frame",
+    "width": "3184",
+    "height": "216",
+    "path": "02-design/components/01-component-library/notice__5-312",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "5:313",
+      "name": "Tone=Info",
+      "type": "symbol",
+      "x": "24",
+      "y": "56",
+      "width": "1032",
+      "height": "52"
+    },
+    {
+      "id": "5:319",
+      "name": "Tone=Success",
+      "type": "symbol",
+      "x": "1076",
+      "y": "56",
+      "width": "1032",
+      "height": "52"
+    },
+    {
+      "id": "5:323",
+      "name": "Tone=Warning",
+      "type": "symbol",
+      "x": "2128",
+      "y": "56",
+      "width": "1032",
+      "height": "52"
+    },
+    {
+      "id": "5:329",
+      "name": "Tone=Error",
+      "type": "symbol",
+      "x": "24",
+      "y": "128",
+      "width": "1032",
+      "height": "52"
+    }
+  ],
+  "text_layer_names": []
+}

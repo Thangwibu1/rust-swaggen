@@ -1,0 +1,63 @@
+{
+  "node": {
+    "page": "11-openapi-contract-details",
+    "page_id": "27:322",
+    "id": "29:9138",
+    "name": "O22 / Response schema mismatch",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/11-openapi-contract-details/o22-response-schema-mismatch__29-9138",
+    "requirements": [
+      "DC08",
+      "TS06"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:9139",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:9142",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:9307",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Response schema mismatch",
+    "DisNote API / openapi / O22",
+    "Schema definition",
+    "Composition inspector",
+    "Path",
+    "$.id",
+    "Invalid",
+    "Expected",
+    "string · uuid",
+    "Schema v13",
+    "Actual",
+    "number · 42",
+    "Response",
+    "Validator",
+    "OpenAPI 3.1 / JSON Schema",
+    "Supported keywords only"
+  ]
+}

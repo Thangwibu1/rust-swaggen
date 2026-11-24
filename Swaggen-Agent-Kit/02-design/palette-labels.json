@@ -1,0 +1,31 @@
+{
+  "source": "Figma text labels, not resolved variable bindings",
+  "override": "51:40541 foreground-only: ordinary surfaces white; earlier bg labels historical",
+  "labels": {
+    "Cream": "#FFEFD2",
+    "Teal": "#6AB0AF",
+    "Salmon": "#F5A89A",
+    "Yellow": "#FFF2A5",
+    "bg/page": "#FBFCFA",
+    "bg/surface": "#FFFFFF",
+    "bg/sidebar": "#FFEFD2",
+    "bg/selected": "#E8F4F0",
+    "bg/brand": "#6AB0AF",
+    "bg/brand-strong": "#245C59",
+    "bg/danger": "#FFF0EC",
+    "bg/warning": "#FFF2A5",
+    "bg/disabled": "#EDF0ED",
+    "text/primary": "#203735",
+    "text/secondary": "#607572",
+    "text/brand": "#245C59",
+    "text/on-brand": "#FFFFFF",
+    "text/danger": "#A23F3F",
+    "text/warning": "#7B5B1C",
+    "border/default": "#DCE6E1",
+    "border/focus": "#245C59",
+    "status/success": "#286649",
+    "status/info": "#345D8E",
+    "accent/salmon": "#F5A89A",
+    "accent/yellow": "#FFF2A5"
+  }
+}

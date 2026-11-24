@@ -1,0 +1,55 @@
+{
+  "node": {
+    "page": "06-settings-system-states",
+    "page_id": "4:94",
+    "id": "7:4339",
+    "name": "S08 / Server health",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/06-settings-system-states/s08-server-health__7-4339",
+    "requirements": [
+      "OP03",
+      "OP04",
+      "OP09",
+      "OP10"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "7:4340",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "7:4343",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "7:4505",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Server health",
+    "DisNote API / Settings",
+    "Services",
+    "NAME / OPERATION",
+    "VALUE / DETAILS",
+    "STATUS"
+  ]
+}

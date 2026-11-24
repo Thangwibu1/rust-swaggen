@@ -1,0 +1,59 @@
+{
+  "node": {
+    "page": "02-access-workspaces",
+    "page_id": "4:90",
+    "id": "6:316",
+    "name": "A05 / Connect your team server",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/02-access-workspaces/a05-connect-your-team-server__6-316",
+    "requirements": [
+      "OP03",
+      "OP04",
+      "WS02"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "6:317",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "6:320",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "6:472",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Connect your team server",
+    "DisNote API / Team workspace",
+    "Configuration",
+    "Server address",
+    "Workspace configuration",
+    "Connection",
+    "Workspace configuration",
+    "Profile name",
+    "Workspace configuration",
+    "Access & sharing",
+    "Changes are saved locally before they are published to your team."
+  ]
+}

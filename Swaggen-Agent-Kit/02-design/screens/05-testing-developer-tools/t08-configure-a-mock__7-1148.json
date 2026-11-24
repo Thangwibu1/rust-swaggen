@@ -1,0 +1,64 @@
+{
+  "node": {
+    "page": "05-testing-developer-tools",
+    "page_id": "4:93",
+    "id": "7:1148",
+    "name": "T08 / Configure a mock",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/05-testing-developer-tools/t08-configure-a-mock__7-1148",
+    "requirements": [
+      "MK01",
+      "MK02",
+      "MK03",
+      "MK04"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "7:1149",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "7:1152",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "7:1310",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Configure a mock",
+    "DisNote API / Developer tools",
+    "Configuration",
+    "Name",
+    "Workspace configuration",
+    "Source",
+    "Workspace configuration",
+    "Hosting",
+    "Workspace configuration",
+    "Authentication",
+    "Workspace configuration",
+    "Delay",
+    "Workspace configuration",
+    "Access & sharing",
+    "Changes are saved locally before they are published to your team."
+  ]
+}

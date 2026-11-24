@@ -1,0 +1,65 @@
+[workspace]
+resolver = "3"
+members = [
+    "apps/cli",
+    "apps/desktop",
+    "apps/server",
+    "crates/api-contract",
+    "crates/domain",
+    "crates/http-engine",
+    "crates/local-store",
+    "crates/mongo-store",
+    "crates/runner",
+    "crates/secret-store",
+    "crates/spec-engine",
+    "crates/sync",
+    "crates/ui-kit",
+]
+exclude = ["spikes/p00", "spikes/p00-native", "spikes/p00-egui", "spikes/p00-transport"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.100"
+publish = false
+
+[workspace.dependencies]
+serde = { version = "=1.0.229", features = ["derive"] }
+serde_json = "=1.0.154"
+windows-sys = { version = "=0.61.2", features = ["Win32_Foundation", "Win32_Storage_FileSystem", "Win32_Security_Cryptography"] }
+eframe = { version = "=0.37.0", default-features = false, features = ["accesskit", "clipboard", "default_fonts", "system_fonts", "wgpu"] }
+swaggen-domain = { path = "crates/domain" }
+swaggen-http-engine = { path = "crates/http-engine" }
+swaggen-local-store = { path = "crates/local-store" }
+swaggen-mongo-store = { path = "crates/mongo-store" }
+swaggen-runner = { path = "crates/runner" }
+swaggen-secret-store = { path = "crates/secret-store" }
+swaggen-spec-engine = { path = "crates/spec-engine" }
+swaggen-sync = { path = "crates/sync" }
+swaggen-ui-kit = { path = "crates/ui-kit" }
+swaggen-api-contract = { path = "crates/api-contract" }
+axum = "=0.8.9"
+tokio = { version = "=1.54.1", features = ["macros", "rt-multi-thread", "net", "time", "sync", "signal", "io-util", "fs"] }
+tokio-util = { version = "=0.7.20", features = ["io", "rt"] }
+hyper = { version = "=1.13.0", features = ["client", "http1"] }
+hyper-util = { version = "=0.1.21", features = ["client-legacy", "http1", "tokio"] }
+http = "=1.5.0"
+http-body-util = "=0.1.5"
+tokio-rustls = { version = "=0.26.6", default-features = false, features = ["ring", "logging", "tls12"] }
+rustls = { version = "=0.23.46", default-features = false, features = ["ring", "logging", "std", "tls12"] }
+rustls-pki-types = "=1.16.0"
+webpki-roots = "=1.0.12"
+flate2 = "=1.1.11"
+url = "=2.5.9"
+uuid = { version = "=1.29.3", features = ["v4"] }
+time = "=0.3.55"
+roxmltree = "=0.20.0"
+yaml-rust2 = "=0.13.2"
+argon2 = { version = "=0.5.3", default-features = false, features = ["alloc", "password-hash"] }
+sha2 = "=0.11.1"
+hmac = "=0.13.0"
+hex = "=0.4.3"
+base64 = "=0.22.1"
+rand = "=0.9.5"
+mongodb = { version = "=3.10.2", features = ["redact-errors"] }
+bson = "=2.15.0"

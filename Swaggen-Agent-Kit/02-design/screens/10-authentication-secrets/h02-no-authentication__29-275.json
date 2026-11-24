@@ -1,0 +1,53 @@
+{
+  "node": {
+    "page": "10-authentication-secrets",
+    "page_id": "27:321",
+    "id": "29:275",
+    "name": "H02 / No authentication",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/10-authentication-secrets/h02-no-authentication__29-275",
+    "requirements": [
+      "AU01"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:276",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:279",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:420",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "No authentication",
+    "DisNote API / auth / H02",
+    "Authorization type",
+    "Inherited credentials",
+    "Disabled for this request",
+    "Explicit headers",
+    "Review manually entered Authorization headers separately"
+  ]
+}

@@ -1,0 +1,16 @@
+﻿{
+    "binary":  "dist\\windows-x64\\Swaggen-0.1.0-win64-unsigned\\swaggen-desktop.exe",
+    "samples":  5,
+    "startup_ms_samples":  [
+                               1245,
+                               60,
+                               62,
+                               47,
+                               49
+                           ],
+    "startup_p95_ms":  1245,
+    "idle_3s_cpu_pct":  0.52,
+    "private_memory_mb":  283.82,
+    "uia_control_count":  0,
+    "offline_no_server":  true
+}

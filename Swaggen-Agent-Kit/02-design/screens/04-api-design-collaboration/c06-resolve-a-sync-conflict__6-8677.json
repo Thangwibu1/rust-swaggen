@@ -1,0 +1,58 @@
+{
+  "node": {
+    "page": "04-api-design-collaboration",
+    "page_id": "4:92",
+    "id": "6:8677",
+    "name": "C06 / Resolve a sync conflict",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/04-api-design-collaboration/c06-resolve-a-sync-conflict__6-8677",
+    "requirements": [
+      "SY03",
+      "SY04",
+      "SY07"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "6:8678",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "6:8681",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "6:8895",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Resolve a sync conflict",
+    "DisNote API / Team workspace",
+    "Base · v12",
+    "Revision 12",
+    "Your draft",
+    "Revision 13",
+    "Team · v13",
+    "Revision 14",
+    "Merge decision",
+    "Keep my request overrides and personal token"
+  ]
+}

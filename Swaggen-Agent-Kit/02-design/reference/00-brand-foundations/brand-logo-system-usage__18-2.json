@@ -1,0 +1,86 @@
+{
+  "node": {
+    "page": "00-brand-foundations",
+    "page_id": "0:1",
+    "id": "18:2",
+    "name": "Brand / Logo system & usage",
+    "type": "frame",
+    "width": "1440",
+    "height": "736",
+    "path": "02-design/reference/00-brand-foundations/brand-logo-system-usage__18-2",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "18:3",
+      "name": "03 / LOGO & APPLICATION ICON",
+      "type": "text",
+      "x": "64",
+      "y": "64",
+      "width": "403",
+      "height": "34"
+    },
+    {
+      "id": "18:4",
+      "name": "Frame",
+      "type": "frame",
+      "x": "64",
+      "y": "138",
+      "width": "482",
+      "height": "200"
+    },
+    {
+      "id": "18:30",
+      "name": "Connected brackets. One shared workflow.",
+      "type": "text",
+      "x": "64",
+      "y": "378",
+      "width": "432",
+      "height": "28"
+    },
+    {
+      "id": "18:31",
+      "name": "The S mark links API design and API testing. Keep the mark clear, compact and legible in the Windows titlebar, activity rail and app icon.",
+      "type": "text",
+      "x": "64",
+      "y": "446",
+      "width": "1250",
+      "height": "22"
+    },
+    {
+      "id": "18:32",
+      "name": "Use the brand mark on white. Brand accents are exceptional; normal UI surfaces stay white. Minimum mark size: 24 px. Clear space: half the mark width.",
+      "type": "text",
+      "x": "64",
+      "y": "508",
+      "width": "1250",
+      "height": "44"
+    },
+    {
+      "id": "18:33",
+      "name": "Do not stretch, rotate or recolor individual parts. Use the Brand/Mark and Brand/Wordmark components from the component library.",
+      "type": "text",
+      "x": "64",
+      "y": "592",
+      "width": "1250",
+      "height": "20"
+    },
+    {
+      "id": "18:34",
+      "name": "Design library → 01 Components Product flows → 02–06 Requirement map → 07",
+      "type": "text",
+      "x": "64",
+      "y": "652",
+      "width": "616",
+      "height": "20"
+    }
+  ],
+  "text_layer_names": [
+    "03 / LOGO & APPLICATION ICON",
+    "Connected brackets. One shared workflow.",
+    "The S mark links API design and API testing. Keep the mark clear, compact and legible in the Windows titlebar, activity rail and app icon.",
+    "Use the brand mark on white. Brand accents are exceptional; normal UI surfaces stay white. Minimum mark size: 24 px. Clear space: half the mark width.",
+    "Do not stretch, rotate or recolor individual parts. Use the Brand/Mark and Brand/Wordmark components from the component library.",
+    "Design library → 01 Components Product flows → 02–06 Requirement map → 07"
+  ]
+}

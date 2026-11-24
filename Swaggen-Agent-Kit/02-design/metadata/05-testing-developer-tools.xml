@@ -1,0 +1,1068 @@
+<canvas id="4:93" name="05 • Testing &amp; developer tools" x="0" y="0" width="0" height="0">
+  <frame id="7:2" name="T01 / Request assertions" x="0" y="0" width="1440" height="900">
+    <instance id="7:3" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="7:6" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="7:7" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="7:67" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="7:153" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="7:154" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="7:169" name="Main / Request assertions" x="0" y="64" width="1128" height="772">
+          <frame id="7:170" name="Frame" x="24" y="24" width="1080" height="58">
+            <frame id="7:171" name="Frame" x="0" y="0" width="260" height="58">
+              <text id="7:172" name="Request assertions" x="0" y="0" width="260" height="34" />
+              <text id="7:173" name="DisNote API / Developer tools" x="0" y="38" width="209" height="20" />
+            </frame>
+            <instance id="7:174" name="Button" x="904" y="9" width="176" height="40" />
+          </frame>
+          <frame id="7:176" name="Frame" x="24" y="102" width="1080" height="286">
+            <frame id="7:177" name="Overview" x="0" y="0" width="1080" height="254">
+              <frame id="7:178" name="Frame" x="25" y="21" width="1032" height="20">
+                <text id="7:179" name="Overview" x="0" y="0" width="63" height="20" />
+                <instance id="7:180" name="Icon/chevron-down" x="1012" y="0" width="20" height="20" />
+              </frame>
+              <frame id="7:182" name="Frame" x="25" y="57" width="1032" height="176">
+                <frame id="7:183" name="Frame" x="0" y="0" width="996" height="32">
+                  <text id="7:184" name="NAME / OPERATION" x="0" y="8" width="300" height="16" />
+                  <text id="7:185" name="VALUE / DETAILS" x="308" y="8" width="440" height="16" />
+                  <text id="7:186" name="STATUS" x="756" y="8" width="240" height="16" />
+                </frame>
+                <instance id="7:187" name="Table row" x="0" y="32" width="1032" height="48" />
+                <instance id="7:191" name="Table row" x="0" y="80" width="1032" height="48" />
+                <instance id="7:195" name="Table row" x="0" y="128" width="1032" height="48" />
+              </frame>
+            </frame>
+            <frame id="7:199" name="Frame" x="0" y="270" width="296" height="16">
+              <text id="7:200" name="Showing 3 items" x="0" y="0" width="99" height="16" />
+              <text id="7:201" name="All changes saved locally" x="131" y="0" width="165" height="16" />
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="7:202" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="7:205" name="T01 / Request assertions   ·   TS01" x="0" y="-32" width="252" height="20" />
+  <frame id="7:206" name="T02 / Run a collection" x="1520" y="0" width="1440" height="900">
+    <instance id="7:207" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="7:210" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="7:211" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="7:246" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="7:303" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="7:304" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="7:315" name="Main / Run a collection" x="0" y="64" width="1128" height="772">
+          <frame id="7:316" name="Frame" x="24" y="24" width="1080" height="58">
+            <frame id="7:317" name="Frame" x="0" y="0" width="231" height="58">
+              <text id="7:318" name="Run a collection" x="0" y="0" width="231" height="34" />
+              <text id="7:319" name="DisNote API / Developer tools" x="0" y="38" width="209" height="20" />
+            </frame>
+            <instance id="7:320" name="Button" x="904" y="9" width="176" height="40" />
+          </frame>
+          <frame id="7:322" name="Frame" x="24" y="102" width="1080" height="466">
+            <frame id="7:323" name="Configuration" x="0" y="0" width="1080" height="352">
+              <frame id="7:324" name="Frame" x="25" y="21" width="1032" height="20">
+                <text id="7:325" name="Configuration" x="0" y="0" width="102" height="20" />
+                <instance id="7:326" name="Icon/chevron-down" x="1012" y="0" width="20" height="20" />
+              </frame>
+              <frame id="7:328" name="Frame" x="25" y="57" width="1032" height="42">
+                <frame id="7:329" name="Frame" x="0" y="1" width="380" height="40">
+                  <text id="7:330" name="Collection" x="0" y="0" width="78" height="20" />
+                  <text id="7:331" name="Workspace configuration" x="0" y="24" width="152" height="16" />
+                </frame>
+                <instance id="7:332" name="Input" x="404" y="0" width="600" height="42" />
+              </frame>
+              <frame id="7:334" name="Frame" x="25" y="115" width="1032" height="42">
+                <frame id="7:335" name="Frame" x="0" y="1" width="380" height="40">
+                  <text id="7:336" name="Environment" x="0" y="0" width="86" height="20" />
+                  <text id="7:337" name="Workspace configuration" x="0" y="24" width="152" height="16" />
+                </frame>
+                <instance id="7:338" name="Input" x="404" y="0" width="600" height="42" />
+              </frame>
+              <frame id="7:340" name="Frame" x="25" y="173" width="1032" height="42">
+                <frame id="7:341" name="Frame" x="0" y="1" width="380" height="40">
+                  <text id="7:342" name="Iterations" x="0" y="0" width="78" height="20" />
+                  <text id="7:343" name="Workspace configuration" x="0" y="24" width="152" height="16" />
+                </frame>
+                <instance id="7:344" name="Input" x="404" y="0" width="600" height="42" />
+              </frame>
+              <frame id="7:346" name="Frame" x="25" y="231" width="1032" height="42">
+                <frame id="7:347" name="Frame" x="0" y="1" width="380" height="40">
+                  <text id="7:348" name="Delay between requests" x="0" y="0" width="172" height="20" />
+                  <text id="7:349" name="Workspace configuration" x="0" y="24" width="152" height="16" />
+                </frame>
+                <instance id="7:350" name="Input" x="404" y="0" width="600" height="42" />
+              </frame>
+              <frame id="7:352" name="Frame" x="25" y="289" width="1032" height="42">
+                <frame id="7:353" name="Frame" x="0" y="1" width="380" height="40">
+                  <text id="7:354" name="On failure" x="0" y="0" width="78" height="20" />
+                  <text id="7:355" name="Workspace configuration" x="0" y="24" width="152" height="16" />
+                </frame>
+                <instance id="7:356" name="Input" x="404" y="0" width="600" height="42" />
+              </frame>
+            </frame>
+            <frame id="7:358" name="Access &amp; sharing" x="0" y="368" width="1080" height="98">
+              <frame id="7:359" name="Frame" x="25" y="21" width="1032" height="20">
+                <text id="7:360" name="Access &amp; sharing" x="0" y="0" width="125" height="20" />
+                <instance id="7:361" name="Icon/chevron-down" x="1012" y="0" width="20" height="20" />
+              </frame>
+              <frame id="7:363" name="Frame" x="25" y="57" width="992" height="20">
+                <instance id="7:364" name="Icon/shield-check" x="0" y="0" width="20" height="20" />
+                <text id="7:367" name="Changes are saved locally before they are published to your team." x="32" y="0" width="960" height="20" />
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="7:368" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="7:371" name="T02 / Run a collection   ·   TS02 TS03 TS09" x="1520" y="-32" width="310" height="20" />
+  <frame id="7:372" name="T03 / Runner data preview" x="3040" y="0" width="1440" height="900">
+    <instance id="7:373" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="7:376" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="7:377" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="7:412" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="7:469" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="7:470" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="7:481" name="Main / Runner data preview" x="0" y="64" width="1128" height="772">
+          <frame id="7:482" name="Frame" x="24" y="24" width="1080" height="58">
+            <frame id="7:483" name="Frame" x="0" y="0" width="274" height="58">
+              <text id="7:484" name="Runner data preview" x="0" y="0" width="274" height="34" />
+              <text id="7:485" name="DisNote API / Developer tools" x="0" y="38" width="209" height="20" />
+            </frame>
+            <instance id="7:486" name="Button" x="904" y="9" width="176" height="40" />
+          </frame>
+          <frame id="7:488" name="Frame" x="24" y="102" width="1080" height="286">
+            <frame id="7:489" name="Overview" x="0" y="0" width="1080" height="254">
+              <frame id="7:490" name="Frame" x="25" y="21" width="1032" height="20">
+                <text id="7:491" name="Overview" x="0" y="0" width="63" height="20" />
+                <instance id="7:492" name="Icon/chevron-down" x="1012" y="0" width="20" height="20" />
+              </frame>
+              <frame id="7:494" name="Frame" x="25" y="57" width="1032" height="176">
+                <frame id="7:495" name="Frame" x="0" y="0" width="996" height="32">
+                  <text id="7:496" name="NAME / OPERATION" x="0" y="8" width="300" height="16" />
+                  <text id="7:497" name="VALUE / DETAILS" x="308" y="8" width="440" height="16" />
+                  <text id="7:498" name="STATUS" x="756" y="8" width="240" height="16" />
+                </frame>
+                <instance id="7:499" name="Table row" x="0" y="32" width="1032" height="48" />
+                <instance id="7:503" name="Table row" x="0" y="80" width="1032" height="48" />
+                <instance id="7:507" name="Table row" x="0" y="128" width="1032" height="48" />
+              </frame>
+            </frame>
+            <frame id="7:511" name="Frame" x="0" y="270" width="296" height="16">
+              <text id="7:512" name="Showing 3 items" x="0" y="0" width="99" height="16" />
+              <text id="7:513" name="All changes saved locally" x="131" y="0" width="165" height="16" />
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="7:514" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="7:517" name="T03 / Runner data preview   ·   TS04" x="3040" y="-32" width="260" height="20" />
+  <frame id="7:518" name="T04 / Run results" x="0" y="1040" width="1440" height="900">
+    <instance id="7:519" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="7:522" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="7:523" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="7:558" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="7:615" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="7:616" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="7:627" name="Main / Run results" x="0" y="64" width="1128" height="772">
+          <frame id="7:628" name="Frame" x="24" y="24" width="1080" height="58">
+            <frame id="7:629" name="Frame" x="0" y="0" width="209" height="58">
+              <text id="7:630" name="Run results" x="0" y="0" width="159" height="34" />
+              <text id="7:631" name="DisNote API / Developer tools" x="0" y="38" width="209" height="20" />
+            </frame>
+            <instance id="7:632" name="Button" x="864" y="9" width="216" height="40" />
+          </frame>
+          <frame id="7:634" name="Frame" x="24" y="102" width="1080" height="502">
+            <frame id="7:635" name="Frame" x="0" y="0" width="1008" height="116">
+              <instance id="7:636" name="Metric" x="0" y="0" width="240" height="116" />
+              <instance id="7:640" name="Metric" x="256" y="0" width="240" height="116" />
+              <instance id="7:644" name="Metric" x="512" y="0" width="240" height="116" />
+              <instance id="7:648" name="Metric" x="768" y="0" width="240" height="116" />
+            </frame>
+            <frame id="7:652" name="Request results" x="0" y="132" width="1080" height="302">
+              <frame id="7:653" name="Frame" x="25" y="21" width="1032" height="20">
+                <text id="7:654" name="Request results" x="0" y="0" width="117" height="20" />
+                <instance id="7:655" name="Icon/chevron-down" x="1012" y="0" width="20" height="20" />
+              </frame>
+              <frame id="7:657" name="Frame" x="25" y="57" width="1032" height="224">
+                <frame id="7:658" name="Frame" x="0" y="0" width="996" height="32">
+                  <text id="7:659" name="NAME / OPERATION" x="0" y="8" width="300" height="16" />
+                  <text id="7:660" name="VALUE / DETAILS" x="308" y="8" width="440" height="16" />
+                  <text id="7:661" name="STATUS" x="756" y="8" width="240" height="16" />
+                </frame>
+                <instance id="7:662" name="Table row" x="0" y="32" width="1032" height="48" />
+                <instance id="7:666" name="Table row" x="0" y="80" width="1032" height="48" />
+                <instance id="7:670" name="Table row" x="0" y="128" width="1032" height="48" />
+                <instance id="7:674" name="Table row" x="0" y="176" width="1032" height="48" />
+              </frame>
+            </frame>
+            <instance id="7:678" name="Notice" x="0" y="450" width="1032" height="52" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="7:687" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="7:690" name="T04 / Run results   ·   TS05 TS10 CO08 MK06" x="0" y="1008" width="310" height="20" />
+  <frame id="7:691" name="T05 / Contract validation" x="1520" y="1040" width="1440" height="900">
+    <instance id="7:692" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="7:695" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="7:696" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="7:731" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="7:788" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="7:789" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="7:800" name="Main / Contract validation" x="0" y="64" width="1128" height="772">
+          <frame id="7:801" name="Frame" x="24" y="24" width="1080" height="58">
+            <frame id="7:802" name="Frame" x="0" y="0" width="274" height="58">
+              <text id="7:803" name="Contract validation" x="0" y="0" width="274" height="34" />
+              <text id="7:804" name="DisNote API / Developer tools" x="0" y="38" width="209" height="20" />
+            </frame>
+            <instance id="7:805" name="Button" x="880" y="9" width="200" height="40" />
+          </frame>
+          <frame id="7:807" name="Frame" x="24" y="102" width="1080" height="286">
+            <frame id="7:808" name="Overview" x="0" y="0" width="1080" height="254">
+              <frame id="7:809" name="Frame" x="25" y="21" width="1032" height="20">
+                <text id="7:810" name="Overview" x="0" y="0" width="63" height="20" />
+                <instance id="7:811" name="Icon/chevron-down" x="1012" y="0" width="20" height="20" />
+              </frame>
+              <frame id="7:813" name="Frame" x="25" y="57" width="1032" height="176">
+                <frame id="7:814" name="Frame" x="0" y="0" width="996" height="32">
+                  <text id="7:815" name="NAME / OPERATION" x="0" y="8" width="300" height="16" />
+                  <text id="7:816" name="VALUE / DETAILS" x="308" y="8" width="440" height="16" />
+                  <text id="7:817" name="STATUS" x="756" y="8" width="240" height="16" />
+                </frame>
+                <instance id="7:818" name="Table row" x="0" y="32" width="1032" height="48" />
+                <instance id="7:822" name="Table row" x="0" y="80" width="1032" height="48" />
+                <instance id="7:826" name="Table row" x="0" y="128" width="1032" height="48" />
+              </frame>
+            </frame>
+            <frame id="7:830" name="Frame" x="0" y="270" width="296" height="16">
+              <text id="7:831" name="Showing 3 items" x="0" y="0" width="99" height="16" />
+              <text id="7:832" name="All changes saved locally" x="131" y="0" width="165" height="16" />
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="7:833" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="7:836" name="T05 / Contract validation   ·   TS06 DC08" x="1520" y="1008" width="296" height="20" />
+  <frame id="7:837" name="T06 / Script editor" x="3040" y="1040" width="1440" height="900">
+    <instance id="7:838" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="7:841" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="7:842" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="7:877" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="7:934" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="7:935" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="7:946" name="Main / Script editor" x="0" y="64" width="1128" height="772">
+          <frame id="7:947" name="Frame" x="24" y="24" width="1080" height="58">
+            <frame id="7:948" name="Frame" x="0" y="0" width="209" height="58">
+              <text id="7:949" name="Script editor" x="0" y="0" width="188" height="34" />
+              <text id="7:950" name="DisNote API / Developer tools" x="0" y="38" width="209" height="20" />
+            </frame>
+            <instance id="7:951" name="Button" x="904" y="9" width="176" height="40" />
+          </frame>
+          <frame id="7:953" name="Frame" x="24" y="102" width="1080" height="414">
+            <instance id="7:954" name="Notice" x="0" y="0" width="1032" height="52" />
+            <frame id="7:960" name="Frame" x="0" y="68" width="406" height="40">
+              <instance id="7:961" name="Tab" x="0" y="0" width="118" height="40" />
+              <instance id="7:965" name="Tab" x="122" y="0" width="100" height="40" />
+              <instance id="7:969" name="Tab" x="226" y="0" width="180" height="40" />
+            </frame>
+            <frame id="7:973" name="Editor" x="0" y="124" width="1080" height="290">
+              <frame id="7:974" name="Frame" x="25" y="21" width="1032" height="20">
+                <text id="7:975" name="Editor" x="0" y="0" width="47" height="20" />
+                <instance id="7:976" name="Icon/chevron-down" x="1012" y="0" width="20" height="20" />
+              </frame>
+              <frame id="7:978" name="Code editor" x="25" y="57" width="1016" height="156">
+                <instance id="7:979" name="Code line" x="0" y="0" width="1016" height="26" />
+                <instance id="7:982" name="Code line" x="0" y="26" width="1016" height="26" />
+                <instance id="7:985" name="Code line" x="0" y="52" width="1016" height="26" />
+                <instance id="7:988" name="Code line" x="0" y="78" width="1016" height="26" />
+                <instance id="7:991" name="Code line" x="0" y="104" width="1016" height="26" />
+                <instance id="7:994" name="Code line" x="0" y="130" width="1016" height="26" />
+              </frame>
+              <frame id="7:997" name="Frame" x="25" y="229" width="364" height="40">
+                <instance id="7:998" name="Button" x="0" y="0" width="176" height="40" />
+                <instance id="7:1000" name="Button" x="188" y="0" width="176" height="40" />
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="7:1002" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="7:1005" name="T06 / Script editor   ·   TS07 TS08" x="3040" y="1008" width="252" height="20" />
+  <frame id="7:1006" name="T07 / Mock servers" x="0" y="2080" width="1440" height="900">
+    <instance id="7:1007" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="7:1010" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="7:1011" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="7:1046" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="7:1103" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="7:1104" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="7:1115" name="Main / Mock servers" x="0" y="64" width="1128" height="772">
+          <frame id="7:1116" name="Frame" x="24" y="24" width="1080" height="58">
+            <frame id="7:1117" name="Frame" x="0" y="0" width="209" height="58">
+              <text id="7:1118" name="Mock servers" x="0" y="0" width="173" height="34" />
+              <text id="7:1119" name="DisNote API / Developer tools" x="0" y="38" width="209" height="20" />
+            </frame>
+            <instance id="7:1120" name="Button" x="904" y="9" width="176" height="40" />
+          </frame>
+          <frame id="7:1122" name="Frame" x="24" y="102" width="1080" height="238">
+            <frame id="7:1123" name="Overview" x="0" y="0" width="1080" height="206">
+              <frame id="7:1124" name="Frame" x="25" y="21" width="1032" height="20">
+                <text id="7:1125" name="Overview" x="0" y="0" width="63" height="20" />
+                <instance id="7:1126" name="Icon/chevron-down" x="1012" y="0" width="20" height="20" />
+              </frame>
+              <frame id="7:1128" name="Frame" x="25" y="57" width="1032" height="128">
+                <frame id="7:1129" name="Frame" x="0" y="0" width="996" height="32">
+                  <text id="7:1130" name="NAME / OPERATION" x="0" y="8" width="300" height="16" />
+                  <text id="7:1131" name="VALUE / DETAILS" x="308" y="8" width="440" height="16" />
+                  <text id="7:1132" name="STATUS" x="756" y="8" width="240" height="16" />
+                </frame>
+                <instance id="7:1133" name="Table row" x="0" y="32" width="1032" height="48" />
+                <instance id="7:1137" name="Table row" x="0" y="80" width="1032" height="48" />
+              </frame>
+            </frame>
+            <frame id="7:1141" name="Frame" x="0" y="222" width="296" height="16">
+              <text id="7:1142" name="Showing 2 items" x="0" y="0" width="99" height="16" />
+              <text id="7:1143" name="All changes saved locally" x="131" y="0" width="165" height="16" />
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="7:1144" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="7:1147" name="T07 / Mock servers   ·   MK01 MK02 MK04" x="0" y="2048" width="281" height="20" />
+  <frame id="7:1148" name="T08 / Configure a mock" x="1520" y="2080" width="1440" height="900">
+    <instance id="7:1149" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="7:1152" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="7:1153" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="7:1188" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="7:1245" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="7:1246" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="7:1257" name="Main / Configure a mock" x="0" y="64" width="1128" height="772">
+          <frame id="7:1258" name="Frame" x="24" y="24" width="1080" height="58">
+            <frame id="7:1259" name="Frame" x="0" y="0" width="231" height="58">
+              <text id="7:1260" name="Configure a mock" x="0" y="0" width="231" height="34" />
+              <text id="7:1261" name="DisNote API / Developer tools" x="0" y="38" width="209" height="20" />
+            </frame>
+            <instance id="7:1262" name="Button" x="904" y="9" width="176" height="40" />
+          </frame>
+          <frame id="7:1264" name="Frame" x="24" y="102" width="1080" height="466">
+            <frame id="7:1265" name="Configuration" x="0" y="0" width="1080" height="352">
+              <frame id="7:1266" name="Frame" x="25" y="21" width="1032" height="20">
+                <text id="7:1267" name="Configuration" x="0" y="0" width="102" height="20" />
+                <instance id="7:1268" name="Icon/chevron-down" x="1012" y="0" width="20" height="20" />
+              </frame>
+              <frame id="7:1270" name="Frame" x="25" y="57" width="1032" height="42">
+                <frame id="7:1271" name="Frame" x="0" y="1" width="380" height="40">
+                  <text id="7:1272" name="Name" x="0" y="0" width="32" height="20" />
+                  <text id="7:1273" name="Workspace configuration" x="0" y="24" width="152" height="16" />
+                </frame>
+                <instance id="7:1274" name="Input" x="404" y="0" width="600" height="42" />
+              </frame>
+              <frame id="7:1276" name="Frame" x="25" y="115" width="1032" height="42">
+                <frame id="7:1277" name="Frame" x="0" y="1" width="380" height="40">
+                  <text id="7:1278" name="Source" x="0" y="0" width="47" height="20" />
+                  <text id="7:1279" name="Workspace configuration" x="0" y="24" width="152" height="16" />
+                </frame>
+                <instance id="7:1280" name="Input" x="404" y="0" width="600" height="42" />
+              </frame>
+              <frame id="7:1282" name="Frame" x="25" y="173" width="1032" height="42">
+                <frame id="7:1283" name="Frame" x="0" y="1" width="380" height="40">
+                  <text id="7:1284" name="Hosting" x="0" y="0" width="55" height="20" />
+                  <text id="7:1285" name="Workspace configuration" x="0" y="24" width="152" height="16" />
+                </frame>
+                <instance id="7:1286" name="Input" x="404" y="0" width="600" height="42" />
+              </frame>
+              <frame id="7:1288" name="Frame" x="25" y="231" width="1032" height="42">
+                <frame id="7:1289" name="Frame" x="0" y="1" width="380" height="40">
+                  <text id="7:1290" name="Authentication" x="0" y="0" width="110" height="20" />
+                  <text id="7:1291" name="Workspace configuration" x="0" y="24" width="152" height="16" />
+                </frame>
+                <instance id="7:1292" name="Input" x="404" y="0" width="600" height="42" />
+              </frame>
+              <frame id="7:1294" name="Frame" x="25" y="289" width="1032" height="42">
+                <frame id="7:1295" name="Frame" x="0" y="1" width="380" height="40">
+                  <text id="7:1296" name="Delay" x="0" y="0" width="39" height="20" />
+                  <text id="7:1297" name="Workspace configuration" x="0" y="24" width="152" height="16" />
+                </frame>
+                <instance id="7:1298" name="Input" x="404" y="0" width="600" height="42" />
+              </frame>
+            </frame>
+            <frame id="7:1300" name="Access &amp; sharing" x="0" y="368" width="1080" height="98">
+              <frame id="7:1301" name="Frame" x="25" y="21" width="1032" height="20">
+                <text id="7:1302" name="Access &amp; sharing" x="0" y="0" width="125" height="20" />
+                <instance id="7:1303" name="Icon/chevron-down" x="1012" y="0" width="20" height="20" />
+              </frame>
+              <frame id="7:1305" name="Frame" x="25" y="57" width="992" height="20">
+                <instance id="7:1306" name="Icon/shield-check" x="0" y="0" width="20" height="20" />
+                <text id="7:1309" name="Changes are saved locally before they are published to your team." x="32" y="0" width="960" height="20" />
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="7:1310" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="7:1313" name="T08 / Configure a mock   ·   MK01 MK02 MK03 MK04" x="1520" y="2048" width="346" height="20" />
+  <frame id="7:1314" name="T09 / Mock rules &amp; traffic" x="3040" y="2080" width="1440" height="900">
+    <instance id="7:1315" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="7:1318" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="7:1319" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="7:1354" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="7:1411" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="7:1412" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="7:1423" name="Main / Mock rules &amp; traffic" x="0" y="64" width="1128" height="772">
+          <frame id="7:1424" name="Frame" x="24" y="24" width="1080" height="58">
+            <frame id="7:1425" name="Frame" x="0" y="0" width="288" height="58">
+              <text id="7:1426" name="Mock rules &amp; traffic" x="0" y="0" width="288" height="34" />
+              <text id="7:1427" name="DisNote API / Developer tools" x="0" y="38" width="209" height="20" />
+            </frame>
+            <instance id="7:1428" name="Button" x="904" y="9" width="176" height="40" />
+          </frame>
+          <frame id="7:1430" name="Frame" x="24" y="102" width="1080" height="286">
+            <frame id="7:1431" name="Overview" x="0" y="0" width="1080" height="254">
+              <frame id="7:1432" name="Frame" x="25" y="21" width="1032" height="20">
+                <text id="7:1433" name="Overview" x="0" y="0" width="63" height="20" />
+                <instance id="7:1434" name="Icon/chevron-down" x="1012" y="0" width="20" height="20" />
+              </frame>
+              <frame id="7:1436" name="Frame" x="25" y="57" width="1032" height="176">
+                <frame id="7:1437" name="Frame" x="0" y="0" width="996" height="32">
+                  <text id="7:1438" name="NAME / OPERATION" x="0" y="8" width="300" height="16" />
+                  <text id="7:1439" name="VALUE / DETAILS" x="308" y="8" width="440" height="16" />
+                  <text id="7:1440" name="STATUS" x="756" y="8" width="240" height="16" />
+                </frame>
+                <instance id="7:1441" name="Table row" x="0" y="32" width="1032" height="48" />
+                <instance id="7:1445" name="Table row" x="0" y="80" width="1032" height="48" />
+                <instance id="7:1449" name="Table row" x="0" y="128" width="1032" height="48" />
+              </frame>
+            </frame>
+            <frame id="7:1453" name="Frame" x="0" y="270" width="296" height="16">
+              <text id="7:1454" name="Showing 3 items" x="0" y="0" width="99" height="16" />
+              <text id="7:1455" name="All changes saved locally" x="131" y="0" width="165" height="16" />
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="7:1456" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="7:1459" name="T09 / Mock rules &amp; traffic   ·   MK03" x="3040" y="2048" width="267" height="20" />
+  <frame id="7:1460" name="T10 / CLI &amp; CI configuration" x="0" y="3120" width="1440" height="900">
+    <instance id="7:1461" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="7:1464" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="7:1465" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="7:1500" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="7:1557" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="7:1558" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="7:1569" name="Main / CLI &amp; CI configuration" x="0" y="64" width="1128" height="772">
+          <frame id="7:1570" name="Frame" x="24" y="24" width="1080" height="58">
+            <frame id="7:1571" name="Frame" x="0" y="0" width="317" height="58">
+              <text id="7:1572" name="CLI &amp; CI configuration" x="0" y="0" width="317" height="34" />
+              <text id="7:1573" name="DisNote API / Developer tools" x="0" y="38" width="209" height="20" />
+            </frame>
+            <instance id="7:1574" name="Button" x="904" y="9" width="176" height="40" />
+          </frame>
+          <frame id="7:1576" name="Frame" x="24" y="102" width="1080" height="346">
+            <frame id="7:1577" name="Frame" x="0" y="0" width="426" height="40">
+              <instance id="7:1578" name="Tab" x="0" y="0" width="174" height="40" />
+              <instance id="7:1582" name="Tab" x="178" y="0" width="118" height="40" />
+              <instance id="7:1586" name="Tab" x="300" y="0" width="126" height="40" />
+            </frame>
+            <frame id="7:1590" name="Editor" x="0" y="56" width="1080" height="290">
+              <frame id="7:1591" name="Frame" x="25" y="21" width="1032" height="20">
+                <text id="7:1592" name="Editor" x="0" y="0" width="47" height="20" />
+                <instance id="7:1593" name="Icon/chevron-down" x="1012" y="0" width="20" height="20" />
+              </frame>
+              <frame id="7:1595" name="Code editor" x="25" y="57" width="1016" height="156">
+                <instance id="7:1596" name="Code line" x="0" y="0" width="1016" height="26" />
+                <instance id="7:1599" name="Code line" x="0" y="26" width="1016" height="26" />
+                <instance id="7:1602" name="Code line" x="0" y="52" width="1016" height="26" />
+                <instance id="7:1605" name="Code line" x="0" y="78" width="1016" height="26" />
+                <instance id="7:1608" name="Code line" x="0" y="104" width="1016" height="26" />
+                <instance id="7:1611" name="Code line" x="0" y="130" width="1016" height="26" />
+              </frame>
+              <frame id="7:1614" name="Frame" x="25" y="229" width="364" height="40">
+                <instance id="7:1615" name="Button" x="0" y="0" width="176" height="40" />
+                <instance id="7:1617" name="Button" x="188" y="0" width="176" height="40" />
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="7:1619" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="7:1622" name="T10 / CLI &amp; CI configuration   ·   MK05 MK06" x="0" y="3088" width="317" height="20" />
+  <frame id="7:1623" name="T11 / Self-hosted runners" x="1520" y="3120" width="1440" height="900">
+    <instance id="7:1624" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="7:1627" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="7:1628" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="7:1663" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="7:1720" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="7:1721" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="7:1732" name="Main / Self-hosted runners" x="0" y="64" width="1128" height="772">
+          <frame id="7:1733" name="Frame" x="24" y="24" width="1080" height="58">
+            <frame id="7:1734" name="Frame" x="0" y="0" width="274" height="58">
+              <text id="7:1735" name="Self-hosted runners" x="0" y="0" width="274" height="34" />
+              <text id="7:1736" name="DisNote API / Developer tools" x="0" y="38" width="209" height="20" />
+            </frame>
+            <instance id="7:1737" name="Button" x="904" y="9" width="176" height="40" />
+          </frame>
+          <frame id="7:1739" name="Frame" x="24" y="102" width="1080" height="238">
+            <frame id="7:1740" name="Overview" x="0" y="0" width="1080" height="206">
+              <frame id="7:1741" name="Frame" x="25" y="21" width="1032" height="20">
+                <text id="7:1742" name="Overview" x="0" y="0" width="63" height="20" />
+                <instance id="7:1743" name="Icon/chevron-down" x="1012" y="0" width="20" height="20" />
+              </frame>
+              <frame id="7:1745" name="Frame" x="25" y="57" width="1032" height="128">
+                <frame id="7:1746" name="Frame" x="0" y="0" width="996" height="32">
+                  <text id="7:1747" name="NAME / OPERATION" x="0" y="8" width="300" height="16" />
+                  <text id="7:1748" name="VALUE / DETAILS" x="308" y="8" width="440" height="16" />
+                  <text id="7:1749" name="STATUS" x="756" y="8" width="240" height="16" />
+                </frame>
+                <instance id="7:1750" name="Table row" x="0" y="32" width="1032" height="48" />
+                <instance id="7:1754" name="Table row" x="0" y="80" width="1032" height="48" />
+              </frame>
+            </frame>
+            <frame id="7:1758" name="Frame" x="0" y="222" width="296" height="16">
+              <text id="7:1759" name="Showing 2 items" x="0" y="0" width="99" height="16" />
+              <text id="7:1760" name="All changes saved locally" x="131" y="0" width="165" height="16" />
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="7:1761" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="7:1764" name="T11 / Self-hosted runners   ·   MK07 MK10" x="1520" y="3088" width="296" height="20" />
+  <frame id="7:1765" name="T12 / Scheduled checks" x="3040" y="3120" width="1440" height="900">
+    <instance id="7:1766" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="7:1769" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="7:1770" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="7:1805" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="7:1862" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="7:1863" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="7:1874" name="Main / Scheduled checks" x="0" y="64" width="1128" height="772">
+          <frame id="7:1875" name="Frame" x="24" y="24" width="1080" height="58">
+            <frame id="7:1876" name="Frame" x="0" y="0" width="231" height="58">
+              <text id="7:1877" name="Scheduled checks" x="0" y="0" width="231" height="34" />
+              <text id="7:1878" name="DisNote API / Developer tools" x="0" y="38" width="209" height="20" />
+            </frame>
+            <instance id="7:1879" name="Button" x="904" y="9" width="176" height="40" />
+          </frame>
+          <frame id="7:1881" name="Frame" x="24" y="102" width="1080" height="466">
+            <frame id="7:1882" name="Configuration" x="0" y="0" width="1080" height="352">
+              <frame id="7:1883" name="Frame" x="25" y="21" width="1032" height="20">
+                <text id="7:1884" name="Configuration" x="0" y="0" width="102" height="20" />
+                <instance id="7:1885" name="Icon/chevron-down" x="1012" y="0" width="20" height="20" />
+              </frame>
+              <frame id="7:1887" name="Frame" x="25" y="57" width="1032" height="42">
+                <frame id="7:1888" name="Frame" x="0" y="1" width="380" height="40">
+                  <text id="7:1889" name="Collection" x="0" y="0" width="78" height="20" />
+                  <text id="7:1890" name="Workspace configuration" x="0" y="24" width="152" height="16" />
+                </frame>
+                <instance id="7:1891" name="Input" x="404" y="0" width="600" height="42" />
+              </frame>
+              <frame id="7:1893" name="Frame" x="25" y="115" width="1032" height="42">
+                <frame id="7:1894" name="Frame" x="0" y="1" width="380" height="40">
+                  <text id="7:1895" name="Schedule" x="0" y="0" width="63" height="20" />
+                  <text id="7:1896" name="Workspace configuration" x="0" y="24" width="152" height="16" />
+                </frame>
+                <instance id="7:1897" name="Input" x="404" y="0" width="600" height="42" />
+              </frame>
+              <frame id="7:1899" name="Frame" x="25" y="173" width="1032" height="42">
+                <frame id="7:1900" name="Frame" x="0" y="1" width="380" height="40">
+                  <text id="7:1901" name="Timezone" x="0" y="0" width="63" height="20" />
+                  <text id="7:1902" name="Workspace configuration" x="0" y="24" width="152" height="16" />
+                </frame>
+                <instance id="7:1903" name="Input" x="404" y="0" width="600" height="42" />
+              </frame>
+              <frame id="7:1905" name="Frame" x="25" y="231" width="1032" height="42">
+                <frame id="7:1906" name="Frame" x="0" y="1" width="380" height="40">
+                  <text id="7:1907" name="Runner" x="0" y="0" width="47" height="20" />
+                  <text id="7:1908" name="Workspace configuration" x="0" y="24" width="152" height="16" />
+                </frame>
+                <instance id="7:1909" name="Input" x="404" y="0" width="600" height="42" />
+              </frame>
+              <frame id="7:1911" name="Frame" x="25" y="289" width="1032" height="42">
+                <frame id="7:1912" name="Frame" x="0" y="1" width="380" height="40">
+                  <text id="7:1913" name="On failure" x="0" y="0" width="78" height="20" />
+                  <text id="7:1914" name="Workspace configuration" x="0" y="24" width="152" height="16" />
+                </frame>
+                <instance id="7:1915" name="Input" x="404" y="0" width="600" height="42" />
+              </frame>
+            </frame>
+            <frame id="7:1917" name="Access &amp; sharing" x="0" y="368" width="1080" height="98">
+              <frame id="7:1918" name="Frame" x="25" y="21" width="1032" height="20">
+                <text id="7:1919" name="Access &amp; sharing" x="0" y="0" width="125" height="20" />
+                <instance id="7:1920" name="Icon/chevron-down" x="1012" y="0" width="20" height="20" />
+              </frame>
+              <frame id="7:1922" name="Frame" x="25" y="57" width="992" height="20">
+                <instance id="7:1923" name="Icon/shield-check" x="0" y="0" width="20" height="20" />
+                <text id="7:1926" name="Changes are saved locally before they are published to your team." x="32" y="0" width="960" height="20" />
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="7:1927" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="7:1930" name="T12 / Scheduled checks   ·   MK08 MK09" x="3040" y="3088" width="274" height="20" />
+  <frame id="7:1931" name="I01 / Import APIs &amp; collections" x="0" y="4160" width="1440" height="900">
+    <instance id="7:1932" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="7:1935" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="7:1936" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="7:1971" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="7:2028" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="7:2029" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="7:2040" name="Main / Import APIs &amp; collections" x="0" y="64" width="1128" height="772">
+          <frame id="7:2041" name="Frame" x="24" y="24" width="1080" height="58">
+            <frame id="7:2042" name="Frame" x="0" y="0" width="360" height="58">
+              <text id="7:2043" name="Import APIs &amp; collections" x="0" y="0" width="360" height="34" />
+              <text id="7:2044" name="DisNote API / Developer tools" x="0" y="38" width="209" height="20" />
+            </frame>
+            <instance id="7:2045" name="Button" x="904" y="9" width="176" height="40" />
+          </frame>
+          <frame id="7:2047" name="Frame" x="24" y="102" width="1080" height="350">
+            <frame id="7:2048" name="Configuration" x="0" y="0" width="1080" height="236">
+              <frame id="7:2049" name="Frame" x="25" y="21" width="1032" height="20">
+                <text id="7:2050" name="Configuration" x="0" y="0" width="102" height="20" />
+                <instance id="7:2051" name="Icon/chevron-down" x="1012" y="0" width="20" height="20" />
+              </frame>
+              <frame id="7:2053" name="Frame" x="25" y="57" width="1032" height="42">
+                <frame id="7:2054" name="Frame" x="0" y="1" width="380" height="40">
+                  <text id="7:2055" name="Source" x="0" y="0" width="47" height="20" />
+                  <text id="7:2056" name="Workspace configuration" x="0" y="24" width="152" height="16" />
+                </frame>
+                <instance id="7:2057" name="Input" x="404" y="0" width="600" height="42" />
+              </frame>
+              <frame id="7:2059" name="Frame" x="25" y="115" width="1032" height="42">
+                <frame id="7:2060" name="Frame" x="0" y="1" width="380" height="40">
+                  <text id="7:2061" name="Selected file" x="0" y="0" width="102" height="20" />
+                  <text id="7:2062" name="Workspace configuration" x="0" y="24" width="152" height="16" />
+                </frame>
+                <instance id="7:2063" name="Input" x="404" y="0" width="600" height="42" />
+              </frame>
+              <frame id="7:2065" name="Frame" x="25" y="173" width="1032" height="42">
+                <frame id="7:2066" name="Frame" x="0" y="1" width="380" height="40">
+                  <text id="7:2067" name="Destination" x="0" y="0" width="86" height="20" />
+                  <text id="7:2068" name="Workspace configuration" x="0" y="24" width="152" height="16" />
+                </frame>
+                <instance id="7:2069" name="Input" x="404" y="0" width="600" height="42" />
+              </frame>
+            </frame>
+            <frame id="7:2071" name="Access &amp; sharing" x="0" y="252" width="1080" height="98">
+              <frame id="7:2072" name="Frame" x="25" y="21" width="1032" height="20">
+                <text id="7:2073" name="Access &amp; sharing" x="0" y="0" width="125" height="20" />
+                <instance id="7:2074" name="Icon/chevron-down" x="1012" y="0" width="20" height="20" />
+              </frame>
+              <frame id="7:2076" name="Frame" x="25" y="57" width="992" height="20">
+                <instance id="7:2077" name="Icon/shield-check" x="0" y="0" width="20" height="20" />
+                <text id="7:2080" name="Changes are saved locally before they are published to your team." x="32" y="0" width="960" height="20" />
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="7:2081" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="7:2084" name="I01 / Import APIs &amp; collections   ·   IM01 IM02 IM03 IM04 IM05 IM" x="0" y="4128" width="519" height="20" />
+  <frame id="7:2085" name="I02 / Review import compatibility" x="1520" y="4160" width="1440" height="900">
+    <instance id="7:2086" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="7:2089" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="7:2090" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="7:2125" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="7:2182" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="7:2183" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="7:2194" name="Main / Review import compatibility" x="0" y="64" width="1128" height="772">
+          <frame id="7:2195" name="Frame" x="24" y="24" width="1080" height="58">
+            <frame id="7:2196" name="Frame" x="0" y="0" width="389" height="58">
+              <text id="7:2197" name="Review import compatibility" x="0" y="0" width="389" height="34" />
+              <text id="7:2198" name="DisNote API / Developer tools" x="0" y="38" width="209" height="20" />
+            </frame>
+            <instance id="7:2199" name="Button" x="864" y="9" width="216" height="40" />
+          </frame>
+          <frame id="7:2201" name="Frame" x="24" y="102" width="1080" height="354">
+            <instance id="7:2202" name="Notice" x="0" y="0" width="1032" height="52" />
+            <frame id="7:2208" name="Overview" x="0" y="68" width="1080" height="254">
+              <frame id="7:2209" name="Frame" x="25" y="21" width="1032" height="20">
+                <text id="7:2210" name="Overview" x="0" y="0" width="63" height="20" />
+                <instance id="7:2211" name="Icon/chevron-down" x="1012" y="0" width="20" height="20" />
+              </frame>
+              <frame id="7:2213" name="Frame" x="25" y="57" width="1032" height="176">
+                <frame id="7:2214" name="Frame" x="0" y="0" width="996" height="32">
+                  <text id="7:2215" name="NAME / OPERATION" x="0" y="8" width="300" height="16" />
+                  <text id="7:2216" name="VALUE / DETAILS" x="308" y="8" width="440" height="16" />
+                  <text id="7:2217" name="STATUS" x="756" y="8" width="240" height="16" />
+                </frame>
+                <instance id="7:2218" name="Table row" x="0" y="32" width="1032" height="48" />
+                <instance id="7:2222" name="Table row" x="0" y="80" width="1032" height="48" />
+                <instance id="7:2226" name="Table row" x="0" y="128" width="1032" height="48" />
+              </frame>
+            </frame>
+            <frame id="7:2230" name="Frame" x="0" y="338" width="296" height="16">
+              <text id="7:2231" name="Showing 3 items" x="0" y="0" width="99" height="16" />
+              <text id="7:2232" name="All changes saved locally" x="131" y="0" width="165" height="16" />
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="7:2233" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="7:2236" name="I02 / Review import compatibility   ·   IM02 IM06 TS08" x="1520" y="4128" width="389" height="20" />
+  <frame id="7:2237" name="I03 / Export your project" x="3040" y="4160" width="1440" height="900">
+    <instance id="7:2238" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="7:2241" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="7:2242" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="7:2277" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="7:2334" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="7:2335" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="7:2346" name="Main / Export your project" x="0" y="64" width="1128" height="772">
+          <frame id="7:2347" name="Frame" x="24" y="24" width="1080" height="58">
+            <frame id="7:2348" name="Frame" x="0" y="0" width="274" height="58">
+              <text id="7:2349" name="Export your project" x="0" y="0" width="274" height="34" />
+              <text id="7:2350" name="DisNote API / Developer tools" x="0" y="38" width="209" height="20" />
+            </frame>
+            <instance id="7:2351" name="Button" x="904" y="9" width="176" height="40" />
+          </frame>
+          <frame id="7:2353" name="Frame" x="24" y="102" width="1080" height="408">
+            <frame id="7:2354" name="Configuration" x="0" y="0" width="1080" height="294">
+              <frame id="7:2355" name="Frame" x="25" y="21" width="1032" height="20">
+                <text id="7:2356" name="Configuration" x="0" y="0" width="102" height="20" />
+                <instance id="7:2357" name="Icon/chevron-down" x="1012" y="0" width="20" height="20" />
+              </frame>
+              <frame id="7:2359" name="Frame" x="25" y="57" width="1032" height="42">
+                <frame id="7:2360" name="Frame" x="0" y="1" width="380" height="40">
+                  <text id="7:2361" name="Format" x="0" y="0" width="47" height="20" />
+                  <text id="7:2362" name="Workspace configuration" x="0" y="24" width="152" height="16" />
+                </frame>
+                <instance id="7:2363" name="Input" x="404" y="0" width="600" height="42" />
+              </frame>
+              <frame id="7:2365" name="Frame" x="25" y="115" width="1032" height="42">
+                <frame id="7:2366" name="Frame" x="0" y="1" width="380" height="40">
+                  <text id="7:2367" name="Include" x="0" y="0" width="55" height="20" />
+                  <text id="7:2368" name="Workspace configuration" x="0" y="24" width="152" height="16" />
+                </frame>
+                <instance id="7:2369" name="Input" x="404" y="0" width="600" height="42" />
+              </frame>
+              <frame id="7:2371" name="Frame" x="25" y="173" width="1032" height="42">
+                <frame id="7:2372" name="Frame" x="0" y="1" width="380" height="40">
+                  <text id="7:2373" name="Attachments" x="0" y="0" width="86" height="20" />
+                  <text id="7:2374" name="Workspace configuration" x="0" y="24" width="152" height="16" />
+                </frame>
+                <instance id="7:2375" name="Input" x="404" y="0" width="600" height="42" />
+              </frame>
+              <frame id="7:2377" name="Frame" x="25" y="231" width="1032" height="42">
+                <frame id="7:2378" name="Frame" x="0" y="1" width="380" height="40">
+                  <text id="7:2379" name="Secret policy" x="0" y="0" width="102" height="20" />
+                  <text id="7:2380" name="Workspace configuration" x="0" y="24" width="152" height="16" />
+                </frame>
+                <instance id="7:2381" name="Input" x="404" y="0" width="600" height="42" />
+              </frame>
+            </frame>
+            <frame id="7:2383" name="Access &amp; sharing" x="0" y="310" width="1080" height="98">
+              <frame id="7:2384" name="Frame" x="25" y="21" width="1032" height="20">
+                <text id="7:2385" name="Access &amp; sharing" x="0" y="0" width="125" height="20" />
+                <instance id="7:2386" name="Icon/chevron-down" x="1012" y="0" width="20" height="20" />
+              </frame>
+              <frame id="7:2388" name="Frame" x="25" y="57" width="992" height="20">
+                <instance id="7:2389" name="Icon/shield-check" x="0" y="0" width="20" height="20" />
+                <text id="7:2392" name="Changes are saved locally before they are published to your team." x="32" y="0" width="960" height="20" />
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="7:2393" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="7:2396" name="I03 / Export your project   ·   IM01 IM07 IM08" x="3040" y="4128" width="331" height="20" />
+  <frame id="7:2397" name="I04 / Connect a Git repository" x="0" y="5200" width="1440" height="900">
+    <instance id="7:2398" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="7:2401" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="7:2402" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="7:2437" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="7:2494" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="7:2495" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="7:2506" name="Main / Connect a Git repository" x="0" y="64" width="1128" height="772">
+          <frame id="7:2507" name="Frame" x="24" y="24" width="1080" height="58">
+            <frame id="7:2508" name="Frame" x="0" y="0" width="346" height="58">
+              <text id="7:2509" name="Connect a Git repository" x="0" y="0" width="346" height="34" />
+              <text id="7:2510" name="DisNote API / Developer tools" x="0" y="38" width="209" height="20" />
+            </frame>
+            <instance id="7:2511" name="Button" x="896" y="9" width="184" height="40" />
+          </frame>
+          <frame id="7:2513" name="Frame" x="24" y="102" width="1080" height="408">
+            <frame id="7:2514" name="Configuration" x="0" y="0" width="1080" height="294">
+              <frame id="7:2515" name="Frame" x="25" y="21" width="1032" height="20">
+                <text id="7:2516" name="Configuration" x="0" y="0" width="102" height="20" />
+                <instance id="7:2517" name="Icon/chevron-down" x="1012" y="0" width="20" height="20" />
+              </frame>
+              <frame id="7:2519" name="Frame" x="25" y="57" width="1032" height="42">
+                <frame id="7:2520" name="Frame" x="0" y="1" width="380" height="40">
+                  <text id="7:2521" name="Repository" x="0" y="0" width="78" height="20" />
+                  <text id="7:2522" name="Workspace configuration" x="0" y="24" width="152" height="16" />
+                </frame>
+                <instance id="7:2523" name="Input" x="404" y="0" width="600" height="42" />
+              </frame>
+              <frame id="7:2525" name="Frame" x="25" y="115" width="1032" height="42">
+                <frame id="7:2526" name="Frame" x="0" y="1" width="380" height="40">
+                  <text id="7:2527" name="Branch" x="0" y="0" width="47" height="20" />
+                  <text id="7:2528" name="Workspace configuration" x="0" y="24" width="152" height="16" />
+                </frame>
+                <instance id="7:2529" name="Input" x="404" y="0" width="600" height="42" />
+              </frame>
+              <frame id="7:2531" name="Frame" x="25" y="173" width="1032" height="42">
+                <frame id="7:2532" name="Frame" x="0" y="1" width="380" height="40">
+                  <text id="7:2533" name="Project directory" x="0" y="0" width="133" height="20" />
+                  <text id="7:2534" name="Workspace configuration" x="0" y="24" width="152" height="16" />
+                </frame>
+                <instance id="7:2535" name="Input" x="404" y="0" width="600" height="42" />
+              </frame>
+              <frame id="7:2537" name="Frame" x="25" y="231" width="1032" height="42">
+                <frame id="7:2538" name="Frame" x="0" y="1" width="380" height="40">
+                  <text id="7:2539" name="Authentication" x="0" y="0" width="110" height="20" />
+                  <text id="7:2540" name="Workspace configuration" x="0" y="24" width="152" height="16" />
+                </frame>
+                <instance id="7:2541" name="Input" x="404" y="0" width="600" height="42" />
+              </frame>
+            </frame>
+            <frame id="7:2543" name="Access &amp; sharing" x="0" y="310" width="1080" height="98">
+              <frame id="7:2544" name="Frame" x="25" y="21" width="1032" height="20">
+                <text id="7:2545" name="Access &amp; sharing" x="0" y="0" width="125" height="20" />
+                <instance id="7:2546" name="Icon/chevron-down" x="1012" y="0" width="20" height="20" />
+              </frame>
+              <frame id="7:2548" name="Frame" x="25" y="57" width="992" height="20">
+                <instance id="7:2549" name="Icon/shield-check" x="0" y="0" width="20" height="20" />
+                <text id="7:2552" name="Changes are saved locally before they are published to your team." x="32" y="0" width="960" height="20" />
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="7:2553" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="7:2556" name="I04 / Connect a Git repository   ·   IM09 SY10" x="0" y="5168" width="331" height="20" />
+  <frame id="7:2557" name="P01 / GraphQL explorer" x="1520" y="5200" width="1440" height="900">
+    <instance id="7:2558" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="7:2561" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="7:2562" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="7:2597" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="7:2654" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="7:2655" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="7:2666" name="Main / GraphQL explorer" x="0" y="64" width="1128" height="772">
+          <frame id="7:2667" name="Frame" x="24" y="24" width="1080" height="58">
+            <frame id="7:2668" name="Frame" x="0" y="0" width="231" height="58">
+              <text id="7:2669" name="GraphQL explorer" x="0" y="0" width="231" height="34" />
+              <text id="7:2670" name="DisNote API / Developer tools" x="0" y="38" width="209" height="20" />
+            </frame>
+            <instance id="7:2671" name="Button" x="904" y="9" width="176" height="40" />
+          </frame>
+          <frame id="7:2673" name="Frame" x="24" y="102" width="1080" height="372">
+            <frame id="7:2674" name="Frame" x="0" y="0" width="310" height="40">
+              <instance id="7:2675" name="Tab" x="0" y="0" width="100" height="40" />
+              <instance id="7:2679" name="Tab" x="104" y="0" width="102" height="40" />
+              <instance id="7:2683" name="Tab" x="210" y="0" width="100" height="40" />
+            </frame>
+            <frame id="7:2687" name="Editor" x="0" y="56" width="1080" height="316">
+              <frame id="7:2688" name="Frame" x="25" y="21" width="1032" height="20">
+                <text id="7:2689" name="Editor" x="0" y="0" width="47" height="20" />
+                <instance id="7:2690" name="Icon/chevron-down" x="1012" y="0" width="20" height="20" />
+              </frame>
+              <frame id="7:2692" name="Code editor" x="25" y="57" width="1016" height="182">
+                <instance id="7:2693" name="Code line" x="0" y="0" width="1016" height="26" />
+                <instance id="7:2696" name="Code line" x="0" y="26" width="1016" height="26" />
+                <instance id="7:2699" name="Code line" x="0" y="52" width="1016" height="26" />
+                <instance id="7:2702" name="Code line" x="0" y="78" width="1016" height="26" />
+                <instance id="7:2705" name="Code line" x="0" y="104" width="1016" height="26" />
+                <instance id="7:2708" name="Code line" x="0" y="130" width="1016" height="26" />
+                <instance id="7:2711" name="Code line" x="0" y="156" width="1016" height="26" />
+              </frame>
+              <frame id="7:2714" name="Frame" x="25" y="255" width="364" height="40">
+                <instance id="7:2715" name="Button" x="0" y="0" width="176" height="40" />
+                <instance id="7:2717" name="Button" x="188" y="0" width="176" height="40" />
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="7:2719" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="7:2722" name="P01 / GraphQL explorer   ·   PR01 PR02" x="1520" y="5168" width="274" height="20" />
+  <frame id="7:2723" name="P02 / WebSocket session" x="3040" y="5200" width="1440" height="900">
+    <instance id="7:2724" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="7:2727" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="7:2728" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="7:2763" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="7:2820" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="7:2821" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="7:2832" name="Main / WebSocket session" x="0" y="64" width="1128" height="772">
+          <frame id="7:2833" name="Frame" x="24" y="24" width="1080" height="58">
+            <frame id="7:2834" name="Frame" x="0" y="0" width="245" height="58">
+              <text id="7:2835" name="WebSocket session" x="0" y="0" width="245" height="34" />
+              <text id="7:2836" name="DisNote API / Developer tools" x="0" y="38" width="209" height="20" />
+            </frame>
+            <instance id="7:2837" name="Button" x="904" y="9" width="176" height="40" />
+          </frame>
+          <frame id="7:2839" name="Frame" x="24" y="102" width="1080" height="286">
+            <frame id="7:2840" name="Overview" x="0" y="0" width="1080" height="254">
+              <frame id="7:2841" name="Frame" x="25" y="21" width="1032" height="20">
+                <text id="7:2842" name="Overview" x="0" y="0" width="63" height="20" />
+                <instance id="7:2843" name="Icon/chevron-down" x="1012" y="0" width="20" height="20" />
+              </frame>
+              <frame id="7:2845" name="Frame" x="25" y="57" width="1032" height="176">
+                <frame id="7:2846" name="Frame" x="0" y="0" width="996" height="32">
+                  <text id="7:2847" name="NAME / OPERATION" x="0" y="8" width="300" height="16" />
+                  <text id="7:2848" name="VALUE / DETAILS" x="308" y="8" width="440" height="16" />
+                  <text id="7:2849" name="STATUS" x="756" y="8" width="240" height="16" />
+                </frame>
+                <instance id="7:2850" name="Table row" x="0" y="32" width="1032" height="48" />
+                <instance id="7:2854" name="Table row" x="0" y="80" width="1032" height="48" />
+                <instance id="7:2858" name="Table row" x="0" y="128" width="1032" height="48" />
+              </frame>
+            </frame>
+            <frame id="7:2862" name="Frame" x="0" y="270" width="296" height="16">
+              <text id="7:2863" name="Showing 3 items" x="0" y="0" width="99" height="16" />
+              <text id="7:2864" name="All changes saved locally" x="131" y="0" width="165" height="16" />
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="7:2865" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="7:2868" name="P02 / WebSocket session   ·   PR03" x="3040" y="5168" width="245" height="20" />
+  <frame id="7:2869" name="P03 / gRPC request" x="0" y="6240" width="1440" height="900">
+    <instance id="7:2870" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="7:2873" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="7:2874" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="7:2909" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="7:2966" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="7:2967" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="7:2978" name="Main / gRPC request" x="0" y="64" width="1128" height="772">
+          <frame id="7:2979" name="Frame" x="24" y="24" width="1080" height="58">
+            <frame id="7:2980" name="Frame" x="0" y="0" width="209" height="58">
+              <text id="7:2981" name="gRPC request" x="0" y="0" width="173" height="34" />
+              <text id="7:2982" name="DisNote API / Developer tools" x="0" y="38" width="209" height="20" />
+            </frame>
+            <instance id="7:2983" name="Button" x="904" y="9" width="176" height="40" />
+          </frame>
+          <frame id="7:2985" name="Frame" x="24" y="102" width="1080" height="466">
+            <frame id="7:2986" name="Configuration" x="0" y="0" width="1080" height="352">
+              <frame id="7:2987" name="Frame" x="25" y="21" width="1032" height="20">
+                <text id="7:2988" name="Configuration" x="0" y="0" width="102" height="20" />
+                <instance id="7:2989" name="Icon/chevron-down" x="1012" y="0" width="20" height="20" />
+              </frame>
+              <frame id="7:2991" name="Frame" x="25" y="57" width="1032" height="42">
+                <frame id="7:2992" name="Frame" x="0" y="1" width="380" height="40">
+                  <text id="7:2993" name="Server" x="0" y="0" width="47" height="20" />
+                  <text id="7:2994" name="Workspace configuration" x="0" y="24" width="152" height="16" />
+                </frame>
+                <instance id="7:2995" name="Input" x="404" y="0" width="600" height="42" />
+              </frame>
+              <frame id="7:2997" name="Frame" x="25" y="115" width="1032" height="42">
+                <frame id="7:2998" name="Frame" x="0" y="1" width="380" height="40">
+                  <text id="7:2999" name="Proto definition" x="0" y="0" width="125" height="20" />
+                  <text id="7:3000" name="Workspace configuration" x="0" y="24" width="152" height="16" />
+                </frame>
+                <instance id="7:3001" name="Input" x="404" y="0" width="600" height="42" />
+              </frame>
+              <frame id="7:3003" name="Frame" x="25" y="173" width="1032" height="42">
+                <frame id="7:3004" name="Frame" x="0" y="1" width="380" height="40">
+                  <text id="7:3005" name="Service" x="0" y="0" width="55" height="20" />
+                  <text id="7:3006" name="Workspace configuration" x="0" y="24" width="152" height="16" />
+                </frame>
+                <instance id="7:3007" name="Input" x="404" y="0" width="600" height="42" />
+              </frame>
+              <frame id="7:3009" name="Frame" x="25" y="231" width="1032" height="42">
+                <frame id="7:3010" name="Frame" x="0" y="1" width="380" height="40">
+                  <text id="7:3011" name="Method" x="0" y="0" width="47" height="20" />
+                  <text id="7:3012" name="Workspace configuration" x="0" y="24" width="152" height="16" />
+                </frame>
+                <instance id="7:3013" name="Input" x="404" y="0" width="600" height="42" />
+              </frame>
+              <frame id="7:3015" name="Frame" x="25" y="289" width="1032" height="42">
+                <frame id="7:3016" name="Frame" x="0" y="1" width="380" height="40">
+                  <text id="7:3017" name="Metadata" x="0" y="0" width="63" height="20" />
+                  <text id="7:3018" name="Workspace configuration" x="0" y="24" width="152" height="16" />
+                </frame>
+                <instance id="7:3019" name="Input" x="404" y="0" width="600" height="42" />
+              </frame>
+            </frame>
+            <frame id="7:3021" name="Access &amp; sharing" x="0" y="368" width="1080" height="98">
+              <frame id="7:3022" name="Frame" x="25" y="21" width="1032" height="20">
+                <text id="7:3023" name="Access &amp; sharing" x="0" y="0" width="125" height="20" />
+                <instance id="7:3024" name="Icon/chevron-down" x="1012" y="0" width="20" height="20" />
+              </frame>
+              <frame id="7:3026" name="Frame" x="25" y="57" width="992" height="20">
+                <instance id="7:3027" name="Icon/shield-check" x="0" y="0" width="20" height="20" />
+                <text id="7:3030" name="Changes are saved locally before they are published to your team." x="32" y="0" width="960" height="20" />
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="7:3031" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="7:3034" name="P03 / gRPC request   ·   PR05" x="0" y="6208" width="209" height="20" />
+  <frame id="7:3035" name="P04 / Developer utilities" x="1520" y="6240" width="1440" height="900">
+    <instance id="7:3036" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="7:3039" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="7:3040" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="7:3075" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="7:3132" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="7:3133" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="7:3144" name="Main / Developer utilities" x="0" y="64" width="1128" height="772">
+          <frame id="7:3145" name="Frame" x="24" y="24" width="1080" height="58">
+            <frame id="7:3146" name="Frame" x="0" y="0" width="274" height="58">
+              <text id="7:3147" name="Developer utilities" x="0" y="0" width="274" height="34" />
+              <text id="7:3148" name="DisNote API / Developer tools" x="0" y="38" width="209" height="20" />
+            </frame>
+            <instance id="7:3149" name="Button" x="904" y="9" width="176" height="40" />
+          </frame>
+          <frame id="7:3151" name="Frame" x="24" y="102" width="1080" height="320">
+            <frame id="7:3152" name="Frame" x="0" y="0" width="474" height="40">
+              <instance id="7:3153" name="Tab" x="0" y="0" width="118" height="40" />
+              <instance id="7:3157" name="Tab" x="122" y="0" width="110" height="40" />
+              <instance id="7:3161" name="Tab" x="236" y="0" width="100" height="40" />
+              <instance id="7:3165" name="Tab" x="340" y="0" width="134" height="40" />
+            </frame>
+            <frame id="7:3169" name="Editor" x="0" y="56" width="1080" height="264">
+              <frame id="7:3170" name="Frame" x="25" y="21" width="1032" height="20">
+                <text id="7:3171" name="Editor" x="0" y="0" width="47" height="20" />
+                <instance id="7:3172" name="Icon/chevron-down" x="1012" y="0" width="20" height="20" />
+              </frame>
+              <frame id="7:3174" name="Code editor" x="25" y="57" width="1016" height="130">
+                <instance id="7:3175" name="Code line" x="0" y="0" width="1016" height="26" />
+                <instance id="7:3178" name="Code line" x="0" y="26" width="1016" height="26" />
+                <instance id="7:3181" name="Code line" x="0" y="52" width="1016" height="26" />
+                <instance id="7:3184" name="Code line" x="0" y="78" width="1016" height="26" />
+                <instance id="7:3187" name="Code line" x="0" y="104" width="1016" height="26" />
+              </frame>
+              <frame id="7:3190" name="Frame" x="25" y="203" width="364" height="40">
+                <instance id="7:3191" name="Button" x="0" y="0" width="176" height="40" />
+                <instance id="7:3193" name="Button" x="188" y="0" width="176" height="40" />
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="7:3195" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="7:3198" name="P04 / Developer utilities   ·   PR08 PR09" x="1520" y="6208" width="296" height="20" />
+</canvas>

@@ -1,0 +1,52 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:283",
+    "name": "Code line",
+    "type": "frame",
+    "width": "3136",
+    "height": "164",
+    "path": "02-design/components/01-component-library/code-line__5-283",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "5:284",
+      "name": "Tone=Default",
+      "type": "symbol",
+      "x": "24",
+      "y": "56",
+      "width": "1016",
+      "height": "26"
+    },
+    {
+      "id": "5:287",
+      "name": "Tone=Added",
+      "type": "symbol",
+      "x": "1060",
+      "y": "56",
+      "width": "1016",
+      "height": "26"
+    },
+    {
+      "id": "5:290",
+      "name": "Tone=Removed",
+      "type": "symbol",
+      "x": "2096",
+      "y": "56",
+      "width": "1016",
+      "height": "26"
+    },
+    {
+      "id": "5:293",
+      "name": "Tone=Warning",
+      "type": "symbol",
+      "x": "24",
+      "y": "102",
+      "width": "1016",
+      "height": "26"
+    }
+  ],
+  "text_layer_names": []
+}

@@ -1,0 +1,3412 @@
+[
+  {
+    "id": "WS01",
+    "priority": "A",
+    "title": "Chế độ cá nhân",
+    "description": "Mở ứng dụng và làm việc offline không cần tạo tài khoản; tạo workspace cục bộ và chuyển sang workspace nhóm khi muốn.",
+    "source_section": "03",
+    "screen_ids": [
+      "6:615",
+      "6:769",
+      "28:25",
+      "28:237"
+    ],
+    "screen_names": [
+      "A07 / Let’s build together",
+      "A08 / Your workspaces",
+      "W01 / Open a personal workspace",
+      "W02 / Move local work to your team"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "WS02",
+    "priority": "A",
+    "title": "Kết nối server",
+    "description": "Nhập địa chỉ máy chủ tự host, kiểm tra TLS và phiên bản giao thức; lưu nhiều cấu hình server và chuyển đổi rõ ràng.",
+    "source_section": "03",
+    "screen_ids": [
+      "6:316",
+      "6:476",
+      "28:394",
+      "28:548"
+    ],
+    "screen_names": [
+      "A05 / Connect your team server",
+      "A06 / Unable to reach your server",
+      "W03 / Server profiles",
+      "W04 / Server connection details"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P04"
+  },
+  {
+    "id": "WS03",
+    "priority": "A",
+    "title": "Tài khoản nội bộ",
+    "description": "Owner tạo lời mời một lần có hạn dùng; thành viên đăng ký, đăng nhập, đổi mật khẩu và đăng xuất thiết bị mà không cần tài khoản dịch vụ ngoài.",
+    "source_section": "03",
+    "screen_ids": [
+      "6:144",
+      "6:187",
+      "6:230",
+      "6:273",
+      "7:3381",
+      "28:3000",
+      "29:22674"
+    ],
+    "screen_names": [
+      "A01 / Welcome to Swaggen",
+      "A02 / Continue in your browser",
+      "A03 / Google sign-in was interrupted",
+      "A04 / Your session has expired",
+      "S02 / Your Google account",
+      "W19 / Invitation expired",
+      "Z10 / Manage signed-in Google sessions"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P04"
+  },
+  {
+    "id": "WS04",
+    "priority": "A",
+    "title": "Quản lý workspace",
+    "description": "Tạo, đổi tên, mô tả, lưu trữ workspace; phân tách dự án cá nhân và nhóm trên cùng ứng dụng.",
+    "source_section": "03",
+    "screen_ids": [
+      "6:615",
+      "6:769",
+      "6:939",
+      "6:1259",
+      "28:237",
+      "28:1004"
+    ],
+    "screen_names": [
+      "A07 / Let’s build together",
+      "A08 / Your workspaces",
+      "A09 / Create a workspace",
+      "A11 / Good morning, Ha Giang",
+      "W02 / Move local work to your team",
+      "W07 / Archive this workspace"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "WS05",
+    "priority": "A",
+    "title": "Thành viên và vai trò",
+    "description": "Mời, chấp nhận, thu hồi lời mời; gán vai trò theo ma trận quyền và xem danh sách thành viên.",
+    "source_section": "03",
+    "screen_ids": [
+      "6:1099",
+      "6:7879",
+      "6:8029",
+      "7:5381",
+      "28:698",
+      "28:852",
+      "28:3000",
+      "28:3157",
+      "28:3311"
+    ],
+    "screen_names": [
+      "A10 / You’re invited to DisNote API",
+      "C01 / Workspace members",
+      "C02 / Invite teammates",
+      "X03 / Read-only workspace",
+      "W05 / Invitation settings",
+      "W06 / Change a member’s role",
+      "W19 / Invitation expired",
+      "W20 / Invitation account mismatch",
+      "W21 / Revoke an invitation"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P04"
+  },
+  {
+    "id": "WS06",
+    "priority": "A",
+    "title": "Collection và folder",
+    "description": "Tạo cây collection, folder lồng nhau, kéo thả thứ tự; sao chép hoặc chuyển request với xác nhận đích.",
+    "source_section": "03",
+    "screen_ids": [
+      "6:1436",
+      "28:1456",
+      "28:1604",
+      "28:1750",
+      "28:1904",
+      "28:2368",
+      "28:2546",
+      "28:2773",
+      "29:10001"
+    ],
+    "screen_names": [
+      "A12 / Your API workspace starts here",
+      "W10 / Create a nested folder",
+      "W11 / Rename a collection",
+      "W12 / Move a request",
+      "W13 / Duplicate a request",
+      "W16 / Collection actions",
+      "W17 / Organize collection folders",
+      "W18 / Move request with drag and drop",
+      "C16 / Fork a collection"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "WS07",
+    "priority": "A",
+    "title": "Tìm kiếm và nhãn",
+    "description": "Tìm theo tên, method, URL, tag và nội dung mô tả; lọc trong workspace hiện tại.",
+    "source_section": "03",
+    "screen_ids": [
+      "6:1569",
+      "7:5248",
+      "28:2058"
+    ],
+    "screen_names": [
+      "A13 / Find anything in your workspace",
+      "X02 / No search results",
+      "W14 / Workspace filters & tags"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "WS08",
+    "priority": "A",
+    "title": "Thiết lập dự án",
+    "description": "Đặt server API mặc định, môi trường, quy ước đặt tên và hướng dẫn bắt đầu cho thành viên mới.",
+    "source_section": "03",
+    "screen_ids": [
+      "6:615",
+      "6:939",
+      "7:3221",
+      "28:1300"
+    ],
+    "screen_names": [
+      "A07 / Let’s build together",
+      "A09 / Create a workspace",
+      "S01 / Workspace settings",
+      "W09 / Project defaults & conventions"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "WS09",
+    "priority": "B",
+    "title": "Quản lý vòng đời",
+    "description": "Lưu trữ hoặc đưa dữ liệu chung vào thùng rác; khôi phục theo thời hạn lưu giữ và quyền thao tác.",
+    "source_section": "03",
+    "screen_ids": [
+      "6:769",
+      "7:3221",
+      "7:5975",
+      "28:1004",
+      "28:2214"
+    ],
+    "screen_names": [
+      "A08 / Your workspaces",
+      "S01 / Workspace settings",
+      "X07 / Workspace trash",
+      "W07 / Archive this workspace",
+      "W15 / Restore a deleted folder"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P09"
+  },
+  {
+    "id": "WS10",
+    "priority": "B",
+    "title": "Chuyển chủ sở hữu",
+    "description": "Owner chuyển quyền cho thành viên phù hợp; không cho rời workspace khi chưa có người nhận quyền.",
+    "source_section": "03",
+    "screen_ids": [
+      "7:3221",
+      "7:6117",
+      "28:1154",
+      "32:2816"
+    ],
+    "screen_names": [
+      "S01 / Workspace settings",
+      "X08 / Transfer workspace ownership",
+      "W08 / Leave your workspace",
+      "W22 / Confirm ownership transfer"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P09"
+  },
+  {
+    "id": "RQ01",
+    "priority": "A",
+    "title": "Method và URL",
+    "description": "Hỗ trợ GET POST PUT PATCH DELETE HEAD OPTIONS; nhập URL, path params và query params, xem URL thực tế trước khi gửi.",
+    "source_section": "04",
+    "screen_ids": [
+      "6:1717",
+      "6:1908",
+      "28:3551",
+      "28:3728",
+      "28:5553"
+    ],
+    "screen_names": [
+      "A14 / Create a new request",
+      "R01 / List tasks",
+      "Q01 / Choose an HTTP method",
+      "Q02 / Path and query parameters",
+      "Q13 / Request without a body"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "RQ02",
+    "priority": "A",
+    "title": "Query chính xác",
+    "description": "Bật tắt từng tham số, giữ thứ tự và tham số trùng tên; kiểm soát encoding để không làm thay đổi ý nghĩa request.",
+    "source_section": "04",
+    "screen_ids": [
+      "6:1908",
+      "28:3728",
+      "28:3904"
+    ],
+    "screen_names": [
+      "R01 / List tasks",
+      "Q02 / Path and query parameters",
+      "Q03 / URL encoding preview"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "RQ03",
+    "priority": "A",
+    "title": "Headers",
+    "description": "Thêm, sửa, bật tắt header; xem header tự sinh, xử lý giá trị trùng theo quy tắc HTTP và báo giá trị không hợp lệ.",
+    "source_section": "04",
+    "screen_ids": [
+      "6:2102",
+      "28:4068",
+      "28:4237"
+    ],
+    "screen_names": [
+      "R02 / Request headers",
+      "Q04 / Headers and generated values",
+      "Q05 / Header validation error"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "RQ04",
+    "priority": "A",
+    "title": "Các loại body",
+    "description": "Soạn JSON, text, XML, form URL encoded, multipart và binary; chọn Content Type và báo lỗi JSON trước khi gửi.",
+    "source_section": "04",
+    "screen_ids": [
+      "6:2296",
+      "28:4400",
+      "28:4577",
+      "28:4739",
+      "28:4895",
+      "28:5057",
+      "28:5222",
+      "28:5393",
+      "28:5553",
+      "28:5718"
+    ],
+    "screen_names": [
+      "R03 / Create a task",
+      "Q06 / Choose request body type",
+      "Q07 / JSON request body",
+      "Q08 / Plain text request body",
+      "Q09 / XML request body",
+      "Q10 / JSON syntax error",
+      "Q11 / Form URL encoded body",
+      "Q12 / Binary request body",
+      "Q13 / Request without a body",
+      "Q14 / Multipart field editor"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "RQ05",
+    "priority": "A",
+    "title": "Tải file lên",
+    "description": "Chọn file từ máy, nhập trường multipart và tên file; đường dẫn riêng không đồng bộ thành file của người khác.",
+    "source_section": "04",
+    "screen_ids": [
+      "6:2492",
+      "28:5393",
+      "28:5718",
+      "28:5889",
+      "28:6203"
+    ],
+    "screen_names": [
+      "R04 / Upload an attachment",
+      "Q12 / Binary request body",
+      "Q14 / Multipart field editor",
+      "Q15 / Uploading an attachment",
+      "Q17 / Local upload file is missing"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "RQ06",
+    "priority": "A",
+    "title": "Gửi và hủy",
+    "description": "Gửi bất đồng bộ, đặt timeout, hủy request; phân biệt hủy bởi người dùng, lỗi mạng và HTTP trả lỗi.",
+    "source_section": "04",
+    "screen_ids": [
+      "6:3260",
+      "6:3839",
+      "28:5057",
+      "28:5889",
+      "28:6046",
+      "28:6514",
+      "28:6672",
+      "28:6829",
+      "28:6987"
+    ],
+    "screen_names": [
+      "R08 / Request failed",
+      "R11 / Streaming response",
+      "Q10 / JSON syntax error",
+      "Q15 / Uploading an attachment",
+      "Q16 / Upload canceled",
+      "Q19 / Request timed out",
+      "Q20 / Request canceled",
+      "Q21 / Server rejected the request",
+      "Q22 / Response could not be saved"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "RQ07",
+    "priority": "A",
+    "title": "Request đã phân giải",
+    "description": "Xem method URL headers body sau khi thay biến; che secret theo mặc định và cảnh báo thiếu biến.",
+    "source_section": "04",
+    "screen_ids": [
+      "6:1908",
+      "6:3649",
+      "28:3904",
+      "29:4487"
+    ],
+    "screen_names": [
+      "R01 / List tasks",
+      "R10 / Resolved request preview",
+      "Q03 / URL encoding preview",
+      "V03 / Missing variable blocks this request"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "RQ08",
+    "priority": "A",
+    "title": "Nháp và lưu",
+    "description": "Tự lưu bản nháp riêng, đánh dấu khác biệt so với bản chung; Publish mới tạo thay đổi cho nhóm.",
+    "source_section": "04",
+    "screen_ids": [
+      "6:1436",
+      "6:1717",
+      "28:7145",
+      "28:7303"
+    ],
+    "screen_names": [
+      "A12 / Your API workspace starts here",
+      "A14 / Create a new request",
+      "Q23 / Draft differs from the shared request",
+      "Q24 / Close unsaved tabs"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "RQ09",
+    "priority": "A",
+    "title": "Sao chép nhanh",
+    "description": "Nhân bản request, lưu thành mẫu mới và mở request từ lịch sử mà không sửa bản chung ngoài ý muốn.",
+    "source_section": "04",
+    "screen_ids": [
+      "6:1717",
+      "6:4351",
+      "28:1750",
+      "28:1904",
+      "28:2368",
+      "28:7460"
+    ],
+    "screen_names": [
+      "A14 / Create a new request",
+      "R14 / Your request history",
+      "W12 / Move a request",
+      "W13 / Duplicate a request",
+      "W16 / Collection actions",
+      "Q25 / Request tab actions"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "RQ10",
+    "priority": "B",
+    "title": "Stream khi truyền",
+    "description": "Hiển thị tiến độ upload download, giữ UI phản hồi; ghi dữ liệu lớn xuống file thay vì đưa toàn bộ vào RAM.",
+    "source_section": "04",
+    "screen_ids": [
+      "6:2492",
+      "6:3446",
+      "28:5889",
+      "28:6046",
+      "28:6357"
+    ],
+    "screen_names": [
+      "R04 / Upload an attachment",
+      "R09 / Large response preview",
+      "Q15 / Uploading an attachment",
+      "Q16 / Upload canceled",
+      "Q18 / Downloading a large response"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P07"
+  },
+  {
+    "id": "AU01",
+    "priority": "A",
+    "title": "No Auth và Bearer",
+    "description": "Chọn không xác thực hoặc Bearer token bằng biến cá nhân; token được che trong giao diện và log.",
+    "source_section": "05",
+    "screen_ids": [
+      "6:2686",
+      "29:25",
+      "29:275"
+    ],
+    "screen_names": [
+      "R05 / Request authorization",
+      "H01 / Choose API authorization",
+      "H02 / No authentication"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "AU02",
+    "priority": "A",
+    "title": "Basic và API key",
+    "description": "Basic Auth, API key trong header hoặc query; cảnh báo URL có secret và loại bỏ secret khi xuất mặc định.",
+    "source_section": "05",
+    "screen_ids": [
+      "6:2686",
+      "29:25",
+      "29:424",
+      "29:574",
+      "29:726"
+    ],
+    "screen_names": [
+      "R05 / Request authorization",
+      "H01 / Choose API authorization",
+      "H03 / Basic authentication",
+      "H04 / API key in a header",
+      "H05 / API key in the query string"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "AU03",
+    "priority": "A",
+    "title": "Kế thừa xác thực",
+    "description": "Request kế thừa từ folder hoặc collection; có thể ghi đè hoặc tắt và xem nguồn cấu hình đang áp dụng.",
+    "source_section": "05",
+    "screen_ids": [
+      "6:2686",
+      "28:4068",
+      "29:25",
+      "29:878",
+      "29:1030"
+    ],
+    "screen_names": [
+      "R05 / Request authorization",
+      "Q04 / Headers and generated values",
+      "H01 / Choose API authorization",
+      "H06 / Inherited authorization",
+      "H07 / Override inherited authorization"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "AU04",
+    "priority": "A",
+    "title": "Cookie jar",
+    "description": "Lưu, xem, sửa, xóa cookie theo domain path và expiry; tách theo workspace hoặc môi trường cá nhân.",
+    "source_section": "05",
+    "screen_ids": [
+      "6:4033",
+      "28:7632",
+      "29:1656"
+    ],
+    "screen_names": [
+      "R12 / Cookies for this workspace",
+      "Q26 / Response headers and cookies",
+      "H11 / Cookie editor"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "AU05",
+    "priority": "A",
+    "title": "TLS mặc định",
+    "description": "Kiểm tra chứng chỉ theo mặc định; cho phép ngoại lệ riêng theo host với cảnh báo rõ và không áp dụng toàn cục.",
+    "source_section": "05",
+    "screen_ids": [
+      "6:4185",
+      "29:1816",
+      "29:3526"
+    ],
+    "screen_names": [
+      "R13 / Connection settings",
+      "H12 / TLS exception for a local host",
+      "H23 / TLS certificate verification failed"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "AU06",
+    "priority": "A",
+    "title": "Redirect",
+    "description": "Cấu hình theo hoặc dừng redirect, giới hạn số lần; không chuyển Authorization sang host khác ngoài chính sách cho phép.",
+    "source_section": "05",
+    "screen_ids": [
+      "6:4185",
+      "29:1968",
+      "29:3996"
+    ],
+    "screen_names": [
+      "R13 / Connection settings",
+      "H13 / Redirect policy",
+      "H26 / Redirect chain inspected"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "AU07",
+    "priority": "B",
+    "title": "Proxy và CA riêng",
+    "description": "Cấu hình proxy, bypass, CA của tổ chức; không ghi mật khẩu proxy vào dữ liệu chung.",
+    "source_section": "05",
+    "screen_ids": [
+      "6:4185",
+      "29:2124",
+      "29:3842"
+    ],
+    "screen_names": [
+      "R13 / Connection settings",
+      "H14 / Proxy and custom certificate authority",
+      "H25 / Proxy authentication required"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P07"
+  },
+  {
+    "id": "AU08",
+    "priority": "B",
+    "title": "OAuth 2 PKCE",
+    "description": "Authorization Code với PKCE, Client Credentials, scope và token refresh; callback loopback được xác thực trạng thái.",
+    "source_section": "05",
+    "screen_ids": [
+      "6:2875",
+      "29:25",
+      "29:1178",
+      "29:1338",
+      "29:1500",
+      "29:2748",
+      "29:2908",
+      "29:3066",
+      "29:3219"
+    ],
+    "screen_names": [
+      "R06 / OAuth 2.0 authorization",
+      "H01 / Choose API authorization",
+      "H08 / OAuth authorization code with PKCE",
+      "H09 / OAuth Client Credentials",
+      "H10 / OAuth token details",
+      "H18 / Waiting for OAuth authorization",
+      "H19 / OAuth callback rejected",
+      "H20 / OAuth access token expired",
+      "H21 / OAuth refresh failed"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P07"
+  },
+  {
+    "id": "AU09",
+    "priority": "B",
+    "title": "Chứng chỉ client",
+    "description": "Cấu hình mTLS theo host và port; khóa riêng giữ trên máy, hỗ trợ xóa liên kết và báo hết hạn.",
+    "source_section": "05",
+    "screen_ids": [
+      "6:4185",
+      "29:2286",
+      "29:3684"
+    ],
+    "screen_names": [
+      "R13 / Connection settings",
+      "H15 / Client certificate mapping",
+      "H24 / Client certificate expired"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P07"
+  },
+  {
+    "id": "AU10",
+    "priority": "C",
+    "title": "Xác thực bổ sung",
+    "description": "Đánh giá Digest, AWS Signature và cơ chế khác theo nhu cầu; hiển thị rõ loại nào chưa được hỗ trợ.",
+    "source_section": "05",
+    "screen_ids": [
+      "6:4185",
+      "29:25",
+      "29:2442",
+      "29:2596",
+      "29:3373"
+    ],
+    "screen_names": [
+      "R13 / Connection settings",
+      "H01 / Choose API authorization",
+      "H16 / AWS Signature v4",
+      "H17 / Digest authentication",
+      "H22 / Unsupported authorization option"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P11"
+  },
+  {
+    "id": "EV01",
+    "priority": "A",
+    "title": "Môi trường",
+    "description": "Tạo local dev staging prod; hiển thị môi trường đang dùng cạnh nút gửi request.",
+    "source_section": "06",
+    "screen_ids": [
+      "6:5197"
+    ],
+    "screen_names": [
+      "E01 / Environments"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "EV02",
+    "priority": "A",
+    "title": "Biến theo cấp",
+    "description": "Hỗ trợ workspace, collection, environment và request; trình kiểm tra chỉ rõ giá trị hiệu lực và nguồn.",
+    "source_section": "06",
+    "screen_ids": [
+      "6:5197",
+      "6:5343",
+      "29:4154"
+    ],
+    "screen_names": [
+      "E01 / Environments",
+      "E02 / Edit Development",
+      "V01 / Inspect an effective variable"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "EV03",
+    "priority": "A",
+    "title": "Giá trị cá nhân",
+    "description": "Đặt local override cho biến chung; bạn A và B có token khác nhau nhưng dùng cùng request template.",
+    "source_section": "06",
+    "screen_ids": [
+      "6:5197",
+      "6:5343",
+      "29:4154",
+      "29:4324",
+      "29:14018"
+    ],
+    "screen_names": [
+      "E01 / Environments",
+      "E02 / Edit Development",
+      "V01 / Inspect an effective variable",
+      "V02 / Personal and shared variable values",
+      "I06 / Import Postman environment values"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "EV04",
+    "priority": "A",
+    "title": "Thay biến",
+    "description": "Dùng cú pháp {{ten_bien}} trong URL header body auth; phát hiện thiếu biến và vòng tham chiếu.",
+    "source_section": "06",
+    "screen_ids": [
+      "6:3649",
+      "6:5197",
+      "29:4487",
+      "29:4641"
+    ],
+    "screen_names": [
+      "R10 / Resolved request preview",
+      "E01 / Environments",
+      "V03 / Missing variable blocks this request",
+      "V04 / Circular variable reference"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "EV05",
+    "priority": "A",
+    "title": "Đánh dấu secret",
+    "description": "Đánh dấu nhạy cảm, che giá trị và lưu bằng cơ chế bảo vệ Windows; chỉ Rust core truy xuất khi cần gửi.",
+    "source_section": "06",
+    "screen_ids": [
+      "6:5343",
+      "6:5509",
+      "29:4324",
+      "29:5431"
+    ],
+    "screen_names": [
+      "E02 / Edit Development",
+      "E03 / Personal secrets",
+      "V02 / Personal and shared variable values",
+      "V09 / Reveal or export a secret"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "EV06",
+    "priority": "A",
+    "title": "Quy tắc xuất",
+    "description": "Mặc định xuất placeholder và tên biến; có bước xem trước nếu người dùng chủ động đưa giá trị nhạy cảm vào file.",
+    "source_section": "06",
+    "screen_ids": [
+      "29:5431"
+    ],
+    "screen_names": [
+      "V09 / Reveal or export a secret"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "EV07",
+    "priority": "A",
+    "title": "Bảo vệ production",
+    "description": "Màu môi trường khác biệt; yêu cầu xác nhận khi gửi request thay đổi dữ liệu đến môi trường đánh dấu production.",
+    "source_section": "06",
+    "screen_ids": [
+      "6:4697"
+    ],
+    "screen_names": [
+      "R16 / Confirm production request"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "EV08",
+    "priority": "B",
+    "title": "Biến động",
+    "description": "Sinh UUID timestamp và giá trị ngẫu nhiên có quy tắc; preview trước khi gửi để dễ tái hiện.",
+    "source_section": "06",
+    "screen_ids": [
+      "6:5343",
+      "29:4795"
+    ],
+    "screen_names": [
+      "E02 / Edit Development",
+      "V05 / Dynamic variable preview"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P07"
+  },
+  {
+    "id": "EV09",
+    "priority": "B",
+    "title": "Trích xuất giá trị",
+    "description": "Lấy trường JSON hoặc header từ response để điền biến cục bộ cho request tiếp theo; không tự publish token.",
+    "source_section": "06",
+    "screen_ids": [
+      "6:5343",
+      "29:4953",
+      "29:15903"
+    ],
+    "screen_names": [
+      "E02 / Edit Development",
+      "V06 / Extract a value from a response",
+      "T15 / Configure a response extractor"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P07"
+  },
+  {
+    "id": "EV10",
+    "priority": "C",
+    "title": "Vault nhóm",
+    "description": "Kho secret riêng có quyền truy cập, luân chuyển khóa, nhật ký; thiết kế và nghiệm thu riêng trước khi bật.",
+    "source_section": "06",
+    "screen_ids": [
+      "7:4961",
+      "29:5119",
+      "29:5279"
+    ],
+    "screen_names": [
+      "S12 / Team secret vault",
+      "V07 / Team vault access policy",
+      "V08 / Rotate a team secret"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P10"
+  },
+  {
+    "id": "RS01",
+    "priority": "A",
+    "title": "Thông tin tổng quan",
+    "description": "Hiển thị status code, thời gian tổng, kích thước và thời điểm chạy; phân biệt body nén và giải nén nếu có số đo.",
+    "source_section": "07",
+    "screen_ids": [
+      "6:3066",
+      "28:8115"
+    ],
+    "screen_names": [
+      "R07 / Inspect the response",
+      "Q29 / Response timing breakdown"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "RS02",
+    "priority": "A",
+    "title": "Hiển thị body",
+    "description": "Raw text, JSON có tô màu và gấp nhánh, XML text; nhận diện binary và cho tải file xuống.",
+    "source_section": "07",
+    "screen_ids": [
+      "6:3066",
+      "28:7795",
+      "28:7953",
+      "32:7157",
+      "32:7317",
+      "32:7478"
+    ],
+    "screen_names": [
+      "R07 / Inspect the response",
+      "Q27 / Find a value in a response",
+      "Q28 / Binary and XML response views",
+      "Q33 / XML response inspector",
+      "Q34 / Binary response inspector",
+      "Q35 / Raw response inspector"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "RS03",
+    "priority": "A",
+    "title": "Response headers",
+    "description": "Xem toàn bộ header, gồm các header lặp; xem cookie do server trả về.",
+    "source_section": "07",
+    "screen_ids": [
+      "6:3066",
+      "28:7632"
+    ],
+    "screen_names": [
+      "R07 / Inspect the response",
+      "Q26 / Response headers and cookies"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "RS04",
+    "priority": "A",
+    "title": "Tìm và sao chép",
+    "description": "Tìm kiếm trong body, sao chép giá trị hoặc JSON path, format và lưu response thành file.",
+    "source_section": "07",
+    "screen_ids": [
+      "6:3066",
+      "28:7795",
+      "28:7953",
+      "32:7157",
+      "32:7478"
+    ],
+    "screen_names": [
+      "R07 / Inspect the response",
+      "Q27 / Find a value in a response",
+      "Q28 / Binary and XML response views",
+      "Q33 / XML response inspector",
+      "Q35 / Raw response inspector"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "RS05",
+    "priority": "A",
+    "title": "Thông báo lỗi",
+    "description": "Phân loại DNS, connection refused, TLS, timeout, hủy và lỗi parse; hướng dẫn xử lý theo tình huống.",
+    "source_section": "07",
+    "screen_ids": [
+      "6:3260",
+      "28:6514",
+      "28:6672",
+      "28:6829",
+      "28:6987",
+      "29:3526",
+      "29:3842"
+    ],
+    "screen_names": [
+      "R08 / Request failed",
+      "Q19 / Request timed out",
+      "Q20 / Request canceled",
+      "Q21 / Server rejected the request",
+      "Q22 / Response could not be saved",
+      "H23 / TLS certificate verification failed",
+      "H25 / Proxy authentication required"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "RS06",
+    "priority": "A",
+    "title": "Response lớn",
+    "description": "Giới hạn phần preview, phân trang hoặc render ảo; vẫn cho lưu raw file và thông báo khi nội dung bị cắt hiển thị.",
+    "source_section": "07",
+    "screen_ids": [
+      "6:3446",
+      "28:6357",
+      "28:6514",
+      "28:6672",
+      "28:6829",
+      "28:6987",
+      "32:7317"
+    ],
+    "screen_names": [
+      "R09 / Large response preview",
+      "Q18 / Downloading a large response",
+      "Q19 / Request timed out",
+      "Q20 / Request canceled",
+      "Q21 / Server rejected the request",
+      "Q22 / Response could not be saved",
+      "Q34 / Binary response inspector"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "RS07",
+    "priority": "A",
+    "title": "Lịch sử riêng",
+    "description": "Lưu lần chạy trên máy với bộ lọc và thời hạn giữ; xóa theo request hoặc toàn bộ mà không xóa template.",
+    "source_section": "07",
+    "screen_ids": [
+      "6:4351",
+      "7:3867",
+      "28:8290",
+      "32:11640"
+    ],
+    "screen_names": [
+      "R14 / Your request history",
+      "S05 / Storage & retention",
+      "Q30 / History filters and cleanup",
+      "Z20 / Confirm local cache cleanup"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "RS08",
+    "priority": "A",
+    "title": "Ví dụ chia sẻ",
+    "description": "Lưu response thành example sau khi xem trước và làm sạch dữ liệu; liên kết với endpoint và status tương ứng.",
+    "source_section": "07",
+    "screen_ids": [
+      "6:4863",
+      "28:8610"
+    ],
+    "screen_names": [
+      "R17 / Save a response example",
+      "Q32 / Review a shared response example"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "RS09",
+    "priority": "B",
+    "title": "So sánh response",
+    "description": "Diff JSON hoặc text giữa hai lần chạy, bỏ qua trường biến động theo cấu hình của người dùng.",
+    "source_section": "07",
+    "screen_ids": [
+      "6:4501",
+      "28:8452"
+    ],
+    "screen_names": [
+      "R15 / Compare responses",
+      "Q31 / Compare JSON or raw responses"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P07"
+  },
+  {
+    "id": "RS10",
+    "priority": "B",
+    "title": "Đo thời gian chi tiết",
+    "description": "Đo DNS TCP TLS TTFB khi transport cung cấp được; ghi không khả dụng thay vì ước đoán thành số đo thật.",
+    "source_section": "07",
+    "screen_ids": [
+      "6:4501",
+      "28:8115"
+    ],
+    "screen_names": [
+      "R15 / Compare responses",
+      "Q29 / Response timing breakdown"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P07"
+  },
+  {
+    "id": "OA01",
+    "priority": "A",
+    "title": "Import đặc tả",
+    "description": "Mở JSON YAML từ file hoặc URL; ưu tiên OpenAPI 3.0 và 3.1, báo phiên bản không hỗ trợ; URL riêng lấy từ máy người dùng.",
+    "source_section": "08",
+    "screen_ids": [
+      "6:5746",
+      "29:5701",
+      "29:5855",
+      "29:13864"
+    ],
+    "screen_names": [
+      "D01 / DisNote OpenAPI",
+      "O01 / OpenAPI file and URL import",
+      "O02 / Unsupported OpenAPI version",
+      "I05 / Import from an API URL"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P03"
+  },
+  {
+    "id": "OA02",
+    "priority": "A",
+    "title": "Editor đặc tả",
+    "description": "Tô màu, format, tìm thay thế, đánh dấu dòng lỗi; giữ nguyên bản nháp khi validation thất bại.",
+    "source_section": "08",
+    "screen_ids": [
+      "6:5746",
+      "29:6008"
+    ],
+    "screen_names": [
+      "D01 / DisNote OpenAPI",
+      "O03 / Find and replace in a specification"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P03"
+  },
+  {
+    "id": "OA03",
+    "priority": "A",
+    "title": "Kiểm tra cấu trúc",
+    "description": "Kiểm tra cú pháp, trường bắt buộc, path params và operationId; không báo đạt khi thư viện không hiểu keyword.",
+    "source_section": "08",
+    "screen_ids": [
+      "6:5940",
+      "29:6163",
+      "29:9311"
+    ],
+    "screen_names": [
+      "D02 / Specification needs attention",
+      "O04 / Duplicate operation validation",
+      "O23 / Unsupported schema keyword"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P03"
+  },
+  {
+    "id": "OA04",
+    "priority": "A",
+    "title": "Quản lý endpoint",
+    "description": "Thêm method path summary description tags và deprecated; có kiểm tra trùng method cùng path.",
+    "source_section": "08",
+    "screen_ids": [
+      "6:5746",
+      "6:6146",
+      "6:7662",
+      "29:6163"
+    ],
+    "screen_names": [
+      "D01 / DisNote OpenAPI",
+      "D03 / Design an endpoint",
+      "D12 / Deprecated operation",
+      "O04 / Duplicate operation validation"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P03"
+  },
+  {
+    "id": "OA05",
+    "priority": "A",
+    "title": "Định nghĩa dữ liệu",
+    "description": "Khai báo parameters requestBody responses content types và examples; phân biệt required nullable và optional theo phiên bản.",
+    "source_section": "08",
+    "screen_ids": [
+      "6:5746",
+      "6:6146",
+      "6:6312",
+      "29:6321",
+      "29:6485",
+      "29:6643",
+      "29:6961"
+    ],
+    "screen_names": [
+      "D01 / DisNote OpenAPI",
+      "D03 / Design an endpoint",
+      "D04 / Task schema",
+      "O05 / Edit an operation parameter",
+      "O06 / Edit request body content",
+      "O07 / Add a documented response",
+      "O09 / Schema property constraints"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P03"
+  },
+  {
+    "id": "OA06",
+    "priority": "A",
+    "title": "Components dùng lại",
+    "description": "Quản lý schema parameters responses và security schemes; giải tham chiếu nội bộ và phát hiện tham chiếu không tồn tại.",
+    "source_section": "08",
+    "screen_ids": [
+      "6:5746",
+      "6:6312",
+      "6:6493",
+      "29:6803",
+      "29:7998"
+    ],
+    "screen_names": [
+      "D01 / DisNote OpenAPI",
+      "D04 / Task schema",
+      "D05 / References & components",
+      "O08 / Edit a reusable security scheme",
+      "O15 / Missing reference and external reference permission"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P03"
+  },
+  {
+    "id": "OA07",
+    "priority": "B",
+    "title": "Schema phức tạp",
+    "description": "Hiển thị allOf oneOf anyOf enum discriminator và đệ quy với giới hạn; không render vô hạn khi có vòng tham chiếu.",
+    "source_section": "08",
+    "screen_ids": [
+      "6:5940",
+      "6:6312",
+      "6:6493",
+      "29:6961",
+      "29:7127",
+      "29:7293",
+      "29:7459",
+      "29:7622",
+      "29:7780"
+    ],
+    "screen_names": [
+      "D02 / Specification needs attention",
+      "D04 / Task schema",
+      "D05 / References & components",
+      "O09 / Schema property constraints",
+      "O10 / Compose schemas with allOf",
+      "O11 / Choose a oneOf schema branch",
+      "O12 / Compose schemas with anyOf",
+      "O13 / Configure an enum discriminator",
+      "O14 / Recursive schema boundary"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P07"
+  },
+  {
+    "id": "OA08",
+    "priority": "B",
+    "title": "Tham chiếu nhiều file",
+    "description": "Giải relative reference trong project, bundle khi export; tham chiếu URL ngoài cần cho phép rõ và giới hạn tài nguyên.",
+    "source_section": "08",
+    "screen_ids": [
+      "6:5940",
+      "6:6493",
+      "29:8161"
+    ],
+    "screen_names": [
+      "D02 / Specification needs attention",
+      "D05 / References & components",
+      "O16 / Bundle a multi-file specification"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P07"
+  },
+  {
+    "id": "OA09",
+    "priority": "B",
+    "title": "Swagger 2 và phiên bản mới",
+    "description": "Chuyển Swagger 2.0 bằng công cụ phù hợp, đánh dấu phần mất mát; đánh giá OpenAPI 3.2 riêng, không mặc định coi tương thích.",
+    "source_section": "08",
+    "screen_ids": [
+      "6:5940",
+      "29:5855",
+      "29:8319"
+    ],
+    "screen_names": [
+      "D02 / Specification needs attention",
+      "O02 / Unsupported OpenAPI version",
+      "O17 / Convert Swagger 2.0"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P07"
+  },
+  {
+    "id": "OA10",
+    "priority": "B",
+    "title": "Lint quy ước nhóm",
+    "description": "Quy tắc đặt operationId, mô tả, error schema và security; phân biệt lỗi đặc tả với cảnh báo quy ước.",
+    "source_section": "08",
+    "screen_ids": [
+      "6:7356",
+      "29:8488"
+    ],
+    "screen_names": [
+      "D10 / API quality checks",
+      "O18 / Configure API lint rules"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P07"
+  },
+  {
+    "id": "DC01",
+    "priority": "A",
+    "title": "Tài liệu tự sinh",
+    "description": "Hiển thị endpoint theo tag, method, path và mô tả từ đặc tả; mở được offline trong app.",
+    "source_section": "09",
+    "screen_ids": [
+      "6:6643"
+    ],
+    "screen_names": [
+      "D06 / API documentation"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P03"
+  },
+  {
+    "id": "DC02",
+    "priority": "A",
+    "title": "Chi tiết hợp đồng",
+    "description": "Hiển thị params required type default enum, body schema, status và ví dụ; tìm theo endpoint hoặc schema.",
+    "source_section": "09",
+    "screen_ids": [
+      "6:6643",
+      "29:6643"
+    ],
+    "screen_names": [
+      "D06 / API documentation",
+      "O07 / Add a documented response"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P03"
+  },
+  {
+    "id": "DC03",
+    "priority": "A",
+    "title": "Chạy từ tài liệu",
+    "description": "Try request mở request builder cùng environment auth và path params; gọi bằng Rust engine trên máy.",
+    "source_section": "09",
+    "screen_ids": [
+      "6:6643",
+      "6:6814"
+    ],
+    "screen_names": [
+      "D06 / API documentation",
+      "D07 / Try List tasks"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P03"
+  },
+  {
+    "id": "DC04",
+    "priority": "A",
+    "title": "Liên kết định danh",
+    "description": "Lưu ID endpoint ổn định và ánh xạ operationId khi có; đổi path không tự tạo request trùng hoặc làm mất liên kết.",
+    "source_section": "09",
+    "screen_ids": [
+      "6:6146",
+      "6:7204",
+      "29:8651"
+    ],
+    "screen_names": [
+      "D03 / Design an endpoint",
+      "D09 / Update linked requests",
+      "O19 / Link request to a stable operation"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P03"
+  },
+  {
+    "id": "DC05",
+    "priority": "A",
+    "title": "Sinh request mẫu",
+    "description": "Tạo request từ operation và example; đánh dấu trường do spec quản lý và phần override của người dùng.",
+    "source_section": "09",
+    "screen_ids": [
+      "6:6643",
+      "6:6814",
+      "29:8651"
+    ],
+    "screen_names": [
+      "D06 / API documentation",
+      "D07 / Try List tasks",
+      "O19 / Link request to a stable operation"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P03"
+  },
+  {
+    "id": "DC06",
+    "priority": "A",
+    "title": "Cập nhật từ đặc tả",
+    "description": "Khi spec đổi, hiển thị diff và đề xuất cập nhật request; giữ token cục bộ và báo override không còn phù hợp.",
+    "source_section": "09",
+    "screen_ids": [
+      "6:7008",
+      "6:7204",
+      "29:8814"
+    ],
+    "screen_names": [
+      "D08 / Review specification changes",
+      "D09 / Update linked requests",
+      "O20 / Review a contract update"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P03"
+  },
+  {
+    "id": "DC07",
+    "priority": "B",
+    "title": "Đề xuất sửa hợp đồng",
+    "description": "Từ request thủ công, tạo draft patch cho spec; người dùng review trước publish, không tự suy ra hợp đồng đầy đủ từ một response.",
+    "source_section": "09",
+    "screen_ids": [
+      "6:7008",
+      "6:9817",
+      "29:8973",
+      "29:10155"
+    ],
+    "screen_names": [
+      "D08 / Review specification changes",
+      "C13 / Review proposed changes",
+      "O21 / Propose a spec change from a request",
+      "C17 / Open a merge request"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P07"
+  },
+  {
+    "id": "DC08",
+    "priority": "B",
+    "title": "Kiểm tra response theo schema",
+    "description": "Đối chiếu status content type và schema; báo vị trí dữ liệu sai, keyword chưa hỗ trợ và phiên bản schema.",
+    "source_section": "09",
+    "screen_ids": [
+      "6:7356",
+      "7:691",
+      "29:9138",
+      "29:9311"
+    ],
+    "screen_names": [
+      "D10 / API quality checks",
+      "T05 / Contract validation",
+      "O22 / Response schema mismatch",
+      "O23 / Unsupported schema keyword"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P07"
+  },
+  {
+    "id": "DC09",
+    "priority": "B",
+    "title": "Chênh lệch hợp đồng",
+    "description": "Phát hiện request hoặc test còn tham chiếu endpoint cũ; liệt kê phần cần sửa khi xóa hoặc đổi operation.",
+    "source_section": "09",
+    "screen_ids": [
+      "6:7008",
+      "6:7204",
+      "6:7662",
+      "29:8814",
+      "29:9468"
+    ],
+    "screen_names": [
+      "D08 / Review specification changes",
+      "D09 / Update linked requests",
+      "D12 / Deprecated operation",
+      "O20 / Review a contract update",
+      "O24 / Delete an operation with dependents"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P07"
+  },
+  {
+    "id": "DC10",
+    "priority": "B",
+    "title": "Xuất tài liệu",
+    "description": "Xuất HTML tự chứa hoặc Markdown, có bước làm sạch secret; tạo snapshot gắn version để chia sẻ ngoài app.",
+    "source_section": "09",
+    "screen_ids": [
+      "6:7502",
+      "29:9631"
+    ],
+    "screen_names": [
+      "D11 / Export API documentation",
+      "O25 / Documentation export preview"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P07"
+  },
+  {
+    "id": "CO01",
+    "priority": "A",
+    "title": "Workspace chung",
+    "description": "Thành viên xem cùng collection spec và cấu hình công khai qua server tự host; không có giới hạn số ghế do mô hình tính phí của app.",
+    "source_section": "10",
+    "screen_ids": [
+      "6:1259",
+      "6:8029",
+      "28:237"
+    ],
+    "screen_names": [
+      "A11 / Good morning, Ha Giang",
+      "C02 / Invite teammates",
+      "W02 / Move local work to your team"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P05"
+  },
+  {
+    "id": "CO02",
+    "priority": "A",
+    "title": "Publish thay đổi",
+    "description": "Lưu nháp riêng rồi publish nội dung chung với ghi chú; người khác nhận đúng phiên bản đã công bố.",
+    "source_section": "10",
+    "screen_ids": [
+      "6:8523",
+      "28:7145"
+    ],
+    "screen_names": [
+      "C05 / Publish your changes",
+      "Q23 / Draft differs from the shared request"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P05"
+  },
+  {
+    "id": "CO03",
+    "priority": "A",
+    "title": "Thông báo thay đổi",
+    "description": "Hiện endpoint hoặc request vừa được sửa, tác giả và thời gian; refresh bằng sự kiện server cùng cơ chế lấy bù.",
+    "source_section": "10",
+    "screen_ids": [
+      "6:8189",
+      "29:11881"
+    ],
+    "screen_names": [
+      "C03 / Workspace activity",
+      "C28 / Notifications inbox"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P05"
+  },
+  {
+    "id": "CO04",
+    "priority": "A",
+    "title": "Bình luận theo đối tượng",
+    "description": "Thread tại endpoint request hoặc schema, trả lời và đánh dấu đã xử lý; lưu liên kết tới revision được thảo luận.",
+    "source_section": "10",
+    "screen_ids": [
+      "6:8335",
+      "29:10315",
+      "29:11565",
+      "29:11723"
+    ],
+    "screen_names": [
+      "C04 / Discuss List tasks",
+      "C18 / Request changes in a review",
+      "C26 / Mention a teammate",
+      "C27 / Thread anchored to a previous revision"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P05"
+  },
+  {
+    "id": "CO05",
+    "priority": "B",
+    "title": "Nhắc thành viên",
+    "description": "Mention thành viên tạo thông báo trong app; không bắt buộc email hay dịch vụ nhắn tin ngoài.",
+    "source_section": "10",
+    "screen_ids": [
+      "6:8189",
+      "6:8335",
+      "29:10763",
+      "29:11565",
+      "29:11881"
+    ],
+    "screen_names": [
+      "C03 / Workspace activity",
+      "C04 / Discuss List tasks",
+      "C21 / Notification preferences",
+      "C26 / Mention a teammate",
+      "C28 / Notifications inbox"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P09"
+  },
+  {
+    "id": "CO06",
+    "priority": "A",
+    "title": "Luồng hoạt động",
+    "description": "Xem ai tạo sửa xóa publish và thay quyền; lọc theo người hoặc đối tượng trong workspace.",
+    "source_section": "10",
+    "screen_ids": [
+      "6:1259",
+      "6:8189"
+    ],
+    "screen_names": [
+      "A11 / Good morning, Ha Giang",
+      "C03 / Workspace activity"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P05"
+  },
+  {
+    "id": "CO07",
+    "priority": "B",
+    "title": "Trạng thái chỉnh sửa",
+    "description": "Hiện ai đang mở hoặc sửa đối tượng khi online; đây là tín hiệu hỗ trợ, không thay thế kiểm soát xung đột.",
+    "source_section": "10",
+    "screen_ids": [
+      "6:9977",
+      "29:12355"
+    ],
+    "screen_names": [
+      "C14 / Live specification editing",
+      "C31 / Collaborative editing presence"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P09"
+  },
+  {
+    "id": "CO08",
+    "priority": "B",
+    "title": "Chia sẻ kết quả chạy",
+    "description": "Chủ động gửi báo cáo hoặc example đã làm sạch vào workspace; người nhận không thấy token cá nhân.",
+    "source_section": "10",
+    "screen_ids": [
+      "6:4863",
+      "7:518",
+      "28:8610",
+      "29:10611"
+    ],
+    "screen_names": [
+      "R17 / Save a response example",
+      "T04 / Run results",
+      "Q32 / Review a shared response example",
+      "C20 / Share a sanitized test report"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P09"
+  },
+  {
+    "id": "CO09",
+    "priority": "B",
+    "title": "Liên kết nội bộ",
+    "description": "Copy deep link tới workspace endpoint và comment; mở trong app, luôn yêu cầu đăng nhập và kiểm tra quyền.",
+    "source_section": "10",
+    "screen_ids": [
+      "6:8335",
+      "29:11723",
+      "29:12044",
+      "29:12201"
+    ],
+    "screen_names": [
+      "C04 / Discuss List tasks",
+      "C27 / Thread anchored to a previous revision",
+      "C29 / Open a workspace deep link",
+      "C30 / Deep link access denied"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P09"
+  },
+  {
+    "id": "CO10",
+    "priority": "C",
+    "title": "Đồng biên tập",
+    "description": "Cùng sửa một nội dung với CRDT hoặc OT, con trỏ và undo phù hợp; phải hỗ trợ offline và thu hồi quyền trước phát hành.",
+    "source_section": "10",
+    "screen_ids": [
+      "6:9977",
+      "29:12355",
+      "29:12519"
+    ],
+    "screen_names": [
+      "C14 / Live specification editing",
+      "C31 / Collaborative editing presence",
+      "C32 / Collaborative editing lost connection"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P11"
+  },
+  {
+    "id": "SY01",
+    "priority": "A",
+    "title": "Lưu cục bộ trước",
+    "description": "Ghi nháp và thao tác chờ bằng transaction SQLite; crash không được làm mất thay đổi đã báo lưu thành công.",
+    "source_section": "11",
+    "screen_ids": [
+      "6:8899",
+      "6:9049",
+      "7:5564",
+      "28:7145",
+      "29:12519",
+      "29:12676",
+      "29:13639"
+    ],
+    "screen_names": [
+      "C07 / Sync queue",
+      "C08 / Working offline",
+      "X04 / Your drafts were recovered",
+      "Q23 / Draft differs from the shared request",
+      "C32 / Collaborative editing lost connection",
+      "Y01 / Pending, syncing, failed and conflicted changes",
+      "Y07 / Device restart recovery"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P05"
+  },
+  {
+    "id": "SY02",
+    "priority": "A",
+    "title": "Hàng đợi đồng bộ",
+    "description": "Có pending syncing synced conflict failed; cho retry và xem nguyên nhân, không dùng một biểu tượng xanh mơ hồ.",
+    "source_section": "11",
+    "screen_ids": [
+      "6:8899",
+      "6:9049"
+    ],
+    "screen_names": [
+      "C07 / Sync queue",
+      "C08 / Working offline"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P05"
+  },
+  {
+    "id": "SY03",
+    "priority": "A",
+    "title": "Phiên bản đối tượng",
+    "description": "Publish gửi base revision; server chỉ chấp nhận khi revision hợp lệ và trả conflict nếu dữ liệu đã đổi.",
+    "source_section": "11",
+    "screen_ids": [
+      "6:8523",
+      "6:8677"
+    ],
+    "screen_names": [
+      "C05 / Publish your changes",
+      "C06 / Resolve a sync conflict"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P05"
+  },
+  {
+    "id": "SY04",
+    "priority": "A",
+    "title": "Giải quyết xung đột",
+    "description": "Hiện bản gốc bản của tôi và bản server; chọn giữ hoặc ghép, preview rồi publish lại; giữ bản thua làm bản nháp.",
+    "source_section": "11",
+    "screen_ids": [
+      "6:8677",
+      "29:11090",
+      "29:11257",
+      "29:13159"
+    ],
+    "screen_names": [
+      "C06 / Resolve a sync conflict",
+      "C23 / Merge conflict between branches",
+      "C24 / Resolve and preview the merged schema",
+      "Y04 / Request deleted while you were offline"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P05"
+  },
+  {
+    "id": "SY05",
+    "priority": "A",
+    "title": "Sự kiện lấy bù",
+    "description": "Client giữ cursor; reconnect lấy thay đổi bỏ lỡ, cursor hết hạn thì lấy snapshot rồi áp lại thao tác còn chờ.",
+    "source_section": "11",
+    "screen_ids": [
+      "6:8899",
+      "7:5836",
+      "28:548",
+      "29:12845",
+      "29:13002"
+    ],
+    "screen_names": [
+      "C07 / Sync queue",
+      "X06 / Server versions are incompatible",
+      "W04 / Server connection details",
+      "Y02 / Reconnect and catch up",
+      "Y03 / Sync cursor expired"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P05"
+  },
+  {
+    "id": "SY06",
+    "priority": "A",
+    "title": "Chống nhân đôi",
+    "description": "Mỗi thao tác có idempotency key; retry hoặc mất ACK không tạo request comment hay revision trùng.",
+    "source_section": "11",
+    "screen_ids": [
+      "6:8523",
+      "6:8899",
+      "29:12845"
+    ],
+    "screen_names": [
+      "C05 / Publish your changes",
+      "C07 / Sync queue",
+      "Y02 / Reconnect and catch up"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P05"
+  },
+  {
+    "id": "SY07",
+    "priority": "A",
+    "title": "Xóa và sửa đồng thời",
+    "description": "Tombstone cho xóa; không tự hồi sinh dữ liệu khi thiết bị offline đẩy bản sửa cũ lên.",
+    "source_section": "11",
+    "screen_ids": [
+      "6:8677",
+      "7:5975",
+      "28:2214",
+      "29:13159"
+    ],
+    "screen_names": [
+      "C06 / Resolve a sync conflict",
+      "X07 / Workspace trash",
+      "W15 / Restore a deleted folder",
+      "Y04 / Request deleted while you were offline"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P05"
+  },
+  {
+    "id": "SY08",
+    "priority": "A",
+    "title": "Lịch sử phiên bản",
+    "description": "Xem diff tác giả thời gian và ghi chú; restore bằng revision mới, không xóa lịch sử đã công bố.",
+    "source_section": "11",
+    "screen_ids": [
+      "6:9371",
+      "6:9517",
+      "29:11409",
+      "29:13486"
+    ],
+    "screen_names": [
+      "C10 / Version history",
+      "C11 / Restore revision 12",
+      "C25 / Merge completed",
+      "Y06 / Restore revision as a new version"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P05"
+  },
+  {
+    "id": "SY09",
+    "priority": "A",
+    "title": "Thu hồi quyền khi offline",
+    "description": "Server từ chối publish sau khi bị gỡ quyền; cho giữ nháp riêng. Không hứa xóa được mọi bản sao đã tải xuống máy.",
+    "source_section": "11",
+    "screen_ids": [
+      "6:9232",
+      "29:12519",
+      "29:13323"
+    ],
+    "screen_names": [
+      "C09 / Workspace access removed",
+      "C32 / Collaborative editing lost connection",
+      "Y05 / Access revoked with pending edits"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P05"
+  },
+  {
+    "id": "SY10",
+    "priority": "B",
+    "title": "Nhánh và review",
+    "description": "Fork hoặc branch dự án, gửi đề nghị hợp nhất, review và kiểm tra xung đột trước merge.",
+    "source_section": "11",
+    "screen_ids": [
+      "6:9671",
+      "6:9817",
+      "7:2397",
+      "29:9853",
+      "29:10001",
+      "29:10155",
+      "29:10315",
+      "29:10463",
+      "29:10921",
+      "29:11090",
+      "29:11257",
+      "29:11409",
+      "29:15281"
+    ],
+    "screen_names": [
+      "C12 / Branches",
+      "C13 / Review proposed changes",
+      "I04 / Connect a Git repository",
+      "C15 / Create a branch",
+      "C16 / Fork a collection",
+      "C17 / Open a merge request",
+      "C18 / Request changes in a review",
+      "C19 / Publish review approval",
+      "C22 / Merge checks and approvals",
+      "C23 / Merge conflict between branches",
+      "C24 / Resolve and preview the merged schema",
+      "C25 / Merge completed",
+      "I14 / Resolve a Git merge conflict"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P09"
+  },
+  {
+    "id": "IM01",
+    "priority": "A",
+    "title": "Định dạng project mở",
+    "description": "Xuất project theo schema có version, ID ổn định và manifest; nêu rõ các file chứa spec request và môi trường công khai.",
+    "source_section": "12",
+    "screen_ids": [
+      "7:1931",
+      "7:2237",
+      "29:14324",
+      "29:15117",
+      "29:15434"
+    ],
+    "screen_names": [
+      "I01 / Import APIs & collections",
+      "I03 / Export your project",
+      "I08 / Choose export files and attachments",
+      "I13 / Export manifest and portability check",
+      "I15 / Drop a file from Windows Explorer"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P03"
+  },
+  {
+    "id": "IM02",
+    "priority": "A",
+    "title": "Postman Collection",
+    "description": "Import Collection v2.1 với folder request variables auth và examples; xuất phần hỗ trợ được và kèm báo cáo tương thích.",
+    "source_section": "12",
+    "screen_ids": [
+      "7:1931",
+      "7:2085",
+      "29:14948",
+      "29:17172"
+    ],
+    "screen_names": [
+      "I01 / Import APIs & collections",
+      "I02 / Review import compatibility",
+      "I12 / Import compatibility report",
+      "T23 / Postman script migration support"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P03"
+  },
+  {
+    "id": "IM03",
+    "priority": "A",
+    "title": "Postman Environment",
+    "description": "Import tên và cấu trúc biến, cho xem trước giá trị; không tự đồng bộ token được nhập vào server nhóm.",
+    "source_section": "12",
+    "screen_ids": [
+      "7:1931",
+      "29:14018"
+    ],
+    "screen_names": [
+      "I01 / Import APIs & collections",
+      "I06 / Import Postman environment values"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P03"
+  },
+  {
+    "id": "IM04",
+    "priority": "A",
+    "title": "OpenAPI import export",
+    "description": "Giữ JSON YAML và các extension chưa hiểu khi có thể; mọi chuyển đổi mất dữ liệu phải báo rõ.",
+    "source_section": "12",
+    "screen_ids": [
+      "6:7502",
+      "7:1931",
+      "29:5701",
+      "29:8161",
+      "29:8319",
+      "29:13864",
+      "29:15117"
+    ],
+    "screen_names": [
+      "D11 / Export API documentation",
+      "I01 / Import APIs & collections",
+      "O01 / OpenAPI file and URL import",
+      "O16 / Bundle a multi-file specification",
+      "O17 / Convert Swagger 2.0",
+      "I05 / Import from an API URL",
+      "I13 / Export manifest and portability check"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P03"
+  },
+  {
+    "id": "IM05",
+    "priority": "A",
+    "title": "cURL hai chiều",
+    "description": "Dán lệnh để tạo request, sinh lệnh cURL từ request; parse không thực thi shell và xử lý khác biệt quoting Windows.",
+    "source_section": "12",
+    "screen_ids": [
+      "7:1931",
+      "29:14638",
+      "29:14790"
+    ],
+    "screen_names": [
+      "I01 / Import APIs & collections",
+      "I10 / Paste a cURL request",
+      "I11 / cURL import parse error"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P03"
+  },
+  {
+    "id": "IM06",
+    "priority": "A",
+    "title": "Xem trước import",
+    "description": "Liệt kê đối tượng mới, trùng, bị bỏ qua và phần không hỗ trợ; chọn tạo project mới hoặc nhập vào project có sẵn.",
+    "source_section": "12",
+    "screen_ids": [
+      "7:2085",
+      "29:14172",
+      "29:14790",
+      "29:14948"
+    ],
+    "screen_names": [
+      "I02 / Review import compatibility",
+      "I07 / Choose an import conflict strategy",
+      "I11 / cURL import parse error",
+      "I12 / Import compatibility report"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P03"
+  },
+  {
+    "id": "IM07",
+    "priority": "B",
+    "title": "File đính kèm",
+    "description": "Chọn đóng gói file dùng chung, giới hạn kích thước và hash; không tự thu thập file từ đường dẫn riêng của thành viên.",
+    "source_section": "12",
+    "screen_ids": [
+      "7:2237",
+      "29:14324",
+      "29:15117"
+    ],
+    "screen_names": [
+      "I03 / Export your project",
+      "I08 / Choose export files and attachments",
+      "I13 / Export manifest and portability check"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P07"
+  },
+  {
+    "id": "IM08",
+    "priority": "A",
+    "title": "Xuất dữ liệu đã làm sạch",
+    "description": "Preview tên biến giá trị auth examples và file; mặc định loại secret cùng lịch sử cá nhân.",
+    "source_section": "12",
+    "screen_ids": [
+      "7:2237",
+      "29:9631",
+      "29:14324"
+    ],
+    "screen_names": [
+      "I03 / Export your project",
+      "O25 / Documentation export preview",
+      "I08 / Choose export files and attachments"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P03"
+  },
+  {
+    "id": "IM09",
+    "priority": "B",
+    "title": "Tích hợp Git",
+    "description": "Lưu project dạng text có thứ tự ổn định, xem diff và merge; cho dùng Git server tự host hoặc Git cục bộ.",
+    "source_section": "12",
+    "screen_ids": [
+      "7:2397",
+      "29:14486",
+      "29:15281"
+    ],
+    "screen_names": [
+      "I04 / Connect a Git repository",
+      "I09 / Git working tree changes",
+      "I14 / Resolve a Git merge conflict"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P07"
+  },
+  {
+    "id": "IM10",
+    "priority": "C",
+    "title": "Định dạng bổ sung",
+    "description": "Đánh giá HAR HTTP files và công cụ khác; chỉ ghi tương thích cho tập tính năng đã kiểm thử.",
+    "source_section": "12",
+    "screen_ids": [
+      "29:14948"
+    ],
+    "screen_names": [
+      "I12 / Import compatibility report"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P11"
+  },
+  {
+    "id": "TS01",
+    "priority": "A",
+    "title": "Assertion cơ bản",
+    "description": "Kiểm tra status header thời gian và JSON path bằng form; lưu expected values với request.",
+    "source_section": "13",
+    "screen_ids": [
+      "7:2",
+      "29:15591"
+    ],
+    "screen_names": [
+      "T01 / Request assertions",
+      "T13 / Add a response assertion"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P03"
+  },
+  {
+    "id": "TS02",
+    "priority": "B",
+    "title": "Collection runner",
+    "description": "Chạy tuần tự request trong folder hoặc collection, chọn environment số vòng và khoảng nghỉ; dừng khi người dùng hủy.",
+    "source_section": "13",
+    "screen_ids": [
+      "7:206",
+      "29:15745",
+      "29:16531"
+    ],
+    "screen_names": [
+      "T02 / Run a collection",
+      "T14 / Run order and dependencies",
+      "T19 / Run in progress"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P08"
+  },
+  {
+    "id": "TS03",
+    "priority": "B",
+    "title": "Chuỗi phụ thuộc",
+    "description": "Trích token hoặc ID từ response cho bước kế; quy tắc fail fast hoặc tiếp tục được cấu hình rõ.",
+    "source_section": "13",
+    "screen_ids": [
+      "7:206",
+      "29:4953",
+      "29:15745",
+      "29:15903",
+      "29:16688"
+    ],
+    "screen_names": [
+      "T02 / Run a collection",
+      "V06 / Extract a value from a response",
+      "T14 / Run order and dependencies",
+      "T15 / Configure a response extractor",
+      "T20 / Dependency failure and skipped steps"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P08"
+  },
+  {
+    "id": "TS04",
+    "priority": "B",
+    "title": "Chạy theo dữ liệu",
+    "description": "Nhập CSV JSON làm data set, xem trước kiểu và dòng lỗi; dữ liệu nhạy cảm không tự publish.",
+    "source_section": "13",
+    "screen_ids": [
+      "7:372",
+      "29:16063",
+      "29:16851"
+    ],
+    "screen_names": [
+      "T03 / Runner data preview",
+      "T16 / Data-driven run settings",
+      "T21 / Invalid data row preview"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P08"
+  },
+  {
+    "id": "TS05",
+    "priority": "B",
+    "title": "Báo cáo kết quả",
+    "description": "Hiển thị pass fail skipped cùng assertion và thời gian; chỉ rõ lỗi hạ tầng khác với assertion thất bại.",
+    "source_section": "13",
+    "screen_ids": [
+      "7:518",
+      "29:16531",
+      "29:16688"
+    ],
+    "screen_names": [
+      "T04 / Run results",
+      "T19 / Run in progress",
+      "T20 / Dependency failure and skipped steps"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P08"
+  },
+  {
+    "id": "TS06",
+    "priority": "B",
+    "title": "Kiểm thử hợp đồng",
+    "description": "Chạy validation OpenAPI với status media type và schema tương ứng; liệt kê giới hạn validator.",
+    "source_section": "13",
+    "screen_ids": [
+      "7:691",
+      "29:9138"
+    ],
+    "screen_names": [
+      "T05 / Contract validation",
+      "O22 / Response schema mismatch"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P08"
+  },
+  {
+    "id": "TS07",
+    "priority": "C",
+    "title": "Pre request và test script",
+    "description": "Runtime JavaScript cách ly, giới hạn thời gian bộ nhớ và API; không cho script đọc file hay chạy shell mặc định.",
+    "source_section": "13",
+    "screen_ids": [
+      "7:837",
+      "29:16375",
+      "29:17014"
+    ],
+    "screen_names": [
+      "T06 / Script editor",
+      "T18 / Runner script permissions",
+      "T22 / Script sandbox stopped execution"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P10"
+  },
+  {
+    "id": "TS08",
+    "priority": "C",
+    "title": "Tương thích script Postman",
+    "description": "Công bố tập pm API hỗ trợ, migration report và case lỗi; không tuyên bố tương thích toàn bộ chỉ vì chạy được JavaScript.",
+    "source_section": "13",
+    "screen_ids": [
+      "7:837",
+      "7:2085",
+      "29:14948",
+      "29:17172"
+    ],
+    "screen_names": [
+      "T06 / Script editor",
+      "I02 / Review import compatibility",
+      "I12 / Import compatibility report",
+      "T23 / Postman script migration support"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P10"
+  },
+  {
+    "id": "TS09",
+    "priority": "C",
+    "title": "Chạy song song có giới hạn",
+    "description": "Giới hạn concurrency và rate, chỉ chạy request độc lập; không coi đây là công cụ load test chuyên dụng.",
+    "source_section": "13",
+    "screen_ids": [
+      "7:206",
+      "29:16219"
+    ],
+    "screen_names": [
+      "T02 / Run a collection",
+      "T17 / Concurrency and rate limits"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P11"
+  },
+  {
+    "id": "TS10",
+    "priority": "B",
+    "title": "Kết quả tái hiện",
+    "description": "Gắn run với revision project, môi trường công khai và phiên bản engine; không lưu token thật vào báo cáo.",
+    "source_section": "13",
+    "screen_ids": [
+      "7:518",
+      "29:10611",
+      "29:17335"
+    ],
+    "screen_names": [
+      "T04 / Run results",
+      "C20 / Share a sanitized test report",
+      "T24 / Reproduce a test run"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P08"
+  },
+  {
+    "id": "MK01",
+    "priority": "B",
+    "title": "Mock từ example",
+    "description": "Sinh response mẫu theo endpoint status và media type; chạy local bằng cổng được chọn.",
+    "source_section": "14",
+    "screen_ids": [
+      "7:1006",
+      "7:1148"
+    ],
+    "screen_names": [
+      "T07 / Mock servers",
+      "T08 / Configure a mock"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P08"
+  },
+  {
+    "id": "MK02",
+    "priority": "B",
+    "title": "Mock từ schema",
+    "description": "Sinh dữ liệu mẫu có seed; báo schema không sinh được và cho thay bằng example thủ công.",
+    "source_section": "14",
+    "screen_ids": [
+      "7:1006",
+      "7:1148",
+      "29:17504",
+      "29:18606"
+    ],
+    "screen_names": [
+      "T07 / Mock servers",
+      "T08 / Configure a mock",
+      "K01 / Mock from a schema",
+      "K08 / Schema cannot generate a mock response"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P08"
+  },
+  {
+    "id": "MK03",
+    "priority": "C",
+    "title": "Kịch bản mock",
+    "description": "Match query header body, giả lập độ trễ và lỗi; ưu tiên rule rõ ràng, có log đã làm sạch.",
+    "source_section": "14",
+    "screen_ids": [
+      "7:1148",
+      "7:1314",
+      "29:17662",
+      "29:18763"
+    ],
+    "screen_names": [
+      "T08 / Configure a mock",
+      "T09 / Mock rules & traffic",
+      "K02 / Edit a mock matching rule",
+      "K09 / Mock traffic inspection"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P11"
+  },
+  {
+    "id": "MK04",
+    "priority": "B",
+    "title": "Mock dùng chung",
+    "description": "Host mock ở server nhóm, đặt quyền hoặc token truy cập; không tự mở cổng máy cá nhân ra Internet.",
+    "source_section": "14",
+    "screen_ids": [
+      "7:1006",
+      "7:1148",
+      "29:17822",
+      "29:18763"
+    ],
+    "screen_names": [
+      "T07 / Mock servers",
+      "T08 / Configure a mock",
+      "K03 / Mock access controls",
+      "K09 / Mock traffic inspection"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P08"
+  },
+  {
+    "id": "MK05",
+    "priority": "B",
+    "title": "CLI Rust",
+    "description": "Chạy collection từ project export trên Windows, tham số môi trường và biến từ secret store hoặc biến tiến trình.",
+    "source_section": "14",
+    "screen_ids": [
+      "7:1460"
+    ],
+    "screen_names": [
+      "T10 / CLI & CI configuration"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P08"
+  },
+  {
+    "id": "MK06",
+    "priority": "B",
+    "title": "Kết quả cho CI",
+    "description": "Exit code theo thành công thất bại, xuất JSON JUnit; che secret trong stdout stderr và report.",
+    "source_section": "14",
+    "screen_ids": [
+      "7:518",
+      "7:1460"
+    ],
+    "screen_names": [
+      "T04 / Run results",
+      "T10 / CLI & CI configuration"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P08"
+  },
+  {
+    "id": "MK07",
+    "priority": "C",
+    "title": "Runner tự host",
+    "description": "Đăng ký runner với workspace và quyền hạn tối thiểu; tách mạng runner khỏi quyền quản trị server.",
+    "source_section": "14",
+    "screen_ids": [
+      "7:1623",
+      "29:17980",
+      "29:18920"
+    ],
+    "screen_names": [
+      "T11 / Self-hosted runners",
+      "K04 / Register a self-hosted runner",
+      "K10 / Scheduled runner is offline"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P11"
+  },
+  {
+    "id": "MK08",
+    "priority": "C",
+    "title": "Lịch chạy kiểm tra",
+    "description": "Lịch chạy múi giờ cấu hình, retry có giới hạn; chỉ hoạt động khi runner được chỉ định online.",
+    "source_section": "14",
+    "screen_ids": [
+      "7:1765",
+      "29:18292",
+      "29:18920"
+    ],
+    "screen_names": [
+      "T12 / Scheduled checks",
+      "K06 / Scheduled run retry policy",
+      "K10 / Scheduled runner is offline"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P11"
+  },
+  {
+    "id": "MK09",
+    "priority": "C",
+    "title": "Thông báo lỗi chạy",
+    "description": "Thông báo trong app từ runner; webhook tới hệ thống nhóm tự chọn là tùy chọn.",
+    "source_section": "14",
+    "screen_ids": [
+      "7:1765",
+      "29:10763",
+      "29:11881",
+      "29:18292",
+      "29:18454",
+      "29:18920"
+    ],
+    "screen_names": [
+      "T12 / Scheduled checks",
+      "C21 / Notification preferences",
+      "C28 / Notifications inbox",
+      "K06 / Scheduled run retry policy",
+      "K07 / Webhook notification permission",
+      "K10 / Scheduled runner is offline"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P11"
+  },
+  {
+    "id": "MK10",
+    "priority": "B",
+    "title": "Quản lý tài nguyên",
+    "description": "Giới hạn số job body retention và log; owner có thể hủy lịch hoặc job để tránh quá tải server.",
+    "source_section": "14",
+    "screen_ids": [
+      "7:1623",
+      "29:16219",
+      "29:18134",
+      "29:19077",
+      "32:11321"
+    ],
+    "screen_names": [
+      "T11 / Self-hosted runners",
+      "T17 / Concurrency and rate limits",
+      "K05 / Runner job resource limits",
+      "K11 / Cancel an active runner job",
+      "Z18 / Server storage and operational quotas"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P08"
+  },
+  {
+    "id": "PR01",
+    "priority": "B",
+    "title": "GraphQL cơ bản",
+    "description": "Editor query variables và headers; hiển thị data errors, lưu request trong collection.",
+    "source_section": "15",
+    "screen_ids": [
+      "7:2557",
+      "29:19306",
+      "29:20248"
+    ],
+    "screen_names": [
+      "P01 / GraphQL explorer",
+      "P05 / GraphQL variables and schema source",
+      "P11 / GraphQL data and errors"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P08"
+  },
+  {
+    "id": "PR02",
+    "priority": "C",
+    "title": "GraphQL schema",
+    "description": "Import SDL hoặc introspection được cho phép; gợi ý trường và kiểm tra query theo schema.",
+    "source_section": "15",
+    "screen_ids": [
+      "7:2557",
+      "29:19306",
+      "29:20248"
+    ],
+    "screen_names": [
+      "P01 / GraphQL explorer",
+      "P05 / GraphQL variables and schema source",
+      "P11 / GraphQL data and errors"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P11"
+  },
+  {
+    "id": "PR03",
+    "priority": "C",
+    "title": "WebSocket",
+    "description": "Kết nối URL auth, gửi nhận message, ngắt kết nối; lưu message mẫu và giới hạn bộ nhớ lịch sử.",
+    "source_section": "15",
+    "screen_ids": [
+      "7:2723",
+      "29:19462",
+      "29:20423"
+    ],
+    "screen_names": [
+      "P02 / WebSocket session",
+      "P06 / WebSocket connection options",
+      "P12 / WebSocket disconnected"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P11"
+  },
+  {
+    "id": "PR04",
+    "priority": "B",
+    "title": "Server Sent Events",
+    "description": "Hiển thị event stream theo thời gian, hủy và cấu hình reconnect; không giữ vô hạn nội dung trong UI.",
+    "source_section": "15",
+    "screen_ids": [
+      "6:3839",
+      "29:20580"
+    ],
+    "screen_names": [
+      "R11 / Streaming response",
+      "P13 / SSE stream event inspector"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P08"
+  },
+  {
+    "id": "PR05",
+    "priority": "C",
+    "title": "gRPC",
+    "description": "Import proto, gọi unary trước; hiển thị metadata status và lỗi; streaming là khả năng phát hành riêng.",
+    "source_section": "15",
+    "screen_ids": [
+      "7:2869",
+      "29:19620",
+      "29:20741"
+    ],
+    "screen_names": [
+      "P03 / gRPC request",
+      "P07 / gRPC metadata and proto import",
+      "P14 / gRPC invocation error"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P11"
+  },
+  {
+    "id": "PR06",
+    "priority": "C",
+    "title": "HTTP nâng cao",
+    "description": "Chọn policy HTTP 1.1 hoặc 2 khi transport hỗ trợ; HTTP 3 cần đánh giá và không nằm trong bản A.",
+    "source_section": "15",
+    "screen_ids": [
+      "6:4185",
+      "29:19780"
+    ],
+    "screen_names": [
+      "R13 / Connection settings",
+      "P08 / HTTP protocol preference"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P11"
+  },
+  {
+    "id": "PR07",
+    "priority": "B",
+    "title": "Sinh code gọi API",
+    "description": "Sinh snippet cURL Rust reqwest JavaScript fetch Dart và Go; placeholder thay cho secret và không tự thực thi.",
+    "source_section": "15",
+    "screen_ids": [
+      "6:5029"
+    ],
+    "screen_names": [
+      "R18 / Generate a code snippet"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P08"
+  },
+  {
+    "id": "PR08",
+    "priority": "C",
+    "title": "Sinh SDK và stub",
+    "description": "Gọi generator theo phiên bản được ghim, chọn ngôn ngữ và xem output; dependency ngoài phải được thông báo.",
+    "source_section": "15",
+    "screen_ids": [
+      "7:3035",
+      "29:19934",
+      "29:20910"
+    ],
+    "screen_names": [
+      "P04 / Developer utilities",
+      "P09 / SDK and server stub generator",
+      "P15 / Generator output review"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P11"
+  },
+  {
+    "id": "PR09",
+    "priority": "B",
+    "title": "Giải mã và chuyển đổi",
+    "description": "URL encode decode Base64 JSON format và chuyển JSON YAML; chạy cục bộ và không gửi dữ liệu ra dịch vụ ngoài.",
+    "source_section": "15",
+    "screen_ids": [
+      "7:3035",
+      "29:21115"
+    ],
+    "screen_names": [
+      "P04 / Developer utilities",
+      "P16 / Local conversion utilities"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P08"
+  },
+  {
+    "id": "PR10",
+    "priority": "C",
+    "title": "Extension có quyền",
+    "description": "Plugin được bật theo quyền mạng file secret, cách ly và có thể gỡ; không cho plugin chạy với mọi quyền mặc định.",
+    "source_section": "15",
+    "screen_ids": [
+      "7:4815",
+      "29:20092"
+    ],
+    "screen_names": [
+      "S11 / Extensions & permissions",
+      "P10 / Extension permission request"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P10"
+  },
+  {
+    "id": "UX01",
+    "priority": "A",
+    "title": "Bố cục làm việc",
+    "description": "Sidebar project, tab request hoặc spec, vùng response; kéo đổi kích thước và nhớ bố cục từng máy.",
+    "source_section": "16",
+    "screen_ids": [
+      "28:2546",
+      "28:7460"
+    ],
+    "screen_names": [
+      "W17 / Organize collection folders",
+      "Q25 / Request tab actions"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "UX02",
+    "priority": "A",
+    "title": "Tab và khôi phục",
+    "description": "Mở nhiều tab, ghim và đóng nhóm; khôi phục nháp và tab sau restart hoặc crash.",
+    "source_section": "16",
+    "screen_ids": [
+      "7:5113",
+      "7:5564",
+      "28:7303",
+      "28:7460",
+      "29:13639"
+    ],
+    "screen_names": [
+      "X01 / Loading your workspace",
+      "X04 / Your drafts were recovered",
+      "Q24 / Close unsaved tabs",
+      "Q25 / Request tab actions",
+      "Y07 / Device restart recovery"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "UX03",
+    "priority": "A",
+    "title": "Phím tắt",
+    "description": "Ctrl Enter gửi, Ctrl S lưu nháp, Ctrl P tìm nhanh; xem danh sách phím và tránh xung đột khi đang gõ trong editor.",
+    "source_section": "16",
+    "screen_ids": [
+      "7:3713",
+      "29:22514"
+    ],
+    "screen_names": [
+      "S04 / Keyboard shortcuts",
+      "Z09 / Accessible keyboard navigation"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "UX04",
+    "priority": "B",
+    "title": "Command palette",
+    "description": "Tìm hành động, đổi environment, mở request và chuyển workspace qua bàn phím.",
+    "source_section": "16",
+    "screen_ids": [
+      "6:1569",
+      "7:3713"
+    ],
+    "screen_names": [
+      "A13 / Find anything in your workspace",
+      "S04 / Keyboard shortcuts"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P09"
+  },
+  {
+    "id": "UX05",
+    "priority": "A",
+    "title": "Hiển thị Windows",
+    "description": "Hỗ trợ DPI scaling nhiều màn hình, resize và cửa sổ nhỏ; chữ và control không bị cắt ở mức zoom thông dụng.",
+    "source_section": "16",
+    "screen_ids": [
+      "7:3547",
+      "29:22514",
+      "32:11481"
+    ],
+    "screen_names": [
+      "S03 / Personal preferences",
+      "Z09 / Accessible keyboard navigation",
+      "Z19 / Language and interface appearance"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "UX06",
+    "priority": "B",
+    "title": "Theme và ngôn ngữ",
+    "description": "Theme sáng tối, lựa chọn tiếng Việt hoặc tiếng Anh; giữ nguyên tên biến và nội dung API của người dùng.",
+    "source_section": "16",
+    "screen_ids": [
+      "7:3547",
+      "32:11481"
+    ],
+    "screen_names": [
+      "S03 / Personal preferences",
+      "Z19 / Language and interface appearance"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P09"
+  },
+  {
+    "id": "UX07",
+    "priority": "B",
+    "title": "Khả năng truy cập",
+    "description": "Focus rõ, điều hướng bàn phím và nhãn control; prototype kiểm tra screen reader trên UI được chọn.",
+    "source_section": "16",
+    "screen_ids": [
+      "7:3547",
+      "29:22514"
+    ],
+    "screen_names": [
+      "S03 / Personal preferences",
+      "Z09 / Accessible keyboard navigation"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P09"
+  },
+  {
+    "id": "UX08",
+    "priority": "B",
+    "title": "Mở file và liên kết",
+    "description": "Mở file project hoặc đặc tả từ Explorer, kéo thả import; deep link không tự chạy request hay lệnh hệ thống.",
+    "source_section": "16",
+    "screen_ids": [
+      "29:12044",
+      "29:15434"
+    ],
+    "screen_names": [
+      "C29 / Open a workspace deep link",
+      "I15 / Drop a file from Windows Explorer"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P09"
+  },
+  {
+    "id": "UX09",
+    "priority": "A",
+    "title": "Trạng thái kết nối",
+    "description": "Hiện server đang dùng, offline và số thay đổi chờ; lỗi sync không chặn soạn request cục bộ.",
+    "source_section": "16",
+    "screen_ids": [
+      "6:476",
+      "6:9049"
+    ],
+    "screen_names": [
+      "A06 / Unable to reach your server",
+      "C08 / Working offline"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "UX10",
+    "priority": "A",
+    "title": "Quản lý dữ liệu máy",
+    "description": "Xem dung lượng history cache downloads, đổi thư mục dữ liệu và đặt retention; dọn cache không xóa project hoặc secret.",
+    "source_section": "16",
+    "screen_ids": [
+      "7:3867",
+      "7:5697",
+      "28:8290",
+      "29:22360",
+      "32:11640"
+    ],
+    "screen_names": [
+      "S05 / Storage & retention",
+      "X05 / Local storage is almost full",
+      "Q30 / History filters and cleanup",
+      "Z08 / Local data folder migration",
+      "Z20 / Confirm local cache cleanup"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P02"
+  },
+  {
+    "id": "SC01",
+    "priority": "A",
+    "title": "Kho bảo mật Windows",
+    "description": "Lưu token khóa và session bằng cơ chế Windows phù hợp; không coi SQLite thường là kho bí mật đã mã hóa.",
+    "source_section": "17",
+    "screen_ids": [
+      "6:5509",
+      "7:4961",
+      "29:5119"
+    ],
+    "screen_names": [
+      "E03 / Personal secrets",
+      "S12 / Team secret vault",
+      "V07 / Team vault access policy"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P01"
+  },
+  {
+    "id": "SC02",
+    "priority": "A",
+    "title": "Làm sạch dữ liệu",
+    "description": "Che auth cookie password và trường được chỉ định trong log report export; preview lại vì không thể nhận diện mọi secret tự động.",
+    "source_section": "17",
+    "screen_ids": [
+      "7:4033",
+      "28:8610",
+      "29:726",
+      "29:5431",
+      "29:10611"
+    ],
+    "screen_names": [
+      "S06 / Privacy & permissions",
+      "Q32 / Review a shared response example",
+      "H05 / API key in the query string",
+      "V09 / Reveal or export a secret",
+      "C20 / Share a sanitized test report"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P01"
+  },
+  {
+    "id": "SC03",
+    "priority": "A",
+    "title": "Đăng nhập máy chủ",
+    "description": "Hash mật khẩu bằng thuật toán phù hợp, TLS, session có hạn và thu hồi; rate limit đăng nhập và token mời một lần.",
+    "source_section": "17",
+    "screen_ids": [
+      "6:144",
+      "6:187",
+      "6:230",
+      "6:273",
+      "7:3381",
+      "29:21426",
+      "29:22674"
+    ],
+    "screen_names": [
+      "A01 / Welcome to Swaggen",
+      "A02 / Continue in your browser",
+      "A03 / Google sign-in was interrupted",
+      "A04 / Your session has expired",
+      "S02 / Your Google account",
+      "Z02 / First server owner setup",
+      "Z10 / Manage signed-in Google sessions"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P04"
+  },
+  {
+    "id": "SC04",
+    "priority": "A",
+    "title": "Cách ly workspace",
+    "description": "Kiểm tra quyền ở mọi API tài nguyên file và kênh sự kiện; ID bị đoán được cũng không cho vượt workspace.",
+    "source_section": "17",
+    "screen_ids": [
+      "6:7879",
+      "6:9232",
+      "7:4193",
+      "7:5381",
+      "28:852",
+      "28:3157",
+      "28:3311",
+      "32:2816",
+      "29:12044",
+      "29:12201",
+      "29:13323"
+    ],
+    "screen_names": [
+      "C01 / Workspace members",
+      "C09 / Workspace access removed",
+      "S07 / Audit log",
+      "X03 / Read-only workspace",
+      "W06 / Change a member’s role",
+      "W20 / Invitation account mismatch",
+      "W21 / Revoke an invitation",
+      "W22 / Confirm ownership transfer",
+      "C29 / Open a workspace deep link",
+      "C30 / Deep link access denied",
+      "Y05 / Access revoked with pending edits"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P04"
+  },
+  {
+    "id": "SC05",
+    "priority": "A",
+    "title": "Nội dung không tin cậy",
+    "description": "Không thực thi HTML hoặc script từ response Markdown hay example; khử nội dung nguy hiểm trong renderer.",
+    "source_section": "17",
+    "screen_ids": [
+      "7:4033",
+      "29:23475"
+    ],
+    "screen_names": [
+      "S06 / Privacy & permissions",
+      "Z15 / Privacy-safe imported content"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P01"
+  },
+  {
+    "id": "SC06",
+    "priority": "A",
+    "title": "Quyền ứng dụng desktop",
+    "description": "Giới hạn IPC command và phạm vi file; không cấp quyền Rust hoặc hệ thống cho trang remote trong WebView. [3]",
+    "source_section": "17",
+    "screen_ids": [
+      "7:4033",
+      "7:4815",
+      "12:2505",
+      "29:16375",
+      "29:20092"
+    ],
+    "screen_names": [
+      "S06 / Privacy & permissions",
+      "S11 / Extensions & permissions",
+      "S13 / Server network policy",
+      "T18 / Runner script permissions",
+      "P10 / Extension permission request"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P01"
+  },
+  {
+    "id": "SC07",
+    "priority": "A",
+    "title": "Không tự gửi telemetry",
+    "description": "Mặc định tắt analytics và báo crash qua dịch vụ ngoài; diagnostic bundle được xem trước và gửi chủ động.",
+    "source_section": "17",
+    "screen_ids": [
+      "7:4033",
+      "29:22206"
+    ],
+    "screen_names": [
+      "S06 / Privacy & permissions",
+      "Z07 / Diagnostic report preview"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P01"
+  },
+  {
+    "id": "SC08",
+    "priority": "B",
+    "title": "Chặn SSRF trên server",
+    "description": "Mock runner fetch spec hoặc webhook ở server phải có allowlist và kiểm tra IP DNS redirect; client cá nhân vẫn gọi localhost theo chủ đích.",
+    "source_section": "17",
+    "screen_ids": [
+      "12:2505",
+      "29:18454",
+      "29:23317"
+    ],
+    "screen_names": [
+      "S13 / Server network policy",
+      "K07 / Webhook notification permission",
+      "Z14 / Server-side destination blocked"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P08"
+  },
+  {
+    "id": "SC09",
+    "priority": "B",
+    "title": "Phục hồi tài khoản và MFA",
+    "description": "Owner quản lý reset an toàn; bổ sung TOTP hoặc giải pháp nội bộ, có recovery code và thu hồi session.",
+    "source_section": "17",
+    "screen_ids": [
+      "7:3381",
+      "29:22674"
+    ],
+    "screen_names": [
+      "S02 / Your Google account",
+      "Z10 / Manage signed-in Google sessions"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P09"
+  },
+  {
+    "id": "SC10",
+    "priority": "B",
+    "title": "Audit và giới hạn lưu",
+    "description": "Ghi thao tác quản trị publish restore và quyền; đặt retention, export audit và không hứa log bất biến nếu chưa có cơ chế chống sửa.",
+    "source_section": "17",
+    "screen_ids": [
+      "7:4193",
+      "32:11157"
+    ],
+    "screen_names": [
+      "S07 / Audit log",
+      "Z17 / Audit log retention policy"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P09"
+  },
+  {
+    "id": "OP01",
+    "priority": "A",
+    "title": "Bộ cài Windows",
+    "description": "Đóng gói MSI hoặc EXE, kiểm tra prerequisite gồm WebView2 nếu dùng Tauri; bản đầu nhắm Windows 11 x64.",
+    "source_section": "18",
+    "screen_ids": [
+      "7:4655",
+      "29:21274"
+    ],
+    "screen_names": [
+      "S10 / Application updates",
+      "Z01 / Windows installation destination"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P06"
+  },
+  {
+    "id": "OP02",
+    "priority": "A",
+    "title": "Chế độ không có cloud",
+    "description": "App cá nhân chạy offline; bản nhóm chỉ kết nối địa chỉ self host được cấu hình, không cần activation server bên ngoài.",
+    "source_section": "18",
+    "screen_ids": [
+      "28:25"
+    ],
+    "screen_names": [
+      "W01 / Open a personal workspace"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P06"
+  },
+  {
+    "id": "OP03",
+    "priority": "A",
+    "title": "Khởi tạo server",
+    "description": "Cung cấp cấu hình Docker Compose hoặc binary, tạo Owner lần đầu và vô hiệu cơ chế bootstrap sau khi xong.",
+    "source_section": "18",
+    "screen_ids": [
+      "6:316",
+      "7:4339",
+      "29:21426",
+      "29:21576"
+    ],
+    "screen_names": [
+      "A05 / Connect your team server",
+      "S08 / Server health",
+      "Z02 / First server owner setup",
+      "Z03 / Coolify backend configuration"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P06"
+  },
+  {
+    "id": "OP04",
+    "priority": "A",
+    "title": "Cấu hình triển khai",
+    "description": "Biến cấu hình domain TLS DB data path và giới hạn tải; hỗ trợ reverse proxy và volume bền vững.",
+    "source_section": "18",
+    "screen_ids": [
+      "6:316",
+      "7:4339",
+      "29:21576"
+    ],
+    "screen_names": [
+      "A05 / Connect your team server",
+      "S08 / Server health",
+      "Z03 / Coolify backend configuration"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P06"
+  },
+  {
+    "id": "OP05",
+    "priority": "A",
+    "title": "Sao lưu server",
+    "description": "Backup nhất quán database file và metadata phiên bản; xuất manifest kiểm tra và cấu hình lịch backup do nhóm quản lý.",
+    "source_section": "18",
+    "screen_ids": [
+      "7:4509",
+      "29:21730",
+      "29:22826"
+    ],
+    "screen_names": [
+      "S09 / Backup & restore",
+      "Z04 / Backup policy",
+      "Z11 / Backup verification result"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P06"
+  },
+  {
+    "id": "OP06",
+    "priority": "A",
+    "title": "Khôi phục dữ liệu",
+    "description": "Restore sang server sạch, kiểm tra liên kết attachment và version; quy trình xử lý mất key hoặc thiếu file được ghi rõ.",
+    "source_section": "18",
+    "screen_ids": [
+      "7:4509",
+      "29:21892",
+      "29:22826",
+      "29:23001"
+    ],
+    "screen_names": [
+      "S09 / Backup & restore",
+      "Z05 / Restore a verified backup",
+      "Z11 / Backup verification result",
+      "Z12 / Restore blocked by a missing key"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P06"
+  },
+  {
+    "id": "OP07",
+    "priority": "A",
+    "title": "Nâng cấp và migration",
+    "description": "Migration có version và backup trước nâng cấp; kiểm tra tương thích client server, không hạ DB bằng thao tác thiếu kiểm soát.",
+    "source_section": "18",
+    "screen_ids": [
+      "7:4655",
+      "7:5836",
+      "29:22050"
+    ],
+    "screen_names": [
+      "S10 / Application updates",
+      "X06 / Server versions are incompatible",
+      "Z06 / Migration and update review"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P06"
+  },
+  {
+    "id": "OP08",
+    "priority": "B",
+    "title": "Phân phối cập nhật",
+    "description": "Bản đầu cập nhật thủ công; bản sau hỗ trợ feed tự host và xác minh chữ ký, không tin file cập nhật không được kiểm tra.",
+    "source_section": "18",
+    "screen_ids": [
+      "7:4655",
+      "29:22050",
+      "29:23159"
+    ],
+    "screen_names": [
+      "S10 / Application updates",
+      "Z06 / Migration and update review",
+      "Z13 / Update signature could not be verified"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P09"
+  },
+  {
+    "id": "OP09",
+    "priority": "A",
+    "title": "Theo dõi sức khỏe",
+    "description": "Health endpoint, log có request ID, dung lượng DB file và hàng đợi; log không chứa body hoặc secret mặc định.",
+    "source_section": "18",
+    "screen_ids": [
+      "7:4339",
+      "29:22206"
+    ],
+    "screen_names": [
+      "S08 / Server health",
+      "Z07 / Diagnostic report preview"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P06"
+  },
+  {
+    "id": "OP10",
+    "priority": "B",
+    "title": "Quota vận hành",
+    "description": "Đặt giới hạn upload retention và số job theo năng lực máy chủ; đây là giới hạn tài nguyên do nhóm quản trị, không phải phí theo ghế.",
+    "source_section": "18",
+    "screen_ids": [
+      "7:4339",
+      "32:11321"
+    ],
+    "screen_names": [
+      "S08 / Server health",
+      "Z18 / Server storage and operational quotas"
+    ],
+    "status": "not_started",
+    "evidence": [],
+    "phase": "P09"
+  }
+]

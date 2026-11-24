@@ -1,0 +1,157 @@
+{
+  "node": {
+    "page": "07-coverage-handoff",
+    "page_id": "4:95",
+    "id": "15:6724",
+    "name": "Coverage / SC",
+    "type": "frame",
+    "width": "1440",
+    "height": "716",
+    "path": "02-design/reference/07-coverage-handoff/coverage-sc__15-6724",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "15:6725",
+      "name": "SC / REQUIREMENT COVERAGE",
+      "type": "text",
+      "x": "41",
+      "y": "41",
+      "width": "360",
+      "height": "34"
+    },
+    {
+      "id": "15:6726",
+      "name": "SC01",
+      "type": "frame",
+      "x": "41",
+      "y": "91",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6731",
+      "name": "SC02",
+      "type": "frame",
+      "x": "41",
+      "y": "151",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6736",
+      "name": "SC03",
+      "type": "frame",
+      "x": "41",
+      "y": "211",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6741",
+      "name": "SC04",
+      "type": "frame",
+      "x": "41",
+      "y": "271",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6746",
+      "name": "SC05",
+      "type": "frame",
+      "x": "41",
+      "y": "331",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6751",
+      "name": "SC06",
+      "type": "frame",
+      "x": "41",
+      "y": "391",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6756",
+      "name": "SC07",
+      "type": "frame",
+      "x": "41",
+      "y": "451",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6761",
+      "name": "SC08",
+      "type": "frame",
+      "x": "41",
+      "y": "511",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6766",
+      "name": "SC09",
+      "type": "frame",
+      "x": "41",
+      "y": "571",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6771",
+      "name": "SC10",
+      "type": "frame",
+      "x": "41",
+      "y": "631",
+      "width": "1360",
+      "height": "44"
+    }
+  ],
+  "text_layer_names": [
+    "SC / REQUIREMENT COVERAGE",
+    "SC01",
+    "Kho bảo mật Windows",
+    "Stage A",
+    "E03 · S12",
+    "SC02",
+    "Làm sạch dữ liệu",
+    "Stage A",
+    "S06 · M05",
+    "SC03",
+    "Đăng nhập máy chủ",
+    "Stage A",
+    "A01 · A02 · A03 · A04 · S02 · M06",
+    "SC04",
+    "Cách ly workspace",
+    "Stage A",
+    "C01 · C09 · S07 · X03",
+    "SC05",
+    "Nội dung không tin cậy",
+    "Stage A",
+    "S06",
+    "SC06",
+    "Quyền ứng dụng desktop",
+    "Stage A",
+    "S06 · S11 · S13",
+    "SC07",
+    "Không tự gửi telemetry",
+    "Stage A",
+    "S06",
+    "SC08",
+    "Chặn SSRF trên server",
+    "Stage B",
+    "S13",
+    "SC09",
+    "Phục hồi tài khoản và MFA",
+    "Stage B",
+    "S02",
+    "SC10",
+    "Audit và giới hạn lưu",
+    "Stage B",
+    "S07"
+  ]
+}

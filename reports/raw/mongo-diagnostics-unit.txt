@@ -1,0 +1,12 @@
+﻿   Compiling swaggen-p00 v0.0.0 (D:\code\potmen\spikes\p00)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 27.54s
+     Running unittests src\lib.rs (spikes\p00\target\debug\build\swaggen-p00/a23b4ef7ca2ed670\out\swaggen_p00-a23b4ef7ca2ed670.exe)
+
+running 3 tests
+test mongo_diagnostics::tests::socket_permission_is_not_reported_as_database_transaction_failure ... ok
+test mongo_diagnostics::tests::diagnostic_output_does_not_include_private_error_message ... ok
+test mongo_diagnostics::tests::malformed_uri_is_configuration_without_network_probe ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+

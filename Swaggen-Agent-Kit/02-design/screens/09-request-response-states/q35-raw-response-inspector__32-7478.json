@@ -1,0 +1,51 @@
+{
+  "node": {
+    "page": "09-request-response-states",
+    "page_id": "27:320",
+    "id": "32:7478",
+    "name": "Q35 / Raw response inspector",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/09-request-response-states/q35-raw-response-inspector__32-7478",
+    "requirements": [
+      "RS02",
+      "RS04"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "32:7479",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "32:7482",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "32:7617",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Raw response inspector",
+    "DisNote API / request / Q35",
+    "Raw body · application/json · 200 OK",
+    "Raw preserves the received body bytes. Pretty formatting is a se"
+  ]
+}

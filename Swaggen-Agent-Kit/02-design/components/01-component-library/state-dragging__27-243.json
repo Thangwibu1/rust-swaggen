@@ -1,0 +1,15 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "27:243",
+    "name": "State=Dragging",
+    "type": "symbol",
+    "width": "680",
+    "height": "40",
+    "path": "02-design/components/01-component-library/state-dragging__27-243",
+    "requirements": []
+  },
+  "direct_children": [],
+  "text_layer_names": []
+}

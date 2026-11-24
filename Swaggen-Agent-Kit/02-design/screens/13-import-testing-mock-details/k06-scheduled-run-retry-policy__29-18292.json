@@ -1,0 +1,54 @@
+{
+  "node": {
+    "page": "13-import-testing-mock-details",
+    "page_id": "27:324",
+    "id": "29:18292",
+    "name": "K06 / Scheduled run retry policy",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/13-import-testing-mock-details/k06-scheduled-run-retry-policy__29-18292",
+    "requirements": [
+      "MK08",
+      "MK09"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:18293",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:18296",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:18450",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Scheduled run retry policy",
+    "DisNote API / tools / K06",
+    "Schedule",
+    "Timezone",
+    "Retries",
+    "When runner is offline",
+    "Notification destination"
+  ]
+}

@@ -1,0 +1,98 @@
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 5 tests
+test diagnostics::tests::diagnostic_preview_contains_no_upload_and_exports_safely ... ok
+test worker::tests::actor_lists_and_deletes_secrets_end_to_end ... ok
+test worker::tests::actual_actor_persists_and_returns_matching_generation ... ok
+test worker::tests::actor_quarantines_corrupt_draft_without_losing_forensic_bytes ... ok
+test worker::tests::failed_open_can_retry_without_losing_commands_or_resetting_data ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 6 tests
+test security::tests::desktop_policy_defaults_fail_closed_and_disable_telemetry ... ok
+test tests::binding_separates_workspaces_and_names ... ok
+test security::tests::untrusted_markup_neutralizes_scripts_events_and_external_links ... ok
+test tests::ids_reject_paths_devices_and_case_aliases ... ok
+test security::tests::redacts_headers_query_json_kv_and_custom_values_with_warning ... ok
+test tests::secret_debug_and_errors_do_not_disclose_payload ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 20 tests
+test journal::tests::crc_known_vector ... ok
+test journal::tests::native_replace_rejects_embedded_nul_before_api_call ... ok
+test journal::tests::unknown_format_version_is_rejected_without_migration_guess ... ok
+test journal::tests::actual_write_error_poisoning_requires_reopen_and_preserves_ack ... ok
+test journal::tests::oversized_batch_does_not_damage_existing_data ... ok
+test journal::tests::failed_compaction_keeps_acknowledged_data ... ok
+test journal::tests::native_write_through_replace_closed_files ... ok
+test journal::tests::second_writer_is_rejected ... ok
+test journal::tests::failed_final_compaction_flush_never_acks_writes_to_old_handle ... ok
+test journal::tests::oversized_file_is_rejected_before_replay_without_truncation ... ok
+test journal::tests::compaction_reopens_full_state_and_preserves_writer_fence ... ok
+test tests::invalid_version_and_workspace_are_not_overwritten ... ok
+test tests::limit_failure_preserves_acknowledged_state ... ok
+test tests::readonly_draft_file_fails_closed_and_recovers_after_reopen ... ok
+test tests::quarantine_preserves_corrupt_bytes_and_allows_clean_reopen ... ok
+test tests::relative_root_and_links_are_rejected ... ok
+test journal::tests::corrupt_complete_frame_is_preserved_and_rejected ... ok
+test tests::workspace_isolation_reopen_and_compaction ... ok
+test journal::tests::every_torn_tail_recovers_whole_batches_and_allows_append ... ok
+test journal::tests::injected_partial_write_errors_never_ack_or_split_draft_and_outbox ... ok
+
+test result: ok. 20 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.96s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 3 tests
+test tests::corrupt_secret_journal_is_preserved_and_rejected ... ok
+test tests::real_dpapi_persistence_binding_and_plaintext_absence ... ok
+test tests::list_names_and_delete_persist_across_reopen ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+
+running 1 test
+test tests::real_http_contract_readiness_is_closed_and_shutdown_completes ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Compiling swaggen-secret-store v0.1.0 (D:\code\potmen\crates\secret-store)
+   Compiling swaggen-desktop v0.1.0 (D:\code\potmen\apps\desktop)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.66s
+     Running unittests src\lib.rs (target\x86_64-pc-windows-msvc\debug\build\swaggen-api-contract/566a8b49529ec889\out\swaggen_api_contract-566a8b49529ec889.exe)
+     Running unittests src\lib.rs (target\x86_64-pc-windows-msvc\debug\build\swaggen-desktop/e4aed156d2ad3eda\out\swaggen_desktop-e4aed156d2ad3eda.exe)
+     Running unittests src\main.rs (target\x86_64-pc-windows-msvc\debug\build\swaggen-desktop/1918ecaaac2b2c20\out\swaggen_desktop-1918ecaaac2b2c20.exe)
+     Running unittests src\lib.rs (target\x86_64-pc-windows-msvc\debug\build\swaggen-domain/e0b29c38bc1b74a5\out\swaggen_domain-e0b29c38bc1b74a5.exe)
+     Running unittests src\lib.rs (target\x86_64-pc-windows-msvc\debug\build\swaggen-local-store/d9f38b4ad7f54c52\out\swaggen_local_store-d9f38b4ad7f54c52.exe)
+     Running unittests src\bin\store-crash-probe.rs (target\x86_64-pc-windows-msvc\debug\build\swaggen-local-store/21f75e5f70c77554\out\store_crash_probe-21f75e5f70c77554.exe)
+     Running unittests src\lib.rs (target\x86_64-pc-windows-msvc\debug\build\swaggen-secret-store/cbdbc227b61d2204\out\swaggen_secret_store-cbdbc227b61d2204.exe)
+     Running unittests src\lib.rs (target\x86_64-pc-windows-msvc\debug\build\swaggen-server/f61a963216dbf70d\out\swaggen_server-f61a963216dbf70d.exe)
+     Running unittests src\main.rs (target\x86_64-pc-windows-msvc\debug\build\swaggen-server/73b7c2f24d24421a\out\swaggen_server-73b7c2f24d24421a.exe)
+     Running unittests src\lib.rs (target\x86_64-pc-windows-msvc\debug\build\swaggen-ui-kit/e02c9b794a955ee3\out\swaggen_ui_kit-e02c9b794a955ee3.exe)

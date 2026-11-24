@@ -1,0 +1,290 @@
+{
+  "observed_at": "2026-11-24T07:42:34.250310+00:00",
+  "scope": "Current review-time inputs, not a Git diff or cryptographic signature of earlier test execution",
+  "files": [
+    {
+      "path": "01-prd/00-authoritative-decisions.md",
+      "sha256": "6f7ce692f01987d0af8a70621754266e6c7832182b36505e7c56b505b28fa1f0"
+    },
+    {
+      "path": "05-prompts/MASTER-PROMPT.md",
+      "sha256": "ba77ce958a7afe5f1f4a69c480195a5f5d4bbdc7231e01e525fa54944963e834"
+    },
+    {
+      "path": "05-prompts/RESUME-PROMPT.md",
+      "sha256": "3eb457c7b9eb4e934d78c905234d80456a18d4c8896e3b56fc80570c31cdfd84"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "95286da3c1b206806b1c426730494c45bf10184c4287f5a811ff2f8b9decce7c"
+    },
+    {
+      "path": "apps/desktop/Cargo.toml",
+      "sha256": "e0c8b22c99bc1bec1545c902a164bd22e36dc54ca8103e54e1f7ced05885239e"
+    },
+    {
+      "path": "apps/desktop/src/lib.rs",
+      "sha256": "499efdbcd0e1756d8473a66442bb3fcc92832085f1de397792326edb4beae038"
+    },
+    {
+      "path": "apps/desktop/src/main.rs",
+      "sha256": "6ffc50ccb01a1304dfc0607d070431ea7b3e3b29c005790c74f18b25c44a8c8f"
+    },
+    {
+      "path": "apps/desktop/src/worker.rs",
+      "sha256": "0584d90dccc8eddc3a402fec82f40fc716c7e761b4de291b7cfe4ba822bdec3e"
+    },
+    {
+      "path": "Cargo.lock",
+      "sha256": "5bd99b98c63192474ebbc6a791ad5fab1785516d8d75b35f5099a10b9da1a41b"
+    },
+    {
+      "path": "Cargo.toml",
+      "sha256": "4ade920595321517109177c66cc5b813f1620f7967f5722c7c6ed5f953335175"
+    },
+    {
+      "path": "crates/domain/Cargo.toml",
+      "sha256": "1065eecc8c46d13412dca1785a5fd23d1236c2c8538c29cab52ada7677fb5bbc"
+    },
+    {
+      "path": "crates/domain/src/lib.rs",
+      "sha256": "298d1926b070dba9c0e4e9531de837db0dc2fd830c29d8dcc6e51bca8529ac52"
+    },
+    {
+      "path": "crates/local-store/Cargo.toml",
+      "sha256": "21165fd848ec9f69e26e1e47cc46bb9f87ce4f14a29e3c6d51d80721bd04dcdf"
+    },
+    {
+      "path": "crates/local-store/src/bin/store-crash-probe.rs",
+      "sha256": "97fdc23a3abd983c0669b9cf14e16e452584b5e8ca8445d5ba94594cb512984f"
+    },
+    {
+      "path": "crates/local-store/src/journal.rs",
+      "sha256": "78aa445f7b24f3b240b82a28997c86e817ecc8b43f4d5c131016c16859150c67"
+    },
+    {
+      "path": "crates/local-store/src/lib.rs",
+      "sha256": "047d9175bade8bbf5ef60e0dea76a59c766b301eadca4e19718cb2ef29b7e367"
+    },
+    {
+      "path": "crates/secret-store/Cargo.toml",
+      "sha256": "0ee0b8bb2c6fc37d0005c8ecc80001e3a84fa74964f0c74f0cc418ba307343a3"
+    },
+    {
+      "path": "crates/secret-store/src/lib.rs",
+      "sha256": "5964b4216b66a32be48c20cb89f10703ec125dfe4e55733dcc4dc5f087c0c9c3"
+    },
+    {
+      "path": "crates/ui-kit/Cargo.toml",
+      "sha256": "0ce459415c8edef18d7d9f7b2577c1847a63b7e827591511123532dfdef29621"
+    },
+    {
+      "path": "crates/ui-kit/src/lib.rs",
+      "sha256": "8f9830efe01af8def50b6c4aa6144f00118ff836811866d7748541740d8da13b"
+    },
+    {
+      "path": "rust-toolchain.toml",
+      "sha256": "1c4f6596d2c5c37fc3f5f5a8594418911b9d7a7fe96591daba551a2ec1bfccf1"
+    },
+    {
+      "path": "spikes/p00/Cargo.lock",
+      "sha256": "cd7c41cc6e4623a016359950b7ea31112c15060a56a4e07890b4a2907133f7e3"
+    },
+    {
+      "path": "spikes/p00/Cargo.toml",
+      "sha256": "e744f7cf9b7a47912ec6a86fdfc9b203e3ff7b700ac40bb399ee323d37c599ed"
+    },
+    {
+      "path": "spikes/p00/src/bin/journal-crash-matrix.rs",
+      "sha256": "241772c62d34ebaaaeb7061c1d02692c958cc31e93c433bfed621dff6dc465ab"
+    },
+    {
+      "path": "spikes/p00/src/bin/journal-smoke.rs",
+      "sha256": "7e1fec3d93ab111f0690670b6034c37d84995c909409d32a60378a4e49b3eeb5"
+    },
+    {
+      "path": "spikes/p00/src/bin/journal-ui-reopen.rs",
+      "sha256": "8a39c64f1ae450ea95764b510690f87433171cb12601293429262cb2ffdbc0ec"
+    },
+    {
+      "path": "spikes/p00/src/bin/mongo-smoke.rs",
+      "sha256": "a55b71032ec6e4829fc7166781513fa2dd81ada4e913a24943cf2968b231ac5e"
+    },
+    {
+      "path": "spikes/p00/src/journal.rs",
+      "sha256": "0b2547222422b59b5831f4da49af6caa1e3bf830552e975eac1c9a010138f8b5"
+    },
+    {
+      "path": "spikes/p00/src/lib.rs",
+      "sha256": "4df23b076790c03ec198939bf3f9b5b6b22c1e79a88f8f05f83a5fe847a45668"
+    },
+    {
+      "path": "spikes/p00/src/mongo_diagnostics.rs",
+      "sha256": "59efc36051b23d565e2a3b95a324521e580e9f574fd885e32525bc2bd6e088f6"
+    },
+    {
+      "path": "spikes/p00-egui/Cargo.lock",
+      "sha256": "f0767d1d3cbe994aac43d18fdf5efc82653ccf494d2653f24a7fa6ce078ce910"
+    },
+    {
+      "path": "spikes/p00-egui/Cargo.toml",
+      "sha256": "53adada481d1a31f30330a0ef69363933f31c520a089ffa6340af5fb2d7fa87a"
+    },
+    {
+      "path": "spikes/p00-egui/src/lib.rs",
+      "sha256": "ce6dc2ba8d7ea7483db47dfda426dbbbf66c194f1d96c4c7b84f2aab8f7e9aeb"
+    },
+    {
+      "path": "spikes/p00-egui/src/main.rs",
+      "sha256": "11b591ef0af6ae3d35ab1e9bc407c254b95b8a3d7a7fe7f61404d03119e56bd5"
+    },
+    {
+      "path": "spikes/p00-native/Cargo.lock",
+      "sha256": "80f9ced347fcb3f16a0ae901ee30693e7add14149e08a211326fb6c8fd4b0a83"
+    },
+    {
+      "path": "spikes/p00-native/Cargo.toml",
+      "sha256": "e158187a9e5506072429cd6aab05d1dfca161ac4ee2b4631c5c515fa5da2afba"
+    },
+    {
+      "path": "spikes/p00-native/src/bin/http-gate.rs",
+      "sha256": "3a6c9e3494abf9db0fc946a46a4b1537eaa67b20381f13a97b022c2205a9859f"
+    },
+    {
+      "path": "spikes/p00-native/src/lib.rs",
+      "sha256": "1131107028cc9c30e1f018208e68bd10083804d61681a8dc269b9e7f45817863"
+    },
+    {
+      "path": "spikes/p00-native/src/main.rs",
+      "sha256": "091067a1e10e2e28a5291274ba487223bc400d2169630257819a07333532a40d"
+    },
+    {
+      "path": "spikes/p00-transport/Cargo.lock",
+      "sha256": "0167a60c2e59a05251cd44fc7000e2584afbb875633a191c68e81eae8c3e83b7"
+    },
+    {
+      "path": "spikes/p00-transport/Cargo.toml",
+      "sha256": "865b2db081a29924697c970ab322ba2afd0b39d6d619c214f3fb4826a04d9a16"
+    },
+    {
+      "path": "spikes/p00-transport/src/lib.rs",
+      "sha256": "fc0bb01477852147ee9498539c67e9f9776daa514ac4acca7f827023daf47997"
+    },
+    {
+      "path": "tools/doctor.ps1",
+      "sha256": "3fffc04a6a5bcfc3a560a408be9254e4a58f3379219b76afc73eebb674658c02"
+    },
+    {
+      "path": "tools/install-p00-deps.ps1",
+      "sha256": "28476309df4912fd5ebb2d17f10a0984e639c5e6a4e0fea41ee170bd1107ac27"
+    },
+    {
+      "path": "tools/p00-audit.py",
+      "sha256": "aa3338ea9b54e8800cfefe8c2875dffccdb00762fc06a2aef88a35a9bf34b40b"
+    },
+    {
+      "path": "tools/p00-check.ps1",
+      "sha256": "d4bffcc74b36d07711cdd80e230f00f163968a505674619deb7c603b6fbd13a8"
+    },
+    {
+      "path": "tools/p00-dependency-review.py",
+      "sha256": "66107bcb041f25491096f0ffa0c6488d3f35dfa784416c917a5d152b1fc486e1"
+    },
+    {
+      "path": "tools/p00-durability-evidence.py",
+      "sha256": "4c6439922742ebd09f834cff511c92a3974a0ce971696f4a8d5d9733302488a5"
+    },
+    {
+      "path": "tools/p00-egui-check.ps1",
+      "sha256": "4e0d5dff729bc9d2a840578d9e09659b147e2bf575604d552a4aeb40af74af00"
+    },
+    {
+      "path": "tools/p00-evidence-audit.py",
+      "sha256": "e18f40726807dd9c1de0357908a5def70e6c638fd8e0dc752acd3261994786df"
+    },
+    {
+      "path": "tools/p00-evidence-store.ps1",
+      "sha256": "fb199b7e304326052f99211db1eb31a5e317e6efdb2091a403a49fe5850b1a78"
+    },
+    {
+      "path": "tools/p00-gate.py",
+      "sha256": "527a600f2fc6b34bf555663be7eefa951a6eef77ca030c909038d6ca7fa9e802"
+    },
+    {
+      "path": "tools/p00-host-check.py",
+      "sha256": "8872a5f75bbdd6a7ded96fc4692abd5e62e96bb2b9edc8798109e9f756aad3fc"
+    },
+    {
+      "path": "tools/p00-idle-check.ps1",
+      "sha256": "3c6160e5ed834e62453d87b21dd50e0718692a20dd40f8127de3c0282e390283"
+    },
+    {
+      "path": "tools/p00-mongo-diagnostics-check.ps1",
+      "sha256": "b6ac4a9d307d970f617914b7dc23f25b360fff7f4123b16b781a1eaabefaad04"
+    },
+    {
+      "path": "tools/p00-mongo.ps1",
+      "sha256": "450cb0b5e2b06afa078e69e2fb0ccabb09dbdd4e5d728742188baf06325cf00e"
+    },
+    {
+      "path": "tools/p00-native-evidence.py",
+      "sha256": "76c11ec47954751f22acd9f26720900129f20a8b69204edd8f281ef2dc9f51f9"
+    },
+    {
+      "path": "tools/p00-network.ps1",
+      "sha256": "afb70ee90fb67b0874c48707a0af6b1948cfc8e58af1de2c1775bbf52b7c254d"
+    },
+    {
+      "path": "tools/p00-renderer-check.ps1",
+      "sha256": "b1725339986337e646962f6201f8b9bf6dd9a0e2ab4e8cc5a091f275562cbd6b"
+    },
+    {
+      "path": "tools/p00-report.py",
+      "sha256": "c580d453062946a3e5ec8e0799bc134e8632f6ab4225140874bf01eb6089aca7"
+    },
+    {
+      "path": "tools/p00-security-check.ps1",
+      "sha256": "91a8c2424189167bd4306dca57478a87f9dd571f6a2a5df7f00fc287eb471992"
+    },
+    {
+      "path": "tools/p00-software-evidence.py",
+      "sha256": "53e0d457f9302731f8c9c9ab3f0c773e55969ea2f6d422ac9c4919b60f150083"
+    },
+    {
+      "path": "tools/p00-source-snapshot.py",
+      "sha256": "c7fa0d308e048d7230daf54894f377c603faa87275b5b111e365154221aca840"
+    },
+    {
+      "path": "tools/p01-check.py",
+      "sha256": "9aceab9213257dbf0316b5617e35fbe0f2b2db21c89fec8af0de95e88f96161a"
+    },
+    {
+      "path": "tools/p01-dependency-check.py",
+      "sha256": "f4b6c393631c205b688b75399637becb6df3c591f142594c1a46a15aaa5ed4f0"
+    },
+    {
+      "path": "tools/p01-evidence-audit.py",
+      "sha256": "349525819e706a4f0a569190c8c9aea05188a0df8b871490c70ea49600b91b49"
+    },
+    {
+      "path": "tools/tests/test-p00-evidence-store.ps1",
+      "sha256": "7ad2ef26ae5923022f7b7ba8b3dc2d42698dc5c330c320caaf252b01a895d25a"
+    },
+    {
+      "path": "tools/tests/test_p00_audit.py",
+      "sha256": "2d351ad3a48688c725be63ae0b450ccc555f296eb6c8e93a9d81a8930b58c661"
+    },
+    {
+      "path": "tools/tests/test_p00_dependency_review.py",
+      "sha256": "7ba30e498774db022c72ee92044b7860979fbc6189e3f690d520a9dcf2c34a7b"
+    },
+    {
+      "path": "tools/tests/test_p00_gate.py",
+      "sha256": "5388329fcc6a22c26b64ba259325cda6469d4bbffb58a2b339bdb3b63c80895c"
+    },
+    {
+      "path": "tools/tests/test_p00_report.py",
+      "sha256": "606eeacddfd4fec17ef2296d2193e46cd78323ee554c545b980f8008e0c1ee58"
+    }
+  ]
+}

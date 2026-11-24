@@ -1,0 +1,53 @@
+{
+  "node": {
+    "page": "13-import-testing-mock-details",
+    "page_id": "27:324",
+    "id": "29:17504",
+    "name": "K01 / Mock from a schema",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/13-import-testing-mock-details/k01-mock-from-a-schema__29-17504",
+    "requirements": [
+      "MK02"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:17505",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:17508",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:17658",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Mock from a schema",
+    "DisNote API / tools / K01",
+    "Source schema",
+    "Seed",
+    "Array length",
+    "Response code",
+    "Generation policy"
+  ]
+}

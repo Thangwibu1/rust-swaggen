@@ -1,0 +1,58 @@
+{
+  "node": {
+    "page": "14-protocols-system-details",
+    "page_id": "27:325",
+    "id": "29:22514",
+    "name": "Z09 / Accessible keyboard navigation",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/14-protocols-system-details/z09-accessible-keyboard-navigation__29-22514",
+    "requirements": [
+      "UX03",
+      "UX05",
+      "UX07"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:22515",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:22518",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:22670",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Accessible keyboard navigation",
+    "DisNote API / system / Z09",
+    "Focus visibility",
+    "Reduced motion",
+    "Enabled",
+    "UI scaling",
+    "Display layout",
+    "Desktop · minimum width 1280",
+    "Keyboard shortcuts",
+    "Respect editor shortcuts before global bindings"
+  ]
+}

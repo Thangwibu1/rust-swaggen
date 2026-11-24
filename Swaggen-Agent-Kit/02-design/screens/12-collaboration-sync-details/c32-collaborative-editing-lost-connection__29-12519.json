@@ -1,0 +1,57 @@
+{
+  "node": {
+    "page": "12-collaboration-sync-details",
+    "page_id": "27:323",
+    "id": "29:12519",
+    "name": "C32 / Collaborative editing lost connection",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/12-collaboration-sync-details/c32-collaborative-editing-lost-connection__29-12519",
+    "requirements": [
+      "CO10",
+      "SY01",
+      "SY09"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:12520",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:12523",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:12672",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Collaborative editing lost connection",
+    "DisNote API / collab / C32",
+    "Review details",
+    "Local operations",
+    "7 pending",
+    "Last synchronized revision",
+    "15",
+    "Undo",
+    "Applies to your own local changes"
+  ]
+}

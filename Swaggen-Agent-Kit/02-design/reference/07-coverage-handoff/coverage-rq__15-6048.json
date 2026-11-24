@@ -1,0 +1,157 @@
+{
+  "node": {
+    "page": "07-coverage-handoff",
+    "page_id": "4:95",
+    "id": "15:6048",
+    "name": "Coverage / RQ",
+    "type": "frame",
+    "width": "1440",
+    "height": "716",
+    "path": "02-design/reference/07-coverage-handoff/coverage-rq__15-6048",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "15:6049",
+      "name": "RQ / REQUIREMENT COVERAGE",
+      "type": "text",
+      "x": "41",
+      "y": "41",
+      "width": "360",
+      "height": "34"
+    },
+    {
+      "id": "15:6050",
+      "name": "RQ01",
+      "type": "frame",
+      "x": "41",
+      "y": "91",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6055",
+      "name": "RQ02",
+      "type": "frame",
+      "x": "41",
+      "y": "151",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6060",
+      "name": "RQ03",
+      "type": "frame",
+      "x": "41",
+      "y": "211",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6065",
+      "name": "RQ04",
+      "type": "frame",
+      "x": "41",
+      "y": "271",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6070",
+      "name": "RQ05",
+      "type": "frame",
+      "x": "41",
+      "y": "331",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6075",
+      "name": "RQ06",
+      "type": "frame",
+      "x": "41",
+      "y": "391",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6080",
+      "name": "RQ07",
+      "type": "frame",
+      "x": "41",
+      "y": "451",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6085",
+      "name": "RQ08",
+      "type": "frame",
+      "x": "41",
+      "y": "511",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6090",
+      "name": "RQ09",
+      "type": "frame",
+      "x": "41",
+      "y": "571",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6095",
+      "name": "RQ10",
+      "type": "frame",
+      "x": "41",
+      "y": "631",
+      "width": "1360",
+      "height": "44"
+    }
+  ],
+  "text_layer_names": [
+    "RQ / REQUIREMENT COVERAGE",
+    "RQ01",
+    "Method và URL",
+    "Stage A",
+    "A14 · R01",
+    "RQ02",
+    "Query chính xác",
+    "Stage A",
+    "R01",
+    "RQ03",
+    "Headers",
+    "Stage A",
+    "R02",
+    "RQ04",
+    "Các loại body",
+    "Stage A",
+    "R03",
+    "RQ05",
+    "Tải file lên",
+    "Stage A",
+    "R04",
+    "RQ06",
+    "Gửi và hủy",
+    "Stage A",
+    "R08 · R11",
+    "RQ07",
+    "Request đã phân giải",
+    "Stage A",
+    "R01 · R10",
+    "RQ08",
+    "Nháp và lưu",
+    "Stage A",
+    "A12 · A14",
+    "RQ09",
+    "Sao chép nhanh",
+    "Stage A",
+    "A14 · R14",
+    "RQ10",
+    "Stream khi truyền",
+    "Stage B",
+    "R04 · R09"
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "27:183",
+    "name": "Data row",
+    "type": "frame",
+    "width": "2136",
+    "height": "272",
+    "path": "02-design/components/01-component-library/data-row__27-183",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "27:184",
+      "name": "State=Default",
+      "type": "symbol",
+      "x": "24",
+      "y": "56",
+      "width": "1032",
+      "height": "44"
+    },
+    {
+      "id": "27:190",
+      "name": "State=Enabled",
+      "type": "symbol",
+      "x": "1080",
+      "y": "56",
+      "width": "1032",
+      "height": "44"
+    },
+    {
+      "id": "27:196",
+      "name": "State=Disabled",
+      "type": "symbol",
+      "x": "24",
+      "y": "120",
+      "width": "1032",
+      "height": "44"
+    },
+    {
+      "id": "27:202",
+      "name": "State=Error",
+      "type": "symbol",
+      "x": "1080",
+      "y": "120",
+      "width": "1032",
+      "height": "44"
+    },
+    {
+      "id": "27:208",
+      "name": "State=Selected",
+      "type": "symbol",
+      "x": "24",
+      "y": "184",
+      "width": "1032",
+      "height": "44"
+    }
+  ],
+  "text_layer_names": []
+}

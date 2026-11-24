@@ -1,0 +1,61 @@
+{
+  "node": {
+    "page": "05-testing-developer-tools",
+    "page_id": "4:93",
+    "id": "7:1931",
+    "name": "I01 / Import APIs & collections",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/05-testing-developer-tools/i01-import-apis-collections__7-1931",
+    "requirements": [
+      "IM01",
+      "IM02",
+      "IM03",
+      "IM04",
+      "IM05"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "7:1932",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "7:1935",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "7:2081",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Import APIs & collections",
+    "DisNote API / Developer tools",
+    "Configuration",
+    "Source",
+    "Workspace configuration",
+    "Selected file",
+    "Workspace configuration",
+    "Destination",
+    "Workspace configuration",
+    "Access & sharing",
+    "Changes are saved locally before they are published to your team."
+  ]
+}

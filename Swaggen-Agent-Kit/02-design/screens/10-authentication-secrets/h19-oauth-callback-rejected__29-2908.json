@@ -1,0 +1,55 @@
+{
+  "node": {
+    "page": "10-authentication-secrets",
+    "page_id": "27:321",
+    "id": "29:2908",
+    "name": "H19 / OAuth callback rejected",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/10-authentication-secrets/h19-oauth-callback-rejected__29-2908",
+    "requirements": [
+      "AU08"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:2909",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:2912",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:3062",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "OAuth callback rejected",
+    "DisNote API / auth / H19",
+    "Action required",
+    "Cause",
+    "State mismatch or expired authorization attempt",
+    "PKCE",
+    "Verifier was not reused",
+    "Retry",
+    "Start a new browser authorization"
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "node": {
+    "page": "10-authentication-secrets",
+    "page_id": "27:321",
+    "id": "29:1030",
+    "name": "H07 / Override inherited authorization",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/10-authentication-secrets/h07-override-inherited-authorization__29-1030",
+    "requirements": [
+      "AU03"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:1031",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:1034",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:1174",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Override inherited authorization",
+    "DisNote API / auth / H07",
+    "Collection setting",
+    "Bearer token",
+    "Request override",
+    "Scope of this change",
+    "This request only"
+  ]
+}

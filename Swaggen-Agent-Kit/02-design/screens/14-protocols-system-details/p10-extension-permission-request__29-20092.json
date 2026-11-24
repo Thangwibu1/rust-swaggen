@@ -1,0 +1,58 @@
+{
+  "node": {
+    "page": "14-protocols-system-details",
+    "page_id": "27:325",
+    "id": "29:20092",
+    "name": "P10 / Extension permission request",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/14-protocols-system-details/p10-extension-permission-request__29-20092",
+    "requirements": [
+      "PR10",
+      "SC06"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:20093",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:20096",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:20244",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Extension permission request",
+    "DisNote API / system / P10",
+    "Extension",
+    "Filesystem scope",
+    "Selected output folder only",
+    "Network hosts",
+    "None",
+    "Secret access",
+    "Denied",
+    "Enable extension",
+    "Only after reviewing these permissions"
+  ]
+}

@@ -1,0 +1,19 @@
+[package]
+name = "swaggen-cli"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[dependencies]
+serde_json.workspace = true
+swaggen-domain.workspace = true
+swaggen-local-store.workspace = true
+swaggen-runner.workspace = true
+swaggen-secret-store.workspace = true
+swaggen-spec-engine.workspace = true
+tokio.workspace = true
+tokio-util.workspace = true
+
+[dev-dependencies]
+axum.workspace = true

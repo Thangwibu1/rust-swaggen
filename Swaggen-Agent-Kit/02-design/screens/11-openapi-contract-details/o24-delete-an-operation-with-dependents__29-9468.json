@@ -1,0 +1,51 @@
+{
+  "node": {
+    "page": "11-openapi-contract-details",
+    "page_id": "27:322",
+    "id": "29:9468",
+    "name": "O24 / Delete an operation with dependents",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/11-openapi-contract-details/o24-delete-an-operation-with-dependents__29-9468",
+    "requirements": [
+      "DC09"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:9469",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:9472",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:9627",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Delete an operation with dependents",
+    "DisNote API / openapi / O24",
+    "DEPENDENT OBJECT",
+    "REFERENCE",
+    "IMPACT"
+  ]
+}

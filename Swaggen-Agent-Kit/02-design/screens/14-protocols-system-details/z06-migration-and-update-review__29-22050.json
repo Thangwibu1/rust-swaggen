@@ -1,0 +1,58 @@
+{
+  "node": {
+    "page": "14-protocols-system-details",
+    "page_id": "27:325",
+    "id": "29:22050",
+    "name": "Z06 / Migration and update review",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/14-protocols-system-details/z06-migration-and-update-review__29-22050",
+    "requirements": [
+      "OP07",
+      "OP08"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:22051",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:22054",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:22202",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Migration and update review",
+    "DisNote API / system / Z06",
+    "Current / target",
+    "1.1.0 → 1.1.1",
+    "Client compatibility",
+    "Compatible with server 1.1",
+    "Data migration",
+    "MongoDB schema 4 → 5; SQLite schema 7 → 8",
+    "Backup",
+    "Package signature",
+    "Verified with team update key"
+  ]
+}

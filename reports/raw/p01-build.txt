@@ -1,0 +1,6 @@
+   Compiling swaggen-domain v0.1.0 (D:\code\potmen\crates\domain)
+   Compiling swaggen-ui-kit v0.1.0 (D:\code\potmen\crates\ui-kit)
+   Compiling swaggen-local-store v0.1.0 (D:\code\potmen\crates\local-store)
+   Compiling swaggen-secret-store v0.1.0 (D:\code\potmen\crates\secret-store)
+   Compiling swaggen-desktop v0.1.0 (D:\code\potmen\apps\desktop)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 16.42s

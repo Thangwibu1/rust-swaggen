@@ -1,0 +1,22 @@
+﻿cargo.exe :    Compiling swaggen-p00 v0.0.0 (D:\code\potmen\spikes\p00)
+At D:\code\potmen\tools\p00-egui-check.ps1:12 char:20
++         $output = (& cargo @Arguments 2>&1 | Out-String)
++                    ~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (   Compiling sw...men\spikes\p00):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+   Compiling swaggen-p00-egui v0.0.0 (D:\code\potmen\spikes\p00-egui)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 14.42s
+     Running unittests src\lib.rs (spikes\p00-egui\target\x86_64-pc-windows-msvc\debug\build\swaggen-p00-egui/78247af5d
+4701e13\out\swaggen_p00_egui-78247af5d4701e13.exe)
+
+running 5 tests
+test tests::complete_drag_in_one_frame_retains_released_width ... ok
+test tests::unicode_search_returns_character_not_byte_offsets ... ok
+test tests::highlighting_preserves_every_unicode_byte_and_complete_coverage ... ok
+test tests::quoted_hash_does_not_consume_following_yaml_tokens ... ok
+test tests::unrelated_click_and_capture_loss_do_not_resize ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+

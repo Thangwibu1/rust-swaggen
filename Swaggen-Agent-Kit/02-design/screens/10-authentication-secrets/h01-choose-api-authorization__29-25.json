@@ -1,0 +1,56 @@
+{
+  "node": {
+    "page": "10-authentication-secrets",
+    "page_id": "27:321",
+    "id": "29:25",
+    "name": "H01 / Choose API authorization",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/10-authentication-secrets/h01-choose-api-authorization__29-25",
+    "requirements": [
+      "AU01",
+      "AU02",
+      "AU03",
+      "AU08",
+      "AU10"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:26",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:29",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:271",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Choose API authorization",
+    "DisNote API / auth / H01",
+    "Available actions",
+    "Selection details",
+    "These are API request credentials. Swaggen account sign-in remai",
+    "These are API request credentials. Swaggen account sign-in remai"
+  ]
+}

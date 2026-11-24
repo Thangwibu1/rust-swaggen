@@ -1,0 +1,51 @@
+{
+  "node": {
+    "page": "09-request-response-states",
+    "page_id": "27:320",
+    "id": "28:7795",
+    "name": "Q27 / Find a value in a response",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/09-request-response-states/q27-find-a-value-in-a-response__28-7795",
+    "requirements": [
+      "RS02",
+      "RS04"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "28:7796",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "28:7799",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "28:7949",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Find a value in a response",
+    "DisNote API / request / Q27",
+    "JSON",
+    "Match 1 of 1 · $.data[0].id · Copy value / Copy path / Save raw "
+  ]
+}

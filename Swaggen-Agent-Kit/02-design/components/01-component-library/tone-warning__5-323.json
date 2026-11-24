@@ -1,0 +1,15 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:323",
+    "name": "Tone=Warning",
+    "type": "symbol",
+    "width": "1032",
+    "height": "52",
+    "path": "02-design/components/01-component-library/tone-warning__5-323",
+    "requirements": []
+  },
+  "direct_children": [],
+  "text_layer_names": []
+}

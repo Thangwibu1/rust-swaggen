@@ -1,0 +1,193 @@
+<canvas id="0:1" name="00 • Brand &amp; foundations" x="0" y="0" width="0" height="0">
+  <symbol id="4:81" name="Brand/Mark" x="496" y="0" width="32" height="32" />
+  <frame id="4:96" name="Swaggen / Brand direction" x="0" y="0" width="1440" height="650">
+    <text id="4:97" name="SWAGGEN" x="64" y="64" width="202" height="60" />
+    <text id="4:98" name="One workspace. Every API." x="64" y="148" width="480" height="44" />
+    <text id="4:99" name="Design • document • test • collaborate" x="64" y="216" width="411" height="28" />
+    <frame id="4:100" name="Brand palette" x="64" y="268" width="1208" height="184">
+      <frame id="4:101" name="Cream" x="0" y="0" width="290" height="184">
+        <rounded-rectangle id="4:102" name="Rectangle" x="0" y="0" width="290" height="120" />
+        <text id="4:103" name="Cream" x="0" y="132" width="39" height="20" />
+        <text id="4:104" name="#FFEFD2" x="0" y="164" width="51" height="20" />
+      </frame>
+      <frame id="4:105" name="Teal" x="306" y="0" width="290" height="184">
+        <rounded-rectangle id="4:106" name="Rectangle" x="0" y="0" width="290" height="120" />
+        <text id="4:107" name="Teal" x="0" y="132" width="32" height="20" />
+        <text id="4:108" name="#6AB0AF" x="0" y="164" width="51" height="20" />
+      </frame>
+      <frame id="4:109" name="Salmon" x="612" y="0" width="290" height="184">
+        <rounded-rectangle id="4:110" name="Rectangle" x="0" y="0" width="290" height="120" />
+        <text id="4:111" name="Salmon" x="0" y="132" width="47" height="20" />
+        <text id="4:112" name="#F5A89A" x="0" y="164" width="51" height="20" />
+      </frame>
+      <frame id="4:113" name="Yellow" x="918" y="0" width="290" height="184">
+        <rounded-rectangle id="4:114" name="Rectangle" x="0" y="0" width="290" height="120" />
+        <text id="4:115" name="Yellow" x="0" y="132" width="47" height="20" />
+        <text id="4:116" name="#FFF2A5" x="0" y="164" width="51" height="20" />
+      </frame>
+    </frame>
+    <text id="4:117" name="Windows desktop  /  Light only  /  JetBrains Mono" x="64" y="476" width="382" height="20" />
+    <text id="4:118" name="A calm, precise API workspace for building togethe" x="64" y="520" width="1240" height="22" />
+    <text id="4:119" name="Structure inspired by DISNOTE: semantic colors, re" x="64" y="566" width="1240" height="20" />
+  </frame>
+  <frame id="4:120" name="Foundations / Typography &amp; layout" x="0" y="900" width="1440" height="1016">
+    <text id="4:121" name="01 / TYPOGRAPHY" x="48" y="48" width="216" height="34" />
+    <text id="4:122" name="JetBrains Mono" x="48" y="106" width="403" height="60" />
+    <text id="4:123" name="H1 / Build APIs with clarity. { &quot;status&quot;: &quot;ready&quot; " x="48" y="190" width="979" height="44" />
+    <text id="4:124" name="H2 / Build APIs with clarity. { &quot;status&quot;: &quot;ready&quot; " x="48" y="258" width="734" height="34" />
+    <text id="4:125" name="H3 / Build APIs with clarity. { &quot;status&quot;: &quot;ready&quot; " x="48" y="316" width="551" height="28" />
+    <text id="4:126" name="Body / Build APIs with clarity. { &quot;status&quot;: &quot;ready" x="48" y="368" width="445" height="22" />
+    <text id="4:127" name="Body small / Build APIs with clarity. { &quot;status&quot;: " x="48" y="414" width="425" height="20" />
+    <text id="4:128" name="Label / Build APIs with clarity. { &quot;status&quot;: &quot;read" x="48" y="458" width="421" height="20" />
+    <text id="4:129" name="Caption / Build APIs with clarity. { &quot;status&quot;: &quot;re" x="48" y="502" width="370" height="16" />
+    <text id="4:130" name="Code / Build APIs with clarity. { &quot;status&quot;: &quot;ready" x="48" y="542" width="414" height="20" />
+    <text id="4:131" name="Button / Build APIs with clarity. { &quot;status&quot;: &quot;rea" x="48" y="586" width="429" height="20" />
+    <text id="4:132" name="Layout / 1440 × 900 desktop · 8 px rhythm" x="48" y="630" width="591" height="34" />
+    <text id="4:133" name="Rail 64 · Sidebar 248 · Main workspace 1128 · Insp" x="48" y="688" width="1280" height="22" />
+    <text id="4:134" name="Space / 2 4 6 8 12 16 20 24 32 40 48 64" x="48" y="734" width="328" height="22" />
+    <text id="4:135" name="Radius / 6 controls · 10 panels · 16 dialogs · 24 " x="48" y="780" width="462" height="22" />
+    <text id="4:136" name="Motion / 120 ms hover · 180 ms panel · reduced-mot" x="48" y="826" width="529" height="22" />
+    <text id="4:137" name="Color rule / pastel surfaces + dark ink" x="48" y="872" width="508" height="28" />
+    <text id="4:138" name="Never place white body text on light teal, salmon " x="48" y="924" width="1250" height="44" />
+  </frame>
+  <frame id="4:139" name="Foundations / Semantic colors" x="1520" y="0" width="1120" height="1122">
+    <text id="4:140" name="02 / SEMANTIC COLOR ROLES" x="40" y="40" width="360" height="34" />
+    <frame id="4:141" name="bg/page" x="40" y="90" width="206" height="32">
+      <rounded-rectangle id="4:142" name="Rectangle" x="0" y="0" width="64" height="32" />
+      <text id="4:143" name="bg/page" x="80" y="5" width="59" height="22" />
+      <text id="4:144" name="#FBFCFA" x="155" y="6" width="51" height="20" />
+    </frame>
+    <frame id="4:145" name="bg/surface" x="40" y="138" width="231" height="32">
+      <rounded-rectangle id="4:146" name="Rectangle" x="0" y="0" width="64" height="32" />
+      <text id="4:147" name="bg/surface" x="80" y="5" width="84" height="22" />
+      <text id="4:148" name="#FFFFFF" x="180" y="6" width="51" height="20" />
+    </frame>
+    <frame id="4:149" name="bg/sidebar" x="40" y="186" width="231" height="32">
+      <rounded-rectangle id="4:150" name="Rectangle" x="0" y="0" width="64" height="32" />
+      <text id="4:151" name="bg/sidebar" x="80" y="5" width="84" height="22" />
+      <text id="4:152" name="#FFEFD2" x="180" y="6" width="51" height="20" />
+    </frame>
+    <frame id="4:153" name="bg/selected" x="40" y="234" width="240" height="32">
+      <rounded-rectangle id="4:154" name="Rectangle" x="0" y="0" width="64" height="32" />
+      <text id="4:155" name="bg/selected" x="80" y="5" width="93" height="22" />
+      <text id="4:156" name="#E8F4F0" x="189" y="6" width="51" height="20" />
+    </frame>
+    <frame id="4:157" name="bg/brand" x="40" y="282" width="215" height="32">
+      <rounded-rectangle id="4:158" name="Rectangle" x="0" y="0" width="64" height="32" />
+      <text id="4:159" name="bg/brand" x="80" y="5" width="68" height="22" />
+      <text id="4:160" name="#6AB0AF" x="164" y="6" width="51" height="20" />
+    </frame>
+    <frame id="4:161" name="bg/brand-strong" x="40" y="330" width="273" height="32">
+      <rounded-rectangle id="4:162" name="Rectangle" x="0" y="0" width="64" height="32" />
+      <text id="4:163" name="bg/brand-strong" x="80" y="5" width="126" height="22" />
+      <text id="4:164" name="#245C59" x="222" y="6" width="51" height="20" />
+    </frame>
+    <frame id="4:165" name="bg/danger" x="40" y="378" width="223" height="32">
+      <rounded-rectangle id="4:166" name="Rectangle" x="0" y="0" width="64" height="32" />
+      <text id="4:167" name="bg/danger" x="80" y="5" width="76" height="22" />
+      <text id="4:168" name="#FFF0EC" x="172" y="6" width="51" height="20" />
+    </frame>
+    <frame id="4:169" name="bg/warning" x="40" y="426" width="231" height="32">
+      <rounded-rectangle id="4:170" name="Rectangle" x="0" y="0" width="64" height="32" />
+      <text id="4:171" name="bg/warning" x="80" y="5" width="84" height="22" />
+      <text id="4:172" name="#FFF2A5" x="180" y="6" width="51" height="20" />
+    </frame>
+    <frame id="4:173" name="bg/disabled" x="40" y="474" width="240" height="32">
+      <rounded-rectangle id="4:174" name="Rectangle" x="0" y="0" width="64" height="32" />
+      <text id="4:175" name="bg/disabled" x="80" y="5" width="93" height="22" />
+      <text id="4:176" name="#EDF0ED" x="189" y="6" width="51" height="20" />
+    </frame>
+    <frame id="4:177" name="text/primary" x="40" y="522" width="248" height="32">
+      <rounded-rectangle id="4:178" name="Rectangle" x="0" y="0" width="64" height="32" />
+      <text id="4:179" name="text/primary" x="80" y="5" width="101" height="22" />
+      <text id="4:180" name="#203735" x="197" y="6" width="51" height="20" />
+    </frame>
+    <frame id="4:181" name="text/secondary" x="40" y="570" width="265" height="32">
+      <rounded-rectangle id="4:182" name="Rectangle" x="0" y="0" width="64" height="32" />
+      <text id="4:183" name="text/secondary" x="80" y="5" width="118" height="22" />
+      <text id="4:184" name="#607572" x="214" y="6" width="51" height="20" />
+    </frame>
+    <frame id="4:185" name="text/brand" x="40" y="618" width="231" height="32">
+      <rounded-rectangle id="4:186" name="Rectangle" x="0" y="0" width="64" height="32" />
+      <text id="4:187" name="text/brand" x="80" y="5" width="84" height="22" />
+      <text id="4:188" name="#245C59" x="180" y="6" width="51" height="20" />
+    </frame>
+    <frame id="4:189" name="text/on-brand" x="40" y="666" width="257" height="32">
+      <rounded-rectangle id="4:190" name="Rectangle" x="0" y="0" width="64" height="32" />
+      <text id="4:191" name="text/on-brand" x="80" y="5" width="110" height="22" />
+      <text id="4:192" name="#FFFFFF" x="206" y="6" width="51" height="20" />
+    </frame>
+    <frame id="4:193" name="text/danger" x="40" y="714" width="240" height="32">
+      <rounded-rectangle id="4:194" name="Rectangle" x="0" y="0" width="64" height="32" />
+      <text id="4:195" name="text/danger" x="80" y="5" width="93" height="22" />
+      <text id="4:196" name="#A23F3F" x="189" y="6" width="51" height="20" />
+    </frame>
+    <frame id="4:197" name="text/warning" x="40" y="762" width="248" height="32">
+      <rounded-rectangle id="4:198" name="Rectangle" x="0" y="0" width="64" height="32" />
+      <text id="4:199" name="text/warning" x="80" y="5" width="101" height="22" />
+      <text id="4:200" name="#7B5B1C" x="197" y="6" width="51" height="20" />
+    </frame>
+    <frame id="4:201" name="border/default" x="40" y="810" width="265" height="32">
+      <rounded-rectangle id="4:202" name="Rectangle" x="0" y="0" width="64" height="32" />
+      <text id="4:203" name="border/default" x="80" y="5" width="118" height="22" />
+      <text id="4:204" name="#DCE6E1" x="214" y="6" width="51" height="20" />
+    </frame>
+    <frame id="4:205" name="border/focus" x="40" y="858" width="248" height="32">
+      <rounded-rectangle id="4:206" name="Rectangle" x="0" y="0" width="64" height="32" />
+      <text id="4:207" name="border/focus" x="80" y="5" width="101" height="22" />
+      <text id="4:208" name="#245C59" x="197" y="6" width="51" height="20" />
+    </frame>
+    <frame id="4:209" name="status/success" x="40" y="906" width="265" height="32">
+      <rounded-rectangle id="4:210" name="Rectangle" x="0" y="0" width="64" height="32" />
+      <text id="4:211" name="status/success" x="80" y="5" width="118" height="22" />
+      <text id="4:212" name="#286649" x="214" y="6" width="51" height="20" />
+    </frame>
+    <frame id="4:213" name="status/info" x="40" y="954" width="240" height="32">
+      <rounded-rectangle id="4:214" name="Rectangle" x="0" y="0" width="64" height="32" />
+      <text id="4:215" name="status/info" x="80" y="5" width="93" height="22" />
+      <text id="4:216" name="#345D8E" x="189" y="6" width="51" height="20" />
+    </frame>
+    <frame id="4:217" name="accent/salmon" x="40" y="1002" width="257" height="32">
+      <rounded-rectangle id="4:218" name="Rectangle" x="0" y="0" width="64" height="32" />
+      <text id="4:219" name="accent/salmon" x="80" y="5" width="110" height="22" />
+      <text id="4:220" name="#F5A89A" x="206" y="6" width="51" height="20" />
+    </frame>
+    <frame id="4:221" name="accent/yellow" x="40" y="1050" width="257" height="32">
+      <rounded-rectangle id="4:222" name="Rectangle" x="0" y="0" width="64" height="32" />
+      <text id="4:223" name="accent/yellow" x="80" y="5" width="110" height="22" />
+      <text id="4:224" name="#FFF2A5" x="206" y="6" width="51" height="20" />
+    </frame>
+  </frame>
+  <frame id="18:2" name="Brand / Logo system &amp; usage" x="1520" y="1800" width="1440" height="736">
+    <text id="18:3" name="03 / LOGO &amp; APPLICATION ICON" x="64" y="64" width="403" height="34" />
+    <frame id="18:4" name="Frame" x="64" y="138" width="482" height="200">
+      <instance id="18:5" name="Brand/Mark" x="0" y="36" width="128" height="128" />
+      <instance id="18:13" name="Brand/Wordmark" x="192" y="0" width="290" height="200" />
+    </frame>
+    <text id="18:30" name="Connected brackets. One shared workflow." x="64" y="378" width="432" height="28" />
+    <text id="18:31" name="The S mark links API design and API testing. Keep the mark clear, compact and legible in the Windows titlebar, activity rail and app icon." x="64" y="446" width="1250" height="22" />
+    <text id="18:32" name="Use the brand mark on white. Brand accents are exceptional; normal UI surfaces stay white. Minimum mark size: 24 px. Clear space: half the mark width." x="64" y="508" width="1250" height="44" />
+    <text id="18:33" name="Do not stretch, rotate or recolor individual parts. Use the Brand/Mark and Brand/Wordmark components from the component library." x="64" y="592" width="1250" height="20" />
+    <text id="18:34" name="Design library → 01 Components Product flows → 02–06 Requirement map → 07" x="64" y="652" width="616" height="20" />
+  </frame>
+  <frame id="51:40541" name="Foundations / Foreground-only color" x="1520" y="2800" width="1440" height="308">
+    <text id="51:40542" name="White surfaces. Meaningful color." x="49" y="41" width="1320" height="34" />
+    <text id="51:40543" name="Page, sidebar, panels, buttons, badges and notices stay white. Apply color to method names, status text, meaningful icons and brand marks." x="49" y="99" width="1320" height="20" />
+    <frame id="51:40544" name="Frame" x="49" y="143" width="516" height="28">
+      <instance id="51:40545" name="Badge" x="0" y="0" width="46" height="28" />
+      <instance id="51:40547" name="Badge" x="66" y="0" width="53" height="28" />
+      <instance id="51:40549" name="Badge" x="139" y="0" width="46" height="28" />
+      <instance id="51:40551" name="Badge" x="205" y="0" width="59" height="28" />
+      <instance id="51:40553" name="Badge" x="284" y="0" width="66" height="28" />
+      <instance id="51:40555" name="Badge" x="370" y="0" width="53" height="28" />
+      <instance id="51:40557" name="Badge" x="443" y="0" width="73" height="28" />
+    </frame>
+    <frame id="51:40559" name="Frame" x="49" y="195" width="647" height="28">
+      <instance id="51:40560" name="Badge" x="0" y="0" width="112" height="28" />
+      <instance id="51:40562" name="Badge" x="132" y="0" width="145" height="28" />
+      <instance id="51:40564" name="Badge" x="297" y="0" width="165" height="28" />
+      <instance id="51:40566" name="Badge" x="482" y="0" width="165" height="28" />
+    </frame>
+    <text id="51:40568" name="Keep ordinary text neutral. Use labels and icons alongside color. Focus and selection remain visible through outlines, underlines and colored labels." x="49" y="247" width="1320" height="20" />
+  </frame>
+</canvas>

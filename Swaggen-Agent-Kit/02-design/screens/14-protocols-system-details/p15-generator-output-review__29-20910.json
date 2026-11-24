@@ -1,0 +1,49 @@
+{
+  "node": {
+    "page": "14-protocols-system-details",
+    "page_id": "27:325",
+    "id": "29:20910",
+    "name": "P15 / Generator output review",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/14-protocols-system-details/p15-generator-output-review__29-20910",
+    "requirements": [
+      "PR08"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:20911",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:20914",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:21111",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Generator output review",
+    "DisNote API / system / P15",
+    "Existing files require a separate overwrite confirmation. No ext"
+  ]
+}

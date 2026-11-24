@@ -1,0 +1,98 @@
+﻿[
+    {
+        "name":  "Host",
+        "status":  "PASS",
+        "detail":  "Microsoft Windows 10.0.26200 ",
+        "command":  "PowerShell presence inspection; see tools/doctor.ps1",
+        "exit_code":  null,
+        "timestamp":  "2026-11-24T06:47:57.8510053Z"
+    },
+    {
+        "name":  "Rust compiler",
+        "status":  "PASS",
+        "detail":  "rustc 1.100.0 (0ef1bc386 2026-11-09)\r\nbinary: rustc\r\ncommit-hash: 0ef1bc386059596dada8fb65b50425aab2ea637a\r\ncommit-date: 2026-11-09\r\nhost: x86_64-pc-windows-msvc\r\nrelease: 1.100.0\r\nLLVM version: 23.1.5",
+        "command":  "rustc +stable -Vv",
+        "exit_code":  0,
+        "timestamp":  "2026-11-24T06:47:58.1817998Z"
+    },
+    {
+        "name":  "Cargo",
+        "status":  "PASS",
+        "detail":  "cargo 1.100.0 (3acc79c0c 2026-11-05)",
+        "command":  "cargo +stable --version",
+        "exit_code":  0,
+        "timestamp":  "2026-11-24T06:47:58.3584912Z"
+    },
+    {
+        "name":  "Rustup target",
+        "status":  "PASS",
+        "detail":  "x86_64-pc-windows-msvc",
+        "command":  "rustup target list --installed --toolchain stable",
+        "exit_code":  0,
+        "timestamp":  "2026-11-24T06:47:58.4986724Z"
+    },
+    {
+        "name":  "Rustfmt",
+        "status":  "PASS",
+        "detail":  "rustfmt 1.11.0-stable (0ef1bc3860 2026-11-09)",
+        "command":  "cargo +stable fmt --version",
+        "exit_code":  0,
+        "timestamp":  "2026-11-24T06:47:58.8728197Z"
+    },
+    {
+        "name":  "Clippy",
+        "status":  "PASS",
+        "detail":  "clippy 0.1.100 (0ef1bc3860 2026-11-09)",
+        "command":  "cargo +stable clippy --version",
+        "exit_code":  0,
+        "timestamp":  "2026-11-24T06:47:59.1990246Z"
+    },
+    {
+        "name":  "Git",
+        "status":  "PASS",
+        "detail":  "git version 2.45.1.windows.1",
+        "command":  "git --version",
+        "exit_code":  0,
+        "timestamp":  "2026-11-24T06:47:59.3207425Z"
+    },
+    {
+        "name":  "MSVC installation",
+        "status":  "PASS",
+        "detail":  "D:\\Development\\MSVC\\BuildTools",
+        "command":  "PowerShell presence inspection; see tools/doctor.ps1",
+        "exit_code":  null,
+        "timestamp":  "2026-11-24T06:47:59.4882590Z"
+    },
+    {
+        "name":  "Windows SDK",
+        "status":  "PASS",
+        "detail":  "C:\\Program Files (x86)\\Windows Kits\\10\\",
+        "command":  "PowerShell presence inspection; see tools/doctor.ps1",
+        "exit_code":  null,
+        "timestamp":  "2026-11-24T06:47:59.5142834Z"
+    },
+    {
+        "name":  "MSVC link smoke test",
+        "status":  "BLOCKED",
+        "detail":  "Build and launch a pinned Rust native executable from a configured MSVC environment; presence checks alone are insufficient",
+        "command":  "PowerShell presence inspection; see tools/doctor.ps1",
+        "exit_code":  null,
+        "timestamp":  "2026-11-24T06:47:59.5152952Z"
+    },
+    {
+        "name":  "Windows GUI/IME/DPI/Narrator",
+        "status":  "BLOCKED",
+        "detail":  "Run P00 native UI spike and record measured evidence",
+        "command":  "PowerShell presence inspection; see tools/doctor.ps1",
+        "exit_code":  null,
+        "timestamp":  "2026-11-24T06:47:59.5152952Z"
+    },
+    {
+        "name":  "Dependency compatibility and licenses",
+        "status":  "BLOCKED",
+        "detail":  "Resolve official exact versions/MSRV/targets/features and advisories; fill dependency-matrix.md before scaffold",
+        "command":  "PowerShell presence inspection; see tools/doctor.ps1",
+        "exit_code":  null,
+        "timestamp":  "2026-11-24T06:47:59.5272900Z"
+    }
+]

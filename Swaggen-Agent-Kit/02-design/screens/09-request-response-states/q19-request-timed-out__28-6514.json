@@ -1,0 +1,57 @@
+{
+  "node": {
+    "page": "09-request-response-states",
+    "page_id": "27:320",
+    "id": "28:6514",
+    "name": "Q19 / Request timed out",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/09-request-response-states/q19-request-timed-out__28-6514",
+    "requirements": [
+      "RQ06",
+      "RS05",
+      "RS06"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "28:6515",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "28:6518",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "28:6668",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Request timed out",
+    "DisNote API / request / Q19",
+    "Action required",
+    "Timeout",
+    "30 seconds",
+    "Draft",
+    "Saved",
+    "Next step",
+    "Check server health or increase this request timeout"
+  ]
+}

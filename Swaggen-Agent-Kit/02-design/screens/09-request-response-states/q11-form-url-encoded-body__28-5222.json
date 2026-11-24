@@ -1,0 +1,52 @@
+{
+  "node": {
+    "page": "09-request-response-states",
+    "page_id": "27:320",
+    "id": "28:5222",
+    "name": "Q11 / Form URL encoded body",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/09-request-response-states/q11-form-url-encoded-body__28-5222",
+    "requirements": [
+      "RQ04"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "28:5223",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "28:5226",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "28:5389",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Form URL encoded body",
+    "DisNote API / request / Q11",
+    "{{base_url}}/v1/tasks",
+    "FIELD",
+    "VALUE",
+    "ENCODING"
+  ]
+}

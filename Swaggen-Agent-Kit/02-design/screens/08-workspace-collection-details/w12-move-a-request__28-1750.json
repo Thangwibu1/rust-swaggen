@@ -1,0 +1,55 @@
+{
+  "node": {
+    "page": "08-workspace-collection-details",
+    "page_id": "27:319",
+    "id": "28:1750",
+    "name": "W12 / Move a request",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/08-workspace-collection-details/w12-move-a-request__28-1750",
+    "requirements": [
+      "RQ09",
+      "WS06"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "28:1751",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "28:1754",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "28:1900",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Move a request",
+    "DisNote API / workspace / W12",
+    "Request",
+    "GET List tasks",
+    "Destination collection",
+    "Destination folder",
+    "Inherited authorization",
+    "Will change from BearerAuth to No auth"
+  ]
+}

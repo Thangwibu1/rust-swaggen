@@ -1,0 +1,53 @@
+{
+  "node": {
+    "page": "10-authentication-secrets",
+    "page_id": "27:321",
+    "id": "29:3373",
+    "name": "H22 / Unsupported authorization option",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/10-authentication-secrets/h22-unsupported-authorization-option__29-3373",
+    "requirements": [
+      "AU10"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:3374",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:3377",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:3522",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Unsupported authorization option",
+    "DisNote API / auth / H22",
+    "Review details",
+    "Requested",
+    "Digest algorithm not supported",
+    "Alternative",
+    "Choose a supported algorithm or explicit signed header"
+  ]
+}

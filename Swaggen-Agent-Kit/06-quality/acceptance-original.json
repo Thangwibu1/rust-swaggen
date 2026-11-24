@@ -1,0 +1,50 @@
+[
+  {
+    "id": "AC01",
+    "criterion": "A mời B vào workspace; B thấy collection và spec; Viewer không thể sửa qua UI hoặc gọi trực tiếp API server."
+  },
+  {
+    "id": "AC02",
+    "criterion": "A publish thay đổi, B online nhận trong mục tiêu 3 giây ở mạng ổn định, không tính thời gian truyền file lớn."
+  },
+  {
+    "id": "AC03",
+    "criterion": "Hai người sửa cùng revision phải xuất hiện conflict; không mất bản nháp và không ghi đè âm thầm."
+  },
+  {
+    "id": "AC04",
+    "criterion": "Mất ACK rồi gửi lại cùng operation ID chỉ sinh một thay đổi; reconnect lấy đủ sự kiện bị bỏ lỡ."
+  },
+  {
+    "id": "AC05",
+    "criterion": "Offline tạo sửa dữ liệu, restart app rồi reconnect vẫn còn pending; thu hồi quyền phải chặn publish."
+  },
+  {
+    "id": "AC06",
+    "criterion": "Import spec thử nghiệm 3.0 và 3.1, giải ref nội bộ, sinh request và cập nhật theo diff; tính năng chưa hỗ trợ được báo."
+  },
+  {
+    "id": "AC07",
+    "criterion": "Token của A khác B; không tìm thấy token cá nhân trong payload đồng bộ, export mặc định, log hoặc example chia sẻ."
+  },
+  {
+    "id": "AC08",
+    "criterion": "Server thử nghiệm xác minh query trùng, encoding, JSON multipart cookies redirect timeout và cancel."
+  },
+  {
+    "id": "AC09",
+    "criterion": "Body 20 MB không làm UI treo; preview có giới hạn và lưu raw file được. Hủy stream kết thúc tác vụ và giải phóng tài nguyên."
+  },
+  {
+    "id": "AC10",
+    "criterion": "Dự án 1.000 request mở và tìm kiếm dùng được; mục tiêu tương tác thường dưới 200 ms trên máy 4 core RAM 8 GB SSD."
+  },
+  {
+    "id": "AC11",
+    "criterion": "Backup rồi restore trên server sạch giữ số đối tượng revision quyền và hash file; có hướng dẫn xử lý khác biệt."
+  },
+  {
+    "id": "AC12",
+    "criterion": "Cài trên Windows 11 x64 sạch, xử lý WebView2 nếu cần; app cá nhân chạy offline và không cần cloud activation."
+  }
+]

@@ -1,0 +1,23 @@
+﻿   Compiling swaggen-p00 v0.0.0 (D:\code\potmen\spikes\p00)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.34s
+     Running unittests src\lib.rs (spikes\p00\target\debug\build\swaggen-p00/377fab7639bb3286\out\swaggen_p00-377fab7639bb3286.exe)
+
+running 14 tests
+test journal::tests::crc_known_vector ... ok
+test journal::tests::native_replace_rejects_embedded_nul_before_api_call ... ok
+test journal::tests::failed_compaction_keeps_acknowledged_data ... ok
+test journal::tests::oversized_file_is_rejected_before_replay_without_truncation ... ok
+test journal::tests::unknown_format_version_is_rejected_without_migration_guess ... ok
+test journal::tests::oversized_batch_does_not_damage_existing_data ... ok
+test journal::tests::second_writer_is_rejected ... ok
+test journal::tests::actual_write_error_poisoning_requires_reopen_and_preserves_ack ... ok
+test journal::tests::native_write_through_replace_closed_files ... ok
+test journal::tests::failed_final_compaction_flush_never_acks_writes_to_old_handle ... ok
+test journal::tests::compaction_reopens_full_state_and_preserves_writer_fence ... ok
+test journal::tests::corrupt_complete_frame_is_preserved_and_rejected ... ok
+test journal::tests::every_torn_tail_recovers_whole_batches_and_allows_append ... ok
+test journal::tests::injected_partial_write_errors_never_ack_or_split_draft_and_outbox ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.05s
+
+

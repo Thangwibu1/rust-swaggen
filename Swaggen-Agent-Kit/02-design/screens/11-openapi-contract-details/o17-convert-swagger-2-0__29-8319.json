@@ -1,0 +1,52 @@
+{
+  "node": {
+    "page": "11-openapi-contract-details",
+    "page_id": "27:322",
+    "id": "29:8319",
+    "name": "O17 / Convert Swagger 2.0",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/11-openapi-contract-details/o17-convert-swagger-2-0__29-8319",
+    "requirements": [
+      "IM04",
+      "OA09"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:8320",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:8323",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:8484",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Convert Swagger 2.0",
+    "DisNote API / openapi / O17",
+    "SOURCE FEATURE",
+    "CONVERSION",
+    "COMPATIBILITY"
+  ]
+}

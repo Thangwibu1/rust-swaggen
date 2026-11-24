@@ -1,0 +1,49 @@
+{
+  "node": {
+    "page": "02-access-workspaces",
+    "page_id": "4:90",
+    "id": "6:1436",
+    "name": "A12 / Your API workspace starts here",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/02-access-workspaces/a12-your-api-workspace-starts-here__6-1436",
+    "requirements": [
+      "RQ08",
+      "WS06"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "6:1437",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "6:1440",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "6:1565",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Your API workspace starts here",
+    "DisNote API / Team workspace"
+  ]
+}

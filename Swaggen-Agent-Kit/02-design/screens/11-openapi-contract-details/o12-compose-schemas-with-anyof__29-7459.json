@@ -1,0 +1,59 @@
+{
+  "node": {
+    "page": "11-openapi-contract-details",
+    "page_id": "27:322",
+    "id": "29:7459",
+    "name": "O12 / Compose schemas with anyOf",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/11-openapi-contract-details/o12-compose-schemas-with-anyof__29-7459",
+    "requirements": [
+      "OA07"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:7460",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:7463",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:7618",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Compose schemas with anyOf",
+    "DisNote API / openapi / O12",
+    "Schema definition",
+    "Composition inspector",
+    "Keyword",
+    "anyOf",
+    "Composition",
+    "Branch 1",
+    "Base schema / email task",
+    "Expand branch",
+    "Branch 2",
+    "Additional fields / webhook task",
+    "Expand branch"
+  ]
+}

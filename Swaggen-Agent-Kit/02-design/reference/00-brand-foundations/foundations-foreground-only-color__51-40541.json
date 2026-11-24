@@ -1,0 +1,65 @@
+{
+  "node": {
+    "page": "00-brand-foundations",
+    "page_id": "0:1",
+    "id": "51:40541",
+    "name": "Foundations / Foreground-only color",
+    "type": "frame",
+    "width": "1440",
+    "height": "308",
+    "path": "02-design/reference/00-brand-foundations/foundations-foreground-only-color__51-40541",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "51:40542",
+      "name": "White surfaces. Meaningful color.",
+      "type": "text",
+      "x": "49",
+      "y": "41",
+      "width": "1320",
+      "height": "34"
+    },
+    {
+      "id": "51:40543",
+      "name": "Page, sidebar, panels, buttons, badges and notices stay white. Apply color to method names, status text, meaningful icons and brand marks.",
+      "type": "text",
+      "x": "49",
+      "y": "99",
+      "width": "1320",
+      "height": "20"
+    },
+    {
+      "id": "51:40544",
+      "name": "Frame",
+      "type": "frame",
+      "x": "49",
+      "y": "143",
+      "width": "516",
+      "height": "28"
+    },
+    {
+      "id": "51:40559",
+      "name": "Frame",
+      "type": "frame",
+      "x": "49",
+      "y": "195",
+      "width": "647",
+      "height": "28"
+    },
+    {
+      "id": "51:40568",
+      "name": "Keep ordinary text neutral. Use labels and icons alongside color. Focus and selection remain visible through outlines, underlines and colored labels.",
+      "type": "text",
+      "x": "49",
+      "y": "247",
+      "width": "1320",
+      "height": "20"
+    }
+  ],
+  "text_layer_names": [
+    "White surfaces. Meaningful color.",
+    "Page, sidebar, panels, buttons, badges and notices stay white. Apply color to method names, status text, meaningful icons and brand marks.",
+    "Keep ordinary text neutral. Use labels and icons alongside color. Focus and selection remain visible through outlines, underlines and colored labels."
+  ]
+}

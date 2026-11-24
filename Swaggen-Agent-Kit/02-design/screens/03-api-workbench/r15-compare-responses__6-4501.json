@@ -1,0 +1,55 @@
+{
+  "node": {
+    "page": "03-api-workbench",
+    "page_id": "4:91",
+    "id": "6:4501",
+    "name": "R15 / Compare responses",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/03-api-workbench/r15-compare-responses__6-4501",
+    "requirements": [
+      "RS09",
+      "RS10"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "6:4502",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "6:4505",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "6:4693",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Compare responses",
+    "DisNote API / Team workspace",
+    "Previous · 10:38",
+    "Revision 12",
+    "Current · 10:42",
+    "Revision 13",
+    "Merge decision",
+    "Keep my request overrides and personal token"
+  ]
+}

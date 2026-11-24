@@ -1,0 +1,60 @@
+{
+  "node": {
+    "page": "04-api-design-collaboration",
+    "page_id": "4:92",
+    "id": "6:7502",
+    "name": "D11 / Export API documentation",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/04-api-design-collaboration/d11-export-api-documentation__6-7502",
+    "requirements": [
+      "DC10",
+      "IM04"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "6:7503",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "6:7506",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "6:7658",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Export API documentation",
+    "DisNote API / Team workspace",
+    "Configuration",
+    "Format",
+    "Workspace configuration",
+    "Specification revision",
+    "Workspace configuration",
+    "Examples",
+    "Workspace configuration",
+    "File name",
+    "Workspace configuration",
+    "Access & sharing",
+    "Changes are saved locally before they are published to your team."
+  ]
+}

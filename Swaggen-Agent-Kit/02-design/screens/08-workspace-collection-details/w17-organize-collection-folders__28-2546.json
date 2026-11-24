@@ -1,0 +1,50 @@
+{
+  "node": {
+    "page": "08-workspace-collection-details",
+    "page_id": "27:319",
+    "id": "28:2546",
+    "name": "W17 / Organize collection folders",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/08-workspace-collection-details/w17-organize-collection-folders__28-2546",
+    "requirements": [
+      "UX01",
+      "WS06"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "28:2547",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "28:2550",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "28:2769",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Organize collection folders",
+    "DisNote API / workspace / W17",
+    "Select a folder to inspect its requests. Drag handles reorder it"
+  ]
+}

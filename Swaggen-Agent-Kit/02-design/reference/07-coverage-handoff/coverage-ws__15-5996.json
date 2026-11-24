@@ -1,0 +1,157 @@
+{
+  "node": {
+    "page": "07-coverage-handoff",
+    "page_id": "4:95",
+    "id": "15:5996",
+    "name": "Coverage / WS",
+    "type": "frame",
+    "width": "1440",
+    "height": "716",
+    "path": "02-design/reference/07-coverage-handoff/coverage-ws__15-5996",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "15:5997",
+      "name": "WS / REQUIREMENT COVERAGE",
+      "type": "text",
+      "x": "41",
+      "y": "41",
+      "width": "360",
+      "height": "34"
+    },
+    {
+      "id": "15:5998",
+      "name": "WS01",
+      "type": "frame",
+      "x": "41",
+      "y": "91",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6003",
+      "name": "WS02",
+      "type": "frame",
+      "x": "41",
+      "y": "151",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6008",
+      "name": "WS03",
+      "type": "frame",
+      "x": "41",
+      "y": "211",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6013",
+      "name": "WS04",
+      "type": "frame",
+      "x": "41",
+      "y": "271",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6018",
+      "name": "WS05",
+      "type": "frame",
+      "x": "41",
+      "y": "331",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6023",
+      "name": "WS06",
+      "type": "frame",
+      "x": "41",
+      "y": "391",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6028",
+      "name": "WS07",
+      "type": "frame",
+      "x": "41",
+      "y": "451",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6033",
+      "name": "WS08",
+      "type": "frame",
+      "x": "41",
+      "y": "511",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6038",
+      "name": "WS09",
+      "type": "frame",
+      "x": "41",
+      "y": "571",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6043",
+      "name": "WS10",
+      "type": "frame",
+      "x": "41",
+      "y": "631",
+      "width": "1360",
+      "height": "44"
+    }
+  ],
+  "text_layer_names": [
+    "WS / REQUIREMENT COVERAGE",
+    "WS01",
+    "Chế độ cá nhân",
+    "Stage A",
+    "A07 · A08",
+    "WS02",
+    "Kết nối server",
+    "Stage A",
+    "A05 · A06",
+    "WS03",
+    "Tài khoản nội bộ",
+    "Stage A",
+    "A01 · A02 · A03 · A04 · S02 · M06",
+    "WS04",
+    "Quản lý workspace",
+    "Stage A",
+    "A07 · A08 · A09 · A11",
+    "WS05",
+    "Thành viên và vai trò",
+    "Stage A",
+    "A10 · C01 · C02 · X03",
+    "WS06",
+    "Collection và folder",
+    "Stage A",
+    "A12 · M01",
+    "WS07",
+    "Tìm kiếm và nhãn",
+    "Stage A",
+    "A13 · X02",
+    "WS08",
+    "Thiết lập dự án",
+    "Stage A",
+    "A07 · A09 · S01",
+    "WS09",
+    "Quản lý vòng đời",
+    "Stage B",
+    "A08 · S01 · X07 · M04",
+    "WS10",
+    "Chuyển chủ sở hữu",
+    "Stage B",
+    "S01 · X08"
+  ]
+}

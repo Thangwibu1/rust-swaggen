@@ -1,0 +1,54 @@
+{
+  "node": {
+    "page": "12-collaboration-sync-details",
+    "page_id": "27:323",
+    "id": "29:12201",
+    "name": "C30 / Deep link access denied",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/12-collaboration-sync-details/c30-deep-link-access-denied__29-12201",
+    "requirements": [
+      "CO09",
+      "SC04"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:12202",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:12205",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:12351",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Deep link access denied",
+    "DisNote API / collab / C30",
+    "Action required",
+    "Workspace",
+    "DisNote API",
+    "Your account",
+    "anh@gmail.com"
+  ]
+}

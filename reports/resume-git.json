@@ -1,0 +1,7 @@
+{
+  "command": "git rev-parse --is-inside-work-tree",
+  "exit_code": 128,
+  "status": "NOT_APPLICABLE",
+  "timestamp": "2026-11-24T04:57:46.8122124Z",
+  "detail": "Git status/diff unavailable if no repository metadata exists; no repository initialized"
+}

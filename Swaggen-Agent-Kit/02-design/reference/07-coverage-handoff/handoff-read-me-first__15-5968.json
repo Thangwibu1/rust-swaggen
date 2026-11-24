@@ -1,0 +1,126 @@
+{
+  "node": {
+    "page": "07-coverage-handoff",
+    "page_id": "4:95",
+    "id": "15:5968",
+    "name": "Handoff / Read me first",
+    "type": "frame",
+    "width": "1440",
+    "height": "750",
+    "path": "02-design/reference/07-coverage-handoff/handoff-read-me-first__15-5968",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "15:5969",
+      "name": "Brand/Wordmark",
+      "type": "instance",
+      "x": "48",
+      "y": "48",
+      "width": "145",
+      "height": "100"
+    },
+    {
+      "id": "15:5986",
+      "name": "DESIGN HANDOFF / SWAGGEN",
+      "type": "text",
+      "x": "48",
+      "y": "172",
+      "width": "461",
+      "height": "44"
+    },
+    {
+      "id": "15:5987",
+      "name": "108 desktop screens & states · 160 requirement references",
+      "type": "text",
+      "x": "48",
+      "y": "240",
+      "width": "616",
+      "height": "28"
+    },
+    {
+      "id": "15:5988",
+      "name": "Start here → 00 Brand & foundations → 01 Component library →",
+      "type": "text",
+      "x": "48",
+      "y": "292",
+      "width": "1300",
+      "height": "22"
+    },
+    {
+      "id": "15:5989",
+      "name": "Desktop only / 1440 × 900 / Light theme / JetBrains Mono",
+      "type": "text",
+      "x": "48",
+      "y": "338",
+      "width": "484",
+      "height": "20"
+    },
+    {
+      "id": "15:5990",
+      "name": "Google-only authentication supersedes local passwords and re",
+      "type": "text",
+      "x": "48",
+      "y": "382",
+      "width": "1300",
+      "height": "44"
+    },
+    {
+      "id": "15:5991",
+      "name": "A = initial team release · B = extended workflows · C = adva",
+      "type": "text",
+      "x": "48",
+      "y": "450",
+      "width": "1300",
+      "height": "20"
+    },
+    {
+      "id": "15:5992",
+      "name": "Backend: Rust + MongoDB on the existing Coolify VPS. Desktop",
+      "type": "text",
+      "x": "48",
+      "y": "494",
+      "width": "1300",
+      "height": "40"
+    },
+    {
+      "id": "15:5993",
+      "name": "Prototype flows: Access, Workbench, API design + collaborati",
+      "type": "text",
+      "x": "48",
+      "y": "558",
+      "width": "1300",
+      "height": "40"
+    },
+    {
+      "id": "15:5994",
+      "name": "Reuse component instances and semantic variables. Do not det",
+      "type": "text",
+      "x": "48",
+      "y": "622",
+      "width": "1300",
+      "height": "40"
+    },
+    {
+      "id": "15:5995",
+      "name": "Assets: editable Swaggen vector mark; Lucide icons (ISC), Go",
+      "type": "text",
+      "x": "48",
+      "y": "686",
+      "width": "1300",
+      "height": "16"
+    }
+  ],
+  "text_layer_names": [
+    "DESIGN HANDOFF / SWAGGEN",
+    "108 desktop screens & states · 160 requirement references",
+    "Start here → 00 Brand & foundations → 01 Component library →",
+    "Desktop only / 1440 × 900 / Light theme / JetBrains Mono",
+    "Google-only authentication supersedes local passwords and re",
+    "A = initial team release · B = extended workflows · C = adva",
+    "Backend: Rust + MongoDB on the existing Coolify VPS. Desktop",
+    "Prototype flows: Access, Workbench, API design + collaborati",
+    "Reuse component instances and semantic variables. Do not det",
+    "Assets: editable Swaggen vector mark; Lucide icons (ISC), Go"
+  ]
+}

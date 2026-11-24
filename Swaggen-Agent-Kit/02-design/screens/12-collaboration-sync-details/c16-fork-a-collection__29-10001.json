@@ -1,0 +1,55 @@
+{
+  "node": {
+    "page": "12-collaboration-sync-details",
+    "page_id": "27:323",
+    "id": "29:10001",
+    "name": "C16 / Fork a collection",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/12-collaboration-sync-details/c16-fork-a-collection__29-10001",
+    "requirements": [
+      "SY10",
+      "WS06"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:10002",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:10005",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:10151",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Fork a collection",
+    "DisNote API / collab / C16",
+    "Collection",
+    "Tasks",
+    "Destination",
+    "Fork name",
+    "Link to source",
+    "Keep upstream revision reference"
+  ]
+}

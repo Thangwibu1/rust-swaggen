@@ -1,0 +1,52 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:247",
+    "name": "Checkbox",
+    "type": "frame",
+    "width": "160",
+    "height": "160",
+    "path": "02-design/components/01-component-library/checkbox__5-247",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "5:248",
+      "name": "State=Unchecked",
+      "type": "symbol",
+      "x": "24",
+      "y": "56",
+      "width": "24",
+      "height": "24"
+    },
+    {
+      "id": "5:250",
+      "name": "State=Checked",
+      "type": "symbol",
+      "x": "68",
+      "y": "56",
+      "width": "24",
+      "height": "24"
+    },
+    {
+      "id": "5:252",
+      "name": "State=Mixed",
+      "type": "symbol",
+      "x": "112",
+      "y": "56",
+      "width": "24",
+      "height": "24"
+    },
+    {
+      "id": "5:254",
+      "name": "State=Disabled",
+      "type": "symbol",
+      "x": "24",
+      "y": "100",
+      "width": "24",
+      "height": "24"
+    }
+  ],
+  "text_layer_names": []
+}

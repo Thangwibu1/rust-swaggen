@@ -1,0 +1,56 @@
+{
+  "node": {
+    "page": "08-workspace-collection-details",
+    "page_id": "27:319",
+    "id": "28:3311",
+    "name": "W21 / Revoke an invitation",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/08-workspace-collection-details/w21-revoke-an-invitation__28-3311",
+    "requirements": [
+      "SC04",
+      "WS05"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "28:3312",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "28:3315",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "28:3464",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Revoke an invitation",
+    "DisNote API / workspace / W21",
+    "Review details",
+    "Invitee",
+    "minh@gmail.com",
+    "Role",
+    "Editor",
+    "Status",
+    "Pending"
+  ]
+}

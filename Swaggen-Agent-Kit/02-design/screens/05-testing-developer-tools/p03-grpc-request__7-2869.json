@@ -1,0 +1,61 @@
+{
+  "node": {
+    "page": "05-testing-developer-tools",
+    "page_id": "4:93",
+    "id": "7:2869",
+    "name": "P03 / gRPC request",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/05-testing-developer-tools/p03-grpc-request__7-2869",
+    "requirements": [
+      "PR05"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "7:2870",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "7:2873",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "7:3031",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "gRPC request",
+    "DisNote API / Developer tools",
+    "Configuration",
+    "Server",
+    "Workspace configuration",
+    "Proto definition",
+    "Workspace configuration",
+    "Service",
+    "Workspace configuration",
+    "Method",
+    "Workspace configuration",
+    "Metadata",
+    "Workspace configuration",
+    "Access & sharing",
+    "Changes are saved locally before they are published to your team."
+  ]
+}

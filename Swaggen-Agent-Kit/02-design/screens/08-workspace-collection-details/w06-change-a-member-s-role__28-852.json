@@ -1,0 +1,56 @@
+{
+  "node": {
+    "page": "08-workspace-collection-details",
+    "page_id": "27:319",
+    "id": "28:852",
+    "name": "W06 / Change a member’s role",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/08-workspace-collection-details/w06-change-a-member-s-role__28-852",
+    "requirements": [
+      "SC04",
+      "WS05"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "28:853",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "28:856",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "28:1000",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Change a member’s role",
+    "DisNote API / workspace / W06",
+    "Member",
+    "Minh Tran · minh@gmail.com",
+    "Current role",
+    "Viewer",
+    "New role",
+    "Publishing access",
+    "Allow after this role change"
+  ]
+}

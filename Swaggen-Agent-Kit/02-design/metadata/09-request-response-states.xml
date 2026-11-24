@@ -1,0 +1,1589 @@
+<canvas id="27:320" name="09 • Request &amp; response states" x="0" y="0" width="0" height="0">
+  <frame id="28:3551" name="Q01 / Choose an HTTP method" x="0" y="0" width="1440" height="900">
+    <instance id="28:3552" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="28:3555" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="28:3556" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="28:3591" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="28:3655" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="28:3656" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="28:3669" name="Detail viewport / Q01" x="0" y="64" width="1128" height="772">
+          <frame id="28:3670" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="28:3671" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="28:3672" name="Choose an HTTP method" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="28:3673" name="DisNote API / request / Q01" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="28:3674" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <frame id="28:3675" name="Frame" x="0" y="0" width="1056" height="354">
+              <frame id="28:3676" name="Context / detail editor" x="0" y="0" width="488" height="354">
+                <text id="28:3677" name="Available actions" x="25" y="21" width="133" height="20" />
+                <frame id="28:3678" name="Frame" x="25" y="53" width="440" height="280">
+                  <instance id="28:3679" name="Menu item" x="0" y="0" width="440" height="40" />
+                  <instance id="28:3684" name="Menu item" x="0" y="40" width="440" height="40" />
+                  <instance id="28:3689" name="Menu item" x="0" y="80" width="440" height="40" />
+                  <instance id="28:3694" name="Menu item" x="0" y="120" width="440" height="40" />
+                  <instance id="28:3699" name="Menu item" x="0" y="160" width="440" height="40" />
+                  <instance id="28:3704" name="Menu item" x="0" y="200" width="440" height="40" />
+                  <instance id="28:3709" name="Menu item" x="0" y="240" width="440" height="40" />
+                </frame>
+              </frame>
+              <frame id="28:3714" name="Context / detail editor" x="512" y="0" width="544" height="154">
+                <text id="28:3715" name="Selection details" x="25" y="21" width="133" height="20" />
+                <text id="28:3716" name="Choose an action from the menu. Your current draft stays availab" x="25" y="53" width="496" height="40" />
+                <instance id="28:3717" name="Badge" x="25" y="105" width="152" height="28" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="28:3719" name="Actions / Q01" x="24" y="700" width="1080" height="40">
+            <instance id="28:3720" name="Button" x="796" y="0" width="136" height="40" />
+            <instance id="28:3722" name="Button" x="944" y="0" width="136" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="28:3724" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="28:3727" name="Q01 · Choose an HTTP method · RQ01" x="0" y="-32" width="1440" height="20" />
+  <frame id="28:3728" name="Q02 / Path and query parameters" x="1520" y="0" width="1440" height="900">
+    <instance id="28:3729" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="28:3732" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="28:3733" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="28:3768" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="28:3832" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="28:3833" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="28:3846" name="Detail viewport / Q02" x="0" y="64" width="1128" height="772">
+          <frame id="28:3847" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="28:3848" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="28:3849" name="Path and query parameters" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="28:3850" name="DisNote API / request / Q02" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="28:3851" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <instance id="28:3852" name="Notice" x="0" y="0" width="1080" height="52" />
+            <frame id="28:3858" name="Context / detail editor" x="0" y="68" width="1080" height="294">
+              <frame id="28:3859" name="Frame" x="25" y="21" width="1032" height="252">
+                <frame id="28:3860" name="Frame" x="0" y="0" width="968" height="32">
+                  <text id="28:3861" name="PARAMETER" x="0" y="8" width="220" height="16" />
+                  <text id="28:3862" name="VALUE" x="232" y="8" width="520" height="16" />
+                  <text id="28:3863" name="ORIGIN" x="764" y="8" width="204" height="16" />
+                </frame>
+                <instance id="28:3864" name="Data row" x="0" y="32" width="1032" height="44" />
+                <instance id="28:3871" name="Data row" x="0" y="76" width="1032" height="44" />
+                <instance id="28:3877" name="Data row" x="0" y="120" width="1032" height="44" />
+                <instance id="28:3883" name="Data row" x="0" y="164" width="1032" height="44" />
+                <instance id="28:3889" name="Data row" x="0" y="208" width="1032" height="44" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="28:3895" name="Actions / Q02" x="24" y="700" width="1080" height="40">
+            <instance id="28:3896" name="Button" x="756" y="0" width="136" height="40" />
+            <instance id="28:3898" name="Button" x="904" y="0" width="176" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="28:3900" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="28:3903" name="Q02 · Path and query parameters · RQ01 RQ02" x="1520" y="-32" width="1440" height="20" />
+  <frame id="28:3904" name="Q03 / URL encoding preview" x="3040" y="0" width="1440" height="900">
+    <instance id="28:3905" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="28:3908" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="28:3909" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="28:3944" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="28:4008" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="28:4009" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="28:4022" name="Detail viewport / Q03" x="0" y="64" width="1128" height="772">
+          <frame id="28:4023" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="28:4024" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="28:4025" name="URL encoding preview" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="28:4026" name="DisNote API / request / Q03" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="28:4027" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <frame id="28:4028" name="Frame" x="0" y="0" width="1080" height="178">
+              <frame id="28:4029" name="Context / detail editor" x="0" y="0" width="528" height="178">
+                <text id="28:4030" name="Entered values" x="25" y="21" width="110" height="20" />
+                <frame id="28:4031" name="Frame" x="25" y="53" width="480" height="104">
+                  <instance id="28:4032" name="Code line" x="0" y="0" width="480" height="26" />
+                  <instance id="28:4035" name="Code line" x="0" y="26" width="480" height="26" />
+                  <instance id="28:4038" name="Code line" x="0" y="52" width="480" height="26" />
+                  <instance id="28:4041" name="Code line" x="0" y="78" width="480" height="26" />
+                </frame>
+              </frame>
+              <frame id="28:4044" name="Context / detail editor" x="552" y="0" width="528" height="178">
+                <text id="28:4045" name="Wire representation" x="25" y="21" width="149" height="20" />
+                <frame id="28:4046" name="Frame" x="25" y="53" width="480" height="104">
+                  <instance id="28:4047" name="Code line" x="0" y="0" width="480" height="26" />
+                  <instance id="28:4050" name="Code line" x="0" y="26" width="480" height="26" />
+                  <instance id="28:4053" name="Code line" x="0" y="52" width="480" height="26" />
+                  <instance id="28:4056" name="Code line" x="0" y="78" width="480" height="26" />
+                </frame>
+              </frame>
+            </frame>
+          </frame>
+          <frame id="28:4059" name="Actions / Q03" x="24" y="700" width="1080" height="40">
+            <instance id="28:4060" name="Button" x="772" y="0" width="136" height="40" />
+            <instance id="28:4062" name="Button" x="920" y="0" width="160" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="28:4064" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="28:4067" name="Q03 · URL encoding preview · RQ02 RQ07" x="3040" y="-32" width="1440" height="20" />
+  <frame id="28:4068" name="Q04 / Headers and generated values" x="0" y="1040" width="1440" height="900">
+    <instance id="28:4069" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="28:4072" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="28:4073" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="28:4108" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="28:4172" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="28:4173" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="28:4186" name="Detail viewport / Q04" x="0" y="64" width="1128" height="772">
+          <frame id="28:4187" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="28:4188" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="28:4189" name="Headers and generated values" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="28:4190" name="DisNote API / request / Q04" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="28:4191" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <frame id="28:4192" name="Context / detail editor" x="0" y="0" width="1080" height="294">
+              <frame id="28:4193" name="Frame" x="25" y="21" width="1032" height="252">
+                <frame id="28:4194" name="Frame" x="0" y="0" width="968" height="32">
+                  <text id="28:4195" name="HEADER" x="0" y="8" width="220" height="16" />
+                  <text id="28:4196" name="VALUE" x="232" y="8" width="520" height="16" />
+                  <text id="28:4197" name="SOURCE" x="764" y="8" width="204" height="16" />
+                </frame>
+                <instance id="28:4198" name="Data row" x="0" y="32" width="1032" height="44" />
+                <instance id="28:4204" name="Data row" x="0" y="76" width="1032" height="44" />
+                <instance id="28:4210" name="Data row" x="0" y="120" width="1032" height="44" />
+                <instance id="28:4216" name="Data row" x="0" y="164" width="1032" height="44" />
+                <instance id="28:4222" name="Data row" x="0" y="208" width="1032" height="44" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="28:4228" name="Actions / Q04" x="24" y="700" width="1080" height="40">
+            <instance id="28:4229" name="Button" x="796" y="0" width="136" height="40" />
+            <instance id="28:4231" name="Button" x="944" y="0" width="136" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="28:4233" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="28:4236" name="Q04 · Headers and generated values · RQ03 AU03" x="0" y="1008" width="1440" height="20" />
+  <frame id="28:4237" name="Q05 / Header validation error" x="1520" y="1040" width="1440" height="900">
+    <instance id="28:4238" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="28:4241" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="28:4242" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="28:4277" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="28:4341" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="28:4342" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="28:4355" name="Detail viewport / Q05" x="0" y="64" width="1128" height="772">
+          <frame id="28:4356" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="28:4357" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="28:4358" name="Header validation error" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="28:4359" name="DisNote API / request / Q05" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="28:4360" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <instance id="28:4361" name="Notice" x="0" y="0" width="1080" height="52" />
+            <frame id="28:4367" name="Context / detail editor" x="0" y="68" width="1080" height="206">
+              <frame id="28:4368" name="Frame" x="25" y="21" width="1032" height="164">
+                <frame id="28:4369" name="Frame" x="0" y="0" width="968" height="32">
+                  <text id="28:4370" name="HEADER" x="0" y="8" width="220" height="16" />
+                  <text id="28:4371" name="VALUE" x="232" y="8" width="520" height="16" />
+                  <text id="28:4372" name="VALIDATION" x="764" y="8" width="204" height="16" />
+                </frame>
+                <instance id="28:4373" name="Data row" x="0" y="32" width="1032" height="44" />
+                <instance id="28:4379" name="Data row" x="0" y="76" width="1032" height="44" />
+                <instance id="28:4385" name="Data row" x="0" y="120" width="1032" height="44" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="28:4391" name="Actions / Q05" x="24" y="700" width="1080" height="40">
+            <instance id="28:4392" name="Button" x="796" y="0" width="136" height="40" />
+            <instance id="28:4394" name="Button" x="944" y="0" width="136" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="28:4396" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="28:4399" name="Q05 · Header validation error · RQ03" x="1520" y="1008" width="1440" height="20" />
+  <frame id="28:4400" name="Q06 / Choose request body type" x="3040" y="1040" width="1440" height="900">
+    <instance id="28:4401" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="28:4404" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="28:4405" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="28:4440" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="28:4504" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="28:4505" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="28:4518" name="Detail viewport / Q06" x="0" y="64" width="1128" height="772">
+          <frame id="28:4519" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="28:4520" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="28:4521" name="Choose request body type" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="28:4522" name="DisNote API / request / Q06" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="28:4523" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <frame id="28:4524" name="Frame" x="0" y="0" width="1056" height="354">
+              <frame id="28:4525" name="Context / detail editor" x="0" y="0" width="488" height="354">
+                <text id="28:4526" name="Available actions" x="25" y="21" width="133" height="20" />
+                <frame id="28:4527" name="Frame" x="25" y="53" width="440" height="280">
+                  <instance id="28:4528" name="Menu item" x="0" y="0" width="440" height="40" />
+                  <instance id="28:4533" name="Menu item" x="0" y="40" width="440" height="40" />
+                  <instance id="28:4538" name="Menu item" x="0" y="80" width="440" height="40" />
+                  <instance id="28:4543" name="Menu item" x="0" y="120" width="440" height="40" />
+                  <instance id="28:4548" name="Menu item" x="0" y="160" width="440" height="40" />
+                  <instance id="28:4553" name="Menu item" x="0" y="200" width="440" height="40" />
+                  <instance id="28:4558" name="Menu item" x="0" y="240" width="440" height="40" />
+                </frame>
+              </frame>
+              <frame id="28:4563" name="Context / detail editor" x="512" y="0" width="544" height="154">
+                <text id="28:4564" name="Selection details" x="25" y="21" width="133" height="20" />
+                <text id="28:4565" name="Choose an action from the menu. Your current draft stays availab" x="25" y="53" width="496" height="40" />
+                <instance id="28:4566" name="Badge" x="25" y="105" width="152" height="28" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="28:4568" name="Actions / Q06" x="24" y="700" width="1080" height="40">
+            <instance id="28:4569" name="Button" x="796" y="0" width="136" height="40" />
+            <instance id="28:4571" name="Button" x="944" y="0" width="136" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="28:4573" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="28:4576" name="Q06 · Choose request body type · RQ04" x="3040" y="1008" width="1440" height="20" />
+  <frame id="28:4577" name="Q07 / JSON request body" x="0" y="2080" width="1440" height="900">
+    <instance id="28:4578" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="28:4581" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="28:4582" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="28:4617" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="28:4681" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="28:4682" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="28:4695" name="Detail viewport / Q07" x="0" y="64" width="1128" height="772">
+          <frame id="28:4696" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="28:4697" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="28:4698" name="JSON request body" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="28:4699" name="DisNote API / request / Q07" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="28:4700" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <frame id="28:4701" name="Frame" x="0" y="0" width="857" height="36">
+              <instance id="28:4702" name="Request tab" x="0" y="0" width="240" height="36" />
+              <instance id="28:4706" name="Badge" x="252" y="4" width="73" height="28" />
+              <text id="28:4708" name="{{base_url}}/v1/tasks" x="337" y="7" width="520" height="22" />
+            </frame>
+            <frame id="28:4709" name="Context / detail editor" x="0" y="52" width="1080" height="212">
+              <frame id="28:4710" name="Frame" x="25" y="21" width="147" height="28">
+                <text id="28:4711" name="JSON" x="0" y="4" width="32" height="20" />
+                <instance id="28:4712" name="Badge" x="48" y="0" width="99" height="28" />
+              </frame>
+              <frame id="28:4714" name="Frame" x="25" y="61" width="1032" height="130">
+                <instance id="28:4715" name="Code line" x="0" y="0" width="1032" height="26" />
+                <instance id="28:4718" name="Code line" x="0" y="26" width="1032" height="26" />
+                <instance id="28:4721" name="Code line" x="0" y="52" width="1032" height="26" />
+                <instance id="28:4724" name="Code line" x="0" y="78" width="1032" height="26" />
+                <instance id="28:4727" name="Code line" x="0" y="104" width="1032" height="26" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="28:4730" name="Actions / Q07" x="24" y="700" width="1080" height="40">
+            <instance id="28:4731" name="Button" x="796" y="0" width="136" height="40" />
+            <instance id="28:4733" name="Button" x="944" y="0" width="136" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="28:4735" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="28:4738" name="Q07 · JSON request body · RQ04" x="0" y="2048" width="1440" height="20" />
+  <frame id="28:4739" name="Q08 / Plain text request body" x="1520" y="2080" width="1440" height="900">
+    <instance id="28:4740" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="28:4743" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="28:4744" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="28:4779" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="28:4843" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="28:4844" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="28:4857" name="Detail viewport / Q08" x="0" y="64" width="1128" height="772">
+          <frame id="28:4858" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="28:4859" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="28:4860" name="Plain text request body" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="28:4861" name="DisNote API / request / Q08" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="28:4862" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <frame id="28:4863" name="Frame" x="0" y="0" width="857" height="36">
+              <instance id="28:4864" name="Request tab" x="0" y="0" width="240" height="36" />
+              <instance id="28:4868" name="Badge" x="252" y="4" width="73" height="28" />
+              <text id="28:4870" name="{{base_url}}/v1/tasks" x="337" y="7" width="520" height="22" />
+            </frame>
+            <frame id="28:4871" name="Context / detail editor" x="0" y="52" width="1080" height="160">
+              <frame id="28:4872" name="Frame" x="25" y="21" width="147" height="28">
+                <text id="28:4873" name="Text" x="0" y="4" width="32" height="20" />
+                <instance id="28:4874" name="Badge" x="48" y="0" width="99" height="28" />
+              </frame>
+              <frame id="28:4876" name="Frame" x="25" y="61" width="1032" height="78">
+                <instance id="28:4877" name="Code line" x="0" y="0" width="1032" height="26" />
+                <instance id="28:4880" name="Code line" x="0" y="26" width="1032" height="26" />
+                <instance id="28:4883" name="Code line" x="0" y="52" width="1032" height="26" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="28:4886" name="Actions / Q08" x="24" y="700" width="1080" height="40">
+            <instance id="28:4887" name="Button" x="796" y="0" width="136" height="40" />
+            <instance id="28:4889" name="Button" x="944" y="0" width="136" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="28:4891" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="28:4894" name="Q08 · Plain text request body · RQ04" x="1520" y="2048" width="1440" height="20" />
+  <frame id="28:4895" name="Q09 / XML request body" x="3040" y="2080" width="1440" height="900">
+    <instance id="28:4896" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="28:4899" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="28:4900" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="28:4935" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="28:4999" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="28:5000" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="28:5013" name="Detail viewport / Q09" x="0" y="64" width="1128" height="772">
+          <frame id="28:5014" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="28:5015" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="28:5016" name="XML request body" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="28:5017" name="DisNote API / request / Q09" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="28:5018" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <frame id="28:5019" name="Frame" x="0" y="0" width="857" height="36">
+              <instance id="28:5020" name="Request tab" x="0" y="0" width="240" height="36" />
+              <instance id="28:5024" name="Badge" x="252" y="4" width="73" height="28" />
+              <text id="28:5026" name="{{base_url}}/v1/tasks" x="337" y="7" width="520" height="22" />
+            </frame>
+            <frame id="28:5027" name="Context / detail editor" x="0" y="52" width="1080" height="212">
+              <frame id="28:5028" name="Frame" x="25" y="21" width="139" height="28">
+                <text id="28:5029" name="XML" x="0" y="4" width="24" height="20" />
+                <instance id="28:5030" name="Badge" x="40" y="0" width="99" height="28" />
+              </frame>
+              <frame id="28:5032" name="Frame" x="25" y="61" width="1032" height="130">
+                <instance id="28:5033" name="Code line" x="0" y="0" width="1032" height="26" />
+                <instance id="28:5036" name="Code line" x="0" y="26" width="1032" height="26" />
+                <instance id="28:5039" name="Code line" x="0" y="52" width="1032" height="26" />
+                <instance id="28:5042" name="Code line" x="0" y="78" width="1032" height="26" />
+                <instance id="28:5045" name="Code line" x="0" y="104" width="1032" height="26" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="28:5048" name="Actions / Q09" x="24" y="700" width="1080" height="40">
+            <instance id="28:5049" name="Button" x="796" y="0" width="136" height="40" />
+            <instance id="28:5051" name="Button" x="944" y="0" width="136" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="28:5053" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="28:5056" name="Q09 · XML request body · RQ04" x="3040" y="2048" width="1440" height="20" />
+  <frame id="28:5057" name="Q10 / JSON syntax error" x="0" y="3120" width="1440" height="900">
+    <instance id="28:5058" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="28:5061" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="28:5062" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="28:5097" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="28:5161" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="28:5162" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="28:5175" name="Detail viewport / Q10" x="0" y="64" width="1128" height="772">
+          <frame id="28:5176" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="28:5177" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="28:5178" name="JSON syntax error" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="28:5179" name="DisNote API / request / Q10" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="28:5180" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <instance id="28:5181" name="Notice" x="0" y="0" width="1080" height="52" />
+            <frame id="28:5187" name="Frame" x="0" y="68" width="857" height="36">
+              <instance id="28:5188" name="Request tab" x="0" y="0" width="240" height="36" />
+              <instance id="28:5192" name="Badge" x="252" y="4" width="73" height="28" />
+              <text id="28:5194" name="{{base_url}}/v1/tasks" x="337" y="7" width="520" height="22" />
+            </frame>
+            <frame id="28:5195" name="Context / detail editor" x="0" y="120" width="1080" height="186">
+              <frame id="28:5196" name="Frame" x="25" y="21" width="147" height="28">
+                <text id="28:5197" name="JSON" x="0" y="4" width="32" height="20" />
+                <instance id="28:5198" name="Badge" x="48" y="0" width="99" height="28" />
+              </frame>
+              <frame id="28:5200" name="Frame" x="25" y="61" width="1032" height="104">
+                <instance id="28:5201" name="Code line" x="0" y="0" width="1032" height="26" />
+                <instance id="28:5204" name="Code line" x="0" y="26" width="1032" height="26" />
+                <instance id="28:5207" name="Code line" x="0" y="52" width="1032" height="26" />
+                <instance id="28:5210" name="Code line" x="0" y="78" width="1032" height="26" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="28:5213" name="Actions / Q10" x="24" y="700" width="1080" height="40">
+            <instance id="28:5214" name="Button" x="796" y="0" width="136" height="40" />
+            <instance id="28:5216" name="Button" x="944" y="0" width="136" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="28:5218" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="28:5221" name="Q10 · JSON syntax error · RQ04 RQ06" x="0" y="3088" width="1440" height="20" />
+  <frame id="28:5222" name="Q11 / Form URL encoded body" x="1520" y="3120" width="1440" height="900">
+    <instance id="28:5223" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="28:5226" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="28:5227" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="28:5262" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="28:5326" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="28:5327" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="28:5340" name="Detail viewport / Q11" x="0" y="64" width="1128" height="772">
+          <frame id="28:5341" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="28:5342" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="28:5343" name="Form URL encoded body" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="28:5344" name="DisNote API / request / Q11" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="28:5345" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <frame id="28:5346" name="Frame" x="0" y="0" width="857" height="36">
+              <instance id="28:5347" name="Request tab" x="0" y="0" width="240" height="36" />
+              <instance id="28:5351" name="Badge" x="252" y="4" width="73" height="28" />
+              <text id="28:5353" name="{{base_url}}/v1/tasks" x="337" y="7" width="520" height="22" />
+            </frame>
+            <frame id="28:5354" name="Context / detail editor" x="0" y="52" width="1080" height="250">
+              <frame id="28:5355" name="Frame" x="25" y="21" width="1032" height="208">
+                <frame id="28:5356" name="Frame" x="0" y="0" width="968" height="32">
+                  <text id="28:5357" name="FIELD" x="0" y="8" width="220" height="16" />
+                  <text id="28:5358" name="VALUE" x="232" y="8" width="520" height="16" />
+                  <text id="28:5359" name="ENCODING" x="764" y="8" width="204" height="16" />
+                </frame>
+                <instance id="28:5360" name="Data row" x="0" y="32" width="1032" height="44" />
+                <instance id="28:5366" name="Data row" x="0" y="76" width="1032" height="44" />
+                <instance id="28:5372" name="Data row" x="0" y="120" width="1032" height="44" />
+                <instance id="28:5378" name="Data row" x="0" y="164" width="1032" height="44" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="28:5384" name="Actions / Q11" x="24" y="700" width="1080" height="40">
+            <instance id="28:5385" name="Button" x="796" y="0" width="136" height="40" />
+            <instance id="28:5387" name="Button" x="944" y="0" width="136" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="28:5389" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="28:5392" name="Q11 · Form URL encoded body · RQ04" x="1520" y="3088" width="1440" height="20" />
+  <frame id="28:5393" name="Q12 / Binary request body" x="3040" y="3120" width="1440" height="900">
+    <instance id="28:5394" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="28:5397" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="28:5398" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="28:5433" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="28:5497" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="28:5498" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="28:5511" name="Detail viewport / Q12" x="0" y="64" width="1128" height="772">
+          <frame id="28:5512" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="28:5513" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="28:5514" name="Binary request body" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="28:5515" name="DisNote API / request / Q12" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="28:5516" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <frame id="28:5517" name="Frame" x="0" y="0" width="857" height="36">
+              <instance id="28:5518" name="Request tab" x="0" y="0" width="240" height="36" />
+              <instance id="28:5522" name="Badge" x="252" y="4" width="73" height="28" />
+              <text id="28:5524" name="{{base_url}}/v1/tasks" x="337" y="7" width="520" height="22" />
+            </frame>
+            <frame id="28:5525" name="Context / detail editor" x="0" y="52" width="1080" height="252">
+              <frame id="28:5526" name="Frame" x="25" y="21" width="1032" height="44">
+                <text id="28:5527" name="Body type" x="0" y="12" width="300" height="20" />
+                <instance id="28:5528" name="Select" x="324" y="0" width="708" height="44" />
+              </frame>
+              <frame id="28:5532" name="Frame" x="25" y="77" width="1032" height="44">
+                <text id="28:5533" name="Selected file" x="0" y="12" width="300" height="20" />
+                <frame id="28:5534" name="Frame" x="324" y="0" width="708" height="44">
+                  <text id="28:5535" name="release-notes.pdf · 2.4 MB" x="0" y="12" width="680" height="20" />
+                </frame>
+              </frame>
+              <frame id="28:5536" name="Frame" x="25" y="133" width="1032" height="42">
+                <text id="28:5537" name="Content type" x="0" y="11" width="300" height="20" />
+                <instance id="28:5538" name="Input" x="324" y="0" width="708" height="42" />
+              </frame>
+              <frame id="28:5540" name="Frame" x="25" y="187" width="1032" height="44">
+                <text id="28:5541" name="Upload policy" x="0" y="12" width="300" height="20" />
+                <frame id="28:5542" name="Frame" x="324" y="0" width="708" height="44">
+                  <text id="28:5543" name="Stream from disk; do not load whole file into UI" x="0" y="12" width="680" height="20" />
+                </frame>
+              </frame>
+            </frame>
+          </frame>
+          <frame id="28:5544" name="Actions / Q12" x="24" y="700" width="1080" height="40">
+            <instance id="28:5545" name="Button" x="796" y="0" width="136" height="40" />
+            <instance id="28:5547" name="Button" x="944" y="0" width="136" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="28:5549" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="28:5552" name="Q12 · Binary request body · RQ04 RQ05" x="3040" y="3088" width="1440" height="20" />
+  <frame id="28:5553" name="Q13 / Request without a body" x="0" y="4160" width="1440" height="900">
+    <instance id="28:5554" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="28:5557" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="28:5558" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="28:5593" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="28:5657" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="28:5658" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="28:5671" name="Detail viewport / Q13" x="0" y="64" width="1128" height="772">
+          <frame id="28:5672" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="28:5673" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="28:5674" name="Request without a body" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="28:5675" name="DisNote API / request / Q13" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="28:5676" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <instance id="28:5677" name="Notice" x="0" y="0" width="1080" height="52" />
+            <frame id="28:5683" name="Frame" x="0" y="68" width="857" height="36">
+              <instance id="28:5684" name="Request tab" x="0" y="0" width="240" height="36" />
+              <instance id="28:5688" name="Badge" x="252" y="4" width="73" height="28" />
+              <text id="28:5690" name="{{base_url}}/v1/tasks" x="337" y="7" width="520" height="22" />
+            </frame>
+            <frame id="28:5691" name="Context / detail editor" x="0" y="120" width="1080" height="238">
+              <frame id="28:5692" name="Frame" x="25" y="21" width="184" height="28">
+                <instance id="28:5693" name="Icon/shield-check" x="0" y="4" width="20" height="20" />
+                <text id="28:5696" name="Review details" x="32" y="0" width="152" height="28" />
+              </frame>
+              <frame id="28:5697" name="Frame" x="25" y="61" width="1032" height="44">
+                <text id="28:5698" name="Method" x="0" y="12" width="300" height="20" />
+                <frame id="28:5699" name="Frame" x="324" y="0" width="708" height="44">
+                  <text id="28:5700" name="HEAD" x="0" y="12" width="680" height="20" />
+                </frame>
+              </frame>
+              <frame id="28:5701" name="Frame" x="25" y="117" width="1032" height="44">
+                <text id="28:5702" name="URL" x="0" y="12" width="300" height="20" />
+                <frame id="28:5703" name="Frame" x="324" y="0" width="708" height="44">
+                  <text id="28:5704" name="{{base_url}}/v1/tasks" x="0" y="12" width="680" height="20" />
+                </frame>
+              </frame>
+              <frame id="28:5705" name="Frame" x="25" y="173" width="1032" height="44">
+                <text id="28:5706" name="Expected result" x="0" y="12" width="300" height="20" />
+                <frame id="28:5707" name="Frame" x="324" y="0" width="708" height="44">
+                  <text id="28:5708" name="Response headers without a body" x="0" y="12" width="680" height="20" />
+                </frame>
+              </frame>
+            </frame>
+          </frame>
+          <frame id="28:5709" name="Actions / Q13" x="24" y="700" width="1080" height="40">
+            <instance id="28:5710" name="Button" x="756" y="0" width="136" height="40" />
+            <instance id="28:5712" name="Button" x="904" y="0" width="176" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="28:5714" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="28:5717" name="Q13 · Request without a body · RQ04 RQ01" x="0" y="4128" width="1440" height="20" />
+  <frame id="28:5718" name="Q14 / Multipart field editor" x="1520" y="4160" width="1440" height="900">
+    <instance id="28:5719" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="28:5722" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="28:5723" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="28:5758" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="28:5822" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="28:5823" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="28:5836" name="Detail viewport / Q14" x="0" y="64" width="1128" height="772">
+          <frame id="28:5837" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="28:5838" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="28:5839" name="Multipart field editor" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="28:5840" name="DisNote API / request / Q14" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="28:5841" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <frame id="28:5842" name="Frame" x="0" y="0" width="857" height="36">
+              <instance id="28:5843" name="Request tab" x="0" y="0" width="240" height="36" />
+              <instance id="28:5847" name="Badge" x="252" y="4" width="73" height="28" />
+              <text id="28:5849" name="{{base_url}}/v1/tasks" x="337" y="7" width="520" height="22" />
+            </frame>
+            <frame id="28:5850" name="Context / detail editor" x="0" y="52" width="1080" height="250">
+              <frame id="28:5851" name="Frame" x="25" y="21" width="1032" height="208">
+                <frame id="28:5852" name="Frame" x="0" y="0" width="968" height="32">
+                  <text id="28:5853" name="FIELD" x="0" y="8" width="220" height="16" />
+                  <text id="28:5854" name="VALUE" x="232" y="8" width="520" height="16" />
+                  <text id="28:5855" name="TYPE" x="764" y="8" width="204" height="16" />
+                </frame>
+                <instance id="28:5856" name="Data row" x="0" y="32" width="1032" height="44" />
+                <instance id="28:5862" name="Data row" x="0" y="76" width="1032" height="44" />
+                <instance id="28:5868" name="Data row" x="0" y="120" width="1032" height="44" />
+                <instance id="28:5874" name="Data row" x="0" y="164" width="1032" height="44" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="28:5880" name="Actions / Q14" x="24" y="700" width="1080" height="40">
+            <instance id="28:5881" name="Button" x="796" y="0" width="136" height="40" />
+            <instance id="28:5883" name="Button" x="944" y="0" width="136" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="28:5885" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="28:5888" name="Q14 · Multipart field editor · RQ04 RQ05" x="1520" y="4128" width="1440" height="20" />
+  <frame id="28:5889" name="Q15 / Uploading an attachment" x="3040" y="4160" width="1440" height="900">
+    <instance id="28:5890" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="28:5893" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="28:5894" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="28:5929" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="28:5993" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="28:5994" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="28:6007" name="Detail viewport / Q15" x="0" y="64" width="1128" height="772">
+          <frame id="28:6008" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="28:6009" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="28:6010" name="Uploading an attachment" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="28:6011" name="DisNote API / request / Q15" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="28:6012" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <instance id="28:6013" name="Notice" x="0" y="0" width="1080" height="52" />
+            <frame id="28:6019" name="Context / detail editor" x="0" y="68" width="1080" height="302">
+              <text id="28:6020" name="68%" x="25" y="21" width="58" height="44" />
+              <instance id="28:6021" name="Progress" x="25" y="77" width="1032" height="36" />
+              <frame id="28:6025" name="Frame" x="25" y="125" width="1032" height="44">
+                <text id="28:6026" name="Transferred" x="0" y="12" width="300" height="20" />
+                <frame id="28:6027" name="Frame" x="324" y="0" width="708" height="44">
+                  <text id="28:6028" name="1.63 MB / 2.4 MB" x="0" y="12" width="680" height="20" />
+                </frame>
+              </frame>
+              <frame id="28:6029" name="Frame" x="25" y="181" width="1032" height="44">
+                <text id="28:6030" name="Speed" x="0" y="12" width="300" height="20" />
+                <frame id="28:6031" name="Frame" x="324" y="0" width="708" height="44">
+                  <text id="28:6032" name="420 KB/s" x="0" y="12" width="680" height="20" />
+                </frame>
+              </frame>
+              <frame id="28:6033" name="Frame" x="25" y="237" width="1032" height="44">
+                <text id="28:6034" name="Source" x="0" y="12" width="300" height="20" />
+                <frame id="28:6035" name="Frame" x="324" y="0" width="708" height="44">
+                  <text id="28:6036" name="Local file · not shared with team" x="0" y="12" width="680" height="20" />
+                </frame>
+              </frame>
+            </frame>
+          </frame>
+          <frame id="28:6037" name="Actions / Q15" x="24" y="700" width="1080" height="40">
+            <instance id="28:6038" name="Button" x="788" y="0" width="136" height="40" />
+            <instance id="28:6040" name="Button" x="936" y="0" width="144" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="28:6042" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="28:6045" name="Q15 · Uploading an attachment · RQ05 RQ06 RQ10" x="3040" y="4128" width="1440" height="20" />
+  <frame id="28:6046" name="Q16 / Upload canceled" x="0" y="5200" width="1440" height="900">
+    <instance id="28:6047" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="28:6050" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="28:6051" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="28:6086" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="28:6150" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="28:6151" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="28:6164" name="Detail viewport / Q16" x="0" y="64" width="1128" height="772">
+          <frame id="28:6165" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="28:6166" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="28:6167" name="Upload canceled" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="28:6168" name="DisNote API / request / Q16" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="28:6169" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <instance id="28:6170" name="Notice" x="0" y="0" width="1080" height="52" />
+            <frame id="28:6176" name="Context / detail editor" x="0" y="68" width="1080" height="238">
+              <frame id="28:6177" name="Frame" x="25" y="21" width="184" height="28">
+                <instance id="28:6178" name="Icon/shield-check" x="0" y="4" width="20" height="20" />
+                <text id="28:6181" name="Review details" x="32" y="0" width="152" height="28" />
+              </frame>
+              <frame id="28:6182" name="Frame" x="25" y="61" width="1032" height="44">
+                <text id="28:6183" name="Upload" x="0" y="12" width="300" height="20" />
+                <frame id="28:6184" name="Frame" x="324" y="0" width="708" height="44">
+                  <text id="28:6185" name="Stopped at 68%" x="0" y="12" width="680" height="20" />
+                </frame>
+              </frame>
+              <frame id="28:6186" name="Frame" x="25" y="117" width="1032" height="44">
+                <text id="28:6187" name="Temporary data" x="0" y="12" width="300" height="20" />
+                <frame id="28:6188" name="Frame" x="324" y="0" width="708" height="44">
+                  <text id="28:6189" name="Cleaned up" x="0" y="12" width="680" height="20" />
+                </frame>
+              </frame>
+              <frame id="28:6190" name="Frame" x="25" y="173" width="1032" height="44">
+                <text id="28:6191" name="Server effects" x="0" y="12" width="300" height="20" />
+                <frame id="28:6192" name="Frame" x="324" y="0" width="708" height="44">
+                  <text id="28:6193" name="Check API behavior before retrying non-idempotent requests" x="0" y="12" width="680" height="20" />
+                </frame>
+              </frame>
+            </frame>
+          </frame>
+          <frame id="28:6194" name="Actions / Q16" x="24" y="700" width="1080" height="40">
+            <instance id="28:6195" name="Button" x="796" y="0" width="136" height="40" />
+            <instance id="28:6197" name="Button" x="944" y="0" width="136" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="28:6199" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="28:6202" name="Q16 · Upload canceled · RQ06 RQ10" x="0" y="5168" width="1440" height="20" />
+  <frame id="28:6203" name="Q17 / Local upload file is missing" x="1520" y="5200" width="1440" height="900">
+    <instance id="28:6204" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="28:6207" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="28:6208" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="28:6243" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="28:6307" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="28:6308" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="28:6321" name="Detail viewport / Q17" x="0" y="64" width="1128" height="772">
+          <frame id="28:6322" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="28:6323" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="28:6324" name="Local upload file is missing" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="28:6325" name="DisNote API / request / Q17" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="28:6326" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <instance id="28:6327" name="Notice" x="0" y="0" width="1080" height="52" />
+            <frame id="28:6333" name="Context / detail editor" x="0" y="68" width="1080" height="182">
+              <frame id="28:6334" name="Frame" x="25" y="21" width="194" height="28">
+                <instance id="28:6335" name="Icon/circle-alert" x="0" y="4" width="20" height="20" />
+                <text id="28:6339" name="Action required" x="32" y="0" width="162" height="28" />
+              </frame>
+              <frame id="28:6340" name="Frame" x="25" y="61" width="1032" height="44">
+                <text id="28:6341" name="Missing file" x="0" y="12" width="300" height="20" />
+                <frame id="28:6342" name="Frame" x="324" y="0" width="708" height="44">
+                  <text id="28:6343" name="api-contract.pdf" x="0" y="12" width="680" height="20" />
+                </frame>
+              </frame>
+              <frame id="28:6344" name="Frame" x="25" y="117" width="1032" height="44">
+                <text id="28:6345" name="Shared request" x="0" y="12" width="300" height="20" />
+                <frame id="28:6346" name="Frame" x="324" y="0" width="708" height="44">
+                  <text id="28:6347" name="Contains field definition only; no local path was shared" x="0" y="12" width="680" height="20" />
+                </frame>
+              </frame>
+            </frame>
+          </frame>
+          <frame id="28:6348" name="Actions / Q17" x="24" y="700" width="1080" height="40">
+            <instance id="28:6349" name="Button" x="756" y="0" width="136" height="40" />
+            <instance id="28:6351" name="Button" x="904" y="0" width="176" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="28:6353" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="28:6356" name="Q17 · Local upload file is missing · RQ05" x="1520" y="5168" width="1440" height="20" />
+  <frame id="28:6357" name="Q18 / Downloading a large response" x="3040" y="5200" width="1440" height="900">
+    <instance id="28:6358" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="28:6361" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="28:6362" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="28:6397" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="28:6461" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="28:6462" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="28:6475" name="Detail viewport / Q18" x="0" y="64" width="1128" height="772">
+          <frame id="28:6476" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="28:6477" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="28:6478" name="Downloading a large response" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="28:6479" name="DisNote API / request / Q18" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="28:6480" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <instance id="28:6481" name="Notice" x="0" y="0" width="1080" height="52" />
+            <frame id="28:6487" name="Context / detail editor" x="0" y="68" width="1080" height="302">
+              <text id="28:6488" name="42%" x="25" y="21" width="58" height="44" />
+              <instance id="28:6489" name="Progress" x="25" y="77" width="1032" height="36" />
+              <frame id="28:6493" name="Frame" x="25" y="125" width="1032" height="44">
+                <text id="28:6494" name="Received" x="0" y="12" width="300" height="20" />
+                <frame id="28:6495" name="Frame" x="324" y="0" width="708" height="44">
+                  <text id="28:6496" name="42 MB / 100 MB" x="0" y="12" width="680" height="20" />
+                </frame>
+              </frame>
+              <frame id="28:6497" name="Frame" x="25" y="181" width="1032" height="44">
+                <text id="28:6498" name="Preview" x="0" y="12" width="300" height="20" />
+                <frame id="28:6499" name="Frame" x="324" y="0" width="708" height="44">
+                  <text id="28:6500" name="First 1 MB only" x="0" y="12" width="680" height="20" />
+                </frame>
+              </frame>
+              <frame id="28:6501" name="Frame" x="25" y="237" width="1032" height="44">
+                <text id="28:6502" name="Destination" x="0" y="12" width="300" height="20" />
+                <frame id="28:6503" name="Frame" x="324" y="0" width="708" height="44">
+                  <text id="28:6504" name="D:\Swaggen\Downloads\response.json" x="0" y="12" width="680" height="20" />
+                </frame>
+              </frame>
+            </frame>
+          </frame>
+          <frame id="28:6505" name="Actions / Q18" x="24" y="700" width="1080" height="40">
+            <instance id="28:6506" name="Button" x="772" y="0" width="136" height="40" />
+            <instance id="28:6508" name="Button" x="920" y="0" width="160" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="28:6510" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="28:6513" name="Q18 · Downloading a large response · RQ10 RS06" x="3040" y="5168" width="1440" height="20" />
+  <frame id="28:6514" name="Q19 / Request timed out" x="0" y="6240" width="1440" height="900">
+    <instance id="28:6515" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="28:6518" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="28:6519" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="28:6554" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="28:6618" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="28:6619" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="28:6632" name="Detail viewport / Q19" x="0" y="64" width="1128" height="772">
+          <frame id="28:6633" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="28:6634" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="28:6635" name="Request timed out" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="28:6636" name="DisNote API / request / Q19" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="28:6637" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <instance id="28:6638" name="Notice" x="0" y="0" width="1080" height="52" />
+            <frame id="28:6644" name="Context / detail editor" x="0" y="68" width="1080" height="238">
+              <frame id="28:6645" name="Frame" x="25" y="21" width="194" height="28">
+                <instance id="28:6646" name="Icon/circle-alert" x="0" y="4" width="20" height="20" />
+                <text id="28:6650" name="Action required" x="32" y="0" width="162" height="28" />
+              </frame>
+              <frame id="28:6651" name="Frame" x="25" y="61" width="1032" height="44">
+                <text id="28:6652" name="Timeout" x="0" y="12" width="300" height="20" />
+                <frame id="28:6653" name="Frame" x="324" y="0" width="708" height="44">
+                  <text id="28:6654" name="30 seconds" x="0" y="12" width="680" height="20" />
+                </frame>
+              </frame>
+              <frame id="28:6655" name="Frame" x="25" y="117" width="1032" height="44">
+                <text id="28:6656" name="Draft" x="0" y="12" width="300" height="20" />
+                <frame id="28:6657" name="Frame" x="324" y="0" width="708" height="44">
+                  <text id="28:6658" name="Saved" x="0" y="12" width="680" height="20" />
+                </frame>
+              </frame>
+              <frame id="28:6659" name="Frame" x="25" y="173" width="1032" height="44">
+                <text id="28:6660" name="Next step" x="0" y="12" width="300" height="20" />
+                <frame id="28:6661" name="Frame" x="324" y="0" width="708" height="44">
+                  <text id="28:6662" name="Check server health or increase this request timeout" x="0" y="12" width="680" height="20" />
+                </frame>
+              </frame>
+            </frame>
+          </frame>
+          <frame id="28:6663" name="Actions / Q19" x="24" y="700" width="1080" height="40">
+            <instance id="28:6664" name="Button" x="788" y="0" width="136" height="40" />
+            <instance id="28:6666" name="Button" x="936" y="0" width="144" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="28:6668" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="28:6671" name="Q19 · Request timed out · RQ06 RS05 RS06" x="0" y="6208" width="1440" height="20" />
+  <frame id="28:6672" name="Q20 / Request canceled" x="1520" y="6240" width="1440" height="900">
+    <instance id="28:6673" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="28:6676" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="28:6677" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="28:6712" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="28:6776" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="28:6777" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="28:6790" name="Detail viewport / Q20" x="0" y="64" width="1128" height="772">
+          <frame id="28:6791" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="28:6792" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="28:6793" name="Request canceled" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="28:6794" name="DisNote API / request / Q20" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="28:6795" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <instance id="28:6796" name="Notice" x="0" y="0" width="1080" height="52" />
+            <frame id="28:6802" name="Context / detail editor" x="0" y="68" width="1080" height="238">
+              <frame id="28:6803" name="Frame" x="25" y="21" width="184" height="28">
+                <instance id="28:6804" name="Icon/shield-check" x="0" y="4" width="20" height="20" />
+                <text id="28:6807" name="Review details" x="32" y="0" width="152" height="28" />
+              </frame>
+              <frame id="28:6808" name="Frame" x="25" y="61" width="1032" height="44">
+                <text id="28:6809" name="HTTP status" x="0" y="12" width="300" height="20" />
+                <frame id="28:6810" name="Frame" x="324" y="0" width="708" height="44">
+                  <text id="28:6811" name="Unavailable" x="0" y="12" width="680" height="20" />
+                </frame>
+              </frame>
+              <frame id="28:6812" name="Frame" x="25" y="117" width="1032" height="44">
+                <text id="28:6813" name="Duration" x="0" y="12" width="300" height="20" />
+                <frame id="28:6814" name="Frame" x="324" y="0" width="708" height="44">
+                  <text id="28:6815" name="4.2 seconds" x="0" y="12" width="680" height="20" />
+                </frame>
+              </frame>
+              <frame id="28:6816" name="Frame" x="25" y="173" width="1032" height="44">
+                <text id="28:6817" name="API effects" x="0" y="12" width="300" height="20" />
+                <frame id="28:6818" name="Frame" x="324" y="0" width="708" height="44">
+                  <text id="28:6819" name="Cancellation does not guarantee server-side rollback" x="0" y="12" width="680" height="20" />
+                </frame>
+              </frame>
+            </frame>
+          </frame>
+          <frame id="28:6820" name="Actions / Q20" x="24" y="700" width="1080" height="40">
+            <instance id="28:6821" name="Button" x="796" y="0" width="136" height="40" />
+            <instance id="28:6823" name="Button" x="944" y="0" width="136" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="28:6825" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="28:6828" name="Q20 · Request canceled · RQ06 RS05 RS06" x="1520" y="6208" width="1440" height="20" />
+  <frame id="28:6829" name="Q21 / Server rejected the request" x="3040" y="6240" width="1440" height="900">
+    <instance id="28:6830" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="28:6833" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="28:6834" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="28:6869" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="28:6933" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="28:6934" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="28:6947" name="Detail viewport / Q21" x="0" y="64" width="1128" height="772">
+          <frame id="28:6948" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="28:6949" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="28:6950" name="Server rejected the request" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="28:6951" name="DisNote API / request / Q21" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="28:6952" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <instance id="28:6953" name="Notice" x="0" y="0" width="1080" height="52" />
+            <frame id="28:6959" name="Context / detail editor" x="0" y="68" width="1080" height="238">
+              <frame id="28:6960" name="Frame" x="25" y="21" width="194" height="28">
+                <instance id="28:6961" name="Icon/circle-alert" x="0" y="4" width="20" height="20" />
+                <text id="28:6965" name="Action required" x="32" y="0" width="162" height="28" />
+              </frame>
+              <frame id="28:6966" name="Frame" x="25" y="61" width="1032" height="44">
+                <text id="28:6967" name="Status" x="0" y="12" width="300" height="20" />
+                <frame id="28:6968" name="Frame" x="324" y="0" width="708" height="44">
+                  <text id="28:6969" name="422 Unprocessable Entity" x="0" y="12" width="680" height="20" />
+                </frame>
+              </frame>
+              <frame id="28:6970" name="Frame" x="25" y="117" width="1032" height="44">
+                <text id="28:6971" name="Error path" x="0" y="12" width="300" height="20" />
+                <frame id="28:6972" name="Frame" x="324" y="0" width="708" height="44">
+                  <text id="28:6973" name="$.title" x="0" y="12" width="680" height="20" />
+                </frame>
+              </frame>
+              <frame id="28:6974" name="Frame" x="25" y="173" width="1032" height="44">
+                <text id="28:6975" name="API message" x="0" y="12" width="300" height="20" />
+                <frame id="28:6976" name="Frame" x="324" y="0" width="708" height="44">
+                  <text id="28:6977" name="title must not be empty" x="0" y="12" width="680" height="20" />
+                </frame>
+              </frame>
+            </frame>
+          </frame>
+          <frame id="28:6978" name="Actions / Q21" x="24" y="700" width="1080" height="40">
+            <instance id="28:6979" name="Button" x="780" y="0" width="136" height="40" />
+            <instance id="28:6981" name="Button" x="928" y="0" width="152" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="28:6983" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="28:6986" name="Q21 · Server rejected the request · RQ06 RS05 RS06" x="3040" y="6208" width="1440" height="20" />
+  <frame id="28:6987" name="Q22 / Response could not be saved" x="0" y="7280" width="1440" height="900">
+    <instance id="28:6988" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="28:6991" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="28:6992" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="28:7027" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="28:7091" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="28:7092" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="28:7105" name="Detail viewport / Q22" x="0" y="64" width="1128" height="772">
+          <frame id="28:7106" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="28:7107" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="28:7108" name="Response could not be saved" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="28:7109" name="DisNote API / request / Q22" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="28:7110" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <instance id="28:7111" name="Notice" x="0" y="0" width="1080" height="52" />
+            <frame id="28:7117" name="Context / detail editor" x="0" y="68" width="1080" height="238">
+              <frame id="28:7118" name="Frame" x="25" y="21" width="194" height="28">
+                <instance id="28:7119" name="Icon/circle-alert" x="0" y="4" width="20" height="20" />
+                <text id="28:7123" name="Action required" x="32" y="0" width="162" height="28" />
+              </frame>
+              <frame id="28:7124" name="Frame" x="25" y="61" width="1032" height="44">
+                <text id="28:7125" name="Saved bytes" x="0" y="12" width="300" height="20" />
+                <frame id="28:7126" name="Frame" x="324" y="0" width="708" height="44">
+                  <text id="28:7127" name="42 MB · Incomplete file" x="0" y="12" width="680" height="20" />
+                </frame>
+              </frame>
+              <frame id="28:7128" name="Frame" x="25" y="117" width="1032" height="44">
+                <text id="28:7129" name="Draft" x="0" y="12" width="300" height="20" />
+                <frame id="28:7130" name="Frame" x="324" y="0" width="708" height="44">
+                  <text id="28:7131" name="Preserved" x="0" y="12" width="680" height="20" />
+                </frame>
+              </frame>
+              <frame id="28:7132" name="Frame" x="25" y="173" width="1032" height="44">
+                <text id="28:7133" name="Next step" x="0" y="12" width="300" height="20" />
+                <frame id="28:7134" name="Frame" x="324" y="0" width="708" height="44">
+                  <text id="28:7135" name="Choose another destination and retry" x="0" y="12" width="680" height="20" />
+                </frame>
+              </frame>
+            </frame>
+          </frame>
+          <frame id="28:7136" name="Actions / Q22" x="24" y="700" width="1080" height="40">
+            <instance id="28:7137" name="Button" x="748" y="0" width="136" height="40" />
+            <instance id="28:7139" name="Button" x="896" y="0" width="184" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="28:7141" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="28:7144" name="Q22 · Response could not be saved · RQ06 RS05 RS06" x="0" y="7248" width="1440" height="20" />
+  <frame id="28:7145" name="Q23 / Draft differs from the shared request" x="1520" y="7280" width="1440" height="900">
+    <instance id="28:7146" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="28:7149" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="28:7150" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="28:7185" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="28:7249" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="28:7250" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="28:7263" name="Detail viewport / Q23" x="0" y="64" width="1128" height="772">
+          <frame id="28:7264" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="28:7265" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="28:7266" name="Draft differs from the shared request" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="28:7267" name="DisNote API / request / Q23" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="28:7268" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <frame id="28:7269" name="Frame" x="0" y="0" width="1080" height="152">
+              <frame id="28:7270" name="Context / detail editor" x="0" y="0" width="528" height="152">
+                <text id="28:7271" name="Published · revision 13" x="25" y="21" width="180" height="20" />
+                <frame id="28:7272" name="Frame" x="25" y="53" width="480" height="78">
+                  <instance id="28:7273" name="Code line" x="0" y="0" width="480" height="26" />
+                  <instance id="28:7276" name="Code line" x="0" y="26" width="480" height="26" />
+                  <instance id="28:7279" name="Code line" x="0" y="52" width="480" height="26" />
+                </frame>
+              </frame>
+              <frame id="28:7282" name="Context / detail editor" x="552" y="0" width="528" height="152">
+                <text id="28:7283" name="Your local draft" x="25" y="21" width="125" height="20" />
+                <frame id="28:7284" name="Frame" x="25" y="53" width="480" height="78">
+                  <instance id="28:7285" name="Code line" x="0" y="0" width="480" height="26" />
+                  <instance id="28:7288" name="Code line" x="0" y="26" width="480" height="26" />
+                  <instance id="28:7291" name="Code line" x="0" y="52" width="480" height="26" />
+                </frame>
+              </frame>
+            </frame>
+          </frame>
+          <frame id="28:7294" name="Actions / Q23" x="24" y="700" width="1080" height="40">
+            <instance id="28:7295" name="Button" x="756" y="0" width="168" height="40" />
+            <instance id="28:7297" name="Button" x="936" y="0" width="144" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="28:7299" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="28:7302" name="Q23 · Draft differs from the shared request · RQ08 SY01 CO02" x="1520" y="7248" width="1440" height="20" />
+  <frame id="28:7303" name="Q24 / Close unsaved tabs" x="3040" y="7280" width="1440" height="900">
+    <instance id="28:7304" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="28:7307" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="28:7308" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="28:7343" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="28:7407" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="28:7408" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="28:7421" name="Detail viewport / Q24" x="0" y="64" width="1128" height="772">
+          <frame id="28:7422" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="28:7423" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="28:7424" name="Close unsaved tabs" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="28:7425" name="DisNote API / request / Q24" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="28:7426" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <frame id="28:7427" name="Context / detail editor" x="0" y="0" width="1080" height="206">
+              <frame id="28:7428" name="Frame" x="25" y="21" width="1032" height="164">
+                <frame id="28:7429" name="Frame" x="0" y="0" width="968" height="32">
+                  <text id="28:7430" name="TAB" x="0" y="8" width="220" height="16" />
+                  <text id="28:7431" name="LOCAL STATE" x="232" y="8" width="520" height="16" />
+                  <text id="28:7432" name="ACTION" x="764" y="8" width="204" height="16" />
+                </frame>
+                <instance id="28:7433" name="Data row" x="0" y="32" width="1032" height="44" />
+                <instance id="28:7439" name="Data row" x="0" y="76" width="1032" height="44" />
+                <instance id="28:7445" name="Data row" x="0" y="120" width="1032" height="44" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="28:7451" name="Actions / Q24" x="24" y="700" width="1080" height="40">
+            <instance id="28:7452" name="Button" x="708" y="0" width="152" height="40" />
+            <instance id="28:7454" name="Button" x="872" y="0" width="208" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="28:7456" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="28:7459" name="Q24 · Close unsaved tabs · RQ08 UX02" x="3040" y="7248" width="1440" height="20" />
+  <frame id="28:7460" name="Q25 / Request tab actions" x="0" y="8320" width="1440" height="900">
+    <instance id="28:7461" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="28:7464" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="28:7465" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="28:7500" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="28:7564" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="28:7565" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="28:7578" name="Detail viewport / Q25" x="0" y="64" width="1128" height="772">
+          <frame id="28:7579" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="28:7580" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="28:7581" name="Request tab actions" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="28:7582" name="DisNote API / request / Q25" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="28:7583" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <frame id="28:7584" name="Frame" x="0" y="0" width="1056" height="314">
+              <frame id="28:7585" name="Context / detail editor" x="0" y="0" width="488" height="314">
+                <text id="28:7586" name="Available actions" x="25" y="21" width="133" height="20" />
+                <frame id="28:7587" name="Frame" x="25" y="53" width="440" height="240">
+                  <instance id="28:7588" name="Menu item" x="0" y="0" width="440" height="40" />
+                  <instance id="28:7593" name="Menu item" x="0" y="40" width="440" height="40" />
+                  <instance id="28:7598" name="Menu item" x="0" y="80" width="440" height="40" />
+                  <instance id="28:7603" name="Menu item" x="0" y="120" width="440" height="40" />
+                  <instance id="28:7608" name="Menu item" x="0" y="160" width="440" height="40" />
+                  <instance id="28:7613" name="Menu item" x="0" y="200" width="440" height="40" />
+                </frame>
+              </frame>
+              <frame id="28:7618" name="Context / detail editor" x="512" y="0" width="544" height="154">
+                <text id="28:7619" name="Selection details" x="25" y="21" width="133" height="20" />
+                <text id="28:7620" name="Choose an action from the menu. Your current draft stays availab" x="25" y="53" width="496" height="40" />
+                <instance id="28:7621" name="Badge" x="25" y="105" width="152" height="28" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="28:7623" name="Actions / Q25" x="24" y="700" width="1080" height="40">
+            <instance id="28:7624" name="Button" x="796" y="0" width="136" height="40" />
+            <instance id="28:7626" name="Button" x="944" y="0" width="136" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="28:7628" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="28:7631" name="Q25 · Request tab actions · UX01 UX02 RQ09" x="0" y="8288" width="1440" height="20" />
+  <frame id="28:7632" name="Q26 / Response headers and cookies" x="1520" y="8320" width="1440" height="900">
+    <instance id="28:7633" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="28:7636" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="28:7637" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="28:7672" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="28:7736" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="28:7737" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="28:7750" name="Detail viewport / Q26" x="0" y="64" width="1128" height="772">
+          <frame id="28:7751" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="28:7752" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="28:7753" name="Response headers and cookies" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="28:7754" name="DisNote API / request / Q26" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="28:7755" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <frame id="28:7756" name="Context / detail editor" x="0" y="0" width="1080" height="250">
+              <frame id="28:7757" name="Frame" x="25" y="21" width="1032" height="208">
+                <frame id="28:7758" name="Frame" x="0" y="0" width="968" height="32">
+                  <text id="28:7759" name="RESPONSE HEADER" x="0" y="8" width="220" height="16" />
+                  <text id="28:7760" name="VALUE" x="232" y="8" width="520" height="16" />
+                  <text id="28:7761" name="DETAILS" x="764" y="8" width="204" height="16" />
+                </frame>
+                <instance id="28:7762" name="Data row" x="0" y="32" width="1032" height="44" />
+                <instance id="28:7768" name="Data row" x="0" y="76" width="1032" height="44" />
+                <instance id="28:7774" name="Data row" x="0" y="120" width="1032" height="44" />
+                <instance id="28:7780" name="Data row" x="0" y="164" width="1032" height="44" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="28:7786" name="Actions / Q26" x="24" y="700" width="1080" height="40">
+            <instance id="28:7787" name="Button" x="772" y="0" width="136" height="40" />
+            <instance id="28:7789" name="Button" x="920" y="0" width="160" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="28:7791" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="28:7794" name="Q26 · Response headers and cookies · RS03 AU04" x="1520" y="8288" width="1440" height="20" />
+  <frame id="28:7795" name="Q27 / Find a value in a response" x="3040" y="8320" width="1440" height="900">
+    <instance id="28:7796" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="28:7799" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="28:7800" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="28:7835" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="28:7899" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="28:7900" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="28:7913" name="Detail viewport / Q27" x="0" y="64" width="1128" height="772">
+          <frame id="28:7914" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="28:7915" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="28:7916" name="Find a value in a response" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="28:7917" name="DisNote API / request / Q27" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="28:7918" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <frame id="28:7919" name="Context / detail editor" x="0" y="0" width="1080" height="238">
+              <frame id="28:7920" name="Frame" x="25" y="21" width="147" height="28">
+                <text id="28:7921" name="JSON" x="0" y="4" width="32" height="20" />
+                <instance id="28:7922" name="Badge" x="48" y="0" width="99" height="28" />
+              </frame>
+              <frame id="28:7924" name="Frame" x="25" y="61" width="1032" height="156">
+                <instance id="28:7925" name="Code line" x="0" y="0" width="1032" height="26" />
+                <instance id="28:7928" name="Code line" x="0" y="26" width="1032" height="26" />
+                <instance id="28:7931" name="Code line" x="0" y="52" width="1032" height="26" />
+                <instance id="28:7934" name="Code line" x="0" y="78" width="1032" height="26" />
+                <instance id="28:7937" name="Code line" x="0" y="104" width="1032" height="26" />
+                <instance id="28:7940" name="Code line" x="0" y="130" width="1032" height="26" />
+              </frame>
+            </frame>
+            <text id="28:7943" name="Match 1 of 1 · $.data[0].id · Copy value / Copy path / Save raw " x="0" y="254" width="1080" height="16" />
+          </frame>
+          <frame id="28:7944" name="Actions / Q27" x="24" y="700" width="1080" height="40">
+            <instance id="28:7945" name="Button" x="780" y="0" width="136" height="40" />
+            <instance id="28:7947" name="Button" x="928" y="0" width="152" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="28:7949" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="28:7952" name="Q27 · Find a value in a response · RS02 RS04" x="3040" y="8288" width="1440" height="20" />
+  <frame id="28:7953" name="Q28 / Binary and XML response views" x="0" y="9360" width="1440" height="900">
+    <instance id="28:7954" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="28:7957" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="28:7958" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="28:7993" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="28:8057" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="28:8058" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="28:8071" name="Detail viewport / Q28" x="0" y="64" width="1128" height="772">
+          <frame id="28:8072" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="28:8073" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="28:8074" name="Binary and XML response views" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="28:8075" name="DisNote API / request / Q28" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="28:8076" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <frame id="28:8077" name="Frame" x="0" y="0" width="1056" height="234">
+              <frame id="28:8078" name="Context / detail editor" x="0" y="0" width="488" height="234">
+                <text id="28:8079" name="Available actions" x="25" y="21" width="133" height="20" />
+                <frame id="28:8080" name="Frame" x="25" y="53" width="440" height="160">
+                  <instance id="28:8081" name="Menu item" x="0" y="0" width="440" height="40" />
+                  <instance id="28:8086" name="Menu item" x="0" y="40" width="440" height="40" />
+                  <instance id="28:8091" name="Menu item" x="0" y="80" width="440" height="40" />
+                  <instance id="28:8096" name="Menu item" x="0" y="120" width="440" height="40" />
+                </frame>
+              </frame>
+              <frame id="28:8101" name="Context / detail editor" x="512" y="0" width="544" height="154">
+                <text id="28:8102" name="Selection details" x="25" y="21" width="133" height="20" />
+                <text id="28:8103" name="Choose an action from the menu. Your current draft stays availab" x="25" y="53" width="496" height="40" />
+                <instance id="28:8104" name="Badge" x="25" y="105" width="152" height="28" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="28:8106" name="Actions / Q28" x="24" y="700" width="1080" height="40">
+            <instance id="28:8107" name="Button" x="796" y="0" width="136" height="40" />
+            <instance id="28:8109" name="Button" x="944" y="0" width="136" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="28:8111" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="28:8114" name="Q28 · Binary and XML response views · RS02 RS04" x="0" y="9328" width="1440" height="20" />
+  <frame id="28:8115" name="Q29 / Response timing breakdown" x="1520" y="9360" width="1440" height="900">
+    <instance id="28:8116" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="28:8119" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="28:8120" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="28:8155" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="28:8219" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="28:8220" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="28:8233" name="Detail viewport / Q29" x="0" y="64" width="1128" height="772">
+          <frame id="28:8234" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="28:8235" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="28:8236" name="Response timing breakdown" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="28:8237" name="DisNote API / request / Q29" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="28:8238" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <frame id="28:8239" name="Context / detail editor" x="0" y="0" width="1080" height="338">
+              <frame id="28:8240" name="Frame" x="25" y="21" width="1032" height="296">
+                <frame id="28:8241" name="Frame" x="0" y="0" width="968" height="32">
+                  <text id="28:8242" name="PHASE" x="0" y="8" width="220" height="16" />
+                  <text id="28:8243" name="DURATION" x="232" y="8" width="520" height="16" />
+                  <text id="28:8244" name="MEASUREMENT" x="764" y="8" width="204" height="16" />
+                </frame>
+                <instance id="28:8245" name="Data row" x="0" y="32" width="1032" height="44" />
+                <instance id="28:8251" name="Data row" x="0" y="76" width="1032" height="44" />
+                <instance id="28:8257" name="Data row" x="0" y="120" width="1032" height="44" />
+                <instance id="28:8263" name="Data row" x="0" y="164" width="1032" height="44" />
+                <instance id="28:8269" name="Data row" x="0" y="208" width="1032" height="44" />
+                <instance id="28:8275" name="Data row" x="0" y="252" width="1032" height="44" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="28:8281" name="Actions / Q29" x="24" y="700" width="1080" height="40">
+            <instance id="28:8282" name="Button" x="748" y="0" width="136" height="40" />
+            <instance id="28:8284" name="Button" x="896" y="0" width="184" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="28:8286" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="28:8289" name="Q29 · Response timing breakdown · RS01 RS10" x="1520" y="9328" width="1440" height="20" />
+  <frame id="28:8290" name="Q30 / History filters and cleanup" x="3040" y="9360" width="1440" height="900">
+    <instance id="28:8291" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="28:8294" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="28:8295" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="28:8330" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="28:8394" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="28:8395" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="28:8408" name="Detail viewport / Q30" x="0" y="64" width="1128" height="772">
+          <frame id="28:8409" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="28:8410" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="28:8411" name="History filters and cleanup" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="28:8412" name="DisNote API / request / Q30" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="28:8413" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <frame id="28:8414" name="Context / detail editor" x="0" y="0" width="1080" height="310">
+              <frame id="28:8415" name="Frame" x="25" y="21" width="1032" height="44">
+                <text id="28:8416" name="Filter by request" x="0" y="12" width="300" height="20" />
+                <instance id="28:8417" name="Select" x="324" y="0" width="708" height="44" />
+              </frame>
+              <frame id="28:8421" name="Frame" x="25" y="77" width="1032" height="44">
+                <text id="28:8422" name="Date range" x="0" y="12" width="300" height="20" />
+                <instance id="28:8423" name="Select" x="324" y="0" width="708" height="44" />
+              </frame>
+              <frame id="28:8427" name="Frame" x="25" y="133" width="1032" height="44">
+                <text id="28:8428" name="Status" x="0" y="12" width="300" height="20" />
+                <instance id="28:8429" name="Select" x="324" y="0" width="708" height="44" />
+              </frame>
+              <frame id="28:8433" name="Frame" x="25" y="189" width="1032" height="44">
+                <text id="28:8434" name="Keep history" x="0" y="12" width="300" height="20" />
+                <instance id="28:8435" name="Select" x="324" y="0" width="708" height="44" />
+              </frame>
+              <frame id="28:8439" name="Frame" x="25" y="245" width="1032" height="44">
+                <text id="28:8440" name="Delete scope" x="0" y="12" width="300" height="20" />
+                <frame id="28:8441" name="Frame" x="324" y="0" width="708" height="44">
+                  <text id="28:8442" name="Matching history only; preserve request templates" x="0" y="12" width="680" height="20" />
+                </frame>
+              </frame>
+            </frame>
+          </frame>
+          <frame id="28:8443" name="Actions / Q30" x="24" y="700" width="1080" height="40">
+            <instance id="28:8444" name="Button" x="716" y="0" width="136" height="40" />
+            <instance id="28:8446" name="Button" x="864" y="0" width="216" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="28:8448" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="28:8451" name="Q30 · History filters and cleanup · RS07 UX10" x="3040" y="9328" width="1440" height="20" />
+  <frame id="28:8452" name="Q31 / Compare JSON or raw responses" x="0" y="10400" width="1440" height="900">
+    <instance id="28:8453" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="28:8456" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="28:8457" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="28:8492" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="28:8556" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="28:8557" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="28:8570" name="Detail viewport / Q31" x="0" y="64" width="1128" height="772">
+          <frame id="28:8571" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="28:8572" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="28:8573" name="Compare JSON or raw responses" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="28:8574" name="DisNote API / request / Q31" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="28:8575" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <frame id="28:8576" name="Frame" x="0" y="0" width="1080" height="152">
+              <frame id="28:8577" name="Context / detail editor" x="0" y="0" width="528" height="152">
+                <text id="28:8578" name="Previous · 200 · 142 ms" x="25" y="21" width="180" height="20" />
+                <frame id="28:8579" name="Frame" x="25" y="53" width="480" height="78">
+                  <instance id="28:8580" name="Code line" x="0" y="0" width="480" height="26" />
+                  <instance id="28:8583" name="Code line" x="0" y="26" width="480" height="26" />
+                  <instance id="28:8586" name="Code line" x="0" y="52" width="480" height="26" />
+                </frame>
+              </frame>
+              <frame id="28:8589" name="Context / detail editor" x="552" y="0" width="528" height="152">
+                <text id="28:8590" name="Current · 200 · 128 ms" x="25" y="21" width="172" height="20" />
+                <frame id="28:8591" name="Frame" x="25" y="53" width="480" height="78">
+                  <instance id="28:8592" name="Code line" x="0" y="0" width="480" height="26" />
+                  <instance id="28:8595" name="Code line" x="0" y="26" width="480" height="26" />
+                  <instance id="28:8598" name="Code line" x="0" y="52" width="480" height="26" />
+                </frame>
+              </frame>
+            </frame>
+          </frame>
+          <frame id="28:8601" name="Actions / Q31" x="24" y="700" width="1080" height="40">
+            <instance id="28:8602" name="Button" x="748" y="0" width="136" height="40" />
+            <instance id="28:8604" name="Button" x="896" y="0" width="184" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="28:8606" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="28:8609" name="Q31 · Compare JSON or raw responses · RS09" x="0" y="10368" width="1440" height="20" />
+  <frame id="28:8610" name="Q32 / Review a shared response example" x="1520" y="10400" width="1440" height="900">
+    <instance id="28:8611" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="28:8614" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="28:8615" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="28:8650" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="28:8714" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="28:8715" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="28:8728" name="Detail viewport / Q32" x="0" y="64" width="1128" height="772">
+          <frame id="28:8729" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="28:8730" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="28:8731" name="Review a shared response example" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="28:8732" name="DisNote API / request / Q32" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="28:8733" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <frame id="28:8734" name="Frame" x="0" y="0" width="1080" height="152">
+              <frame id="28:8735" name="Context / detail editor" x="0" y="0" width="528" height="152">
+                <text id="28:8736" name="Local response" x="25" y="21" width="110" height="20" />
+                <frame id="28:8737" name="Frame" x="25" y="53" width="480" height="78">
+                  <instance id="28:8738" name="Code line" x="0" y="0" width="480" height="26" />
+                  <instance id="28:8741" name="Code line" x="0" y="26" width="480" height="26" />
+                  <instance id="28:8744" name="Code line" x="0" y="52" width="480" height="26" />
+                </frame>
+              </frame>
+              <frame id="28:8747" name="Context / detail editor" x="552" y="0" width="528" height="152">
+                <text id="28:8748" name="Sanitized shared example" x="25" y="21" width="188" height="20" />
+                <frame id="28:8749" name="Frame" x="25" y="53" width="480" height="78">
+                  <instance id="28:8750" name="Code line" x="0" y="0" width="480" height="26" />
+                  <instance id="28:8753" name="Code line" x="0" y="26" width="480" height="26" />
+                  <instance id="28:8756" name="Code line" x="0" y="52" width="480" height="26" />
+                </frame>
+              </frame>
+            </frame>
+            <text id="28:8759" name="Linked to GET /v1/tasks · status 200 · content type application/" x="0" y="168" width="1080" height="16" />
+          </frame>
+          <frame id="28:8760" name="Actions / Q32" x="24" y="700" width="1080" height="40">
+            <instance id="28:8761" name="Button" x="708" y="0" width="136" height="40" />
+            <instance id="28:8763" name="Button" x="856" y="0" width="224" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="28:8765" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="28:8768" name="Q32 · Review a shared response example · RS08 CO08 SC02" x="1520" y="10368" width="1440" height="20" />
+  <frame id="32:7157" name="Q33 / XML response inspector" x="3040" y="10400" width="1440" height="900">
+    <instance id="32:7158" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="32:7161" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="32:7162" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="32:7197" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="32:7261" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="32:7262" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="32:7275" name="Detail viewport / Q33" x="0" y="64" width="1128" height="772">
+          <frame id="32:7276" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="32:7277" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="32:7278" name="XML response inspector" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="32:7279" name="DisNote API / request / Q33" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="32:7280" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <frame id="32:7281" name="Context / detail editor" x="0" y="0" width="1080" height="264">
+              <frame id="32:7282" name="Frame" x="25" y="21" width="349" height="28">
+                <text id="32:7283" name="XML · Pretty · 200 OK · 142 ms" x="0" y="4" width="234" height="20" />
+                <instance id="32:7284" name="Badge" x="250" y="0" width="99" height="28" />
+              </frame>
+              <frame id="32:7286" name="Frame" x="25" y="61" width="1032" height="182">
+                <instance id="32:7287" name="Code line" x="0" y="0" width="1032" height="26" />
+                <instance id="32:7290" name="Code line" x="0" y="26" width="1032" height="26" />
+                <instance id="32:7293" name="Code line" x="0" y="52" width="1032" height="26" />
+                <instance id="32:7296" name="Code line" x="0" y="78" width="1032" height="26" />
+                <instance id="32:7299" name="Code line" x="0" y="104" width="1032" height="26" />
+                <instance id="32:7302" name="Code line" x="0" y="130" width="1032" height="26" />
+                <instance id="32:7305" name="Code line" x="0" y="156" width="1032" height="26" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="32:7308" name="Actions / Q33" x="24" y="700" width="1080" height="40">
+            <instance id="32:7309" name="Button" x="748" y="0" width="136" height="40" />
+            <instance id="32:7311" name="Button" x="896" y="0" width="184" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="32:7313" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="32:7316" name="Q33 · XML response inspector · RS02 RS04" x="3040" y="10368" width="1440" height="20" />
+  <frame id="32:7317" name="Q34 / Binary response inspector" x="0" y="11440" width="1440" height="900">
+    <instance id="32:7318" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="32:7321" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="32:7322" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="32:7357" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="32:7421" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="32:7422" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="32:7435" name="Detail viewport / Q34" x="0" y="64" width="1128" height="772">
+          <frame id="32:7436" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="32:7437" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="32:7438" name="Binary response inspector" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="32:7439" name="DisNote API / request / Q34" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="32:7440" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <instance id="32:7441" name="Notice" x="0" y="0" width="1080" height="52" />
+            <frame id="32:7447" name="Context / detail editor" x="0" y="68" width="1080" height="294">
+              <frame id="32:7448" name="Frame" x="25" y="21" width="184" height="28">
+                <instance id="32:7449" name="Icon/shield-check" x="0" y="4" width="20" height="20" />
+                <text id="32:7452" name="Review details" x="32" y="0" width="152" height="28" />
+              </frame>
+              <frame id="32:7453" name="Frame" x="25" y="61" width="1032" height="44">
+                <text id="32:7454" name="Status" x="0" y="12" width="300" height="20" />
+                <frame id="32:7455" name="Frame" x="324" y="0" width="708" height="44">
+                  <text id="32:7456" name="200 OK · 385 ms" x="0" y="12" width="680" height="20" />
+                </frame>
+              </frame>
+              <frame id="32:7457" name="Frame" x="25" y="117" width="1032" height="44">
+                <text id="32:7458" name="File" x="0" y="12" width="300" height="20" />
+                <frame id="32:7459" name="Frame" x="324" y="0" width="708" height="44">
+                  <text id="32:7460" name="api-contract.pdf" x="0" y="12" width="680" height="20" />
+                </frame>
+              </frame>
+              <frame id="32:7461" name="Frame" x="25" y="173" width="1032" height="44">
+                <text id="32:7462" name="SHA-256" x="0" y="12" width="300" height="20" />
+                <frame id="32:7463" name="Frame" x="324" y="0" width="708" height="44">
+                  <text id="32:7464" name="b89c2f…e21d · Calculated locally" x="0" y="12" width="680" height="20" />
+                </frame>
+              </frame>
+              <frame id="32:7465" name="Frame" x="25" y="229" width="1032" height="44">
+                <text id="32:7466" name="Preview" x="0" y="12" width="300" height="20" />
+                <frame id="32:7467" name="Frame" x="324" y="0" width="708" height="44">
+                  <text id="32:7468" name="Binary content · no text preview" x="0" y="12" width="680" height="20" />
+                </frame>
+              </frame>
+            </frame>
+          </frame>
+          <frame id="32:7469" name="Actions / Q34" x="24" y="700" width="1080" height="40">
+            <instance id="32:7470" name="Button" x="748" y="0" width="136" height="40" />
+            <instance id="32:7472" name="Button" x="896" y="0" width="184" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="32:7474" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="32:7477" name="Q34 · Binary response inspector · RS02 RS06" x="0" y="11408" width="1440" height="20" />
+  <frame id="32:7478" name="Q35 / Raw response inspector" x="1520" y="11440" width="1440" height="900">
+    <instance id="32:7479" name="Shell/Windows titlebar" x="0" y="0" width="1440" height="36" />
+    <frame id="32:7482" name="Frame" x="0" y="36" width="1440" height="836">
+      <instance id="32:7483" name="Shell/Activity rail" x="0" y="0" width="64" height="836" />
+      <instance id="32:7518" name="Shell/Project sidebar" x="64" y="0" width="248" height="836" />
+      <frame id="32:7582" name="Frame" x="312" y="0" width="1128" height="836">
+        <instance id="32:7583" name="Shell/Workspace header" x="0" y="0" width="1128" height="64" />
+        <frame id="32:7596" name="Detail viewport / Q35" x="0" y="64" width="1128" height="772">
+          <frame id="32:7597" name="Screen heading" x="24" y="24" width="1080" height="56">
+            <frame id="32:7598" name="Frame" x="0" y="0" width="980" height="34">
+              <text id="32:7599" name="Raw response inspector" x="0" y="0" width="980" height="34" />
+            </frame>
+            <text id="32:7600" name="DisNote API / request / Q35" x="0" y="40" width="1080" height="16" />
+          </frame>
+          <frame id="32:7601" name="Scrollable detail content" x="24" y="102" width="1080" height="568">
+            <frame id="32:7602" name="Context / detail editor" x="0" y="0" width="1080" height="108">
+              <frame id="32:7603" name="Frame" x="25" y="21" width="396" height="28">
+                <text id="32:7604" name="Raw body · application/json · 200 OK" x="0" y="4" width="281" height="20" />
+                <instance id="32:7605" name="Badge" x="297" y="0" width="99" height="28" />
+              </frame>
+              <frame id="32:7607" name="Frame" x="25" y="61" width="1032" height="26">
+                <instance id="32:7608" name="Code line" x="0" y="0" width="1032" height="26" />
+              </frame>
+            </frame>
+            <text id="32:7611" name="Raw preserves the received body bytes. Pretty formatting is a se" x="0" y="124" width="1080" height="16" />
+          </frame>
+          <frame id="32:7612" name="Actions / Q35" x="24" y="700" width="1080" height="40">
+            <instance id="32:7613" name="Button" x="788" y="0" width="136" height="40" />
+            <instance id="32:7615" name="Button" x="936" y="0" width="144" height="40" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="32:7617" name="Shell/Statusbar" x="0" y="872" width="1440" height="28" />
+  </frame>
+  <text id="32:7620" name="Q35 · Raw response inspector · RS02 RS04" x="1520" y="11408" width="1440" height="20" />
+</canvas>

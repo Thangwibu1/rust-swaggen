@@ -1,0 +1,10 @@
+{
+  "observed_at": "2026-11-24T10:50:40+00:00",
+  "path": "target/x86_64-pc-windows-msvc/debug/swaggen-desktop.exe",
+  "sha256": "D11AF971F3D70F62894FA67567B293141D36F95082186B780F7BAA8C142F6BC2",
+  "profile": "debug",
+  "window_title": "Swaggen",
+  "final_window_id": 2036682,
+  "uia_controls_observed": 20,
+  "scope": "Updated P01 native binary opened offline on Windows, exposed 20 UIA controls across header, status bar, 4-tab sidebar (Draft, E03, Z15, S06) and draft editor. No release/installer/performance acceptance."
+}

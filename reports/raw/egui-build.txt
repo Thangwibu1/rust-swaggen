@@ -1,0 +1,9 @@
+﻿cargo.exe :    Compiling swaggen-p00-egui v0.0.0 (D:\code\potmen\spikes\p00-egui)
+At D:\code\potmen\tools\p00-egui-check.ps1:12 char:20
++         $output = (& cargo @Arguments 2>&1 | Out-String)
++                    ~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (   Compiling sw...pikes\p00-egui):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 22.64s
+

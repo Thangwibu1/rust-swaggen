@@ -1,0 +1,157 @@
+{
+  "node": {
+    "page": "07-coverage-handoff",
+    "page_id": "4:95",
+    "id": "15:6256",
+    "name": "Coverage / OA",
+    "type": "frame",
+    "width": "1440",
+    "height": "716",
+    "path": "02-design/reference/07-coverage-handoff/coverage-oa__15-6256",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "15:6257",
+      "name": "OA / REQUIREMENT COVERAGE",
+      "type": "text",
+      "x": "41",
+      "y": "41",
+      "width": "360",
+      "height": "34"
+    },
+    {
+      "id": "15:6258",
+      "name": "OA01",
+      "type": "frame",
+      "x": "41",
+      "y": "91",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6263",
+      "name": "OA02",
+      "type": "frame",
+      "x": "41",
+      "y": "151",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6268",
+      "name": "OA03",
+      "type": "frame",
+      "x": "41",
+      "y": "211",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6273",
+      "name": "OA04",
+      "type": "frame",
+      "x": "41",
+      "y": "271",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6278",
+      "name": "OA05",
+      "type": "frame",
+      "x": "41",
+      "y": "331",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6283",
+      "name": "OA06",
+      "type": "frame",
+      "x": "41",
+      "y": "391",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6288",
+      "name": "OA07",
+      "type": "frame",
+      "x": "41",
+      "y": "451",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6293",
+      "name": "OA08",
+      "type": "frame",
+      "x": "41",
+      "y": "511",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6298",
+      "name": "OA09",
+      "type": "frame",
+      "x": "41",
+      "y": "571",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6303",
+      "name": "OA10",
+      "type": "frame",
+      "x": "41",
+      "y": "631",
+      "width": "1360",
+      "height": "44"
+    }
+  ],
+  "text_layer_names": [
+    "OA / REQUIREMENT COVERAGE",
+    "OA01",
+    "Import đặc tả",
+    "Stage A",
+    "D01 · I01",
+    "OA02",
+    "Editor đặc tả",
+    "Stage A",
+    "D01",
+    "OA03",
+    "Kiểm tra cấu trúc",
+    "Stage A",
+    "D02",
+    "OA04",
+    "Quản lý endpoint",
+    "Stage A",
+    "D01 · D03 · D12",
+    "OA05",
+    "Định nghĩa dữ liệu",
+    "Stage A",
+    "D01 · D03 · D04",
+    "OA06",
+    "Components dùng lại",
+    "Stage A",
+    "D01 · D04 · D05",
+    "OA07",
+    "Schema phức tạp",
+    "Stage B",
+    "D02 · D04 · D05",
+    "OA08",
+    "Tham chiếu nhiều file",
+    "Stage B",
+    "D02 · D05",
+    "OA09",
+    "Swagger 2 và phiên bản mới",
+    "Stage B",
+    "D02",
+    "OA10",
+    "Lint quy ước nhóm",
+    "Stage B",
+    "D10"
+  ]
+}

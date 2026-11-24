@@ -1,0 +1,14 @@
+{
+  "cancel_after_signal_p95_ms": 16.6436,
+  "open_search_1k_p50_ms": 1.441,
+  "open_search_1k_p95_ms": 1.6441999999999999,
+  "open_search_1k_p99_ms": 1.8502,
+  "open_search_1k_samples": 40,
+  "profile": "release",
+  "stream_20mb_p95_ms": 187.8787,
+  "stream_20mb_samples": 10,
+  "stream_preview_cap_bytes": 1048576,
+  "target": "x86_64-pc-windows-msvc",
+  "workspace_payload_bytes": 598670,
+  "workspace_requests": 1000
+}

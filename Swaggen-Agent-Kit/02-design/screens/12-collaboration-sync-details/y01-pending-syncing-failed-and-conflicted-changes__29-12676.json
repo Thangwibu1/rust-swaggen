@@ -1,0 +1,51 @@
+{
+  "node": {
+    "page": "12-collaboration-sync-details",
+    "page_id": "27:323",
+    "id": "29:12676",
+    "name": "Y01 / Pending, syncing, failed and conflicted changes",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/12-collaboration-sync-details/y01-pending-syncing-failed-and-conflicted-changes__29-12676",
+    "requirements": [
+      "SY01"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:12677",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:12680",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:12841",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Pending, syncing, failed and conflicted changes",
+    "DisNote API / collab / Y01",
+    "OPERATION",
+    "STATE",
+    "RECOVERY"
+  ]
+}

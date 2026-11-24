@@ -1,0 +1,59 @@
+{
+  "node": {
+    "page": "02-access-workspaces",
+    "page_id": "4:90",
+    "id": "6:1259",
+    "name": "A11 / Good morning, Ha Giang",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/02-access-workspaces/a11-good-morning-ha-giang__6-1259",
+    "requirements": [
+      "CO01",
+      "CO06",
+      "WS04"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "6:1260",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "6:1263",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "6:1432",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Good morning, Ha Giang",
+    "DisNote API / Team workspace",
+    "Continue where you left off",
+    "NAME / OPERATION",
+    "VALUE / DETAILS",
+    "STATUS",
+    "Team activity",
+    "Tina published a new Task schema",
+    "Added due_at and clarified the status enum · 2 minutes ago",
+    "Minh added a response example",
+    "List tasks · Success response · 8 minutes ago"
+  ]
+}

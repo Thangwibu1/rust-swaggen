@@ -1,0 +1,55 @@
+{
+  "node": {
+    "page": "08-workspace-collection-details",
+    "page_id": "27:319",
+    "id": "28:1904",
+    "name": "W13 / Duplicate a request",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/08-workspace-collection-details/w13-duplicate-a-request__28-1904",
+    "requirements": [
+      "RQ09",
+      "WS06"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "28:1905",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "28:1908",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "28:2054",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Duplicate a request",
+    "DisNote API / workspace / W13",
+    "Source",
+    "POST Create task",
+    "New name",
+    "Destination",
+    "Personal overrides",
+    "Keep local values on this PC"
+  ]
+}

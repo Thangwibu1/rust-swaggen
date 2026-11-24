@@ -1,0 +1,925 @@
+{
+  "generated_at": "2026-11-24T10:29:49.527550+00:00",
+  "phase": "P00",
+  "status": "passed",
+  "gate_passed": true,
+  "product_scaffold_created": true,
+  "docker_used": false,
+  "checks": [
+    {
+      "name": "Host",
+      "status": "PASS",
+      "detail": "Microsoft Windows 10.0.26200 ",
+      "command": "PowerShell presence inspection; see tools/doctor.ps1",
+      "exit_code": null,
+      "timestamp": "2026-11-24T06:47:57.8510053Z"
+    },
+    {
+      "name": "Rust compiler",
+      "status": "PASS",
+      "detail": "rustc 1.100.0 (0ef1bc386 2026-11-09)\r\nbinary: rustc\r\ncommit-hash: 0ef1bc386059596dada8fb65b50425aab2ea637a\r\ncommit-date: 2026-11-09\r\nhost: x86_64-pc-windows-msvc\r\nrelease: 1.100.0\r\nLLVM version: 23.1.5",
+      "command": "rustc +stable -Vv",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T06:47:58.1817998Z"
+    },
+    {
+      "name": "Cargo",
+      "status": "PASS",
+      "detail": "cargo 1.100.0 (3acc79c0c 2026-11-05)",
+      "command": "cargo +stable --version",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T06:47:58.3584912Z"
+    },
+    {
+      "name": "Rustup target",
+      "status": "PASS",
+      "detail": "x86_64-pc-windows-msvc",
+      "command": "rustup target list --installed --toolchain stable",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T06:47:58.4986724Z"
+    },
+    {
+      "name": "Rustfmt",
+      "status": "PASS",
+      "detail": "rustfmt 1.11.0-stable (0ef1bc3860 2026-11-09)",
+      "command": "cargo +stable fmt --version",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T06:47:58.8728197Z"
+    },
+    {
+      "name": "Clippy",
+      "status": "PASS",
+      "detail": "clippy 0.1.100 (0ef1bc3860 2026-11-09)",
+      "command": "cargo +stable clippy --version",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T06:47:59.1990246Z"
+    },
+    {
+      "name": "Git",
+      "status": "PASS",
+      "detail": "git version 2.45.1.windows.1",
+      "command": "git --version",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T06:47:59.3207425Z"
+    },
+    {
+      "name": "MSVC installation",
+      "status": "PASS",
+      "detail": "D:\\Development\\MSVC\\BuildTools",
+      "command": "PowerShell presence inspection; see tools/doctor.ps1",
+      "exit_code": null,
+      "timestamp": "2026-11-24T06:47:59.4882590Z"
+    },
+    {
+      "name": "Windows SDK",
+      "status": "PASS",
+      "detail": "C:\\Program Files (x86)\\Windows Kits\\10\\",
+      "command": "PowerShell presence inspection; see tools/doctor.ps1",
+      "exit_code": null,
+      "timestamp": "2026-11-24T06:47:59.5142834Z"
+    },
+    {
+      "name": "MSVC link smoke test",
+      "status": "PASS",
+      "detail": "Native test executable linked and executed; GUI validation remains separate",
+      "command": "cargo +stable test --manifest-path spikes/p00/Cargo.toml --offline --locked --lib",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T06:43:24.1820170Z",
+      "artifact_path": "reports/raw/journal-unit.txt"
+    },
+    {
+      "name": "Windows GUI/IME/DPI/Narrator",
+      "status": "PASS",
+      "detail": "Selected prototype smoke only; exact scope in p00-final-native.md",
+      "command": "PowerShell presence inspection; see tools/doctor.ps1",
+      "exit_code": null,
+      "timestamp": "2026-11-24T06:47:59.5152952Z",
+      "artifact_path": "reports/p00-final-native.md"
+    },
+    {
+      "name": "Dependency compatibility and licenses",
+      "status": "PASS",
+      "detail": "Declared source license/MSRV policy and adopted Windows graph advisory audit; cross-platform/rejected Iced failures retained. See p00-security-disposition.md",
+      "command": "PowerShell presence inspection; see tools/doctor.ps1",
+      "exit_code": null,
+      "timestamp": "2026-11-24T06:47:59.5272900Z"
+    },
+    {
+      "name": "mongo-runtime",
+      "status": "PASS",
+      "command": "cargo +stable run --manifest-path spikes/p00/Cargo.toml --offline --locked --features mongo --bin mongo-smoke",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T05:29:30.3323244Z",
+      "artifact_path": "reports/raw/mongo-runtime.txt"
+    },
+    {
+      "name": "format",
+      "status": "PASS",
+      "command": "cargo +stable fmt --manifest-path spikes/p00/Cargo.toml -- --check",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T06:43:23.6552079Z",
+      "artifact_path": "reports/raw/format.txt"
+    },
+    {
+      "name": "journal-unit",
+      "status": "PASS",
+      "command": "cargo +stable test --manifest-path spikes/p00/Cargo.toml --offline --locked --lib",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T06:43:24.1820170Z",
+      "artifact_path": "reports/raw/journal-unit.txt"
+    },
+    {
+      "name": "journal-process-crash",
+      "status": "PASS",
+      "command": "cargo +stable run --manifest-path spikes/p00/Cargo.toml --offline --locked --bin journal-smoke",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T06:43:32.1665283Z",
+      "artifact_path": "reports/raw/journal-process-crash.txt"
+    },
+    {
+      "name": "journal-crash-matrix",
+      "status": "PASS",
+      "command": "cargo +stable run --manifest-path spikes/p00/Cargo.toml --offline --locked --features fault-injection --bin journal-crash-matrix",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T06:43:39.9944028Z",
+      "artifact_path": "reports/raw/journal-crash-matrix.txt"
+    },
+    {
+      "name": "mongo-build",
+      "status": "PASS",
+      "command": "cargo +stable build --manifest-path spikes/p00/Cargo.toml --offline --locked --features mongo",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T06:43:50.6475617Z",
+      "artifact_path": "reports/raw/mongo-build.txt"
+    },
+    {
+      "name": "clippy",
+      "status": "PASS",
+      "command": "cargo +stable clippy --manifest-path spikes/p00/Cargo.toml --offline --locked --features mongo,fault-injection --all-targets -- -D warnings",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T06:44:13.8641931Z",
+      "artifact_path": "reports/raw/clippy.txt"
+    },
+    {
+      "name": "native-format",
+      "status": "PASS",
+      "command": "cargo +stable fmt --manifest-path spikes/p00-native/Cargo.toml -- --check",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T06:44:17.5378400Z",
+      "artifact_path": "reports/raw/native-format.txt"
+    },
+    {
+      "name": "native-unit",
+      "status": "PASS",
+      "command": "cargo +stable test --manifest-path spikes/p00-native/Cargo.toml --offline --locked --lib",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T06:44:18.0679798Z",
+      "artifact_path": "reports/raw/native-unit.txt"
+    },
+    {
+      "name": "native-clippy",
+      "status": "PASS",
+      "command": "cargo +stable clippy --manifest-path spikes/p00-native/Cargo.toml --offline --locked --all-targets -- -D warnings",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T06:44:26.6718167Z",
+      "artifact_path": "reports/raw/native-clippy.txt"
+    },
+    {
+      "name": "index.crates.io",
+      "status": "BLOCKED",
+      "command": "Resolve-DnsName index.crates.io",
+      "exit_code": null,
+      "timestamp": "2026-11-24T05:07:06.5852275Z",
+      "detail": "DNS lookup failed in execution environment; no URI or credentials logged"
+    },
+    {
+      "name": "coolify.be-learning.io.vn",
+      "status": "BLOCKED",
+      "command": "Resolve-DnsName coolify.be-learning.io.vn",
+      "exit_code": null,
+      "timestamp": "2026-11-24T05:07:07.5408404Z",
+      "detail": "DNS lookup failed in execution environment; no URI or credentials logged"
+    },
+    {
+      "name": "windows-target",
+      "command": "rustup target list --installed --toolchain stable",
+      "exit_code": 0,
+      "status": "PASS",
+      "timestamp": "2026-11-24T05:27:23.8106142Z",
+      "artifact_path": "reports/raw/install-windows-target.txt"
+    },
+    {
+      "name": "rustfmt",
+      "command": "rustup component add rustfmt --toolchain stable",
+      "exit_code": 0,
+      "status": "PASS",
+      "timestamp": "2026-11-24T05:27:23.8991336Z",
+      "artifact_path": "reports/raw/install-rustfmt.txt"
+    },
+    {
+      "name": "candidate-crates",
+      "command": "cargo +stable fetch --manifest-path .local/p00-dependencies/Cargo.toml --target x86_64-pc-windows-msvc",
+      "exit_code": 0,
+      "status": "PASS",
+      "timestamp": "2026-11-24T05:27:24.1912563Z",
+      "artifact_path": "reports/raw/install-candidate-crates.txt"
+    },
+    {
+      "name": "software-build-debug",
+      "status": "PASS",
+      "command": "cargo +stable build --manifest-path spikes/p00-native/Cargo.toml --offline --locked --no-default-features --features software --target x86_64-pc-windows-msvc --target-dir spikes/p00-native/target-software --bin native-gate",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T05:09:44.1663919Z",
+      "artifact_path": "reports/raw/software-build-debug.txt"
+    },
+    {
+      "name": "software-unit",
+      "status": "PASS",
+      "command": "cargo +stable test --manifest-path spikes/p00-native/Cargo.toml --offline --locked --no-default-features --features software --target x86_64-pc-windows-msvc --target-dir spikes/p00-native/target-software --lib",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T05:12:41.6905069Z",
+      "artifact_path": "reports/raw/software-unit.txt"
+    },
+    {
+      "name": "software-clippy",
+      "status": "PASS",
+      "command": "cargo +stable clippy --manifest-path spikes/p00-native/Cargo.toml --offline --locked --no-default-features --features software --target x86_64-pc-windows-msvc --target-dir spikes/p00-native/target-software --all-targets -- -D warnings",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T05:13:10.4828555Z",
+      "artifact_path": "reports/raw/software-clippy.txt"
+    },
+    {
+      "name": "software-metadata",
+      "status": "PASS",
+      "command": "cargo +stable metadata --manifest-path spikes/p00-native/Cargo.toml --offline --locked --no-default-features --features software --filter-platform x86_64-pc-windows-msvc --format-version 1",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T05:13:45.0879940Z",
+      "artifact_path": "reports/raw/software-metadata.txt"
+    },
+    {
+      "name": "mongo-diagnostics-unit",
+      "command": "cargo +stable test --manifest-path spikes/p00/Cargo.toml --offline --locked --features mongo --lib mongo_diagnostics::tests",
+      "status": "PASS",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T05:14:13.0162669Z",
+      "artifact_path": "reports/raw/mongo-diagnostics-unit.txt"
+    },
+    {
+      "name": "mongo-diagnostics-build",
+      "command": "cargo +stable build --manifest-path spikes/p00/Cargo.toml --offline --locked --features mongo --bin mongo-smoke",
+      "status": "PASS",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T05:14:41.5397230Z",
+      "artifact_path": "reports/raw/mongo-diagnostics-build.txt"
+    },
+    {
+      "name": "mongo-diagnostics-clippy",
+      "command": "cargo +stable clippy --manifest-path spikes/p00/Cargo.toml --offline --locked --features mongo,fault-injection --all-targets -- -D warnings",
+      "status": "PASS",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T05:14:49.8059033Z",
+      "artifact_path": "reports/raw/mongo-diagnostics-clippy.txt"
+    },
+    {
+      "name": "egui-format",
+      "status": "PASS",
+      "command": "cargo +stable fmt --manifest-path spikes/p00-egui/Cargo.toml -- --check",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T06:47:59.7474364Z",
+      "artifact_path": "reports/raw/egui-format.txt"
+    },
+    {
+      "name": "egui-unit",
+      "status": "PASS",
+      "command": "cargo +stable test --manifest-path spikes/p00-egui/Cargo.toml --offline --locked --target x86_64-pc-windows-msvc --lib",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T06:48:00.2965240Z",
+      "artifact_path": "reports/raw/egui-unit.txt"
+    },
+    {
+      "name": "egui-build",
+      "status": "PASS",
+      "command": "cargo +stable build --manifest-path spikes/p00-egui/Cargo.toml --offline --locked --target x86_64-pc-windows-msvc",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T06:48:15.4827078Z",
+      "artifact_path": "reports/raw/egui-build.txt"
+    },
+    {
+      "name": "egui-release-build",
+      "status": "PASS",
+      "command": "cargo +stable build --manifest-path spikes/p00-egui/Cargo.toml --offline --locked --target x86_64-pc-windows-msvc --release",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T06:48:38.3441016Z",
+      "artifact_path": "reports/raw/egui-release-build.txt"
+    },
+    {
+      "name": "egui-clippy",
+      "status": "PASS",
+      "command": "cargo +stable clippy --manifest-path spikes/p00-egui/Cargo.toml --offline --locked --target x86_64-pc-windows-msvc --all-targets -- -D warnings",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T06:48:50.7738629Z",
+      "artifact_path": "reports/raw/egui-clippy.txt"
+    },
+    {
+      "name": "egui-metadata",
+      "status": "PASS",
+      "command": "cargo +stable metadata --manifest-path spikes/p00-egui/Cargo.toml --offline --locked --filter-platform x86_64-pc-windows-msvc --format-version 1",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T06:48:55.5512314Z",
+      "artifact_path": "reports/raw/egui-metadata.txt"
+    },
+    {
+      "name": "egui-windows-control-semantics",
+      "status": "PASS",
+      "timestamp": "2026-11-24T05:49:05.621912+00:00",
+      "exit_code": null,
+      "command": "Observed native Windows tool interactions; see egui-comparison.md",
+      "artifact_path": "reports/egui-comparison.md",
+      "detail": "Labelled search/body fields, request buttons, separator and dialog exposed by Windows accessibility tree; no full Narrator acceptance",
+      "timestamp_scope": "recorded after interactive observations, not a benchmark timestamp"
+    },
+    {
+      "name": "egui-unicode-font-fallback",
+      "status": "PASS",
+      "timestamp": "2026-11-24T05:49:05.621912+00:00",
+      "exit_code": null,
+      "command": "Observed native Windows tool interactions; see egui-comparison.md",
+      "artifact_path": "reports/egui-comparison.md",
+      "detail": "Corrected build preserved accented fixture in both Value and Document text; screenshots displayed Vietnamese glyphs; clipboard only",
+      "timestamp_scope": "recorded after interactive observations, not a benchmark timestamp"
+    },
+    {
+      "name": "egui-search-and-selected-tab-focus",
+      "status": "PASS",
+      "timestamp": "2026-11-24T05:49:05.621912+00:00",
+      "exit_code": null,
+      "command": "Observed native Windows tool interactions; see egui-comparison.md",
+      "artifact_path": "reports/egui-comparison.md",
+      "detail": "UIA SetValue search Viet with accent reported 1 match; Tab focused body; Ctrl+P/Tab/Escape restored body focus with draft retained",
+      "timestamp_scope": "recorded after interactive observations, not a benchmark timestamp"
+    },
+    {
+      "name": "egui-virtual-list",
+      "status": "PASS",
+      "timestamp": "2026-11-24T05:49:05.621912+00:00",
+      "exit_code": null,
+      "command": "Observed native Windows tool interactions; see egui-comparison.md",
+      "artifact_path": "reports/egui-comparison.md",
+      "detail": "Windows tree reached GET /fixture/1000 with 45 rows drawn, 44 near top; no latency or full keyboard navigation acceptance",
+      "timestamp_scope": "recorded after interactive observations, not a benchmark timestamp"
+    },
+    {
+      "name": "egui-first-build-undo-redo",
+      "status": "PASS",
+      "timestamp": "2026-11-24T05:49:05.621912+00:00",
+      "exit_code": null,
+      "command": "Observed native Windows tool interactions; see egui-comparison.md",
+      "artifact_path": "reports/egui-comparison.md",
+      "detail": "Ctrl+Z restored initial JSON and Ctrl+Y restored pasted fixture on first build before system_fonts addition",
+      "timestamp_scope": "recorded after interactive observations, not a benchmark timestamp"
+    },
+    {
+      "name": "egui-index-click",
+      "status": "FAIL",
+      "timestamp": "2026-11-24T05:49:05.621912+00:00",
+      "exit_code": null,
+      "command": "Observed native Windows tool interactions; see egui-comparison.md",
+      "artifact_path": "reports/egui-comparison.md",
+      "detail": "First-build indexed editor click returned coordinate input geometry is unavailable; screenshot-coordinate click worked; cause not assigned to framework",
+      "timestamp_scope": "recorded after interactive observations, not a benchmark timestamp"
+    },
+    {
+      "name": "egui-splitter-drag",
+      "status": "FAIL",
+      "timestamp": "2026-11-24T05:49:05.621912+00:00",
+      "exit_code": null,
+      "command": "Observed native Windows tool interactions; see egui-comparison.md",
+      "artifact_path": "reports/egui-comparison.md",
+      "detail": "Corrected-build drag produced no measurable separator value/layout change; helper geometry and candidate resizing need diagnosis",
+      "timestamp_scope": "recorded after interactive observations, not a benchmark timestamp"
+    },
+    {
+      "name": "egui-ime-narrator-osdpi",
+      "status": "BLOCKED",
+      "timestamp": "2026-11-24T05:49:05.621912+00:00",
+      "exit_code": null,
+      "command": "Observed native Windows tool interactions; see egui-comparison.md",
+      "artifact_path": "reports/egui-comparison.md",
+      "detail": "Real IME preedit/commit/cancel, Narrator, OS DPI and multiple monitors not tested",
+      "timestamp_scope": "recorded after interactive observations, not a benchmark timestamp"
+    },
+    {
+      "name": "evidence-store-regression-ps51",
+      "status": "PASS",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T06:57:30.920325+00:00",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/tests/test-p00-evidence-store.ps1",
+      "artifact_path": "reports/raw/evidence-store-regression-ps51.txt"
+    },
+    {
+      "name": "foundation-python-regression",
+      "status": "PASS",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T07:15:46.154233+00:00",
+      "command": "\"C:\\Users\\Ngoc Thang\\AppData\\Local\\Programs\\Python\\Python312\\python.exe\" -X utf8 -m unittest discover -s tools/tests -p test_p00*.py",
+      "artifact_path": "reports/raw/foundation-python-regression.txt"
+    },
+    {
+      "name": "rustsec-p00",
+      "status": "PASS",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T07:16:43.960933+00:00",
+      "lock_sha256": "cd7c41cc6e4623a016359950b7ea31112c15060a56a4e07890b4a2907133f7e3",
+      "command": "D:\\code\\potmen\\.local\\p00-audit-tools\\bin\\cargo-audit.exe audit --json --file D:\\code\\potmen\\spikes\\p00\\Cargo.lock --db D:\\code\\potmen\\.local\\p00-advisory-db --deny warnings --no-fetch",
+      "artifact_path": "reports/raw/audit-p00.json",
+      "stderr_path": "reports/raw/audit-p00.stderr.txt",
+      "detail": "Warnings denied; no advisory ignores. Original cross-platform lock; retained even for rejected candidates.",
+      "database": {
+        "advisory-count": 1563,
+        "last-commit": null,
+        "last-updated": null
+      },
+      "artifact_sha256": "d7ff1c0575863c3b7844dec31f6db62fc23ea7941790af4a9c7d3fa0a39c8355"
+    },
+    {
+      "name": "rustsec-windows-p00",
+      "status": "PASS",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T07:16:44.479403+00:00",
+      "lock_sha256": "cd7c41cc6e4623a016359950b7ea31112c15060a56a4e07890b4a2907133f7e3",
+      "target": "x86_64-pc-windows-msvc",
+      "metadata_path": "reports/raw/audit-metadata-p00.json",
+      "metadata_command": [
+        "C:\\Users\\Ngoc Thang\\.cargo\\bin\\cargo.exe",
+        "+stable",
+        "metadata",
+        "--manifest-path",
+        "spikes/p00/Cargo.toml",
+        "--offline",
+        "--locked",
+        "--filter-platform",
+        "x86_64-pc-windows-msvc",
+        "--format-version",
+        "1",
+        "--features",
+        "mongo"
+      ],
+      "projection_path": "reports/raw/audit-windows-p00.lock",
+      "projection_sha256": "0b60bba23c202fb59d4e795269b5dd04f8ae27cacb567d95a7452b3b14c51d6f",
+      "input_sha256": {
+        "spikes/p00/Cargo.toml": "e744f7cf9b7a47912ec6a86fdfc9b203e3ff7b700ac40bb399ee323d37c599ed",
+        "spikes/p00-native/Cargo.toml": "e158187a9e5506072429cd6aab05d1dfca161ac4ee2b4631c5c515fa5da2afba",
+        "spikes/p00-egui/Cargo.toml": "53adada481d1a31f30330a0ef69363933f31c520a089ffa6340af5fb2d7fa87a",
+        "spikes/p00-transport/Cargo.toml": "865b2db081a29924697c970ab322ba2afd0b39d6d619c214f3fb4826a04d9a16",
+        "spikes/p00/Cargo.lock": "cd7c41cc6e4623a016359950b7ea31112c15060a56a4e07890b4a2907133f7e3",
+        "reports/raw/audit-metadata-p00.json": "2ade88602c0c68fc91fb7d89dff1a297760fbb0ce2330db5f6e6fb0538175ab4"
+      },
+      "resolved_packages": 185,
+      "command": "D:\\code\\potmen\\.local\\p00-audit-tools\\bin\\cargo-audit.exe audit --json --file D:\\code\\potmen\\reports\\raw\\audit-windows-p00.lock --db D:\\code\\potmen\\.local\\p00-advisory-db --deny warnings --no-fetch",
+      "artifact_path": "reports/raw/audit-windows-p00.json",
+      "stderr_path": "reports/raw/audit-windows-p00.stderr.txt",
+      "detail": "Warnings denied; no advisory ignores. Complete Windows dependency closure.",
+      "database": {
+        "advisory-count": 1563,
+        "last-commit": null,
+        "last-updated": null
+      },
+      "artifact_sha256": "dbf4f6d956239c4ea53d83c8e883d526270c438752bfb122974825e2702c3b85"
+    },
+    {
+      "name": "rustsec-p00-native",
+      "status": "FAIL",
+      "exit_code": 1,
+      "timestamp": "2026-11-24T07:16:45.828012+00:00",
+      "lock_sha256": "80f9ced347fcb3f16a0ae901ee30693e7add14149e08a211326fb6c8fd4b0a83",
+      "command": "D:\\code\\potmen\\.local\\p00-audit-tools\\bin\\cargo-audit.exe audit --json --file D:\\code\\potmen\\spikes\\p00-native\\Cargo.lock --db D:\\code\\potmen\\.local\\p00-advisory-db --deny warnings --no-fetch",
+      "artifact_path": "reports/raw/audit-p00-native.json",
+      "stderr_path": "reports/raw/audit-p00-native.stderr.txt",
+      "detail": "Warnings denied; no advisory ignores. Original cross-platform lock; retained even for rejected candidates."
+    },
+    {
+      "name": "rustsec-windows-p00-native",
+      "status": "FAIL",
+      "exit_code": 1,
+      "timestamp": "2026-11-24T07:16:46.567297+00:00",
+      "lock_sha256": "80f9ced347fcb3f16a0ae901ee30693e7add14149e08a211326fb6c8fd4b0a83",
+      "target": "x86_64-pc-windows-msvc",
+      "metadata_path": "reports/raw/audit-metadata-p00-native.json",
+      "metadata_command": [
+        "C:\\Users\\Ngoc Thang\\.cargo\\bin\\cargo.exe",
+        "+stable",
+        "metadata",
+        "--manifest-path",
+        "spikes/p00-native/Cargo.toml",
+        "--offline",
+        "--locked",
+        "--filter-platform",
+        "x86_64-pc-windows-msvc",
+        "--format-version",
+        "1"
+      ],
+      "projection_path": "reports/raw/audit-windows-p00-native.lock",
+      "projection_sha256": "5013ca1c942f9b6372e3833495d18a622cf55482da6f6005c3cb95c3cb95f9ec",
+      "input_sha256": {
+        "spikes/p00/Cargo.toml": "e744f7cf9b7a47912ec6a86fdfc9b203e3ff7b700ac40bb399ee323d37c599ed",
+        "spikes/p00-native/Cargo.toml": "e158187a9e5506072429cd6aab05d1dfca161ac4ee2b4631c5c515fa5da2afba",
+        "spikes/p00-egui/Cargo.toml": "53adada481d1a31f30330a0ef69363933f31c520a089ffa6340af5fb2d7fa87a",
+        "spikes/p00-transport/Cargo.toml": "865b2db081a29924697c970ab322ba2afd0b39d6d619c214f3fb4826a04d9a16",
+        "spikes/p00-native/Cargo.lock": "80f9ced347fcb3f16a0ae901ee30693e7add14149e08a211326fb6c8fd4b0a83",
+        "reports/raw/audit-metadata-p00-native.json": "4ccb48a7ed034cefbfc1af0f07dea945b7fb43a3267bc20ef57b8f8a1c26e41a"
+      },
+      "resolved_packages": 255,
+      "command": "D:\\code\\potmen\\.local\\p00-audit-tools\\bin\\cargo-audit.exe audit --json --file D:\\code\\potmen\\reports\\raw\\audit-windows-p00-native.lock --db D:\\code\\potmen\\.local\\p00-advisory-db --deny warnings --no-fetch",
+      "artifact_path": "reports/raw/audit-windows-p00-native.json",
+      "stderr_path": "reports/raw/audit-windows-p00-native.stderr.txt",
+      "detail": "Warnings denied; no advisory ignores. Complete Windows dependency closure."
+    },
+    {
+      "name": "rustsec-p00-egui",
+      "status": "FAIL",
+      "exit_code": 1,
+      "timestamp": "2026-11-24T07:16:47.563406+00:00",
+      "lock_sha256": "f0767d1d3cbe994aac43d18fdf5efc82653ccf494d2653f24a7fa6ce078ce910",
+      "command": "D:\\code\\potmen\\.local\\p00-audit-tools\\bin\\cargo-audit.exe audit --json --file D:\\code\\potmen\\spikes\\p00-egui\\Cargo.lock --db D:\\code\\potmen\\.local\\p00-advisory-db --deny warnings --no-fetch",
+      "artifact_path": "reports/raw/audit-p00-egui.json",
+      "stderr_path": "reports/raw/audit-p00-egui.stderr.txt",
+      "detail": "Warnings denied; no advisory ignores. Original cross-platform lock; retained even for rejected candidates."
+    },
+    {
+      "name": "rustsec-windows-p00-egui",
+      "status": "PASS",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T07:16:48.212805+00:00",
+      "lock_sha256": "f0767d1d3cbe994aac43d18fdf5efc82653ccf494d2653f24a7fa6ce078ce910",
+      "target": "x86_64-pc-windows-msvc",
+      "metadata_path": "reports/raw/audit-metadata-p00-egui.json",
+      "metadata_command": [
+        "C:\\Users\\Ngoc Thang\\.cargo\\bin\\cargo.exe",
+        "+stable",
+        "metadata",
+        "--manifest-path",
+        "spikes/p00-egui/Cargo.toml",
+        "--offline",
+        "--locked",
+        "--filter-platform",
+        "x86_64-pc-windows-msvc",
+        "--format-version",
+        "1"
+      ],
+      "projection_path": "reports/raw/audit-windows-p00-egui.lock",
+      "projection_sha256": "5eb7b5802f52381f9ee4eba7c8ed6d7d7c369154617697b3d6d95c22ce682b9b",
+      "input_sha256": {
+        "spikes/p00/Cargo.toml": "e744f7cf9b7a47912ec6a86fdfc9b203e3ff7b700ac40bb399ee323d37c599ed",
+        "spikes/p00-native/Cargo.toml": "e158187a9e5506072429cd6aab05d1dfca161ac4ee2b4631c5c515fa5da2afba",
+        "spikes/p00-egui/Cargo.toml": "53adada481d1a31f30330a0ef69363933f31c520a089ffa6340af5fb2d7fa87a",
+        "spikes/p00-transport/Cargo.toml": "865b2db081a29924697c970ab322ba2afd0b39d6d619c214f3fb4826a04d9a16",
+        "spikes/p00-egui/Cargo.lock": "f0767d1d3cbe994aac43d18fdf5efc82653ccf494d2653f24a7fa6ce078ce910",
+        "reports/raw/audit-metadata-p00-egui.json": "0ee39bd0679bf1d14fe3cf10ff7359a6e1d497e74b28a42c07b6ab47c4014373"
+      },
+      "resolved_packages": 203,
+      "command": "D:\\code\\potmen\\.local\\p00-audit-tools\\bin\\cargo-audit.exe audit --json --file D:\\code\\potmen\\reports\\raw\\audit-windows-p00-egui.lock --db D:\\code\\potmen\\.local\\p00-advisory-db --deny warnings --no-fetch",
+      "artifact_path": "reports/raw/audit-windows-p00-egui.json",
+      "stderr_path": "reports/raw/audit-windows-p00-egui.stderr.txt",
+      "detail": "Warnings denied; no advisory ignores. Complete Windows dependency closure.",
+      "database": {
+        "advisory-count": 1563,
+        "last-commit": null,
+        "last-updated": null
+      },
+      "artifact_sha256": "669c82a01e0dfdcd0dd65ae80147903c3852fc2be0f7354c78357cc992edf4e2"
+    },
+    {
+      "name": "rustsec-p00-transport",
+      "status": "PASS",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T07:16:49.697574+00:00",
+      "lock_sha256": "0167a60c2e59a05251cd44fc7000e2584afbb875633a191c68e81eae8c3e83b7",
+      "command": "D:\\code\\potmen\\.local\\p00-audit-tools\\bin\\cargo-audit.exe audit --json --file D:\\code\\potmen\\spikes\\p00-transport\\Cargo.lock --db D:\\code\\potmen\\.local\\p00-advisory-db --deny warnings --no-fetch",
+      "artifact_path": "reports/raw/audit-p00-transport.json",
+      "stderr_path": "reports/raw/audit-p00-transport.stderr.txt",
+      "detail": "Warnings denied; no advisory ignores. Original cross-platform lock; retained even for rejected candidates.",
+      "database": {
+        "advisory-count": 1563,
+        "last-commit": null,
+        "last-updated": null
+      },
+      "artifact_sha256": "f8803569f9929eea72a8e1e127490cabeebd215d3ebb2ffb58980117c81e5315"
+    },
+    {
+      "name": "rustsec-windows-p00-transport",
+      "status": "PASS",
+      "exit_code": 0,
+      "timestamp": "2026-11-24T07:16:50.028755+00:00",
+      "lock_sha256": "0167a60c2e59a05251cd44fc7000e2584afbb875633a191c68e81eae8c3e83b7",
+      "target": "x86_64-pc-windows-msvc",
+      "metadata_path": "reports/raw/audit-metadata-p00-transport.json",
+      "metadata_command": [
+        "C:\\Users\\Ngoc Thang\\.cargo\\bin\\cargo.exe",
+        "+stable",
+        "metadata",
+        "--manifest-path",
+        "spikes/p00-transport/Cargo.toml",
+        "--offline",
+        "--locked",
+        "--filter-platform",
+        "x86_64-pc-windows-msvc",
+        "--format-version",
+        "1"
+      ],
+      "projection_path": "reports/raw/audit-windows-p00-transport.lock",
+      "projection_sha256": "aadc08a7b370ab682409aca3e8b9c55ea34e9b916e1f7eae5fc8ec50124dd4a1",
+      "input_sha256": {
+        "spikes/p00/Cargo.toml": "e744f7cf9b7a47912ec6a86fdfc9b203e3ff7b700ac40bb399ee323d37c599ed",
+        "spikes/p00-native/Cargo.toml": "e158187a9e5506072429cd6aab05d1dfca161ac4ee2b4631c5c515fa5da2afba",
+        "spikes/p00-egui/Cargo.toml": "53adada481d1a31f30330a0ef69363933f31c520a089ffa6340af5fb2d7fa87a",
+        "spikes/p00-transport/Cargo.toml": "865b2db081a29924697c970ab322ba2afd0b39d6d619c214f3fb4826a04d9a16",
+        "spikes/p00-transport/Cargo.lock": "0167a60c2e59a05251cd44fc7000e2584afbb875633a191c68e81eae8c3e83b7",
+        "reports/raw/audit-metadata-p00-transport.json": "44d203c86994c36ad1a013eeb5db1656e0bde89c3d1975e5c8edb4d937f4a5ce"
+      },
+      "resolved_packages": 50,
+      "command": "D:\\code\\potmen\\.local\\p00-audit-tools\\bin\\cargo-audit.exe audit --json --file D:\\code\\potmen\\reports\\raw\\audit-windows-p00-transport.lock --db D:\\code\\potmen\\.local\\p00-advisory-db --deny warnings --no-fetch",
+      "artifact_path": "reports/raw/audit-windows-p00-transport.json",
+      "stderr_path": "reports/raw/audit-windows-p00-transport.stderr.txt",
+      "detail": "Warnings denied; no advisory ignores. Complete Windows dependency closure.",
+      "database": {
+        "advisory-count": 1563,
+        "last-commit": null,
+        "last-updated": null
+      },
+      "artifact_sha256": "d42d1d27db5dc190d23c539805f09e910258426c4b02f8bf8e43b3bf7cfbd87b"
+    },
+    {
+      "name": "dependency-source-license-msrv",
+      "status": "PASS",
+      "timestamp": "2026-11-24T06:46:33.788740+00:00",
+      "exit_code": 0,
+      "command": "python -X utf8 tools/p00-dependency-review.py",
+      "artifact_path": "reports/dependency-source-review.json",
+      "scope": "Selected Windows source manifests, declared licenses/MSRV and bundled upstream notices only; current advisories and license obligations remain separate",
+      "issues": [],
+      "release_notice_bundle_complete": false
+    },
+    {
+      "name": "p00-editor-highlight-search",
+      "status": "PASS",
+      "timestamp": "2026-11-24T06:54:43.721752+00:00",
+      "exit_code": null,
+      "command": "Observed native Windows application interactions; exact actions in p00-final-native.md",
+      "artifact_path": "reports/p00-final-native.md",
+      "detail": "Observed JSON/YAML lexical colours, Unicode two-match F3 selection; final release Ctrl+Z emptied Telex phrase and Ctrl+Y restored it exactly",
+      "timestamp_scope": "Recorded after observations, not a latency timestamp"
+    },
+    {
+      "name": "p00-keyboard-modal",
+      "status": "PASS",
+      "timestamp": "2026-11-24T06:54:43.721752+00:00",
+      "exit_code": null,
+      "command": "Observed native Windows application interactions; exact actions in p00-final-native.md",
+      "artifact_path": "reports/p00-final-native.md",
+      "detail": "Observed background nodes removed, immediate Return to editor focus, Tab trap and Escape focus restoration; final release Shift+Tab traversed to Restore and Enter invoked it",
+      "timestamp_scope": "Recorded after observations, not a latency timestamp"
+    },
+    {
+      "name": "p00-telex-input",
+      "status": "PASS",
+      "timestamp": "2026-11-24T06:54:43.721752+00:00",
+      "exit_code": null,
+      "command": "Observed native Windows application interactions; exact actions in p00-final-native.md",
+      "artifact_path": "reports/p00-final-native.md",
+      "detail": "Individual native key events tieengs space vieetj space produced tieng viet with correct Vietnamese accents; repeated on final release, not paste",
+      "timestamp_scope": "Recorded after observations, not a latency timestamp"
+    },
+    {
+      "name": "p00-native-resize-dpi",
+      "status": "PASS",
+      "timestamp": "2026-11-24T06:54:43.721752+00:00",
+      "exit_code": null,
+      "command": "Observed native Windows application interactions; exact actions in p00-final-native.md",
+      "artifact_path": "reports/p00-final-native.md",
+      "detail": "Actual Windows scale 1.75; release resized 1440x900 ->951x900 ->720x480 and maximized1646x903; editor usable; ordered pointer splitter retained250->419 points. Current-scale smoke only, not all-DPI certification",
+      "timestamp_scope": "Recorded after observations, not a latency timestamp"
+    },
+    {
+      "name": "p00-narrator",
+      "status": "PASS",
+      "timestamp": "2026-11-24T06:54:43.721752+00:00",
+      "exit_code": null,
+      "command": "Observed native Windows application interactions; exact actions in p00-final-native.md",
+      "artifact_path": "reports/p00-final-native.md",
+      "detail": "Visible Windows Speech recap contained Swaggen P00 region, Find text edit and Previous Shift+F3 button. Selected-control speech smoke only; session exited and absence observed",
+      "timestamp_scope": "Recorded after observations, not a latency timestamp"
+    },
+    {
+      "name": "p00-ui-local-restore",
+      "status": "PASS",
+      "timestamp": "2026-11-24T06:54:43.721752+00:00",
+      "exit_code": null,
+      "command": "Observed native Windows application interactions; exact actions in p00-final-native.md",
+      "artifact_path": "reports/p00-final-native.md",
+      "detail": "Saved Unicode fixture after sync_all, changed draft, restored actual journal fixture; final executable restored the same fixture through keyboard. CRC/artifact verification recorded separately",
+      "timestamp_scope": "Recorded after observations, not a latency timestamp"
+    },
+    {
+      "name": "p00-ui-large-response",
+      "status": "PASS",
+      "timestamp": "2026-11-24T06:54:43.721752+00:00",
+      "exit_code": null,
+      "command": "Observed native Windows application interactions; exact actions in p00-final-native.md",
+      "artifact_path": "reports/p00-final-native.md",
+      "detail": "Real loopback Axum HTTP sent20971520 bytes into egui worker with65536 preview cap; dialog opened after initiation; every body byte and SHA256 independently verified",
+      "timestamp_scope": "Recorded after observations, not a latency timestamp"
+    },
+    {
+      "name": "p00-ui-decision",
+      "status": "PASS",
+      "timestamp": "2026-11-24T06:54:43.721752+00:00",
+      "exit_code": null,
+      "artifact_path": "reports/ADR-0001-ui.md",
+      "command": "Evidence-based foundation ADR review",
+      "detail": "Technical foundation selection documented; product scaffold remains behind common advisory gate"
+    },
+    {
+      "name": "p00-storage-decision",
+      "status": "PASS",
+      "timestamp": "2026-11-24T06:54:43.721752+00:00",
+      "exit_code": null,
+      "artifact_path": "reports/ADR-0002-local-store.md",
+      "command": "Evidence-based foundation ADR review",
+      "detail": "Technical foundation selection documented; product scaffold remains behind common advisory gate"
+    },
+    {
+      "name": "host-hardware-and-workspace",
+      "status": "PASS",
+      "timestamp": "2026-11-24T06:30:52.408137+00:00",
+      "command": "python -X utf8 tools/p00-host-check.py",
+      "exit_code": 0,
+      "artifact_path": "reports/host-check.json",
+      "inventory": {
+        "logical_processors": 20,
+        "cpu_model": "13th Gen Intel(R) Core(TM) i9-13900H",
+        "physical_memory_bytes": 25384443904,
+        "workspace_free_bytes": 19638853632,
+        "workspace_volume_total_bytes": 128849014784,
+        "workspace_create_write_sync_read_rename_delete": "PASS"
+      },
+      "issues": [],
+      "scope": "Hardware and file permissions only; no benchmark, display setting or production data change"
+    },
+    {
+      "name": "software-renderer-feature-graph-debug",
+      "status": "PASS",
+      "exit_code": 0,
+      "command": "python -X utf8 tools/p00-software-evidence.py",
+      "timestamp": "2026-11-24T05:21:31.532363+00:00",
+      "artifact_path": "reports/software-renderer-evidence-debug.json",
+      "profile": "debug",
+      "binary": "spikes/p00-native/target-software/x86_64-pc-windows-msvc/debug/native-gate.exe",
+      "binary_sha256": "9f67ba4ac2c81218ccca57e91c634cbc4aaaeb74b292240e171d841b6544e911",
+      "renderer_crates": {
+        "iced": {
+          "version": "0.14.0",
+          "features": [
+            "crisp",
+            "highlighter",
+            "iced_highlighter",
+            "svg",
+            "tiny-skia",
+            "tokio"
+          ]
+        },
+        "iced_renderer": {
+          "version": "0.14.0",
+          "features": [
+            "iced_tiny_skia",
+            "svg",
+            "tiny-skia"
+          ]
+        },
+        "iced_tiny_skia": {
+          "version": "0.14.1",
+          "features": [
+            "resvg",
+            "svg"
+          ]
+        }
+      },
+      "wgpu_selected": false,
+      "limits": "Build/feature graph only. Interactive launch must be observed separately. Windows compositor/GPU driver behavior and release performance are not certified."
+    },
+    {
+      "name": "native-default-check",
+      "status": "PASS",
+      "exit_code": 0,
+      "command": "cargo +stable check --manifest-path spikes/p00-native/Cargo.toml --offline --locked",
+      "timestamp": "2026-11-24T05:20:21.5016174Z",
+      "artifact_path": "reports/raw/native-default-check.txt"
+    },
+    {
+      "name": "software-native-render-and-input",
+      "status": "PASS",
+      "exit_code": null,
+      "timestamp": "2026-11-24",
+      "command": "Native app launcher and computer-use inspection of target-software/x86_64-pc-windows-msvc/debug/native-gate.exe; Vietnamese fixture paste and Ctrl+Z",
+      "artifact_path": "reports/software-renderer.md"
+    },
+    {
+      "name": "software-accessibility",
+      "status": "FAIL",
+      "exit_code": null,
+      "timestamp": "2026-11-24",
+      "command": "Computer-use accessibility tree inspection exposes window chrome only; no editor/list/button semantics",
+      "artifact_path": "reports/software-renderer.md"
+    },
+    {
+      "name": "native-render",
+      "status": "PASS",
+      "command": "Native app launcher + computer-use window/screenshot inspection",
+      "exit_code": null,
+      "timestamp": "2026-11-24",
+      "artifact_path": "reports/native-ui.md"
+    },
+    {
+      "name": "native-unicode-undo-search",
+      "status": "PASS",
+      "command": "Computer-use: paste fixture Vietnamese JSON, Ctrl+Z, Ctrl+Y, exact search",
+      "exit_code": null,
+      "timestamp": "2026-11-24",
+      "artifact_path": "reports/native-ui.md"
+    },
+    {
+      "name": "native-virtual-list",
+      "status": "PASS",
+      "command": "Computer-use: scroll to fixture/1000 and inspect rendered row count",
+      "exit_code": null,
+      "timestamp": "2026-11-24",
+      "artifact_path": "reports/native-ui.md"
+    },
+    {
+      "name": "native-ui-transfer",
+      "status": "PASS",
+      "command": "Computer-use: send real 20MiB loopback fixture and inspect completed byte/preview counts",
+      "exit_code": null,
+      "timestamp": "2026-11-24",
+      "artifact_path": "reports/native-ui-http-artifact.json"
+    },
+    {
+      "name": "native-ui-local-save",
+      "status": "PASS",
+      "command": "Computer-use Ctrl+S, then cargo +stable run --manifest-path spikes/p00/Cargo.toml --offline --locked --bin journal-ui-reopen",
+      "exit_code": 0,
+      "timestamp": "2026-11-24",
+      "artifact_path": "reports/raw/native-ui-save-reopen.txt"
+    },
+    {
+      "name": "native-app-scale-stress",
+      "status": "PASS",
+      "command": "Computer-use: inspect corrected compact editor layout at 200% application scale; 125% also observed",
+      "exit_code": null,
+      "timestamp": "2026-11-24",
+      "artifact_path": "reports/native-ui.md"
+    },
+    {
+      "name": "native-accessibility",
+      "status": "FAIL",
+      "command": "Computer-use accessibility tree inspection: no internal editor/list/button semantics",
+      "exit_code": null,
+      "timestamp": "2026-11-24",
+      "artifact_path": "reports/native-ui.md"
+    },
+    {
+      "name": "native-ime-osdpi-narrator",
+      "status": "BLOCKED",
+      "command": "Real IME composition, OS per-monitor DPI and Narrator acceptance not performed",
+      "exit_code": null,
+      "timestamp": "2026-11-24",
+      "artifact_path": "reports/native-ui.md"
+    },
+    {
+      "name": "native-ui-http-artifact",
+      "status": "PASS",
+      "exit_code": 0,
+      "command": "python -X utf8 tools/p00-native-evidence.py",
+      "timestamp": "2026-11-24T04:46:34.473935+00:00",
+      "artifact_path": "reports/native-ui-http-artifact.json",
+      "files": [
+        {
+          "fixture_file": ".local/p00-native/body-41436-1795495445157780500.bin",
+          "bytes": 20971520,
+          "sha256": "6adfa0775cbd16a3f50d1fda1d7bd7f375dd1f9af5e6dfb751a87d3dff68699c",
+          "all_bytes_verified": true
+        }
+      ],
+      "limits": "Artifact integrity only; manual UI displayed 64KiB preview. No p95/RAM/IME/accessibility acceptance."
+    }
+  ],
+  "blockers": [],
+  "deferred_release_or_product_checks": [
+    "Full product keyboard/accessibility/DPI matrices, multiple monitors, automatic device-loss recovery and release performance budgets are phase-specific; selected P00 smoke observations do not certify them.",
+    "Production store schema migrations, workspace scoping and physical disk/power-loss qualification remain separate from the observed process-crash and OS-flush contract.",
+    "Some upstream published crates omit notice files; the release notice bundle must be completed from exact upstream revisions before distribution. See dependency-source-review.json.",
+    "464 design renders missing; no full visual parity claim.",
+    "No git repository detected; no commit evidence."
+  ],
+  "product_requirements_verified": 0,
+  "product_screens_verified": 0
+}

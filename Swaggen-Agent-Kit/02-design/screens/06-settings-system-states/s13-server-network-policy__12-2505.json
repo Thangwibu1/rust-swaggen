@@ -1,0 +1,62 @@
+{
+  "node": {
+    "page": "06-settings-system-states",
+    "page_id": "4:94",
+    "id": "12:2505",
+    "name": "S13 / Server network policy",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/06-settings-system-states/s13-server-network-policy__12-2505",
+    "requirements": [
+      "SC06",
+      "SC08"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "12:2506",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "12:2509",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "12:2675",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Server network policy",
+    "DisNote API / Settings",
+    "Configuration",
+    "Allowed destinations",
+    "Workspace configuration",
+    "Private network access",
+    "Workspace configuration",
+    "Redirect policy",
+    "Workspace configuration",
+    "DNS validation",
+    "Workspace configuration",
+    "Webhook permissions",
+    "Workspace configuration",
+    "Access & sharing",
+    "Changes are saved locally before they are published to your team."
+  ]
+}

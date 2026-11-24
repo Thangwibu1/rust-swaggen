@@ -1,0 +1,28 @@
+[package]
+name = "swaggen-p00-native"
+version = "0.0.0"
+edition = "2024"
+rust-version = "1.100"
+publish = false
+
+[features]
+# Preserve the original candidate's default feature set.
+default = ["iced/default"]
+# Explicit CPU drawing path for the isolated Windows renderer probe.
+software = ["iced/tiny-skia", "iced/crisp"]
+
+[dependencies]
+iced = { version = "=0.14.0", default-features = false, features = ["tokio", "highlighter", "svg"] }
+axum = "=0.8.9"
+tokio = { version = "=1.54.1", features = ["macros", "rt-multi-thread", "net", "time", "sync"] }
+futures-util = "=0.3.34"
+swaggen-p00 = { path = "../p00" }
+swaggen-p00-transport = { path = "../p00-transport" }
+
+[[bin]]
+name = "native-gate"
+path = "src/main.rs"
+
+[[bin]]
+name = "http-gate"
+path = "src/bin/http-gate.rs"

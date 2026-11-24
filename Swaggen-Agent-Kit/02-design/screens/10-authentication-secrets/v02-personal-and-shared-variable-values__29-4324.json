@@ -1,0 +1,52 @@
+{
+  "node": {
+    "page": "10-authentication-secrets",
+    "page_id": "27:321",
+    "id": "29:4324",
+    "name": "V02 / Personal and shared variable values",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/10-authentication-secrets/v02-personal-and-shared-variable-values__29-4324",
+    "requirements": [
+      "EV03",
+      "EV05"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:4325",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:4328",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:4483",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Personal and shared variable values",
+    "DisNote API / auth / V02",
+    "VARIABLE",
+    "YOUR LOCAL VALUE",
+    "SHARED CONFIGURATION"
+  ]
+}

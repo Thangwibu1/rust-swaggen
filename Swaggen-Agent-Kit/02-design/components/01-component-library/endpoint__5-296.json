@@ -1,0 +1,61 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:296",
+    "name": "Endpoint",
+    "type": "frame",
+    "width": "736",
+    "height": "184",
+    "path": "02-design/components/01-component-library/endpoint__5-296",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "5:297",
+      "name": "Method=GET",
+      "type": "symbol",
+      "x": "24",
+      "y": "56",
+      "width": "216",
+      "height": "36"
+    },
+    {
+      "id": "5:300",
+      "name": "Method=POST",
+      "type": "symbol",
+      "x": "260",
+      "y": "56",
+      "width": "216",
+      "height": "36"
+    },
+    {
+      "id": "5:303",
+      "name": "Method=PUT",
+      "type": "symbol",
+      "x": "496",
+      "y": "56",
+      "width": "216",
+      "height": "36"
+    },
+    {
+      "id": "5:306",
+      "name": "Method=PATCH",
+      "type": "symbol",
+      "x": "24",
+      "y": "112",
+      "width": "216",
+      "height": "36"
+    },
+    {
+      "id": "5:309",
+      "name": "Method=DELETE",
+      "type": "symbol",
+      "x": "260",
+      "y": "112",
+      "width": "216",
+      "height": "36"
+    }
+  ],
+  "text_layer_names": []
+}

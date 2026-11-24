@@ -1,0 +1,54 @@
+{
+  "node": {
+    "page": "14-protocols-system-details",
+    "page_id": "27:325",
+    "id": "29:21274",
+    "name": "Z01 / Windows installation destination",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/14-protocols-system-details/z01-windows-installation-destination__29-21274",
+    "requirements": [
+      "OP01"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:21275",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:21278",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:21422",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Windows installation destination",
+    "DisNote API / system / Z01",
+    "Install location",
+    "WebView2 runtime",
+    "Installed · compatible",
+    "Desktop shortcut",
+    "Enabled",
+    "User data"
+  ]
+}

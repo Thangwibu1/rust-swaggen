@@ -1,0 +1,61 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:199",
+    "name": "Input",
+    "type": "frame",
+    "width": "1168",
+    "height": "196",
+    "path": "02-design/components/01-component-library/input__5-199",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "5:200",
+      "name": "State=Default",
+      "type": "symbol",
+      "x": "24",
+      "y": "56",
+      "width": "360",
+      "height": "42"
+    },
+    {
+      "id": "5:202",
+      "name": "State=Focus",
+      "type": "symbol",
+      "x": "404",
+      "y": "56",
+      "width": "360",
+      "height": "42"
+    },
+    {
+      "id": "5:204",
+      "name": "State=Error",
+      "type": "symbol",
+      "x": "784",
+      "y": "56",
+      "width": "360",
+      "height": "42"
+    },
+    {
+      "id": "5:206",
+      "name": "State=Disabled",
+      "type": "symbol",
+      "x": "24",
+      "y": "118",
+      "width": "360",
+      "height": "42"
+    },
+    {
+      "id": "5:208",
+      "name": "State=Secret",
+      "type": "symbol",
+      "x": "404",
+      "y": "118",
+      "width": "360",
+      "height": "42"
+    }
+  ],
+  "text_layer_names": []
+}

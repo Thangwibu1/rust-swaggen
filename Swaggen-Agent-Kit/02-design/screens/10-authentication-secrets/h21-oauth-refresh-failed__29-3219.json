@@ -1,0 +1,53 @@
+{
+  "node": {
+    "page": "10-authentication-secrets",
+    "page_id": "27:321",
+    "id": "29:3219",
+    "name": "H21 / OAuth refresh failed",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/10-authentication-secrets/h21-oauth-refresh-failed__29-3219",
+    "requirements": [
+      "AU08"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:3220",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:3223",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:3369",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "OAuth refresh failed",
+    "DisNote API / auth / H21",
+    "Action required",
+    "Access token",
+    "Expired",
+    "Team data",
+    "Unaffected"
+  ]
+}

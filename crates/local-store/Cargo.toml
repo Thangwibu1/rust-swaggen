@@ -1,0 +1,16 @@
+[package]
+name = "swaggen-local-store"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+[features]
+fault-injection = []
+[dependencies]
+swaggen-domain.workspace = true
+swaggen-spec-engine.workspace = true
+swaggen-sync.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+[target.'cfg(windows)'.dependencies]
+windows-sys.workspace = true

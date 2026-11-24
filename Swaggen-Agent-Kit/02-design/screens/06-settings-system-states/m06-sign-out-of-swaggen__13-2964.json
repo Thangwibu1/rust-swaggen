@@ -1,0 +1,68 @@
+{
+  "node": {
+    "page": "06-settings-system-states",
+    "page_id": "4:94",
+    "id": "13:2964",
+    "name": "M06 / Sign out of Swaggen?",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/06-settings-system-states/m06-sign-out-of-swaggen__13-2964",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "13:2965",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "13:2966",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "13:3010",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    },
+    {
+      "id": "13:3011",
+      "name": "Overlay / Sign out of Swaggen?",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    }
+  ],
+  "text_layer_names": [
+    "Your Google account",
+    "DisNote API / Settings",
+    "Configuration",
+    "Account",
+    "Workspace configuration",
+    "Display name",
+    "Workspace configuration",
+    "Active session",
+    "Workspace configuration",
+    "Security",
+    "Workspace configuration",
+    "Access & sharing",
+    "Changes are saved locally before they are published to your team.",
+    "Sign out of Swaggen?",
+    "Your local drafts are preserved. Team sync will pause until you sign in with Google again."
+  ]
+}

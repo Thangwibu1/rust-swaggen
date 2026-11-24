@@ -1,0 +1,8 @@
+    Checking swaggen-domain v0.1.0 (D:\code\potmen\crates\domain)
+    Checking swaggen-api-contract v0.1.0 (D:\code\potmen\crates\api-contract)
+    Checking swaggen-ui-kit v0.1.0 (D:\code\potmen\crates\ui-kit)
+    Checking swaggen-server v0.1.0 (D:\code\potmen\apps\server)
+    Checking swaggen-local-store v0.1.0 (D:\code\potmen\crates\local-store)
+    Checking swaggen-secret-store v0.1.0 (D:\code\potmen\crates\secret-store)
+    Checking swaggen-desktop v0.1.0 (D:\code\potmen\apps\desktop)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 4.21s

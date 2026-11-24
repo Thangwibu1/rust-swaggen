@@ -1,0 +1,57 @@
+{
+  "node": {
+    "page": "09-request-response-states",
+    "page_id": "27:320",
+    "id": "28:6672",
+    "name": "Q20 / Request canceled",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/09-request-response-states/q20-request-canceled__28-6672",
+    "requirements": [
+      "RQ06",
+      "RS05",
+      "RS06"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "28:6673",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "28:6676",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "28:6825",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Request canceled",
+    "DisNote API / request / Q20",
+    "Review details",
+    "HTTP status",
+    "Unavailable",
+    "Duration",
+    "4.2 seconds",
+    "API effects",
+    "Cancellation does not guarantee server-side rollback"
+  ]
+}

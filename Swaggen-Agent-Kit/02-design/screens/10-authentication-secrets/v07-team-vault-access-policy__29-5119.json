@@ -1,0 +1,57 @@
+{
+  "node": {
+    "page": "10-authentication-secrets",
+    "page_id": "27:321",
+    "id": "29:5119",
+    "name": "V07 / Team vault access policy",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/10-authentication-secrets/v07-team-vault-access-policy__29-5119",
+    "requirements": [
+      "EV10",
+      "SC01"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:5120",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:5123",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:5275",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Team vault access policy",
+    "DisNote API / auth / V07",
+    "Secret",
+    "STAGING_API_KEY",
+    "Allowed roles",
+    "Rotation interval",
+    "Audit access",
+    "Enabled",
+    "Encryption key",
+    "Key identifier only; no raw key in UI"
+  ]
+}

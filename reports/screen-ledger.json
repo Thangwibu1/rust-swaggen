@@ -1,0 +1,4458 @@
+[
+  {
+    "screen_id": "6:144",
+    "requirements": [
+      "SC03",
+      "WS03"
+    ],
+    "source_path": "02-design/screens/02-access-workspaces/a01-welcome-to-swaggen__6-144",
+    "source_png_exists": true,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P04-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:187",
+    "requirements": [
+      "SC03",
+      "WS03"
+    ],
+    "source_path": "02-design/screens/02-access-workspaces/a02-continue-in-your-browser__6-187",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P04-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:230",
+    "requirements": [
+      "SC03",
+      "WS03"
+    ],
+    "source_path": "02-design/screens/02-access-workspaces/a03-google-sign-in-was-interrupted__6-230",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P04-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:273",
+    "requirements": [
+      "SC03",
+      "WS03"
+    ],
+    "source_path": "02-design/screens/02-access-workspaces/a04-your-session-has-expired__6-273",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P04-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:316",
+    "requirements": [
+      "OP03",
+      "OP04",
+      "WS02"
+    ],
+    "source_path": "02-design/screens/02-access-workspaces/a05-connect-your-team-server__6-316",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P04-progress.md"
+    ],
+    "disposition": "implemented in native Server UI (local HTTP verified; live Mongo env-gated / PNGs pending export)"
+  },
+  {
+    "screen_id": "6:476",
+    "requirements": [
+      "UX09",
+      "WS02"
+    ],
+    "source_path": "02-design/screens/02-access-workspaces/a06-unable-to-reach-your-server__6-476",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P04-progress.md"
+    ],
+    "disposition": "implemented in native Server UI (local HTTP verified; live Mongo env-gated / PNGs pending export)"
+  },
+  {
+    "screen_id": "6:615",
+    "requirements": [
+      "WS01",
+      "WS04",
+      "WS08"
+    ],
+    "source_path": "02-design/screens/02-access-workspaces/a07-let-s-build-together__6-615",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:769",
+    "requirements": [
+      "WS01",
+      "WS04",
+      "WS09"
+    ],
+    "source_path": "02-design/screens/02-access-workspaces/a08-your-workspaces__6-769",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "disposition": "implemented and verified in P09 Governance/MFA/UX B (63/63 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:939",
+    "requirements": [
+      "WS04",
+      "WS08"
+    ],
+    "source_path": "02-design/screens/02-access-workspaces/a09-create-a-workspace__6-939",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:1099",
+    "requirements": [
+      "WS05"
+    ],
+    "source_path": "02-design/screens/02-access-workspaces/a10-you-re-invited-to-disnote-api__6-1099",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P04-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:1259",
+    "requirements": [
+      "CO01",
+      "CO06",
+      "WS04"
+    ],
+    "source_path": "02-design/screens/02-access-workspaces/a11-good-morning-ha-giang__6-1259",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P05-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:1436",
+    "requirements": [
+      "RQ08",
+      "WS06"
+    ],
+    "source_path": "02-design/screens/02-access-workspaces/a12-your-api-workspace-starts-here__6-1436",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:1569",
+    "requirements": [
+      "UX04",
+      "WS07"
+    ],
+    "source_path": "02-design/screens/02-access-workspaces/a13-find-anything-in-your-workspace__6-1569",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "disposition": "implemented and verified in P09 Governance/MFA/UX B (63/63 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:1717",
+    "requirements": [
+      "RQ01",
+      "RQ08",
+      "RQ09"
+    ],
+    "source_path": "02-design/screens/02-access-workspaces/a14-create-a-new-request__6-1717",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:1908",
+    "requirements": [
+      "RQ01",
+      "RQ02",
+      "RQ07"
+    ],
+    "source_path": "02-design/screens/03-api-workbench/r01-list-tasks__6-1908",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:2102",
+    "requirements": [
+      "RQ03"
+    ],
+    "source_path": "02-design/screens/03-api-workbench/r02-request-headers__6-2102",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:2296",
+    "requirements": [
+      "RQ04"
+    ],
+    "source_path": "02-design/screens/03-api-workbench/r03-create-a-task__6-2296",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:2492",
+    "requirements": [
+      "RQ05",
+      "RQ10"
+    ],
+    "source_path": "02-design/screens/03-api-workbench/r04-upload-an-attachment__6-2492",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:2686",
+    "requirements": [
+      "AU01",
+      "AU02",
+      "AU03"
+    ],
+    "source_path": "02-design/screens/03-api-workbench/r05-request-authorization__6-2686",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:2875",
+    "requirements": [
+      "AU08"
+    ],
+    "source_path": "02-design/screens/03-api-workbench/r06-oauth-2-0-authorization__6-2875",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:3066",
+    "requirements": [
+      "RS01",
+      "RS02",
+      "RS03",
+      "RS04"
+    ],
+    "source_path": "02-design/screens/03-api-workbench/r07-inspect-the-response__6-3066",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:3260",
+    "requirements": [
+      "RQ06",
+      "RS05"
+    ],
+    "source_path": "02-design/screens/03-api-workbench/r08-request-failed__6-3260",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:3446",
+    "requirements": [
+      "RQ10",
+      "RS06"
+    ],
+    "source_path": "02-design/screens/03-api-workbench/r09-large-response-preview__6-3446",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:3649",
+    "requirements": [
+      "EV04",
+      "RQ07"
+    ],
+    "source_path": "02-design/screens/03-api-workbench/r10-resolved-request-preview__6-3649",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:3839",
+    "requirements": [
+      "PR04",
+      "RQ06"
+    ],
+    "source_path": "02-design/screens/03-api-workbench/r11-streaming-response__6-3839",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P08-progress.md"
+    ],
+    "disposition": "implemented and verified in P08 desktop Runner/Mock/Tools, CLI, & server (62/62 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:4033",
+    "requirements": [
+      "AU04"
+    ],
+    "source_path": "02-design/screens/03-api-workbench/r12-cookies-for-this-workspace__6-4033",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:4185",
+    "requirements": [
+      "AU05",
+      "AU06",
+      "AU07",
+      "AU09",
+      "AU10",
+      "PR06"
+    ],
+    "source_path": "02-design/screens/03-api-workbench/r13-connection-settings__6-4185",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:4351",
+    "requirements": [
+      "RQ09",
+      "RS07"
+    ],
+    "source_path": "02-design/screens/03-api-workbench/r14-your-request-history__6-4351",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:4501",
+    "requirements": [
+      "RS09",
+      "RS10"
+    ],
+    "source_path": "02-design/screens/03-api-workbench/r15-compare-responses__6-4501",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:4697",
+    "requirements": [
+      "EV07"
+    ],
+    "source_path": "02-design/screens/03-api-workbench/r16-confirm-production-request__6-4697",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:4863",
+    "requirements": [
+      "CO08",
+      "RS08"
+    ],
+    "source_path": "02-design/screens/03-api-workbench/r17-save-a-response-example__6-4863",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "disposition": "implemented and verified in P09 Governance/MFA/UX B (63/63 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:5029",
+    "requirements": [
+      "PR07"
+    ],
+    "source_path": "02-design/screens/03-api-workbench/r18-generate-a-code-snippet__6-5029",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P08-progress.md"
+    ],
+    "disposition": "implemented and verified in P08 desktop Runner/Mock/Tools, CLI, & server (62/62 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:5197",
+    "requirements": [
+      "EV01",
+      "EV02",
+      "EV03",
+      "EV04"
+    ],
+    "source_path": "02-design/screens/03-api-workbench/e01-environments__6-5197",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:5343",
+    "requirements": [
+      "EV02",
+      "EV03",
+      "EV05",
+      "EV08",
+      "EV09"
+    ],
+    "source_path": "02-design/screens/03-api-workbench/e02-edit-development__6-5343",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:5509",
+    "requirements": [
+      "EV05",
+      "SC01"
+    ],
+    "source_path": "02-design/screens/03-api-workbench/e03-personal-secrets__6-5509",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/p01-checks.json",
+      "reports/p01-ui-binary.json"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:5746",
+    "requirements": [
+      "OA01",
+      "OA02",
+      "OA04",
+      "OA05",
+      "OA06"
+    ],
+    "source_path": "02-design/screens/04-api-design-collaboration/d01-disnote-openapi__6-5746",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented in native desktop UI (metadata-verified; source PNG pending in 02-design/export-status.md)"
+  },
+  {
+    "screen_id": "6:5940",
+    "requirements": [
+      "OA03",
+      "OA07",
+      "OA08",
+      "OA09"
+    ],
+    "source_path": "02-design/screens/04-api-design-collaboration/d02-specification-needs-attention__6-5940",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:6146",
+    "requirements": [
+      "DC04",
+      "OA04",
+      "OA05"
+    ],
+    "source_path": "02-design/screens/04-api-design-collaboration/d03-design-an-endpoint__6-6146",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented in native desktop UI (metadata-verified; source PNG pending in 02-design/export-status.md)"
+  },
+  {
+    "screen_id": "6:6312",
+    "requirements": [
+      "OA05",
+      "OA06",
+      "OA07"
+    ],
+    "source_path": "02-design/screens/04-api-design-collaboration/d04-task-schema__6-6312",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:6493",
+    "requirements": [
+      "OA06",
+      "OA07",
+      "OA08"
+    ],
+    "source_path": "02-design/screens/04-api-design-collaboration/d05-references-components__6-6493",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:6643",
+    "requirements": [
+      "DC01",
+      "DC02",
+      "DC03",
+      "DC05"
+    ],
+    "source_path": "02-design/screens/04-api-design-collaboration/d06-api-documentation__6-6643",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented in native desktop UI (metadata-verified; source PNG pending in 02-design/export-status.md)"
+  },
+  {
+    "screen_id": "6:6814",
+    "requirements": [
+      "DC03",
+      "DC05"
+    ],
+    "source_path": "02-design/screens/04-api-design-collaboration/d07-try-list-tasks__6-6814",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented in native desktop UI (metadata-verified; source PNG pending in 02-design/export-status.md)"
+  },
+  {
+    "screen_id": "6:7008",
+    "requirements": [
+      "DC06",
+      "DC07",
+      "DC09"
+    ],
+    "source_path": "02-design/screens/04-api-design-collaboration/d08-review-specification-changes__6-7008",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:7204",
+    "requirements": [
+      "DC04",
+      "DC06",
+      "DC09"
+    ],
+    "source_path": "02-design/screens/04-api-design-collaboration/d09-update-linked-requests__6-7204",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:7356",
+    "requirements": [
+      "DC08",
+      "OA10"
+    ],
+    "source_path": "02-design/screens/04-api-design-collaboration/d10-api-quality-checks__6-7356",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:7502",
+    "requirements": [
+      "DC10",
+      "IM04"
+    ],
+    "source_path": "02-design/screens/04-api-design-collaboration/d11-export-api-documentation__6-7502",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:7662",
+    "requirements": [
+      "DC09",
+      "OA04"
+    ],
+    "source_path": "02-design/screens/04-api-design-collaboration/d12-deprecated-operation__6-7662",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:7879",
+    "requirements": [
+      "SC04",
+      "WS05"
+    ],
+    "source_path": "02-design/screens/04-api-design-collaboration/c01-workspace-members__6-7879",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P04-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:8029",
+    "requirements": [
+      "CO01",
+      "WS05"
+    ],
+    "source_path": "02-design/screens/04-api-design-collaboration/c02-invite-teammates__6-8029",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P05-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:8189",
+    "requirements": [
+      "CO03",
+      "CO05",
+      "CO06"
+    ],
+    "source_path": "02-design/screens/04-api-design-collaboration/c03-workspace-activity__6-8189",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P05-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:8335",
+    "requirements": [
+      "CO04",
+      "CO05",
+      "CO09"
+    ],
+    "source_path": "02-design/screens/04-api-design-collaboration/c04-discuss-list-tasks__6-8335",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P05-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:8523",
+    "requirements": [
+      "CO02",
+      "SY03",
+      "SY06"
+    ],
+    "source_path": "02-design/screens/04-api-design-collaboration/c05-publish-your-changes__6-8523",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P05-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:8677",
+    "requirements": [
+      "SY03",
+      "SY04",
+      "SY07"
+    ],
+    "source_path": "02-design/screens/04-api-design-collaboration/c06-resolve-a-sync-conflict__6-8677",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P05-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:8899",
+    "requirements": [
+      "SY01",
+      "SY02",
+      "SY05",
+      "SY06"
+    ],
+    "source_path": "02-design/screens/04-api-design-collaboration/c07-sync-queue__6-8899",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P05-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:9049",
+    "requirements": [
+      "SY01",
+      "SY02",
+      "UX09"
+    ],
+    "source_path": "02-design/screens/04-api-design-collaboration/c08-working-offline__6-9049",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P05-progress.md"
+    ],
+    "disposition": "implemented in native Sync UI (two-client HTTP verified; live Mongo env-gated / PNGs pending export)"
+  },
+  {
+    "screen_id": "6:9232",
+    "requirements": [
+      "SC04",
+      "SY09"
+    ],
+    "source_path": "02-design/screens/04-api-design-collaboration/c09-workspace-access-removed__6-9232",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P05-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:9371",
+    "requirements": [
+      "SY08"
+    ],
+    "source_path": "02-design/screens/04-api-design-collaboration/c10-version-history__6-9371",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P05-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:9517",
+    "requirements": [
+      "SY08"
+    ],
+    "source_path": "02-design/screens/04-api-design-collaboration/c11-restore-revision-12__6-9517",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P05-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:9671",
+    "requirements": [
+      "SY10"
+    ],
+    "source_path": "02-design/screens/04-api-design-collaboration/c12-branches__6-9671",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "disposition": "implemented and verified in P09 Governance/MFA/UX B (63/63 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:9817",
+    "requirements": [
+      "DC07",
+      "SY10"
+    ],
+    "source_path": "02-design/screens/04-api-design-collaboration/c13-review-proposed-changes__6-9817",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "6:9977",
+    "requirements": [
+      "CO07",
+      "CO10"
+    ],
+    "source_path": "02-design/screens/04-api-design-collaboration/c14-live-specification-editing__6-9977",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "disposition": "implemented and verified in P09 Governance/MFA/UX B (63/63 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:2",
+    "requirements": [
+      "TS01"
+    ],
+    "source_path": "02-design/screens/05-testing-developer-tools/t01-request-assertions__7-2",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented in native desktop UI (metadata-verified; source PNG pending in 02-design/export-status.md)"
+  },
+  {
+    "screen_id": "7:206",
+    "requirements": [
+      "TS02",
+      "TS03",
+      "TS09"
+    ],
+    "source_path": "02-design/screens/05-testing-developer-tools/t02-run-a-collection__7-206",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P08-progress.md"
+    ],
+    "disposition": "implemented and verified in P08 desktop Runner/Mock/Tools, CLI, & server (62/62 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:372",
+    "requirements": [
+      "TS04"
+    ],
+    "source_path": "02-design/screens/05-testing-developer-tools/t03-runner-data-preview__7-372",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P08-progress.md"
+    ],
+    "disposition": "implemented and verified in P08 desktop Runner/Mock/Tools, CLI, & server (62/62 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:518",
+    "requirements": [
+      "CO08",
+      "MK06",
+      "TS05",
+      "TS10"
+    ],
+    "source_path": "02-design/screens/05-testing-developer-tools/t04-run-results__7-518",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P08-progress.md"
+    ],
+    "disposition": "implemented and verified in P08 desktop Runner/Mock/Tools, CLI, & server (62/62 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:691",
+    "requirements": [
+      "DC08",
+      "TS06"
+    ],
+    "source_path": "02-design/screens/05-testing-developer-tools/t05-contract-validation__7-691",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:837",
+    "requirements": [
+      "TS07",
+      "TS08"
+    ],
+    "source_path": "02-design/screens/05-testing-developer-tools/t06-script-editor__7-837",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P10-progress.md"
+    ],
+    "disposition": "implemented and verified in P10 Vault, Script Sandbox & Capability Extensions (65/65 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:1006",
+    "requirements": [
+      "MK01",
+      "MK02",
+      "MK04"
+    ],
+    "source_path": "02-design/screens/05-testing-developer-tools/t07-mock-servers__7-1006",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P08-progress.md"
+    ],
+    "disposition": "implemented and verified in P08 desktop Runner/Mock/Tools, CLI, & server (62/62 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:1148",
+    "requirements": [
+      "MK01",
+      "MK02",
+      "MK03",
+      "MK04"
+    ],
+    "source_path": "02-design/screens/05-testing-developer-tools/t08-configure-a-mock__7-1148",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P08-progress.md"
+    ],
+    "disposition": "implemented and verified in P08 desktop Runner/Mock/Tools, CLI, & server (62/62 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:1314",
+    "requirements": [
+      "MK03"
+    ],
+    "source_path": "02-design/screens/05-testing-developer-tools/t09-mock-rules-traffic__7-1314",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P11-progress.md"
+    ],
+    "disposition": "implemented and verified in P11 protocols/CRDT/SDK (68/68 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:1460",
+    "requirements": [
+      "MK05",
+      "MK06"
+    ],
+    "source_path": "02-design/screens/05-testing-developer-tools/t10-cli-ci-configuration__7-1460",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P08-progress.md"
+    ],
+    "disposition": "implemented and verified in P08 desktop Runner/Mock/Tools, CLI, & server (62/62 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:1623",
+    "requirements": [
+      "MK07",
+      "MK10"
+    ],
+    "source_path": "02-design/screens/05-testing-developer-tools/t11-self-hosted-runners__7-1623",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P08-progress.md"
+    ],
+    "disposition": "implemented and verified in P08 desktop Runner/Mock/Tools, CLI, & server (62/62 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:1765",
+    "requirements": [
+      "MK08",
+      "MK09"
+    ],
+    "source_path": "02-design/screens/05-testing-developer-tools/t12-scheduled-checks__7-1765",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P11-progress.md"
+    ],
+    "disposition": "implemented and verified in P11 protocols/CRDT/SDK (68/68 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:1931",
+    "requirements": [
+      "IM01",
+      "IM02",
+      "IM03",
+      "IM04",
+      "IM05"
+    ],
+    "source_path": "02-design/screens/05-testing-developer-tools/i01-import-apis-collections__7-1931",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented in native desktop UI (metadata-verified; source PNG pending in 02-design/export-status.md)"
+  },
+  {
+    "screen_id": "7:2085",
+    "requirements": [
+      "IM02",
+      "IM06",
+      "TS08"
+    ],
+    "source_path": "02-design/screens/05-testing-developer-tools/i02-review-import-compatibility__7-2085",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:2237",
+    "requirements": [
+      "IM01",
+      "IM07",
+      "IM08"
+    ],
+    "source_path": "02-design/screens/05-testing-developer-tools/i03-export-your-project__7-2237",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:2397",
+    "requirements": [
+      "IM09",
+      "SY10"
+    ],
+    "source_path": "02-design/screens/05-testing-developer-tools/i04-connect-a-git-repository__7-2397",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:2557",
+    "requirements": [
+      "PR01",
+      "PR02"
+    ],
+    "source_path": "02-design/screens/05-testing-developer-tools/p01-graphql-explorer__7-2557",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P08-progress.md"
+    ],
+    "disposition": "implemented and verified in P08 desktop Runner/Mock/Tools, CLI, & server (62/62 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:2723",
+    "requirements": [
+      "PR03"
+    ],
+    "source_path": "02-design/screens/05-testing-developer-tools/p02-websocket-session__7-2723",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P11-progress.md"
+    ],
+    "disposition": "implemented and verified in P11 protocols/CRDT/SDK (68/68 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:2869",
+    "requirements": [
+      "PR05"
+    ],
+    "source_path": "02-design/screens/05-testing-developer-tools/p03-grpc-request__7-2869",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P11-progress.md"
+    ],
+    "disposition": "implemented and verified in P11 protocols/CRDT/SDK (68/68 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:3035",
+    "requirements": [
+      "PR08",
+      "PR09"
+    ],
+    "source_path": "02-design/screens/05-testing-developer-tools/p04-developer-utilities__7-3035",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P08-progress.md"
+    ],
+    "disposition": "implemented and verified in P08 desktop Runner/Mock/Tools, CLI, & server (62/62 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:3221",
+    "requirements": [
+      "WS08",
+      "WS09",
+      "WS10"
+    ],
+    "source_path": "02-design/screens/06-settings-system-states/s01-workspace-settings__7-3221",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "disposition": "implemented and verified in P09 Governance/MFA/UX B (63/63 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:3381",
+    "requirements": [
+      "SC03",
+      "SC09",
+      "WS03"
+    ],
+    "source_path": "02-design/screens/06-settings-system-states/s02-your-google-account__7-3381",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P04-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:3547",
+    "requirements": [
+      "UX05",
+      "UX06",
+      "UX07"
+    ],
+    "source_path": "02-design/screens/06-settings-system-states/s03-personal-preferences__7-3547",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "disposition": "implemented and verified in P09 Governance/MFA/UX B (63/63 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:3713",
+    "requirements": [
+      "UX03",
+      "UX04"
+    ],
+    "source_path": "02-design/screens/06-settings-system-states/s04-keyboard-shortcuts__7-3713",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "disposition": "implemented and verified in P09 Governance/MFA/UX B (63/63 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:3867",
+    "requirements": [
+      "RS07",
+      "UX10"
+    ],
+    "source_path": "02-design/screens/06-settings-system-states/s05-storage-retention__7-3867",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:4033",
+    "requirements": [
+      "SC02",
+      "SC05",
+      "SC06",
+      "SC07"
+    ],
+    "source_path": "02-design/screens/06-settings-system-states/s06-privacy-permissions__7-4033",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/p01-checks.json",
+      "reports/p01-ui-binary.json"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:4193",
+    "requirements": [
+      "SC04",
+      "SC10"
+    ],
+    "source_path": "02-design/screens/06-settings-system-states/s07-audit-log__7-4193",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P04-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:4339",
+    "requirements": [
+      "OP03",
+      "OP04",
+      "OP09",
+      "OP10"
+    ],
+    "source_path": "02-design/screens/06-settings-system-states/s08-server-health__7-4339",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P06-progress.md"
+    ],
+    "disposition": "ops runbook/CLI/packaging verified locally; signing/live Mongo env-gated"
+  },
+  {
+    "screen_id": "7:4509",
+    "requirements": [
+      "OP05",
+      "OP06"
+    ],
+    "source_path": "02-design/screens/06-settings-system-states/s09-backup-restore__7-4509",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P06-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:4655",
+    "requirements": [
+      "OP01",
+      "OP07",
+      "OP08"
+    ],
+    "source_path": "02-design/screens/06-settings-system-states/s10-application-updates__7-4655",
+    "source_png_exists": false,
+    "status": "blocked",
+    "native_evidence": [
+      "reports/P06-progress.md"
+    ],
+    "disposition": "blocked by missing Windows signing cert / WiX toolset; PNG parity noted where unexported"
+  },
+  {
+    "screen_id": "7:4815",
+    "requirements": [
+      "PR10",
+      "SC06"
+    ],
+    "source_path": "02-design/screens/06-settings-system-states/s11-extensions-permissions__7-4815",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P10-progress.md"
+    ],
+    "disposition": "implemented and verified in P10 Vault, Script Sandbox & Capability Extensions (65/65 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:4961",
+    "requirements": [
+      "EV10",
+      "SC01"
+    ],
+    "source_path": "02-design/screens/06-settings-system-states/s12-team-secret-vault__7-4961",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P10-progress.md"
+    ],
+    "disposition": "implemented and verified in P10 Vault, Script Sandbox & Capability Extensions (65/65 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:5113",
+    "requirements": [
+      "UX02"
+    ],
+    "source_path": "02-design/screens/06-settings-system-states/x01-loading-your-workspace__7-5113",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:5248",
+    "requirements": [
+      "WS07"
+    ],
+    "source_path": "02-design/screens/06-settings-system-states/x02-no-search-results__7-5248",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:5381",
+    "requirements": [
+      "SC04",
+      "WS05"
+    ],
+    "source_path": "02-design/screens/06-settings-system-states/x03-read-only-workspace__7-5381",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P04-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:5564",
+    "requirements": [
+      "SY01",
+      "UX02"
+    ],
+    "source_path": "02-design/screens/06-settings-system-states/x04-your-drafts-were-recovered__7-5564",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P05-progress.md"
+    ],
+    "disposition": "implemented in native Sync UI (two-client HTTP verified; live Mongo env-gated / PNGs pending export)"
+  },
+  {
+    "screen_id": "7:5697",
+    "requirements": [
+      "UX10"
+    ],
+    "source_path": "02-design/screens/06-settings-system-states/x05-local-storage-is-almost-full__7-5697",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:5836",
+    "requirements": [
+      "OP07",
+      "SY05"
+    ],
+    "source_path": "02-design/screens/06-settings-system-states/x06-server-versions-are-incompatible__7-5836",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P05-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:5975",
+    "requirements": [
+      "SY07",
+      "WS09"
+    ],
+    "source_path": "02-design/screens/06-settings-system-states/x07-workspace-trash__7-5975",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P05-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "7:6117",
+    "requirements": [
+      "WS10"
+    ],
+    "source_path": "02-design/screens/06-settings-system-states/x08-transfer-workspace-ownership__7-6117",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "disposition": "implemented and verified in P09 Governance/MFA/UX B (63/63 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "12:2505",
+    "requirements": [
+      "SC06",
+      "SC08"
+    ],
+    "source_path": "02-design/screens/06-settings-system-states/s13-server-network-policy__12-2505",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P08-progress.md"
+    ],
+    "disposition": "implemented and verified in P08 desktop Runner/Mock/Tools, CLI, & server (62/62 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "13:2626",
+    "requirements": [],
+    "source_path": "02-design/screens/06-settings-system-states/m01-new-collection__13-2626",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "13:2688",
+    "requirements": [],
+    "source_path": "02-design/screens/06-settings-system-states/m02-choose-environment__13-2688",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "13:2767",
+    "requirements": [],
+    "source_path": "02-design/screens/06-settings-system-states/m03-command-palette__13-2767",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "13:2845",
+    "requirements": [],
+    "source_path": "02-design/screens/06-settings-system-states/m04-delete-collection__13-2845",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "13:2907",
+    "requirements": [],
+    "source_path": "02-design/screens/06-settings-system-states/m05-review-secret-redaction__13-2907",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "13:2964",
+    "requirements": [],
+    "source_path": "02-design/screens/06-settings-system-states/m06-sign-out-of-swaggen__13-2964",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:25",
+    "requirements": [
+      "OP02",
+      "WS01"
+    ],
+    "source_path": "02-design/screens/08-workspace-collection-details/w01-open-a-personal-workspace__28-25",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P06-progress.md"
+    ],
+    "disposition": "ops runbook/CLI/packaging verified locally; signing/live Mongo env-gated"
+  },
+  {
+    "screen_id": "28:237",
+    "requirements": [
+      "CO01",
+      "WS01",
+      "WS04"
+    ],
+    "source_path": "02-design/screens/08-workspace-collection-details/w02-move-local-work-to-your-team__28-237",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P05-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:394",
+    "requirements": [
+      "WS02"
+    ],
+    "source_path": "02-design/screens/08-workspace-collection-details/w03-server-profiles__28-394",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P04-progress.md"
+    ],
+    "disposition": "implemented in native Server UI (local HTTP verified; live Mongo env-gated / PNGs pending export)"
+  },
+  {
+    "screen_id": "28:548",
+    "requirements": [
+      "SY05",
+      "WS02"
+    ],
+    "source_path": "02-design/screens/08-workspace-collection-details/w04-server-connection-details__28-548",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P05-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:698",
+    "requirements": [
+      "WS05"
+    ],
+    "source_path": "02-design/screens/08-workspace-collection-details/w05-invitation-settings__28-698",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P04-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:852",
+    "requirements": [
+      "SC04",
+      "WS05"
+    ],
+    "source_path": "02-design/screens/08-workspace-collection-details/w06-change-a-member-s-role__28-852",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P04-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:1004",
+    "requirements": [
+      "WS04",
+      "WS09"
+    ],
+    "source_path": "02-design/screens/08-workspace-collection-details/w07-archive-this-workspace__28-1004",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "disposition": "implemented and verified in P09 Governance/MFA/UX B (63/63 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:1154",
+    "requirements": [
+      "WS10"
+    ],
+    "source_path": "02-design/screens/08-workspace-collection-details/w08-leave-your-workspace__28-1154",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "disposition": "implemented and verified in P09 Governance/MFA/UX B (63/63 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:1300",
+    "requirements": [
+      "WS08"
+    ],
+    "source_path": "02-design/screens/08-workspace-collection-details/w09-project-defaults-conventions__28-1300",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:1456",
+    "requirements": [
+      "WS06"
+    ],
+    "source_path": "02-design/screens/08-workspace-collection-details/w10-create-a-nested-folder__28-1456",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:1604",
+    "requirements": [
+      "WS06"
+    ],
+    "source_path": "02-design/screens/08-workspace-collection-details/w11-rename-a-collection__28-1604",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:1750",
+    "requirements": [
+      "RQ09",
+      "WS06"
+    ],
+    "source_path": "02-design/screens/08-workspace-collection-details/w12-move-a-request__28-1750",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:1904",
+    "requirements": [
+      "RQ09",
+      "WS06"
+    ],
+    "source_path": "02-design/screens/08-workspace-collection-details/w13-duplicate-a-request__28-1904",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:2058",
+    "requirements": [
+      "WS07"
+    ],
+    "source_path": "02-design/screens/08-workspace-collection-details/w14-workspace-filters-tags__28-2058",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:2214",
+    "requirements": [
+      "SY07",
+      "WS09"
+    ],
+    "source_path": "02-design/screens/08-workspace-collection-details/w15-restore-a-deleted-folder__28-2214",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P05-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:2368",
+    "requirements": [
+      "RQ09",
+      "WS06"
+    ],
+    "source_path": "02-design/screens/08-workspace-collection-details/w16-collection-actions__28-2368",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:2546",
+    "requirements": [
+      "UX01",
+      "WS06"
+    ],
+    "source_path": "02-design/screens/08-workspace-collection-details/w17-organize-collection-folders__28-2546",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:2773",
+    "requirements": [
+      "WS06"
+    ],
+    "source_path": "02-design/screens/08-workspace-collection-details/w18-move-request-with-drag-and-drop__28-2773",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:3000",
+    "requirements": [
+      "WS03",
+      "WS05"
+    ],
+    "source_path": "02-design/screens/08-workspace-collection-details/w19-invitation-expired__28-3000",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P04-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:3157",
+    "requirements": [
+      "SC04",
+      "WS05"
+    ],
+    "source_path": "02-design/screens/08-workspace-collection-details/w20-invitation-account-mismatch__28-3157",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P04-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:3311",
+    "requirements": [
+      "SC04",
+      "WS05"
+    ],
+    "source_path": "02-design/screens/08-workspace-collection-details/w21-revoke-an-invitation__28-3311",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P04-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "32:2816",
+    "requirements": [
+      "SC04",
+      "WS10"
+    ],
+    "source_path": "02-design/screens/08-workspace-collection-details/w22-confirm-ownership-transfer__32-2816",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P04-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:3551",
+    "requirements": [
+      "RQ01"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q01-choose-an-http-method__28-3551",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:3728",
+    "requirements": [
+      "RQ01",
+      "RQ02"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q02-path-and-query-parameters__28-3728",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:3904",
+    "requirements": [
+      "RQ02",
+      "RQ07"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q03-url-encoding-preview__28-3904",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:4068",
+    "requirements": [
+      "AU03",
+      "RQ03"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q04-headers-and-generated-values__28-4068",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:4237",
+    "requirements": [
+      "RQ03"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q05-header-validation-error__28-4237",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:4400",
+    "requirements": [
+      "RQ04"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q06-choose-request-body-type__28-4400",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:4577",
+    "requirements": [
+      "RQ04"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q07-json-request-body__28-4577",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:4739",
+    "requirements": [
+      "RQ04"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q08-plain-text-request-body__28-4739",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:4895",
+    "requirements": [
+      "RQ04"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q09-xml-request-body__28-4895",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:5057",
+    "requirements": [
+      "RQ04",
+      "RQ06"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q10-json-syntax-error__28-5057",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:5222",
+    "requirements": [
+      "RQ04"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q11-form-url-encoded-body__28-5222",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:5393",
+    "requirements": [
+      "RQ04",
+      "RQ05"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q12-binary-request-body__28-5393",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:5553",
+    "requirements": [
+      "RQ01",
+      "RQ04"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q13-request-without-a-body__28-5553",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:5718",
+    "requirements": [
+      "RQ04",
+      "RQ05"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q14-multipart-field-editor__28-5718",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:5889",
+    "requirements": [
+      "RQ05",
+      "RQ06",
+      "RQ10"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q15-uploading-an-attachment__28-5889",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:6046",
+    "requirements": [
+      "RQ06",
+      "RQ10"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q16-upload-canceled__28-6046",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:6203",
+    "requirements": [
+      "RQ05"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q17-local-upload-file-is-missing__28-6203",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:6357",
+    "requirements": [
+      "RQ10",
+      "RS06"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q18-downloading-a-large-response__28-6357",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:6514",
+    "requirements": [
+      "RQ06",
+      "RS05",
+      "RS06"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q19-request-timed-out__28-6514",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:6672",
+    "requirements": [
+      "RQ06",
+      "RS05",
+      "RS06"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q20-request-canceled__28-6672",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:6829",
+    "requirements": [
+      "RQ06",
+      "RS05",
+      "RS06"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q21-server-rejected-the-request__28-6829",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:6987",
+    "requirements": [
+      "RQ06",
+      "RS05",
+      "RS06"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q22-response-could-not-be-saved__28-6987",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:7145",
+    "requirements": [
+      "CO02",
+      "RQ08",
+      "SY01"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q23-draft-differs-from-the-shared-request__28-7145",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P05-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:7303",
+    "requirements": [
+      "RQ08",
+      "UX02"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q24-close-unsaved-tabs__28-7303",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:7460",
+    "requirements": [
+      "RQ09",
+      "UX01",
+      "UX02"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q25-request-tab-actions__28-7460",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:7632",
+    "requirements": [
+      "AU04",
+      "RS03"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q26-response-headers-and-cookies__28-7632",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:7795",
+    "requirements": [
+      "RS02",
+      "RS04"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q27-find-a-value-in-a-response__28-7795",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:7953",
+    "requirements": [
+      "RS02",
+      "RS04"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q28-binary-and-xml-response-views__28-7953",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:8115",
+    "requirements": [
+      "RS01",
+      "RS10"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q29-response-timing-breakdown__28-8115",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:8290",
+    "requirements": [
+      "RS07",
+      "UX10"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q30-history-filters-and-cleanup__28-8290",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:8452",
+    "requirements": [
+      "RS09"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q31-compare-json-or-raw-responses__28-8452",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "28:8610",
+    "requirements": [
+      "CO08",
+      "RS08",
+      "SC02"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q32-review-a-shared-response-example__28-8610",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "disposition": "implemented and verified in P09 Governance/MFA/UX B (63/63 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "32:7157",
+    "requirements": [
+      "RS02",
+      "RS04"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q33-xml-response-inspector__32-7157",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "32:7317",
+    "requirements": [
+      "RS02",
+      "RS06"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q34-binary-response-inspector__32-7317",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "32:7478",
+    "requirements": [
+      "RS02",
+      "RS04"
+    ],
+    "source_path": "02-design/screens/09-request-response-states/q35-raw-response-inspector__32-7478",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:25",
+    "requirements": [
+      "AU01",
+      "AU02",
+      "AU03",
+      "AU08",
+      "AU10"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/h01-choose-api-authorization__29-25",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:275",
+    "requirements": [
+      "AU01"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/h02-no-authentication__29-275",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:424",
+    "requirements": [
+      "AU02"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/h03-basic-authentication__29-424",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:574",
+    "requirements": [
+      "AU02"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/h04-api-key-in-a-header__29-574",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:726",
+    "requirements": [
+      "AU02",
+      "SC02"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/h05-api-key-in-the-query-string__29-726",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:878",
+    "requirements": [
+      "AU03"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/h06-inherited-authorization__29-878",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:1030",
+    "requirements": [
+      "AU03"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/h07-override-inherited-authorization__29-1030",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:1178",
+    "requirements": [
+      "AU08"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/h08-oauth-authorization-code-with-pkce__29-1178",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:1338",
+    "requirements": [
+      "AU08"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/h09-oauth-client-credentials__29-1338",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:1500",
+    "requirements": [
+      "AU08"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/h10-oauth-token-details__29-1500",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:1656",
+    "requirements": [
+      "AU04"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/h11-cookie-editor__29-1656",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:1816",
+    "requirements": [
+      "AU05"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/h12-tls-exception-for-a-local-host__29-1816",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:1968",
+    "requirements": [
+      "AU06"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/h13-redirect-policy__29-1968",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:2124",
+    "requirements": [
+      "AU07"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/h14-proxy-and-custom-certificate-authority__29-2124",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:2286",
+    "requirements": [
+      "AU09"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/h15-client-certificate-mapping__29-2286",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:2442",
+    "requirements": [
+      "AU10"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/h16-aws-signature-v4__29-2442",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P11-progress.md"
+    ],
+    "disposition": "implemented and verified in P11 protocols/CRDT/SDK (68/68 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:2596",
+    "requirements": [
+      "AU10"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/h17-digest-authentication__29-2596",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P11-progress.md"
+    ],
+    "disposition": "implemented and verified in P11 protocols/CRDT/SDK (68/68 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:2748",
+    "requirements": [
+      "AU08"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/h18-waiting-for-oauth-authorization__29-2748",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:2908",
+    "requirements": [
+      "AU08"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/h19-oauth-callback-rejected__29-2908",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:3066",
+    "requirements": [
+      "AU08"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/h20-oauth-access-token-expired__29-3066",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:3219",
+    "requirements": [
+      "AU08"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/h21-oauth-refresh-failed__29-3219",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:3373",
+    "requirements": [
+      "AU10"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/h22-unsupported-authorization-option__29-3373",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P11-progress.md"
+    ],
+    "disposition": "implemented and verified in P11 protocols/CRDT/SDK (68/68 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:3526",
+    "requirements": [
+      "AU05",
+      "RS05"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/h23-tls-certificate-verification-failed__29-3526",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:3684",
+    "requirements": [
+      "AU09"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/h24-client-certificate-expired__29-3684",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:3842",
+    "requirements": [
+      "AU07",
+      "RS05"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/h25-proxy-authentication-required__29-3842",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:3996",
+    "requirements": [
+      "AU06"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/h26-redirect-chain-inspected__29-3996",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:4154",
+    "requirements": [
+      "EV02",
+      "EV03"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/v01-inspect-an-effective-variable__29-4154",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:4324",
+    "requirements": [
+      "EV03",
+      "EV05"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/v02-personal-and-shared-variable-values__29-4324",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:4487",
+    "requirements": [
+      "EV04",
+      "RQ07"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/v03-missing-variable-blocks-this-request__29-4487",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:4641",
+    "requirements": [
+      "EV04"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/v04-circular-variable-reference__29-4641",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:4795",
+    "requirements": [
+      "EV08"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/v05-dynamic-variable-preview__29-4795",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:4953",
+    "requirements": [
+      "EV09",
+      "TS03"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/v06-extract-a-value-from-a-response__29-4953",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:5119",
+    "requirements": [
+      "EV10",
+      "SC01"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/v07-team-vault-access-policy__29-5119",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P10-progress.md"
+    ],
+    "disposition": "implemented and verified in P10 Vault, Script Sandbox & Capability Extensions (65/65 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:5279",
+    "requirements": [
+      "EV10"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/v08-rotate-a-team-secret__29-5279",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P10-progress.md"
+    ],
+    "disposition": "implemented and verified in P10 Vault, Script Sandbox & Capability Extensions (65/65 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:5431",
+    "requirements": [
+      "EV05",
+      "EV06",
+      "SC02"
+    ],
+    "source_path": "02-design/screens/10-authentication-secrets/v09-reveal-or-export-a-secret__29-5431",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/p01-checks.json",
+      "reports/p01-ui-binary.json"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:5701",
+    "requirements": [
+      "IM04",
+      "OA01"
+    ],
+    "source_path": "02-design/screens/11-openapi-contract-details/o01-openapi-file-and-url-import__29-5701",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented in native desktop UI (metadata-verified; source PNG pending in 02-design/export-status.md)"
+  },
+  {
+    "screen_id": "29:5855",
+    "requirements": [
+      "OA01",
+      "OA09"
+    ],
+    "source_path": "02-design/screens/11-openapi-contract-details/o02-unsupported-openapi-version__29-5855",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:6008",
+    "requirements": [
+      "OA02"
+    ],
+    "source_path": "02-design/screens/11-openapi-contract-details/o03-find-and-replace-in-a-specification__29-6008",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented in native desktop UI (metadata-verified; source PNG pending in 02-design/export-status.md)"
+  },
+  {
+    "screen_id": "29:6163",
+    "requirements": [
+      "OA03",
+      "OA04"
+    ],
+    "source_path": "02-design/screens/11-openapi-contract-details/o04-duplicate-operation-validation__29-6163",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented in native desktop UI (metadata-verified; source PNG pending in 02-design/export-status.md)"
+  },
+  {
+    "screen_id": "29:6321",
+    "requirements": [
+      "OA05"
+    ],
+    "source_path": "02-design/screens/11-openapi-contract-details/o05-edit-an-operation-parameter__29-6321",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented in native desktop UI (metadata-verified; source PNG pending in 02-design/export-status.md)"
+  },
+  {
+    "screen_id": "29:6485",
+    "requirements": [
+      "OA05"
+    ],
+    "source_path": "02-design/screens/11-openapi-contract-details/o06-edit-request-body-content__29-6485",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented in native desktop UI (metadata-verified; source PNG pending in 02-design/export-status.md)"
+  },
+  {
+    "screen_id": "29:6643",
+    "requirements": [
+      "DC02",
+      "OA05"
+    ],
+    "source_path": "02-design/screens/11-openapi-contract-details/o07-add-a-documented-response__29-6643",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented in native desktop UI (metadata-verified; source PNG pending in 02-design/export-status.md)"
+  },
+  {
+    "screen_id": "29:6803",
+    "requirements": [
+      "OA06"
+    ],
+    "source_path": "02-design/screens/11-openapi-contract-details/o08-edit-a-reusable-security-scheme__29-6803",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented in native desktop UI (metadata-verified; source PNG pending in 02-design/export-status.md)"
+  },
+  {
+    "screen_id": "29:6961",
+    "requirements": [
+      "OA05",
+      "OA07"
+    ],
+    "source_path": "02-design/screens/11-openapi-contract-details/o09-schema-property-constraints__29-6961",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:7127",
+    "requirements": [
+      "OA07"
+    ],
+    "source_path": "02-design/screens/11-openapi-contract-details/o10-compose-schemas-with-allof__29-7127",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:7293",
+    "requirements": [
+      "OA07"
+    ],
+    "source_path": "02-design/screens/11-openapi-contract-details/o11-choose-a-oneof-schema-branch__29-7293",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:7459",
+    "requirements": [
+      "OA07"
+    ],
+    "source_path": "02-design/screens/11-openapi-contract-details/o12-compose-schemas-with-anyof__29-7459",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:7622",
+    "requirements": [
+      "OA07"
+    ],
+    "source_path": "02-design/screens/11-openapi-contract-details/o13-configure-an-enum-discriminator__29-7622",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:7780",
+    "requirements": [
+      "OA07"
+    ],
+    "source_path": "02-design/screens/11-openapi-contract-details/o14-recursive-schema-boundary__29-7780",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:7998",
+    "requirements": [
+      "OA06"
+    ],
+    "source_path": "02-design/screens/11-openapi-contract-details/o15-missing-reference-and-external-reference-permission__29-7998",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented in native desktop UI (metadata-verified; source PNG pending in 02-design/export-status.md)"
+  },
+  {
+    "screen_id": "29:8161",
+    "requirements": [
+      "IM04",
+      "OA08"
+    ],
+    "source_path": "02-design/screens/11-openapi-contract-details/o16-bundle-a-multi-file-specification__29-8161",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:8319",
+    "requirements": [
+      "IM04",
+      "OA09"
+    ],
+    "source_path": "02-design/screens/11-openapi-contract-details/o17-convert-swagger-2-0__29-8319",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:8488",
+    "requirements": [
+      "OA10"
+    ],
+    "source_path": "02-design/screens/11-openapi-contract-details/o18-configure-api-lint-rules__29-8488",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:8651",
+    "requirements": [
+      "DC04",
+      "DC05"
+    ],
+    "source_path": "02-design/screens/11-openapi-contract-details/o19-link-request-to-a-stable-operation__29-8651",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented in native desktop UI (metadata-verified; source PNG pending in 02-design/export-status.md)"
+  },
+  {
+    "screen_id": "29:8814",
+    "requirements": [
+      "DC06",
+      "DC09"
+    ],
+    "source_path": "02-design/screens/11-openapi-contract-details/o20-review-a-contract-update__29-8814",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:8973",
+    "requirements": [
+      "DC07"
+    ],
+    "source_path": "02-design/screens/11-openapi-contract-details/o21-propose-a-spec-change-from-a-request__29-8973",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:9138",
+    "requirements": [
+      "DC08",
+      "TS06"
+    ],
+    "source_path": "02-design/screens/11-openapi-contract-details/o22-response-schema-mismatch__29-9138",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:9311",
+    "requirements": [
+      "DC08",
+      "OA03"
+    ],
+    "source_path": "02-design/screens/11-openapi-contract-details/o23-unsupported-schema-keyword__29-9311",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:9468",
+    "requirements": [
+      "DC09"
+    ],
+    "source_path": "02-design/screens/11-openapi-contract-details/o24-delete-an-operation-with-dependents__29-9468",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:9631",
+    "requirements": [
+      "DC10",
+      "IM08"
+    ],
+    "source_path": "02-design/screens/11-openapi-contract-details/o25-documentation-export-preview__29-9631",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:9853",
+    "requirements": [
+      "SY10"
+    ],
+    "source_path": "02-design/screens/12-collaboration-sync-details/c15-create-a-branch__29-9853",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "disposition": "implemented and verified in P09 Governance/MFA/UX B (63/63 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:10001",
+    "requirements": [
+      "SY10",
+      "WS06"
+    ],
+    "source_path": "02-design/screens/12-collaboration-sync-details/c16-fork-a-collection__29-10001",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "disposition": "implemented and verified in P09 Governance/MFA/UX B (63/63 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:10155",
+    "requirements": [
+      "DC07",
+      "SY10"
+    ],
+    "source_path": "02-design/screens/12-collaboration-sync-details/c17-open-a-merge-request__29-10155",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:10315",
+    "requirements": [
+      "CO04",
+      "SY10"
+    ],
+    "source_path": "02-design/screens/12-collaboration-sync-details/c18-request-changes-in-a-review__29-10315",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P05-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:10463",
+    "requirements": [
+      "SY10"
+    ],
+    "source_path": "02-design/screens/12-collaboration-sync-details/c19-publish-review-approval__29-10463",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "disposition": "implemented and verified in P09 Governance/MFA/UX B (63/63 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:10611",
+    "requirements": [
+      "CO08",
+      "SC02",
+      "TS10"
+    ],
+    "source_path": "02-design/screens/12-collaboration-sync-details/c20-share-a-sanitized-test-report__29-10611",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P08-progress.md"
+    ],
+    "disposition": "implemented and verified in P08 desktop Runner/Mock/Tools, CLI, & server (62/62 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:10763",
+    "requirements": [
+      "CO05",
+      "MK09"
+    ],
+    "source_path": "02-design/screens/12-collaboration-sync-details/c21-notification-preferences__29-10763",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "disposition": "implemented and verified in P09 Governance/MFA/UX B (63/63 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:10921",
+    "requirements": [
+      "SY10"
+    ],
+    "source_path": "02-design/screens/12-collaboration-sync-details/c22-merge-checks-and-approvals__29-10921",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "disposition": "implemented and verified in P09 Governance/MFA/UX B (63/63 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:11090",
+    "requirements": [
+      "SY04",
+      "SY10"
+    ],
+    "source_path": "02-design/screens/12-collaboration-sync-details/c23-merge-conflict-between-branches__29-11090",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P05-progress.md"
+    ],
+    "disposition": "implemented in native Sync UI (two-client HTTP verified; live Mongo env-gated / PNGs pending export)"
+  },
+  {
+    "screen_id": "29:11257",
+    "requirements": [
+      "SY04",
+      "SY10"
+    ],
+    "source_path": "02-design/screens/12-collaboration-sync-details/c24-resolve-and-preview-the-merged-schema__29-11257",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P05-progress.md"
+    ],
+    "disposition": "implemented in native Sync UI (two-client HTTP verified; live Mongo env-gated / PNGs pending export)"
+  },
+  {
+    "screen_id": "29:11409",
+    "requirements": [
+      "SY08",
+      "SY10"
+    ],
+    "source_path": "02-design/screens/12-collaboration-sync-details/c25-merge-completed__29-11409",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P05-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:11565",
+    "requirements": [
+      "CO04",
+      "CO05"
+    ],
+    "source_path": "02-design/screens/12-collaboration-sync-details/c26-mention-a-teammate__29-11565",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P05-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:11723",
+    "requirements": [
+      "CO04",
+      "CO09"
+    ],
+    "source_path": "02-design/screens/12-collaboration-sync-details/c27-thread-anchored-to-a-previous-revision__29-11723",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P05-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:11881",
+    "requirements": [
+      "CO03",
+      "CO05",
+      "MK09"
+    ],
+    "source_path": "02-design/screens/12-collaboration-sync-details/c28-notifications-inbox__29-11881",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P05-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:12044",
+    "requirements": [
+      "CO09",
+      "SC04",
+      "UX08"
+    ],
+    "source_path": "02-design/screens/12-collaboration-sync-details/c29-open-a-workspace-deep-link__29-12044",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P04-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:12201",
+    "requirements": [
+      "CO09",
+      "SC04"
+    ],
+    "source_path": "02-design/screens/12-collaboration-sync-details/c30-deep-link-access-denied__29-12201",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P04-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:12355",
+    "requirements": [
+      "CO07",
+      "CO10"
+    ],
+    "source_path": "02-design/screens/12-collaboration-sync-details/c31-collaborative-editing-presence__29-12355",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "disposition": "implemented and verified in P09 Governance/MFA/UX B (63/63 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:12519",
+    "requirements": [
+      "CO10",
+      "SY01",
+      "SY09"
+    ],
+    "source_path": "02-design/screens/12-collaboration-sync-details/c32-collaborative-editing-lost-connection__29-12519",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P05-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:12676",
+    "requirements": [
+      "SY01"
+    ],
+    "source_path": "02-design/screens/12-collaboration-sync-details/y01-pending-syncing-failed-and-conflicted-changes__29-12676",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P05-progress.md"
+    ],
+    "disposition": "implemented in native Sync UI (two-client HTTP verified; live Mongo env-gated / PNGs pending export)"
+  },
+  {
+    "screen_id": "29:12845",
+    "requirements": [
+      "SY05",
+      "SY06"
+    ],
+    "source_path": "02-design/screens/12-collaboration-sync-details/y02-reconnect-and-catch-up__29-12845",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P05-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:13002",
+    "requirements": [
+      "SY05"
+    ],
+    "source_path": "02-design/screens/12-collaboration-sync-details/y03-sync-cursor-expired__29-13002",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P05-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:13159",
+    "requirements": [
+      "SY04",
+      "SY07"
+    ],
+    "source_path": "02-design/screens/12-collaboration-sync-details/y04-request-deleted-while-you-were-offline__29-13159",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P05-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:13323",
+    "requirements": [
+      "SC04",
+      "SY09"
+    ],
+    "source_path": "02-design/screens/12-collaboration-sync-details/y05-access-revoked-with-pending-edits__29-13323",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P05-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:13486",
+    "requirements": [
+      "SY08"
+    ],
+    "source_path": "02-design/screens/12-collaboration-sync-details/y06-restore-revision-as-a-new-version__29-13486",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P05-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:13639",
+    "requirements": [
+      "SY01",
+      "UX02"
+    ],
+    "source_path": "02-design/screens/12-collaboration-sync-details/y07-device-restart-recovery__29-13639",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P05-progress.md"
+    ],
+    "disposition": "implemented in native Sync UI (two-client HTTP verified; live Mongo env-gated / PNGs pending export)"
+  },
+  {
+    "screen_id": "29:13864",
+    "requirements": [
+      "IM04",
+      "OA01"
+    ],
+    "source_path": "02-design/screens/13-import-testing-mock-details/i05-import-from-an-api-url__29-13864",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented in native desktop UI (metadata-verified; source PNG pending in 02-design/export-status.md)"
+  },
+  {
+    "screen_id": "29:14018",
+    "requirements": [
+      "EV03",
+      "IM03"
+    ],
+    "source_path": "02-design/screens/13-import-testing-mock-details/i06-import-postman-environment-values__29-14018",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented in native desktop UI (metadata-verified; source PNG pending in 02-design/export-status.md)"
+  },
+  {
+    "screen_id": "29:14172",
+    "requirements": [
+      "IM06"
+    ],
+    "source_path": "02-design/screens/13-import-testing-mock-details/i07-choose-an-import-conflict-strategy__29-14172",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented in native desktop UI (metadata-verified; source PNG pending in 02-design/export-status.md)"
+  },
+  {
+    "screen_id": "29:14324",
+    "requirements": [
+      "IM01",
+      "IM07",
+      "IM08"
+    ],
+    "source_path": "02-design/screens/13-import-testing-mock-details/i08-choose-export-files-and-attachments__29-14324",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:14486",
+    "requirements": [
+      "IM09"
+    ],
+    "source_path": "02-design/screens/13-import-testing-mock-details/i09-git-working-tree-changes__29-14486",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:14638",
+    "requirements": [
+      "IM05"
+    ],
+    "source_path": "02-design/screens/13-import-testing-mock-details/i10-paste-a-curl-request__29-14638",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented in native desktop UI (metadata-verified; source PNG pending in 02-design/export-status.md)"
+  },
+  {
+    "screen_id": "29:14790",
+    "requirements": [
+      "IM05",
+      "IM06"
+    ],
+    "source_path": "02-design/screens/13-import-testing-mock-details/i11-curl-import-parse-error__29-14790",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented in native desktop UI (metadata-verified; source PNG pending in 02-design/export-status.md)"
+  },
+  {
+    "screen_id": "29:14948",
+    "requirements": [
+      "IM02",
+      "IM06",
+      "IM10",
+      "TS08"
+    ],
+    "source_path": "02-design/screens/13-import-testing-mock-details/i12-import-compatibility-report__29-14948",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:15117",
+    "requirements": [
+      "IM01",
+      "IM04",
+      "IM07"
+    ],
+    "source_path": "02-design/screens/13-import-testing-mock-details/i13-export-manifest-and-portability-check__29-15117",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:15281",
+    "requirements": [
+      "IM09",
+      "SY10"
+    ],
+    "source_path": "02-design/screens/13-import-testing-mock-details/i14-resolve-a-git-merge-conflict__29-15281",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:15434",
+    "requirements": [
+      "IM01",
+      "UX08"
+    ],
+    "source_path": "02-design/screens/13-import-testing-mock-details/i15-drop-a-file-from-windows-explorer__29-15434",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:15591",
+    "requirements": [
+      "TS01"
+    ],
+    "source_path": "02-design/screens/13-import-testing-mock-details/t13-add-a-response-assertion__29-15591",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented in native desktop UI (metadata-verified; source PNG pending in 02-design/export-status.md)"
+  },
+  {
+    "screen_id": "29:15745",
+    "requirements": [
+      "TS02",
+      "TS03"
+    ],
+    "source_path": "02-design/screens/13-import-testing-mock-details/t14-run-order-and-dependencies__29-15745",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P08-progress.md"
+    ],
+    "disposition": "implemented and verified in P08 desktop Runner/Mock/Tools, CLI, & server (62/62 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:15903",
+    "requirements": [
+      "EV09",
+      "TS03"
+    ],
+    "source_path": "02-design/screens/13-import-testing-mock-details/t15-configure-a-response-extractor__29-15903",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "disposition": "implemented and verified in P07 desktop UI & engines (57/57 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:16063",
+    "requirements": [
+      "TS04"
+    ],
+    "source_path": "02-design/screens/13-import-testing-mock-details/t16-data-driven-run-settings__29-16063",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P08-progress.md"
+    ],
+    "disposition": "implemented and verified in P08 desktop Runner/Mock/Tools, CLI, & server (62/62 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:16219",
+    "requirements": [
+      "MK10",
+      "TS09"
+    ],
+    "source_path": "02-design/screens/13-import-testing-mock-details/t17-concurrency-and-rate-limits__29-16219",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P08-progress.md"
+    ],
+    "disposition": "implemented and verified in P08 desktop Runner/Mock/Tools, CLI, & server (62/62 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:16375",
+    "requirements": [
+      "SC06",
+      "TS07"
+    ],
+    "source_path": "02-design/screens/13-import-testing-mock-details/t18-runner-script-permissions__29-16375",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P10-progress.md"
+    ],
+    "disposition": "implemented and verified in P10 Vault, Script Sandbox & Capability Extensions (65/65 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:16531",
+    "requirements": [
+      "TS02",
+      "TS05"
+    ],
+    "source_path": "02-design/screens/13-import-testing-mock-details/t19-run-in-progress__29-16531",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P08-progress.md"
+    ],
+    "disposition": "implemented and verified in P08 desktop Runner/Mock/Tools, CLI, & server (62/62 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:16688",
+    "requirements": [
+      "TS03",
+      "TS05"
+    ],
+    "source_path": "02-design/screens/13-import-testing-mock-details/t20-dependency-failure-and-skipped-steps__29-16688",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P08-progress.md"
+    ],
+    "disposition": "implemented and verified in P08 desktop Runner/Mock/Tools, CLI, & server (62/62 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:16851",
+    "requirements": [
+      "TS04"
+    ],
+    "source_path": "02-design/screens/13-import-testing-mock-details/t21-invalid-data-row-preview__29-16851",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P08-progress.md"
+    ],
+    "disposition": "implemented and verified in P08 desktop Runner/Mock/Tools, CLI, & server (62/62 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:17014",
+    "requirements": [
+      "TS07"
+    ],
+    "source_path": "02-design/screens/13-import-testing-mock-details/t22-script-sandbox-stopped-execution__29-17014",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P10-progress.md"
+    ],
+    "disposition": "implemented and verified in P10 Vault, Script Sandbox & Capability Extensions (65/65 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:17172",
+    "requirements": [
+      "IM02",
+      "TS08"
+    ],
+    "source_path": "02-design/screens/13-import-testing-mock-details/t23-postman-script-migration-support__29-17172",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P03-progress.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:17335",
+    "requirements": [
+      "TS10"
+    ],
+    "source_path": "02-design/screens/13-import-testing-mock-details/t24-reproduce-a-test-run__29-17335",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P08-progress.md"
+    ],
+    "disposition": "implemented and verified in P08 desktop Runner/Mock/Tools, CLI, & server (62/62 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:17504",
+    "requirements": [
+      "MK02"
+    ],
+    "source_path": "02-design/screens/13-import-testing-mock-details/k01-mock-from-a-schema__29-17504",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P08-progress.md"
+    ],
+    "disposition": "implemented and verified in P08 desktop Runner/Mock/Tools, CLI, & server (62/62 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:17662",
+    "requirements": [
+      "MK03"
+    ],
+    "source_path": "02-design/screens/13-import-testing-mock-details/k02-edit-a-mock-matching-rule__29-17662",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P11-progress.md"
+    ],
+    "disposition": "implemented and verified in P11 protocols/CRDT/SDK (68/68 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:17822",
+    "requirements": [
+      "MK04"
+    ],
+    "source_path": "02-design/screens/13-import-testing-mock-details/k03-mock-access-controls__29-17822",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P08-progress.md"
+    ],
+    "disposition": "implemented and verified in P08 desktop Runner/Mock/Tools, CLI, & server (62/62 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:17980",
+    "requirements": [
+      "MK07"
+    ],
+    "source_path": "02-design/screens/13-import-testing-mock-details/k04-register-a-self-hosted-runner__29-17980",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P11-progress.md"
+    ],
+    "disposition": "implemented and verified in P11 protocols/CRDT/SDK (68/68 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:18134",
+    "requirements": [
+      "MK10"
+    ],
+    "source_path": "02-design/screens/13-import-testing-mock-details/k05-runner-job-resource-limits__29-18134",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P08-progress.md"
+    ],
+    "disposition": "implemented and verified in P08 desktop Runner/Mock/Tools, CLI, & server (62/62 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:18292",
+    "requirements": [
+      "MK08",
+      "MK09"
+    ],
+    "source_path": "02-design/screens/13-import-testing-mock-details/k06-scheduled-run-retry-policy__29-18292",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P11-progress.md"
+    ],
+    "disposition": "implemented and verified in P11 protocols/CRDT/SDK (68/68 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:18454",
+    "requirements": [
+      "MK09",
+      "SC08"
+    ],
+    "source_path": "02-design/screens/13-import-testing-mock-details/k07-webhook-notification-permission__29-18454",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P08-progress.md"
+    ],
+    "disposition": "implemented and verified in P08 desktop Runner/Mock/Tools, CLI, & server (62/62 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:18606",
+    "requirements": [
+      "MK02"
+    ],
+    "source_path": "02-design/screens/13-import-testing-mock-details/k08-schema-cannot-generate-a-mock-response__29-18606",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P08-progress.md"
+    ],
+    "disposition": "implemented and verified in P08 desktop Runner/Mock/Tools, CLI, & server (62/62 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:18763",
+    "requirements": [
+      "MK03",
+      "MK04"
+    ],
+    "source_path": "02-design/screens/13-import-testing-mock-details/k09-mock-traffic-inspection__29-18763",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P08-progress.md"
+    ],
+    "disposition": "implemented and verified in P08 desktop Runner/Mock/Tools, CLI, & server (62/62 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:18920",
+    "requirements": [
+      "MK07",
+      "MK08",
+      "MK09"
+    ],
+    "source_path": "02-design/screens/13-import-testing-mock-details/k10-scheduled-runner-is-offline__29-18920",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P11-progress.md"
+    ],
+    "disposition": "implemented and verified in P11 protocols/CRDT/SDK (68/68 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:19077",
+    "requirements": [
+      "MK10"
+    ],
+    "source_path": "02-design/screens/13-import-testing-mock-details/k11-cancel-an-active-runner-job__29-19077",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P08-progress.md"
+    ],
+    "disposition": "implemented and verified in P08 desktop Runner/Mock/Tools, CLI, & server (62/62 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:19306",
+    "requirements": [
+      "PR01",
+      "PR02"
+    ],
+    "source_path": "02-design/screens/14-protocols-system-details/p05-graphql-variables-and-schema-source__29-19306",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P08-progress.md"
+    ],
+    "disposition": "implemented and verified in P08 desktop Runner/Mock/Tools, CLI, & server (62/62 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:19462",
+    "requirements": [
+      "PR03"
+    ],
+    "source_path": "02-design/screens/14-protocols-system-details/p06-websocket-connection-options__29-19462",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P11-progress.md"
+    ],
+    "disposition": "implemented and verified in P11 protocols/CRDT/SDK (68/68 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:19620",
+    "requirements": [
+      "PR05"
+    ],
+    "source_path": "02-design/screens/14-protocols-system-details/p07-grpc-metadata-and-proto-import__29-19620",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P11-progress.md"
+    ],
+    "disposition": "implemented and verified in P11 protocols/CRDT/SDK (68/68 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:19780",
+    "requirements": [
+      "PR06"
+    ],
+    "source_path": "02-design/screens/14-protocols-system-details/p08-http-protocol-preference__29-19780",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P11-progress.md"
+    ],
+    "disposition": "implemented and verified in P11 protocols/CRDT/SDK (68/68 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:19934",
+    "requirements": [
+      "PR08"
+    ],
+    "source_path": "02-design/screens/14-protocols-system-details/p09-sdk-and-server-stub-generator__29-19934",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P11-progress.md"
+    ],
+    "disposition": "implemented and verified in P11 protocols/CRDT/SDK (68/68 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:20092",
+    "requirements": [
+      "PR10",
+      "SC06"
+    ],
+    "source_path": "02-design/screens/14-protocols-system-details/p10-extension-permission-request__29-20092",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P10-progress.md"
+    ],
+    "disposition": "implemented and verified in P10 Vault, Script Sandbox & Capability Extensions (65/65 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:20248",
+    "requirements": [
+      "PR01",
+      "PR02"
+    ],
+    "source_path": "02-design/screens/14-protocols-system-details/p11-graphql-data-and-errors__29-20248",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P08-progress.md"
+    ],
+    "disposition": "implemented and verified in P08 desktop Runner/Mock/Tools, CLI, & server (62/62 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:20423",
+    "requirements": [
+      "PR03"
+    ],
+    "source_path": "02-design/screens/14-protocols-system-details/p12-websocket-disconnected__29-20423",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P11-progress.md"
+    ],
+    "disposition": "implemented and verified in P11 protocols/CRDT/SDK (68/68 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:20580",
+    "requirements": [
+      "PR04"
+    ],
+    "source_path": "02-design/screens/14-protocols-system-details/p13-sse-stream-event-inspector__29-20580",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P08-progress.md"
+    ],
+    "disposition": "implemented and verified in P08 desktop Runner/Mock/Tools, CLI, & server (62/62 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:20741",
+    "requirements": [
+      "PR05"
+    ],
+    "source_path": "02-design/screens/14-protocols-system-details/p14-grpc-invocation-error__29-20741",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P11-progress.md"
+    ],
+    "disposition": "implemented and verified in P11 protocols/CRDT/SDK (68/68 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:20910",
+    "requirements": [
+      "PR08"
+    ],
+    "source_path": "02-design/screens/14-protocols-system-details/p15-generator-output-review__29-20910",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P11-progress.md"
+    ],
+    "disposition": "implemented and verified in P11 protocols/CRDT/SDK (68/68 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:21115",
+    "requirements": [
+      "PR09"
+    ],
+    "source_path": "02-design/screens/14-protocols-system-details/p16-local-conversion-utilities__29-21115",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P08-progress.md"
+    ],
+    "disposition": "implemented and verified in P08 desktop Runner/Mock/Tools, CLI, & server (62/62 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:21274",
+    "requirements": [
+      "OP01"
+    ],
+    "source_path": "02-design/screens/14-protocols-system-details/z01-windows-installation-destination__29-21274",
+    "source_png_exists": false,
+    "status": "blocked",
+    "native_evidence": [
+      "reports/P06-progress.md"
+    ],
+    "disposition": "blocked by missing Windows signing cert / WiX toolset; PNG parity noted where unexported"
+  },
+  {
+    "screen_id": "29:21426",
+    "requirements": [
+      "OP03",
+      "SC03"
+    ],
+    "source_path": "02-design/screens/14-protocols-system-details/z02-first-server-owner-setup__29-21426",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P04-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:21576",
+    "requirements": [
+      "OP03",
+      "OP04"
+    ],
+    "source_path": "02-design/screens/14-protocols-system-details/z03-coolify-backend-configuration__29-21576",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P06-progress.md"
+    ],
+    "disposition": "ops runbook/CLI/packaging verified locally; signing/live Mongo env-gated"
+  },
+  {
+    "screen_id": "29:21730",
+    "requirements": [
+      "OP05"
+    ],
+    "source_path": "02-design/screens/14-protocols-system-details/z04-backup-policy__29-21730",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P06-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:21892",
+    "requirements": [
+      "OP06"
+    ],
+    "source_path": "02-design/screens/14-protocols-system-details/z05-restore-a-verified-backup__29-21892",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P06-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:22050",
+    "requirements": [
+      "OP07",
+      "OP08"
+    ],
+    "source_path": "02-design/screens/14-protocols-system-details/z06-migration-and-update-review__29-22050",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P06-progress.md"
+    ],
+    "disposition": "ops runbook/CLI/packaging verified locally; signing/live Mongo env-gated"
+  },
+  {
+    "screen_id": "29:22206",
+    "requirements": [
+      "OP09",
+      "SC07"
+    ],
+    "source_path": "02-design/screens/14-protocols-system-details/z07-diagnostic-report-preview__29-22206",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/p01-checks.json",
+      "reports/p01-ui-binary.json",
+      "apps/desktop/src/diagnostics.rs"
+    ],
+    "disposition": "implemented and tested in P01 (Z07 Diagnostic report preview + manual export)"
+  },
+  {
+    "screen_id": "29:22360",
+    "requirements": [
+      "UX10"
+    ],
+    "source_path": "02-design/screens/14-protocols-system-details/z08-local-data-folder-migration__29-22360",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:22514",
+    "requirements": [
+      "UX03",
+      "UX05",
+      "UX07"
+    ],
+    "source_path": "02-design/screens/14-protocols-system-details/z09-accessible-keyboard-navigation__29-22514",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "disposition": "implemented and verified in P09 Governance/MFA/UX B (63/63 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:22674",
+    "requirements": [
+      "SC03",
+      "SC09",
+      "WS03"
+    ],
+    "source_path": "02-design/screens/14-protocols-system-details/z10-manage-signed-in-google-sessions__29-22674",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P04-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:22826",
+    "requirements": [
+      "OP05",
+      "OP06"
+    ],
+    "source_path": "02-design/screens/14-protocols-system-details/z11-backup-verification-result__29-22826",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P06-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:23001",
+    "requirements": [
+      "OP06"
+    ],
+    "source_path": "02-design/screens/14-protocols-system-details/z12-restore-blocked-by-a-missing-key__29-23001",
+    "source_png_exists": false,
+    "status": "implemented_unverified",
+    "native_evidence": [
+      "reports/P06-progress.md"
+    ],
+    "disposition": "implemented in native Rust desktop/server (HTTP verified locally; live MongoDB SWAGGEN_MONGO_URI env-gated; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:23159",
+    "requirements": [
+      "OP08"
+    ],
+    "source_path": "02-design/screens/14-protocols-system-details/z13-update-signature-could-not-be-verified__29-23159",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "disposition": "implemented and verified in P09 Governance/MFA/UX B (63/63 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:23317",
+    "requirements": [
+      "SC08"
+    ],
+    "source_path": "02-design/screens/14-protocols-system-details/z14-server-side-destination-blocked__29-23317",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P08-progress.md"
+    ],
+    "disposition": "implemented and verified in P08 desktop Runner/Mock/Tools, CLI, & server (62/62 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:23475",
+    "requirements": [
+      "SC05"
+    ],
+    "source_path": "02-design/screens/14-protocols-system-details/z15-privacy-safe-imported-content__29-23475",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/p01-checks.json",
+      "reports/p01-ui-binary.json"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "29:23632",
+    "requirements": [],
+    "source_path": "02-design/screens/14-protocols-system-details/z16-performance-acceptance-dashboard__29-23632",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "32:11157",
+    "requirements": [
+      "SC10"
+    ],
+    "source_path": "02-design/screens/14-protocols-system-details/z17-audit-log-retention-policy__32-11157",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "disposition": "implemented and verified in P09 Governance/MFA/UX B (63/63 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "32:11321",
+    "requirements": [
+      "MK10",
+      "OP10"
+    ],
+    "source_path": "02-design/screens/14-protocols-system-details/z18-server-storage-and-operational-quotas__32-11321",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P08-progress.md"
+    ],
+    "disposition": "implemented and verified in P08 desktop Runner/Mock/Tools, CLI, & server (62/62 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "32:11481",
+    "requirements": [
+      "UX05",
+      "UX06"
+    ],
+    "source_path": "02-design/screens/14-protocols-system-details/z19-language-and-interface-appearance__32-11481",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "disposition": "implemented and verified in P09 Governance/MFA/UX B (63/63 tests pass; PNG parity noted where unexported)"
+  },
+  {
+    "screen_id": "32:11640",
+    "requirements": [
+      "RS07",
+      "UX10"
+    ],
+    "source_path": "02-design/screens/14-protocols-system-details/z20-confirm-local-cache-cleanup__32-11640",
+    "source_png_exists": false,
+    "status": "verified",
+    "native_evidence": [
+      "reports/P02-progress.md",
+      "reports/P12-final.md"
+    ],
+    "disposition": "implemented and verified across native desktop/crates (68/68 workspace tests pass; PNG parity noted where unexported)"
+  }
+]

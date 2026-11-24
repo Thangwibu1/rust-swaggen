@@ -1,0 +1,52 @@
+{
+  "node": {
+    "page": "13-import-testing-mock-details",
+    "page_id": "27:324",
+    "id": "29:18763",
+    "name": "K09 / Mock traffic inspection",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/13-import-testing-mock-details/k09-mock-traffic-inspection__29-18763",
+    "requirements": [
+      "MK03",
+      "MK04"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:18764",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:18767",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:18916",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Mock traffic inspection",
+    "DisNote API / tools / K09",
+    "REQUEST",
+    "MATCHED RULE",
+    "RESPONSE"
+  ]
+}

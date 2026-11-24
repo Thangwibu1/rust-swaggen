@@ -1,0 +1,56 @@
+{
+  "node": {
+    "page": "10-authentication-secrets",
+    "page_id": "27:321",
+    "id": "29:4953",
+    "name": "V06 / Extract a value from a response",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/10-authentication-secrets/v06-extract-a-value-from-a-response__29-4953",
+    "requirements": [
+      "EV09",
+      "TS03"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:4954",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:4957",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:5115",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Extract a value from a response",
+    "DisNote API / auth / V06",
+    "Response source",
+    "Extractor",
+    "Path",
+    "Target variable",
+    "Storage scope",
+    "Mark as secret",
+    "Enabled"
+  ]
+}

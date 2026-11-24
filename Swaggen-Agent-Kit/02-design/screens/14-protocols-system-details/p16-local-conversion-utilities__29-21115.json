@@ -1,0 +1,51 @@
+{
+  "node": {
+    "page": "14-protocols-system-details",
+    "page_id": "27:325",
+    "id": "29:21115",
+    "name": "P16 / Local conversion utilities",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/14-protocols-system-details/p16-local-conversion-utilities__29-21115",
+    "requirements": [
+      "PR09"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:21116",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:21119",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:21270",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Local conversion utilities",
+    "DisNote API / system / P16",
+    "JSON input",
+    "YAML output",
+    "URL encoding, Base64 and JSON/YAML conversion run locally withou"
+  ]
+}

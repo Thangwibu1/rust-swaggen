@@ -1,0 +1,50 @@
+{
+  "node": {
+    "page": "14-protocols-system-details",
+    "page_id": "27:325",
+    "id": "29:23632",
+    "name": "Z16 / Performance acceptance dashboard",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/14-protocols-system-details/z16-performance-acceptance-dashboard__29-23632",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "29:23633",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:23636",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:23810",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Performance acceptance dashboard",
+    "DisNote API / system / Z16",
+    "BENCHMARK GATE",
+    "REQUIRED THRESHOLD",
+    "REPORT STATUS",
+    "Design targets only. Do not present these thresholds as measured"
+  ]
+}

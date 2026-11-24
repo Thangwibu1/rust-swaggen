@@ -1,0 +1,65 @@
+{
+  "node": {
+    "page": "06-settings-system-states",
+    "page_id": "4:94",
+    "id": "13:2845",
+    "name": "M04 / Delete collection?",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/06-settings-system-states/m04-delete-collection__13-2845",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "13:2846",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "13:2847",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "13:2895",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    },
+    {
+      "id": "13:2896",
+      "name": "Overlay / Delete collection?",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    }
+  ],
+  "text_layer_names": [
+    "List tasks",
+    "DisNote API / Team workspace",
+    "Request configuration",
+    "NAME / OPERATION",
+    "VALUE / DETAILS",
+    "STATUS",
+    "Response",
+    "142 ms",
+    "1.24 KB",
+    "Saved locally · not shared",
+    "Delete collection?",
+    "Tasks API and its 12 requests will move to trash. Your team can restore them within the retention period."
+  ]
+}

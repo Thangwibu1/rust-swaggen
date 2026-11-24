@@ -1,0 +1,59 @@
+{
+  "node": {
+    "page": "04-api-design-collaboration",
+    "page_id": "4:92",
+    "id": "6:9049",
+    "name": "C08 / Working offline",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/04-api-design-collaboration/c08-working-offline__6-9049",
+    "requirements": [
+      "SY01",
+      "SY02",
+      "UX09"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "6:9050",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "6:9053",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "6:9228",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Working offline",
+    "DisNote API / Team workspace",
+    "Continue where you left off",
+    "NAME / OPERATION",
+    "VALUE / DETAILS",
+    "STATUS",
+    "Team activity",
+    "Tina published a new Task schema",
+    "Added due_at and clarified the status enum · 2 minutes ago",
+    "Minh added a response example",
+    "List tasks · Success response · 8 minutes ago"
+  ]
+}

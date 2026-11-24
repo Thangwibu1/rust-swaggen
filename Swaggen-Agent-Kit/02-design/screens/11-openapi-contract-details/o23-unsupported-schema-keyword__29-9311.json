@@ -1,0 +1,56 @@
+{
+  "node": {
+    "page": "11-openapi-contract-details",
+    "page_id": "27:322",
+    "id": "29:9311",
+    "name": "O23 / Unsupported schema keyword",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/11-openapi-contract-details/o23-unsupported-schema-keyword__29-9311",
+    "requirements": [
+      "DC08",
+      "OA03"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:9312",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:9315",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:9464",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Unsupported schema keyword",
+    "DisNote API / openapi / O23",
+    "Review details",
+    "Keyword",
+    "See validator compatibility report",
+    "Result",
+    "Not marked as passed",
+    "Response",
+    "Kept for manual inspection"
+  ]
+}

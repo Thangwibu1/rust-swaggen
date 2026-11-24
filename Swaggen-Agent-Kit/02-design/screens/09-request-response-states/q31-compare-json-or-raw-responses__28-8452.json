@@ -1,0 +1,50 @@
+{
+  "node": {
+    "page": "09-request-response-states",
+    "page_id": "27:320",
+    "id": "28:8452",
+    "name": "Q31 / Compare JSON or raw responses",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/09-request-response-states/q31-compare-json-or-raw-responses__28-8452",
+    "requirements": [
+      "RS09"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "28:8453",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "28:8456",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "28:8606",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Compare JSON or raw responses",
+    "DisNote API / request / Q31",
+    "Previous · 200 · 142 ms",
+    "Current · 200 · 128 ms"
+  ]
+}

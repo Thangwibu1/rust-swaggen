@@ -1,0 +1,15 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:465",
+    "name": "Shell/Statusbar",
+    "type": "symbol",
+    "width": "1440",
+    "height": "28",
+    "path": "02-design/components/01-component-library/shell-statusbar__5-465",
+    "requirements": []
+  },
+  "direct_children": [],
+  "text_layer_names": []
+}

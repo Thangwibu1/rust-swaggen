@@ -1,0 +1,226 @@
+[
+  {
+    "name": "rustsec-p00",
+    "status": "PASS",
+    "exit_code": 0,
+    "timestamp": "2026-11-24T07:16:43.960933+00:00",
+    "lock_sha256": "cd7c41cc6e4623a016359950b7ea31112c15060a56a4e07890b4a2907133f7e3",
+    "command": "D:\\code\\potmen\\.local\\p00-audit-tools\\bin\\cargo-audit.exe audit --json --file D:\\code\\potmen\\spikes\\p00\\Cargo.lock --db D:\\code\\potmen\\.local\\p00-advisory-db --deny warnings --no-fetch",
+    "artifact_path": "reports/raw/audit-p00.json",
+    "stderr_path": "reports/raw/audit-p00.stderr.txt",
+    "detail": "Warnings denied; no advisory ignores. Original cross-platform lock; retained even for rejected candidates.",
+    "database": {
+      "advisory-count": 1563,
+      "last-commit": null,
+      "last-updated": null
+    },
+    "artifact_sha256": "d7ff1c0575863c3b7844dec31f6db62fc23ea7941790af4a9c7d3fa0a39c8355"
+  },
+  {
+    "name": "rustsec-windows-p00",
+    "status": "PASS",
+    "exit_code": 0,
+    "timestamp": "2026-11-24T07:16:44.479403+00:00",
+    "lock_sha256": "cd7c41cc6e4623a016359950b7ea31112c15060a56a4e07890b4a2907133f7e3",
+    "target": "x86_64-pc-windows-msvc",
+    "metadata_path": "reports/raw/audit-metadata-p00.json",
+    "metadata_command": [
+      "C:\\Users\\Ngoc Thang\\.cargo\\bin\\cargo.exe",
+      "+stable",
+      "metadata",
+      "--manifest-path",
+      "spikes/p00/Cargo.toml",
+      "--offline",
+      "--locked",
+      "--filter-platform",
+      "x86_64-pc-windows-msvc",
+      "--format-version",
+      "1",
+      "--features",
+      "mongo"
+    ],
+    "projection_path": "reports/raw/audit-windows-p00.lock",
+    "projection_sha256": "0b60bba23c202fb59d4e795269b5dd04f8ae27cacb567d95a7452b3b14c51d6f",
+    "input_sha256": {
+      "spikes/p00/Cargo.toml": "e744f7cf9b7a47912ec6a86fdfc9b203e3ff7b700ac40bb399ee323d37c599ed",
+      "spikes/p00-native/Cargo.toml": "e158187a9e5506072429cd6aab05d1dfca161ac4ee2b4631c5c515fa5da2afba",
+      "spikes/p00-egui/Cargo.toml": "53adada481d1a31f30330a0ef69363933f31c520a089ffa6340af5fb2d7fa87a",
+      "spikes/p00-transport/Cargo.toml": "865b2db081a29924697c970ab322ba2afd0b39d6d619c214f3fb4826a04d9a16",
+      "spikes/p00/Cargo.lock": "cd7c41cc6e4623a016359950b7ea31112c15060a56a4e07890b4a2907133f7e3",
+      "reports/raw/audit-metadata-p00.json": "2ade88602c0c68fc91fb7d89dff1a297760fbb0ce2330db5f6e6fb0538175ab4"
+    },
+    "resolved_packages": 185,
+    "command": "D:\\code\\potmen\\.local\\p00-audit-tools\\bin\\cargo-audit.exe audit --json --file D:\\code\\potmen\\reports\\raw\\audit-windows-p00.lock --db D:\\code\\potmen\\.local\\p00-advisory-db --deny warnings --no-fetch",
+    "artifact_path": "reports/raw/audit-windows-p00.json",
+    "stderr_path": "reports/raw/audit-windows-p00.stderr.txt",
+    "detail": "Warnings denied; no advisory ignores. Complete Windows dependency closure.",
+    "database": {
+      "advisory-count": 1563,
+      "last-commit": null,
+      "last-updated": null
+    },
+    "artifact_sha256": "dbf4f6d956239c4ea53d83c8e883d526270c438752bfb122974825e2702c3b85"
+  },
+  {
+    "name": "rustsec-p00-native",
+    "status": "FAIL",
+    "exit_code": 1,
+    "timestamp": "2026-11-24T07:16:45.828012+00:00",
+    "lock_sha256": "80f9ced347fcb3f16a0ae901ee30693e7add14149e08a211326fb6c8fd4b0a83",
+    "command": "D:\\code\\potmen\\.local\\p00-audit-tools\\bin\\cargo-audit.exe audit --json --file D:\\code\\potmen\\spikes\\p00-native\\Cargo.lock --db D:\\code\\potmen\\.local\\p00-advisory-db --deny warnings --no-fetch",
+    "artifact_path": "reports/raw/audit-p00-native.json",
+    "stderr_path": "reports/raw/audit-p00-native.stderr.txt",
+    "detail": "Warnings denied; no advisory ignores. Original cross-platform lock; retained even for rejected candidates."
+  },
+  {
+    "name": "rustsec-windows-p00-native",
+    "status": "FAIL",
+    "exit_code": 1,
+    "timestamp": "2026-11-24T07:16:46.567297+00:00",
+    "lock_sha256": "80f9ced347fcb3f16a0ae901ee30693e7add14149e08a211326fb6c8fd4b0a83",
+    "target": "x86_64-pc-windows-msvc",
+    "metadata_path": "reports/raw/audit-metadata-p00-native.json",
+    "metadata_command": [
+      "C:\\Users\\Ngoc Thang\\.cargo\\bin\\cargo.exe",
+      "+stable",
+      "metadata",
+      "--manifest-path",
+      "spikes/p00-native/Cargo.toml",
+      "--offline",
+      "--locked",
+      "--filter-platform",
+      "x86_64-pc-windows-msvc",
+      "--format-version",
+      "1"
+    ],
+    "projection_path": "reports/raw/audit-windows-p00-native.lock",
+    "projection_sha256": "5013ca1c942f9b6372e3833495d18a622cf55482da6f6005c3cb95c3cb95f9ec",
+    "input_sha256": {
+      "spikes/p00/Cargo.toml": "e744f7cf9b7a47912ec6a86fdfc9b203e3ff7b700ac40bb399ee323d37c599ed",
+      "spikes/p00-native/Cargo.toml": "e158187a9e5506072429cd6aab05d1dfca161ac4ee2b4631c5c515fa5da2afba",
+      "spikes/p00-egui/Cargo.toml": "53adada481d1a31f30330a0ef69363933f31c520a089ffa6340af5fb2d7fa87a",
+      "spikes/p00-transport/Cargo.toml": "865b2db081a29924697c970ab322ba2afd0b39d6d619c214f3fb4826a04d9a16",
+      "spikes/p00-native/Cargo.lock": "80f9ced347fcb3f16a0ae901ee30693e7add14149e08a211326fb6c8fd4b0a83",
+      "reports/raw/audit-metadata-p00-native.json": "4ccb48a7ed034cefbfc1af0f07dea945b7fb43a3267bc20ef57b8f8a1c26e41a"
+    },
+    "resolved_packages": 255,
+    "command": "D:\\code\\potmen\\.local\\p00-audit-tools\\bin\\cargo-audit.exe audit --json --file D:\\code\\potmen\\reports\\raw\\audit-windows-p00-native.lock --db D:\\code\\potmen\\.local\\p00-advisory-db --deny warnings --no-fetch",
+    "artifact_path": "reports/raw/audit-windows-p00-native.json",
+    "stderr_path": "reports/raw/audit-windows-p00-native.stderr.txt",
+    "detail": "Warnings denied; no advisory ignores. Complete Windows dependency closure."
+  },
+  {
+    "name": "rustsec-p00-egui",
+    "status": "FAIL",
+    "exit_code": 1,
+    "timestamp": "2026-11-24T07:16:47.563406+00:00",
+    "lock_sha256": "f0767d1d3cbe994aac43d18fdf5efc82653ccf494d2653f24a7fa6ce078ce910",
+    "command": "D:\\code\\potmen\\.local\\p00-audit-tools\\bin\\cargo-audit.exe audit --json --file D:\\code\\potmen\\spikes\\p00-egui\\Cargo.lock --db D:\\code\\potmen\\.local\\p00-advisory-db --deny warnings --no-fetch",
+    "artifact_path": "reports/raw/audit-p00-egui.json",
+    "stderr_path": "reports/raw/audit-p00-egui.stderr.txt",
+    "detail": "Warnings denied; no advisory ignores. Original cross-platform lock; retained even for rejected candidates."
+  },
+  {
+    "name": "rustsec-windows-p00-egui",
+    "status": "PASS",
+    "exit_code": 0,
+    "timestamp": "2026-11-24T07:16:48.212805+00:00",
+    "lock_sha256": "f0767d1d3cbe994aac43d18fdf5efc82653ccf494d2653f24a7fa6ce078ce910",
+    "target": "x86_64-pc-windows-msvc",
+    "metadata_path": "reports/raw/audit-metadata-p00-egui.json",
+    "metadata_command": [
+      "C:\\Users\\Ngoc Thang\\.cargo\\bin\\cargo.exe",
+      "+stable",
+      "metadata",
+      "--manifest-path",
+      "spikes/p00-egui/Cargo.toml",
+      "--offline",
+      "--locked",
+      "--filter-platform",
+      "x86_64-pc-windows-msvc",
+      "--format-version",
+      "1"
+    ],
+    "projection_path": "reports/raw/audit-windows-p00-egui.lock",
+    "projection_sha256": "5eb7b5802f52381f9ee4eba7c8ed6d7d7c369154617697b3d6d95c22ce682b9b",
+    "input_sha256": {
+      "spikes/p00/Cargo.toml": "e744f7cf9b7a47912ec6a86fdfc9b203e3ff7b700ac40bb399ee323d37c599ed",
+      "spikes/p00-native/Cargo.toml": "e158187a9e5506072429cd6aab05d1dfca161ac4ee2b4631c5c515fa5da2afba",
+      "spikes/p00-egui/Cargo.toml": "53adada481d1a31f30330a0ef69363933f31c520a089ffa6340af5fb2d7fa87a",
+      "spikes/p00-transport/Cargo.toml": "865b2db081a29924697c970ab322ba2afd0b39d6d619c214f3fb4826a04d9a16",
+      "spikes/p00-egui/Cargo.lock": "f0767d1d3cbe994aac43d18fdf5efc82653ccf494d2653f24a7fa6ce078ce910",
+      "reports/raw/audit-metadata-p00-egui.json": "0ee39bd0679bf1d14fe3cf10ff7359a6e1d497e74b28a42c07b6ab47c4014373"
+    },
+    "resolved_packages": 203,
+    "command": "D:\\code\\potmen\\.local\\p00-audit-tools\\bin\\cargo-audit.exe audit --json --file D:\\code\\potmen\\reports\\raw\\audit-windows-p00-egui.lock --db D:\\code\\potmen\\.local\\p00-advisory-db --deny warnings --no-fetch",
+    "artifact_path": "reports/raw/audit-windows-p00-egui.json",
+    "stderr_path": "reports/raw/audit-windows-p00-egui.stderr.txt",
+    "detail": "Warnings denied; no advisory ignores. Complete Windows dependency closure.",
+    "database": {
+      "advisory-count": 1563,
+      "last-commit": null,
+      "last-updated": null
+    },
+    "artifact_sha256": "669c82a01e0dfdcd0dd65ae80147903c3852fc2be0f7354c78357cc992edf4e2"
+  },
+  {
+    "name": "rustsec-p00-transport",
+    "status": "PASS",
+    "exit_code": 0,
+    "timestamp": "2026-11-24T07:16:49.697574+00:00",
+    "lock_sha256": "0167a60c2e59a05251cd44fc7000e2584afbb875633a191c68e81eae8c3e83b7",
+    "command": "D:\\code\\potmen\\.local\\p00-audit-tools\\bin\\cargo-audit.exe audit --json --file D:\\code\\potmen\\spikes\\p00-transport\\Cargo.lock --db D:\\code\\potmen\\.local\\p00-advisory-db --deny warnings --no-fetch",
+    "artifact_path": "reports/raw/audit-p00-transport.json",
+    "stderr_path": "reports/raw/audit-p00-transport.stderr.txt",
+    "detail": "Warnings denied; no advisory ignores. Original cross-platform lock; retained even for rejected candidates.",
+    "database": {
+      "advisory-count": 1563,
+      "last-commit": null,
+      "last-updated": null
+    },
+    "artifact_sha256": "f8803569f9929eea72a8e1e127490cabeebd215d3ebb2ffb58980117c81e5315"
+  },
+  {
+    "name": "rustsec-windows-p00-transport",
+    "status": "PASS",
+    "exit_code": 0,
+    "timestamp": "2026-11-24T07:16:50.028755+00:00",
+    "lock_sha256": "0167a60c2e59a05251cd44fc7000e2584afbb875633a191c68e81eae8c3e83b7",
+    "target": "x86_64-pc-windows-msvc",
+    "metadata_path": "reports/raw/audit-metadata-p00-transport.json",
+    "metadata_command": [
+      "C:\\Users\\Ngoc Thang\\.cargo\\bin\\cargo.exe",
+      "+stable",
+      "metadata",
+      "--manifest-path",
+      "spikes/p00-transport/Cargo.toml",
+      "--offline",
+      "--locked",
+      "--filter-platform",
+      "x86_64-pc-windows-msvc",
+      "--format-version",
+      "1"
+    ],
+    "projection_path": "reports/raw/audit-windows-p00-transport.lock",
+    "projection_sha256": "aadc08a7b370ab682409aca3e8b9c55ea34e9b916e1f7eae5fc8ec50124dd4a1",
+    "input_sha256": {
+      "spikes/p00/Cargo.toml": "e744f7cf9b7a47912ec6a86fdfc9b203e3ff7b700ac40bb399ee323d37c599ed",
+      "spikes/p00-native/Cargo.toml": "e158187a9e5506072429cd6aab05d1dfca161ac4ee2b4631c5c515fa5da2afba",
+      "spikes/p00-egui/Cargo.toml": "53adada481d1a31f30330a0ef69363933f31c520a089ffa6340af5fb2d7fa87a",
+      "spikes/p00-transport/Cargo.toml": "865b2db081a29924697c970ab322ba2afd0b39d6d619c214f3fb4826a04d9a16",
+      "spikes/p00-transport/Cargo.lock": "0167a60c2e59a05251cd44fc7000e2584afbb875633a191c68e81eae8c3e83b7",
+      "reports/raw/audit-metadata-p00-transport.json": "44d203c86994c36ad1a013eeb5db1656e0bde89c3d1975e5c8edb4d937f4a5ce"
+    },
+    "resolved_packages": 50,
+    "command": "D:\\code\\potmen\\.local\\p00-audit-tools\\bin\\cargo-audit.exe audit --json --file D:\\code\\potmen\\reports\\raw\\audit-windows-p00-transport.lock --db D:\\code\\potmen\\.local\\p00-advisory-db --deny warnings --no-fetch",
+    "artifact_path": "reports/raw/audit-windows-p00-transport.json",
+    "stderr_path": "reports/raw/audit-windows-p00-transport.stderr.txt",
+    "detail": "Warnings denied; no advisory ignores. Complete Windows dependency closure.",
+    "database": {
+      "advisory-count": 1563,
+      "last-commit": null,
+      "last-updated": null
+    },
+    "artifact_sha256": "d42d1d27db5dc190d23c539805f09e910258426c4b02f8bf8e43b3bf7cfbd87b"
+  }
+]

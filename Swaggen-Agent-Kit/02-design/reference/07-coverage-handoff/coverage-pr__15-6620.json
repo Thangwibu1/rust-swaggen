@@ -1,0 +1,157 @@
+{
+  "node": {
+    "page": "07-coverage-handoff",
+    "page_id": "4:95",
+    "id": "15:6620",
+    "name": "Coverage / PR",
+    "type": "frame",
+    "width": "1440",
+    "height": "716",
+    "path": "02-design/reference/07-coverage-handoff/coverage-pr__15-6620",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "15:6621",
+      "name": "PR / REQUIREMENT COVERAGE",
+      "type": "text",
+      "x": "41",
+      "y": "41",
+      "width": "360",
+      "height": "34"
+    },
+    {
+      "id": "15:6622",
+      "name": "PR01",
+      "type": "frame",
+      "x": "41",
+      "y": "91",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6627",
+      "name": "PR02",
+      "type": "frame",
+      "x": "41",
+      "y": "151",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6632",
+      "name": "PR03",
+      "type": "frame",
+      "x": "41",
+      "y": "211",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6637",
+      "name": "PR04",
+      "type": "frame",
+      "x": "41",
+      "y": "271",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6642",
+      "name": "PR05",
+      "type": "frame",
+      "x": "41",
+      "y": "331",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6647",
+      "name": "PR06",
+      "type": "frame",
+      "x": "41",
+      "y": "391",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6652",
+      "name": "PR07",
+      "type": "frame",
+      "x": "41",
+      "y": "451",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6657",
+      "name": "PR08",
+      "type": "frame",
+      "x": "41",
+      "y": "511",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6662",
+      "name": "PR09",
+      "type": "frame",
+      "x": "41",
+      "y": "571",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6667",
+      "name": "PR10",
+      "type": "frame",
+      "x": "41",
+      "y": "631",
+      "width": "1360",
+      "height": "44"
+    }
+  ],
+  "text_layer_names": [
+    "PR / REQUIREMENT COVERAGE",
+    "PR01",
+    "GraphQL cơ bản",
+    "Stage B",
+    "P01",
+    "PR02",
+    "GraphQL schema",
+    "Stage C",
+    "P01",
+    "PR03",
+    "WebSocket",
+    "Stage C",
+    "P02",
+    "PR04",
+    "Server Sent Events",
+    "Stage B",
+    "R11",
+    "PR05",
+    "gRPC",
+    "Stage C",
+    "P03",
+    "PR06",
+    "HTTP nâng cao",
+    "Stage C",
+    "R13",
+    "PR07",
+    "Sinh code gọi API",
+    "Stage B",
+    "R18",
+    "PR08",
+    "Sinh SDK và stub",
+    "Stage C",
+    "P04",
+    "PR09",
+    "Giải mã và chuyển đổi",
+    "Stage B",
+    "P04",
+    "PR10",
+    "Extension có quyền",
+    "Stage C",
+    "S11"
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "node": {
+    "page": "08-workspace-collection-details",
+    "page_id": "27:319",
+    "id": "28:394",
+    "name": "W03 / Server profiles",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/08-workspace-collection-details/w03-server-profiles__28-394",
+    "requirements": [
+      "WS02"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "28:395",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "28:398",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "28:544",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Server profiles",
+    "DisNote API / workspace / W03",
+    "Active server",
+    "New profile name",
+    "Server URL",
+    "TLS verification",
+    "Enabled"
+  ]
+}

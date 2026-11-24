@@ -1,0 +1,54 @@
+{
+  "node": {
+    "page": "11-openapi-contract-details",
+    "page_id": "27:322",
+    "id": "29:6643",
+    "name": "O07 / Add a documented response",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/11-openapi-contract-details/o07-add-a-documented-response__29-6643",
+    "requirements": [
+      "DC02",
+      "OA05"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:6644",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:6647",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:6799",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Add a documented response",
+    "DisNote API / openapi / O07",
+    "HTTP status",
+    "Media type",
+    "Schema",
+    "Description",
+    "Example"
+  ]
+}

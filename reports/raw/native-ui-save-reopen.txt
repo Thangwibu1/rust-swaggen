@@ -1,0 +1,4 @@
+   Compiling swaggen-p00 v0.0.0 (D:\code\potmen\spikes\p00)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.92s
+     Running `spikes\p00\target\debug\journal-ui-reopen.exe`
+PASS: native UI saved fixture reopened with 146 UTF-8 draft bytes and no publish intent

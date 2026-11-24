@@ -1,0 +1,57 @@
+{
+  "node": {
+    "page": "08-workspace-collection-details",
+    "page_id": "27:319",
+    "id": "32:2816",
+    "name": "W22 / Confirm ownership transfer",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/08-workspace-collection-details/w22-confirm-ownership-transfer__32-2816",
+    "requirements": [
+      "SC04",
+      "WS10"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "32:2817",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "32:2820",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "32:2974",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Confirm ownership transfer",
+    "DisNote API / workspace / W22",
+    "Workspace",
+    "DisNote API",
+    "Current owner",
+    "Ha Giang · giang@gmail.com",
+    "New owner",
+    "Your role after transfer",
+    "Admin",
+    "Type workspace name"
+  ]
+}

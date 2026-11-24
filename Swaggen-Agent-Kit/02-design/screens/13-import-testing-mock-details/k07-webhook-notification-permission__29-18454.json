@@ -1,0 +1,54 @@
+{
+  "node": {
+    "page": "13-import-testing-mock-details",
+    "page_id": "27:324",
+    "id": "29:18454",
+    "name": "K07 / Webhook notification permission",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/13-import-testing-mock-details/k07-webhook-notification-permission__29-18454",
+    "requirements": [
+      "MK09",
+      "SC08"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:18455",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:18458",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:18602",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Webhook notification permission",
+    "DisNote API / tools / K07",
+    "Destination URL",
+    "Allowed host",
+    "hooks.team.local",
+    "Signing secret",
+    "Include payload"
+  ]
+}

@@ -1,0 +1,72 @@
+[
+  {
+    "name": "p00-editor-highlight-search",
+    "status": "PASS",
+    "timestamp": "2026-11-24T06:54:43.721752+00:00",
+    "exit_code": null,
+    "command": "Observed native Windows application interactions; exact actions in p00-final-native.md",
+    "artifact_path": "reports/p00-final-native.md",
+    "detail": "Observed JSON/YAML lexical colours, Unicode two-match F3 selection; final release Ctrl+Z emptied Telex phrase and Ctrl+Y restored it exactly",
+    "timestamp_scope": "Recorded after observations, not a latency timestamp"
+  },
+  {
+    "name": "p00-keyboard-modal",
+    "status": "PASS",
+    "timestamp": "2026-11-24T06:54:43.721752+00:00",
+    "exit_code": null,
+    "command": "Observed native Windows application interactions; exact actions in p00-final-native.md",
+    "artifact_path": "reports/p00-final-native.md",
+    "detail": "Observed background nodes removed, immediate Return to editor focus, Tab trap and Escape focus restoration; final release Shift+Tab traversed to Restore and Enter invoked it",
+    "timestamp_scope": "Recorded after observations, not a latency timestamp"
+  },
+  {
+    "name": "p00-telex-input",
+    "status": "PASS",
+    "timestamp": "2026-11-24T06:54:43.721752+00:00",
+    "exit_code": null,
+    "command": "Observed native Windows application interactions; exact actions in p00-final-native.md",
+    "artifact_path": "reports/p00-final-native.md",
+    "detail": "Individual native key events tieengs space vieetj space produced tieng viet with correct Vietnamese accents; repeated on final release, not paste",
+    "timestamp_scope": "Recorded after observations, not a latency timestamp"
+  },
+  {
+    "name": "p00-native-resize-dpi",
+    "status": "PASS",
+    "timestamp": "2026-11-24T06:54:43.721752+00:00",
+    "exit_code": null,
+    "command": "Observed native Windows application interactions; exact actions in p00-final-native.md",
+    "artifact_path": "reports/p00-final-native.md",
+    "detail": "Actual Windows scale 1.75; release resized 1440x900 ->951x900 ->720x480 and maximized1646x903; editor usable; ordered pointer splitter retained250->419 points. Current-scale smoke only, not all-DPI certification",
+    "timestamp_scope": "Recorded after observations, not a latency timestamp"
+  },
+  {
+    "name": "p00-narrator",
+    "status": "PASS",
+    "timestamp": "2026-11-24T06:54:43.721752+00:00",
+    "exit_code": null,
+    "command": "Observed native Windows application interactions; exact actions in p00-final-native.md",
+    "artifact_path": "reports/p00-final-native.md",
+    "detail": "Visible Windows Speech recap contained Swaggen P00 region, Find text edit and Previous Shift+F3 button. Selected-control speech smoke only; session exited and absence observed",
+    "timestamp_scope": "Recorded after observations, not a latency timestamp"
+  },
+  {
+    "name": "p00-ui-local-restore",
+    "status": "PASS",
+    "timestamp": "2026-11-24T06:54:43.721752+00:00",
+    "exit_code": null,
+    "command": "Observed native Windows application interactions; exact actions in p00-final-native.md",
+    "artifact_path": "reports/p00-final-native.md",
+    "detail": "Saved Unicode fixture after sync_all, changed draft, restored actual journal fixture; final executable restored the same fixture through keyboard. CRC/artifact verification recorded separately",
+    "timestamp_scope": "Recorded after observations, not a latency timestamp"
+  },
+  {
+    "name": "p00-ui-large-response",
+    "status": "PASS",
+    "timestamp": "2026-11-24T06:54:43.721752+00:00",
+    "exit_code": null,
+    "command": "Observed native Windows application interactions; exact actions in p00-final-native.md",
+    "artifact_path": "reports/p00-final-native.md",
+    "detail": "Real loopback Axum HTTP sent20971520 bytes into egui worker with65536 preview cap; dialog opened after initiation; every body byte and SHA256 independently verified",
+    "timestamp_scope": "Recorded after observations, not a latency timestamp"
+  }
+]

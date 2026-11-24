@@ -1,0 +1,41 @@
+{
+  "name": "software-renderer-feature-graph-debug",
+  "status": "PASS",
+  "exit_code": 0,
+  "command": "python -X utf8 tools/p00-software-evidence.py",
+  "timestamp": "2026-11-24T05:21:31.532363+00:00",
+  "artifact_path": "reports/software-renderer-evidence-debug.json",
+  "profile": "debug",
+  "binary": "spikes/p00-native/target-software/x86_64-pc-windows-msvc/debug/native-gate.exe",
+  "binary_sha256": "9f67ba4ac2c81218ccca57e91c634cbc4aaaeb74b292240e171d841b6544e911",
+  "renderer_crates": {
+    "iced": {
+      "version": "0.14.0",
+      "features": [
+        "crisp",
+        "highlighter",
+        "iced_highlighter",
+        "svg",
+        "tiny-skia",
+        "tokio"
+      ]
+    },
+    "iced_renderer": {
+      "version": "0.14.0",
+      "features": [
+        "iced_tiny_skia",
+        "svg",
+        "tiny-skia"
+      ]
+    },
+    "iced_tiny_skia": {
+      "version": "0.14.1",
+      "features": [
+        "resvg",
+        "svg"
+      ]
+    }
+  },
+  "wgpu_selected": false,
+  "limits": "Build/feature graph only. Interactive launch must be observed separately. Windows compositor/GPU driver behavior and release performance are not certified."
+}

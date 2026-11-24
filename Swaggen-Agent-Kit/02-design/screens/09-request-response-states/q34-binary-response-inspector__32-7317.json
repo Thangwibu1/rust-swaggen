@@ -1,0 +1,58 @@
+{
+  "node": {
+    "page": "09-request-response-states",
+    "page_id": "27:320",
+    "id": "32:7317",
+    "name": "Q34 / Binary response inspector",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/09-request-response-states/q34-binary-response-inspector__32-7317",
+    "requirements": [
+      "RS02",
+      "RS06"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "32:7318",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "32:7321",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "32:7474",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Binary response inspector",
+    "DisNote API / request / Q34",
+    "Review details",
+    "Status",
+    "200 OK · 385 ms",
+    "File",
+    "api-contract.pdf",
+    "SHA-256",
+    "b89c2f…e21d · Calculated locally",
+    "Preview",
+    "Binary content · no text preview"
+  ]
+}

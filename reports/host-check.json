@@ -1,0 +1,18 @@
+{
+  "name": "host-hardware-and-workspace",
+  "status": "PASS",
+  "timestamp": "2026-11-24T06:30:52.408137+00:00",
+  "command": "python -X utf8 tools/p00-host-check.py",
+  "exit_code": 0,
+  "artifact_path": "reports/host-check.json",
+  "inventory": {
+    "logical_processors": 20,
+    "cpu_model": "13th Gen Intel(R) Core(TM) i9-13900H",
+    "physical_memory_bytes": 25384443904,
+    "workspace_free_bytes": 19638853632,
+    "workspace_volume_total_bytes": 128849014784,
+    "workspace_create_write_sync_read_rename_delete": "PASS"
+  },
+  "issues": [],
+  "scope": "Hardware and file permissions only; no benchmark, display setting or production data change"
+}

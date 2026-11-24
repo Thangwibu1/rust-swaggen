@@ -1,0 +1,43 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:263",
+    "name": "Avatar",
+    "type": "frame",
+    "width": "184",
+    "height": "124",
+    "path": "02-design/components/01-component-library/avatar__5-263",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "5:264",
+      "name": "Tone=Teal",
+      "type": "symbol",
+      "x": "24",
+      "y": "56",
+      "width": "32",
+      "height": "32"
+    },
+    {
+      "id": "5:266",
+      "name": "Tone=Salmon",
+      "type": "symbol",
+      "x": "76",
+      "y": "56",
+      "width": "32",
+      "height": "32"
+    },
+    {
+      "id": "5:268",
+      "name": "Tone=Cream",
+      "type": "symbol",
+      "x": "128",
+      "y": "56",
+      "width": "32",
+      "height": "32"
+    }
+  ],
+  "text_layer_names": []
+}

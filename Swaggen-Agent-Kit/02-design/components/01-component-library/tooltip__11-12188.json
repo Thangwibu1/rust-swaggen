@@ -1,0 +1,25 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "11:12188",
+    "name": "Tooltip",
+    "type": "frame",
+    "width": "288",
+    "height": "120",
+    "path": "02-design/components/01-component-library/tooltip__11-12188",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "11:12189",
+      "name": "State=Default",
+      "type": "symbol",
+      "x": "24",
+      "y": "48",
+      "width": "240",
+      "height": "32"
+    }
+  ],
+  "text_layer_names": []
+}

@@ -1,0 +1,51 @@
+{
+  "node": {
+    "page": "12-collaboration-sync-details",
+    "page_id": "27:323",
+    "id": "29:13159",
+    "name": "Y04 / Request deleted while you were offline",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/12-collaboration-sync-details/y04-request-deleted-while-you-were-offline__29-13159",
+    "requirements": [
+      "SY04",
+      "SY07"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:13160",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:13163",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:13319",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Request deleted while you were offline",
+    "DisNote API / collab / Y04",
+    "Your local draft",
+    "Team deletion"
+  ]
+}

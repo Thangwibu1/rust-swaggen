@@ -1,0 +1,16 @@
+[package]
+name = "swaggen-spec-engine"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+hex.workspace = true
+swaggen-domain.workspace = true
+url.workspace = true
+uuid.workspace = true
+yaml-rust2.workspace = true

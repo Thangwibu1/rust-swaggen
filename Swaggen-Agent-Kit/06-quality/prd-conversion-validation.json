@@ -1,0 +1,7 @@
+{
+  "source_text_runs": 949,
+  "missing_text_runs": 0,
+  "source_tables": 24,
+  "method": "Every nonempty source XML text run must occur in normalized full-source Markdown; preserve 24 tables and 160 requirement IDs.",
+  "passed": true
+}

@@ -1,0 +1,52 @@
+{
+  "node": {
+    "page": "09-request-response-states",
+    "page_id": "27:320",
+    "id": "28:7953",
+    "name": "Q28 / Binary and XML response views",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/09-request-response-states/q28-binary-and-xml-response-views__28-7953",
+    "requirements": [
+      "RS02",
+      "RS04"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "28:7954",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "28:7957",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "28:8111",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Binary and XML response views",
+    "DisNote API / request / Q28",
+    "Available actions",
+    "Selection details",
+    "Choose an action from the menu. Your current draft stays availab"
+  ]
+}

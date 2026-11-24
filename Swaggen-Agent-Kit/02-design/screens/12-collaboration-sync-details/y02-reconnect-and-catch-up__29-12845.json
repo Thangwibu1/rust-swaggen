@@ -1,0 +1,56 @@
+{
+  "node": {
+    "page": "12-collaboration-sync-details",
+    "page_id": "27:323",
+    "id": "29:12845",
+    "name": "Y02 / Reconnect and catch up",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/12-collaboration-sync-details/y02-reconnect-and-catch-up__29-12845",
+    "requirements": [
+      "SY05",
+      "SY06"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:12846",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:12849",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:12998",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Reconnect and catch up",
+    "DisNote API / collab / Y02",
+    "68%",
+    "Missed events",
+    "42",
+    "Pending operations",
+    "3 · original operation IDs reused",
+    "Duplicates",
+    "Not created when acknowledgments are retried"
+  ]
+}

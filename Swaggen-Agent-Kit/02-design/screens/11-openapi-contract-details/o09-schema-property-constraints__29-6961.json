@@ -1,0 +1,57 @@
+{
+  "node": {
+    "page": "11-openapi-contract-details",
+    "page_id": "27:322",
+    "id": "29:6961",
+    "name": "O09 / Schema property constraints",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/11-openapi-contract-details/o09-schema-property-constraints__29-6961",
+    "requirements": [
+      "OA05",
+      "OA07"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:6962",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:6965",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:7123",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Schema property constraints",
+    "DisNote API / openapi / O09",
+    "Property",
+    "Type",
+    "Format",
+    "Required",
+    "Disabled",
+    "Nullable",
+    "Enabled · OpenAPI 3.1 null union",
+    "Default value"
+  ]
+}

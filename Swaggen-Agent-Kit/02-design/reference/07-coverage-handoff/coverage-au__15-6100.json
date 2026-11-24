@@ -1,0 +1,157 @@
+{
+  "node": {
+    "page": "07-coverage-handoff",
+    "page_id": "4:95",
+    "id": "15:6100",
+    "name": "Coverage / AU",
+    "type": "frame",
+    "width": "1440",
+    "height": "716",
+    "path": "02-design/reference/07-coverage-handoff/coverage-au__15-6100",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "15:6101",
+      "name": "AU / REQUIREMENT COVERAGE",
+      "type": "text",
+      "x": "41",
+      "y": "41",
+      "width": "360",
+      "height": "34"
+    },
+    {
+      "id": "15:6102",
+      "name": "AU01",
+      "type": "frame",
+      "x": "41",
+      "y": "91",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6107",
+      "name": "AU02",
+      "type": "frame",
+      "x": "41",
+      "y": "151",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6112",
+      "name": "AU03",
+      "type": "frame",
+      "x": "41",
+      "y": "211",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6117",
+      "name": "AU04",
+      "type": "frame",
+      "x": "41",
+      "y": "271",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6122",
+      "name": "AU05",
+      "type": "frame",
+      "x": "41",
+      "y": "331",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6127",
+      "name": "AU06",
+      "type": "frame",
+      "x": "41",
+      "y": "391",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6132",
+      "name": "AU07",
+      "type": "frame",
+      "x": "41",
+      "y": "451",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6137",
+      "name": "AU08",
+      "type": "frame",
+      "x": "41",
+      "y": "511",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6142",
+      "name": "AU09",
+      "type": "frame",
+      "x": "41",
+      "y": "571",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6147",
+      "name": "AU10",
+      "type": "frame",
+      "x": "41",
+      "y": "631",
+      "width": "1360",
+      "height": "44"
+    }
+  ],
+  "text_layer_names": [
+    "AU / REQUIREMENT COVERAGE",
+    "AU01",
+    "No Auth và Bearer",
+    "Stage A",
+    "R05",
+    "AU02",
+    "Basic và API key",
+    "Stage A",
+    "R05",
+    "AU03",
+    "Kế thừa xác thực",
+    "Stage A",
+    "R05",
+    "AU04",
+    "Cookie jar",
+    "Stage A",
+    "R12",
+    "AU05",
+    "TLS mặc định",
+    "Stage A",
+    "R13",
+    "AU06",
+    "Redirect",
+    "Stage A",
+    "R13",
+    "AU07",
+    "Proxy và CA riêng",
+    "Stage B",
+    "R13",
+    "AU08",
+    "OAuth 2 PKCE",
+    "Stage B",
+    "R06",
+    "AU09",
+    "Chứng chỉ client",
+    "Stage B",
+    "R13",
+    "AU10",
+    "Xác thực bổ sung",
+    "Stage C",
+    "R13"
+  ]
+}

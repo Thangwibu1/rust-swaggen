@@ -1,0 +1,52 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "11:12145",
+    "name": "Icon button",
+    "type": "frame",
+    "width": "268",
+    "height": "128",
+    "path": "02-design/components/01-component-library/icon-button__11-12145",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "11:12146",
+      "name": "State=Default",
+      "type": "symbol",
+      "x": "24",
+      "y": "48",
+      "width": "40",
+      "height": "40"
+    },
+    {
+      "id": "11:12150",
+      "name": "State=Hover",
+      "type": "symbol",
+      "x": "84",
+      "y": "48",
+      "width": "40",
+      "height": "40"
+    },
+    {
+      "id": "11:12154",
+      "name": "State=Disabled",
+      "type": "symbol",
+      "x": "144",
+      "y": "48",
+      "width": "40",
+      "height": "40"
+    },
+    {
+      "id": "11:12158",
+      "name": "State=Selected",
+      "type": "symbol",
+      "x": "204",
+      "y": "48",
+      "width": "40",
+      "height": "40"
+    }
+  ],
+  "text_layer_names": []
+}

@@ -1,0 +1,4070 @@
+[
+  {
+    "requirement_id": "WS01",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "6:615",
+      "6:769",
+      "28:25",
+      "28:237"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "WS02",
+    "phase": "P04",
+    "status": "verified",
+    "code_paths": [
+      "crates/api-contract/src/lib.rs",
+      "crates/mongo-store/src/lib.rs",
+      "crates/mongo-store/src/mongo_backend.rs",
+      "crates/mongo-store/src/memory_backend.rs",
+      "crates/mongo-store/src/crypto.rs",
+      "apps/server/src/lib.rs",
+      "crates/domain/src/server_profiles.rs",
+      "crates/local-store/src/server_profiles_store.rs",
+      "apps/desktop/src/views/server.rs",
+      "apps/desktop/src/server_worker.rs"
+    ],
+    "screen_ids": [
+      "6:316",
+      "6:476",
+      "28:394",
+      "28:548"
+    ],
+    "test_evidence": [
+      "reports/P04-progress.md",
+      "reports/raw/p04-audit.json",
+      "reports/raw/p04-linux-server-audit.json",
+      "07-operations/server-openapi.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:35:56.167875+00:00"
+  },
+  {
+    "requirement_id": "WS03",
+    "phase": "P04",
+    "status": "implemented_unverified",
+    "code_paths": [
+      "crates/api-contract/src/lib.rs",
+      "crates/mongo-store/src/lib.rs",
+      "crates/mongo-store/src/mongo_backend.rs",
+      "crates/mongo-store/src/memory_backend.rs",
+      "crates/mongo-store/src/crypto.rs",
+      "apps/server/src/lib.rs",
+      "crates/domain/src/server_profiles.rs",
+      "crates/local-store/src/server_profiles_store.rs",
+      "apps/desktop/src/views/server.rs",
+      "apps/desktop/src/server_worker.rs"
+    ],
+    "screen_ids": [
+      "6:144",
+      "6:187",
+      "6:230",
+      "6:273",
+      "7:3381",
+      "28:3000",
+      "29:22674"
+    ],
+    "test_evidence": [
+      "reports/P04-progress.md",
+      "reports/raw/p04-audit.json",
+      "reports/raw/p04-linux-server-audit.json",
+      "07-operations/server-openapi.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [
+      "Live MongoDB replica-set smoke awaits SWAGGEN_MONGO_URI; Google OAuth screens A01-A04/S02/Z10 await external credential confirmation"
+    ],
+    "last_updated": "2026-11-24T11:35:56.167875+00:00"
+  },
+  {
+    "requirement_id": "WS04",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "6:615",
+      "6:769",
+      "6:939",
+      "6:1259",
+      "28:237",
+      "28:1004"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "WS05",
+    "phase": "P04",
+    "status": "implemented_unverified",
+    "code_paths": [
+      "crates/api-contract/src/lib.rs",
+      "crates/mongo-store/src/lib.rs",
+      "crates/mongo-store/src/mongo_backend.rs",
+      "crates/mongo-store/src/memory_backend.rs",
+      "crates/mongo-store/src/crypto.rs",
+      "apps/server/src/lib.rs",
+      "crates/domain/src/server_profiles.rs",
+      "crates/local-store/src/server_profiles_store.rs",
+      "apps/desktop/src/views/server.rs",
+      "apps/desktop/src/server_worker.rs"
+    ],
+    "screen_ids": [
+      "6:1099",
+      "6:7879",
+      "6:8029",
+      "7:5381",
+      "28:698",
+      "28:852",
+      "28:3000",
+      "28:3157",
+      "28:3311"
+    ],
+    "test_evidence": [
+      "reports/P04-progress.md",
+      "reports/raw/p04-audit.json",
+      "reports/raw/p04-linux-server-audit.json",
+      "07-operations/server-openapi.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [
+      "Live MongoDB replica-set smoke awaits SWAGGEN_MONGO_URI; Google OAuth screens A01-A04/S02/Z10 await external credential confirmation"
+    ],
+    "last_updated": "2026-11-24T11:35:56.167875+00:00"
+  },
+  {
+    "requirement_id": "WS06",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "6:1436",
+      "28:1456",
+      "28:1604",
+      "28:1750",
+      "28:1904",
+      "28:2368",
+      "28:2546",
+      "28:2773",
+      "29:10001"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "WS07",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "6:1569",
+      "7:5248",
+      "28:2058"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "WS08",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "6:615",
+      "6:939",
+      "7:3221",
+      "28:1300"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "WS09",
+    "phase": "P09",
+    "status": "verified",
+    "code_paths": [
+      "crates/mongo-store/src/repo.rs",
+      "crates/mongo-store/src/memory_backend.rs",
+      "crates/mongo-store/src/mongo_backend.rs",
+      "apps/server/src/lib.rs"
+    ],
+    "screen_ids": [
+      "6:769",
+      "7:3221",
+      "7:5975",
+      "28:1004",
+      "28:2214"
+    ],
+    "test_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:25:45.562417+00:00"
+  },
+  {
+    "requirement_id": "WS10",
+    "phase": "P09",
+    "status": "verified",
+    "code_paths": [
+      "crates/mongo-store/src/repo.rs",
+      "crates/mongo-store/src/memory_backend.rs",
+      "crates/mongo-store/src/mongo_backend.rs",
+      "apps/server/src/lib.rs"
+    ],
+    "screen_ids": [
+      "7:3221",
+      "7:6117",
+      "28:1154",
+      "32:2816"
+    ],
+    "test_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:25:45.562417+00:00"
+  },
+  {
+    "requirement_id": "RQ01",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "6:1717",
+      "6:1908",
+      "28:3551",
+      "28:3728",
+      "28:5553"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "RQ02",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "6:1908",
+      "28:3728",
+      "28:3904"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "RQ03",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "6:2102",
+      "28:4068",
+      "28:4237"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "RQ04",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "6:2296",
+      "28:4400",
+      "28:4577",
+      "28:4739",
+      "28:4895",
+      "28:5057",
+      "28:5222",
+      "28:5393",
+      "28:5553",
+      "28:5718"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "RQ05",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "6:2492",
+      "28:5393",
+      "28:5718",
+      "28:5889",
+      "28:6203"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "RQ06",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "6:3260",
+      "6:3839",
+      "28:5057",
+      "28:5889",
+      "28:6046",
+      "28:6514",
+      "28:6672",
+      "28:6829",
+      "28:6987"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "RQ07",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "6:1908",
+      "6:3649",
+      "28:3904",
+      "29:4487"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "RQ08",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "apps/desktop/src/views/request_pane.rs",
+      "apps/desktop/src/views/response_pane.rs"
+    ],
+    "screen_ids": [
+      "6:1436",
+      "6:1717",
+      "28:7145",
+      "28:7303"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/P11-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [
+      "Team publish/sync server integration completed in P04/P05"
+    ],
+    "last_updated": "2026-11-24T12:37:42.896644+00:00"
+  },
+  {
+    "requirement_id": "RQ09",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "6:1717",
+      "6:4351",
+      "28:1750",
+      "28:1904",
+      "28:2368",
+      "28:7460"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "RQ10",
+    "phase": "P07",
+    "status": "verified",
+    "code_paths": [
+      "crates/http-engine/src/lib.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/views/request_pane.rs"
+    ],
+    "screen_ids": [
+      "6:2492",
+      "6:3446",
+      "28:5889",
+      "28:6046",
+      "28:6357"
+    ],
+    "test_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:05:54.709909+00:00"
+  },
+  {
+    "requirement_id": "AU01",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "6:2686",
+      "29:25",
+      "29:275"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "AU02",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "6:2686",
+      "29:25",
+      "29:424",
+      "29:574",
+      "29:726"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "AU03",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "6:2686",
+      "28:4068",
+      "29:25",
+      "29:878",
+      "29:1030"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "AU04",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "6:4033",
+      "28:7632",
+      "29:1656"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "AU05",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "6:4185",
+      "29:1816",
+      "29:3526"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "AU06",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "6:4185",
+      "29:1968",
+      "29:3996"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "AU07",
+    "phase": "P07",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "apps/desktop/src/views/request_pane.rs"
+    ],
+    "screen_ids": [
+      "6:4185",
+      "29:2124",
+      "29:3842"
+    ],
+    "test_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:05:54.709909+00:00"
+  },
+  {
+    "requirement_id": "AU08",
+    "phase": "P07",
+    "status": "verified",
+    "code_paths": [
+      "crates/http-engine/src/oauth2.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/views/request_pane.rs"
+    ],
+    "screen_ids": [
+      "6:2875",
+      "29:25",
+      "29:1178",
+      "29:1338",
+      "29:1500",
+      "29:2748",
+      "29:2908",
+      "29:3066",
+      "29:3219"
+    ],
+    "test_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:05:54.709909+00:00"
+  },
+  {
+    "requirement_id": "AU09",
+    "phase": "P07",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "apps/desktop/src/views/request_pane.rs"
+    ],
+    "screen_ids": [
+      "6:4185",
+      "29:2286",
+      "29:3684"
+    ],
+    "test_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:05:54.709909+00:00"
+  },
+  {
+    "requirement_id": "AU10",
+    "phase": "P11",
+    "status": "verified",
+    "code_paths": [
+      "crates/runner/src/advanced_protocols.rs",
+      "apps/desktop/src/views/runner.rs"
+    ],
+    "screen_ids": [
+      "6:4185",
+      "29:25",
+      "29:2442",
+      "29:2596",
+      "29:3373"
+    ],
+    "test_evidence": [
+      "reports/P11-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:36:18.685810+00:00"
+  },
+  {
+    "requirement_id": "EV01",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "6:5197"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "EV02",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "6:5197",
+      "6:5343",
+      "29:4154"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "EV03",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "6:5197",
+      "6:5343",
+      "29:4154",
+      "29:4324",
+      "29:14018"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "EV04",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "6:3649",
+      "6:5197",
+      "29:4487",
+      "29:4641"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "EV05",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "6:5343",
+      "6:5509",
+      "29:4324",
+      "29:5431"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "EV06",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "29:5431"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "EV07",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "6:4697"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "EV08",
+    "phase": "P07",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/dynamic_vars.rs",
+      "crates/domain/src/workspace.rs",
+      "apps/desktop/src/views/request_pane.rs"
+    ],
+    "screen_ids": [
+      "6:5343",
+      "29:4795"
+    ],
+    "test_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:05:54.709909+00:00"
+  },
+  {
+    "requirement_id": "EV09",
+    "phase": "P07",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/dynamic_vars.rs",
+      "crates/domain/src/workspace.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/views/request_pane.rs"
+    ],
+    "screen_ids": [
+      "6:5343",
+      "29:4953",
+      "29:15903"
+    ],
+    "test_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:05:54.709909+00:00"
+  },
+  {
+    "requirement_id": "EV10",
+    "phase": "P10",
+    "status": "verified",
+    "code_paths": [
+      "crates/api-contract/src/lib.rs",
+      "apps/server/src/lib.rs"
+    ],
+    "screen_ids": [
+      "7:4961",
+      "29:5119",
+      "29:5279"
+    ],
+    "test_evidence": [
+      "reports/P10-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:30:16.379125+00:00"
+  },
+  {
+    "requirement_id": "RS01",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "6:3066",
+      "28:8115"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "RS02",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "6:3066",
+      "28:7795",
+      "28:7953",
+      "32:7157",
+      "32:7317",
+      "32:7478"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "RS03",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "6:3066",
+      "28:7632"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "RS04",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "6:3066",
+      "28:7795",
+      "28:7953",
+      "32:7157",
+      "32:7478"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "RS05",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "6:3260",
+      "28:6514",
+      "28:6672",
+      "28:6829",
+      "28:6987",
+      "29:3526",
+      "29:3842"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "RS06",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "6:3446",
+      "28:6357",
+      "28:6514",
+      "28:6672",
+      "28:6829",
+      "28:6987",
+      "32:7317"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "RS07",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "6:4351",
+      "7:3867",
+      "28:8290",
+      "32:11640"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "RS08",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "apps/desktop/src/views/request_pane.rs",
+      "apps/desktop/src/views/response_pane.rs"
+    ],
+    "screen_ids": [
+      "6:4863",
+      "28:8610"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/P11-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [
+      "Team publish/sync server integration completed in P04/P05"
+    ],
+    "last_updated": "2026-11-24T12:37:42.896644+00:00"
+  },
+  {
+    "requirement_id": "RS09",
+    "phase": "P07",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/dynamic_vars.rs",
+      "apps/desktop/src/app.rs",
+      "apps/desktop/src/views/response_pane.rs"
+    ],
+    "screen_ids": [
+      "6:4501",
+      "28:8452"
+    ],
+    "test_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:05:54.709909+00:00"
+  },
+  {
+    "requirement_id": "RS10",
+    "phase": "P07",
+    "status": "verified",
+    "code_paths": [
+      "crates/http-engine/src/lib.rs",
+      "apps/desktop/src/views/response_pane.rs"
+    ],
+    "screen_ids": [
+      "6:4501",
+      "28:8115"
+    ],
+    "test_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:05:54.709909+00:00"
+  },
+  {
+    "requirement_id": "OA01",
+    "phase": "P03",
+    "status": "verified",
+    "code_paths": [
+      "crates/spec-engine/src/lib.rs",
+      "crates/spec-engine/src/openapi.rs",
+      "crates/spec-engine/src/importers.rs",
+      "crates/spec-engine/src/assertions.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/views/specs.rs",
+      "apps/desktop/src/views/import_export.rs",
+      "apps/desktop/src/worker.rs"
+    ],
+    "screen_ids": [
+      "6:5746",
+      "29:5701",
+      "29:5855",
+      "29:13864"
+    ],
+    "test_evidence": [
+      "reports/P03-progress.md",
+      "reports/raw/p03-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:18:26.825584+00:00"
+  },
+  {
+    "requirement_id": "OA02",
+    "phase": "P03",
+    "status": "verified",
+    "code_paths": [
+      "crates/spec-engine/src/lib.rs",
+      "crates/spec-engine/src/openapi.rs",
+      "crates/spec-engine/src/importers.rs",
+      "crates/spec-engine/src/assertions.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/views/specs.rs",
+      "apps/desktop/src/views/import_export.rs",
+      "apps/desktop/src/worker.rs"
+    ],
+    "screen_ids": [
+      "6:5746",
+      "29:6008"
+    ],
+    "test_evidence": [
+      "reports/P03-progress.md",
+      "reports/raw/p03-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:18:26.825584+00:00"
+  },
+  {
+    "requirement_id": "OA03",
+    "phase": "P03",
+    "status": "verified",
+    "code_paths": [
+      "crates/spec-engine/src/lib.rs",
+      "crates/spec-engine/src/openapi.rs",
+      "crates/spec-engine/src/importers.rs",
+      "crates/spec-engine/src/assertions.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/views/specs.rs",
+      "apps/desktop/src/views/import_export.rs",
+      "apps/desktop/src/worker.rs"
+    ],
+    "screen_ids": [
+      "6:5940",
+      "29:6163",
+      "29:9311"
+    ],
+    "test_evidence": [
+      "reports/P03-progress.md",
+      "reports/raw/p03-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:18:26.825584+00:00"
+  },
+  {
+    "requirement_id": "OA04",
+    "phase": "P03",
+    "status": "verified",
+    "code_paths": [
+      "crates/spec-engine/src/lib.rs",
+      "crates/spec-engine/src/openapi.rs",
+      "crates/spec-engine/src/importers.rs",
+      "crates/spec-engine/src/assertions.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/views/specs.rs",
+      "apps/desktop/src/views/import_export.rs",
+      "apps/desktop/src/worker.rs"
+    ],
+    "screen_ids": [
+      "6:5746",
+      "6:6146",
+      "6:7662",
+      "29:6163"
+    ],
+    "test_evidence": [
+      "reports/P03-progress.md",
+      "reports/raw/p03-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:18:26.825584+00:00"
+  },
+  {
+    "requirement_id": "OA05",
+    "phase": "P03",
+    "status": "verified",
+    "code_paths": [
+      "crates/spec-engine/src/lib.rs",
+      "crates/spec-engine/src/openapi.rs",
+      "crates/spec-engine/src/importers.rs",
+      "crates/spec-engine/src/assertions.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/views/specs.rs",
+      "apps/desktop/src/views/import_export.rs",
+      "apps/desktop/src/worker.rs"
+    ],
+    "screen_ids": [
+      "6:5746",
+      "6:6146",
+      "6:6312",
+      "29:6321",
+      "29:6485",
+      "29:6643",
+      "29:6961"
+    ],
+    "test_evidence": [
+      "reports/P03-progress.md",
+      "reports/raw/p03-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:18:26.825584+00:00"
+  },
+  {
+    "requirement_id": "OA06",
+    "phase": "P03",
+    "status": "verified",
+    "code_paths": [
+      "crates/spec-engine/src/lib.rs",
+      "crates/spec-engine/src/openapi.rs",
+      "crates/spec-engine/src/importers.rs",
+      "crates/spec-engine/src/assertions.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/views/specs.rs",
+      "apps/desktop/src/views/import_export.rs",
+      "apps/desktop/src/worker.rs"
+    ],
+    "screen_ids": [
+      "6:5746",
+      "6:6312",
+      "6:6493",
+      "29:6803",
+      "29:7998"
+    ],
+    "test_evidence": [
+      "reports/P03-progress.md",
+      "reports/raw/p03-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:18:26.825584+00:00"
+  },
+  {
+    "requirement_id": "OA07",
+    "phase": "P07",
+    "status": "verified",
+    "code_paths": [
+      "crates/spec-engine/src/advanced.rs",
+      "apps/desktop/src/views/specs.rs"
+    ],
+    "screen_ids": [
+      "6:5940",
+      "6:6312",
+      "6:6493",
+      "29:6961",
+      "29:7127",
+      "29:7293",
+      "29:7459",
+      "29:7622",
+      "29:7780"
+    ],
+    "test_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:05:54.709909+00:00"
+  },
+  {
+    "requirement_id": "OA08",
+    "phase": "P07",
+    "status": "verified",
+    "code_paths": [
+      "crates/spec-engine/src/advanced.rs",
+      "apps/desktop/src/views/specs.rs"
+    ],
+    "screen_ids": [
+      "6:5940",
+      "6:6493",
+      "29:8161"
+    ],
+    "test_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:05:54.709909+00:00"
+  },
+  {
+    "requirement_id": "OA09",
+    "phase": "P07",
+    "status": "verified",
+    "code_paths": [
+      "crates/spec-engine/src/advanced.rs",
+      "apps/desktop/src/views/specs.rs"
+    ],
+    "screen_ids": [
+      "6:5940",
+      "29:5855",
+      "29:8319"
+    ],
+    "test_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:05:54.709909+00:00"
+  },
+  {
+    "requirement_id": "OA10",
+    "phase": "P07",
+    "status": "verified",
+    "code_paths": [
+      "crates/spec-engine/src/advanced.rs",
+      "apps/desktop/src/views/specs.rs"
+    ],
+    "screen_ids": [
+      "6:7356",
+      "29:8488"
+    ],
+    "test_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:05:54.709909+00:00"
+  },
+  {
+    "requirement_id": "DC01",
+    "phase": "P03",
+    "status": "verified",
+    "code_paths": [
+      "crates/spec-engine/src/lib.rs",
+      "crates/spec-engine/src/openapi.rs",
+      "crates/spec-engine/src/importers.rs",
+      "crates/spec-engine/src/assertions.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/views/specs.rs",
+      "apps/desktop/src/views/import_export.rs",
+      "apps/desktop/src/worker.rs"
+    ],
+    "screen_ids": [
+      "6:6643"
+    ],
+    "test_evidence": [
+      "reports/P03-progress.md",
+      "reports/raw/p03-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:18:26.825584+00:00"
+  },
+  {
+    "requirement_id": "DC02",
+    "phase": "P03",
+    "status": "verified",
+    "code_paths": [
+      "crates/spec-engine/src/lib.rs",
+      "crates/spec-engine/src/openapi.rs",
+      "crates/spec-engine/src/importers.rs",
+      "crates/spec-engine/src/assertions.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/views/specs.rs",
+      "apps/desktop/src/views/import_export.rs",
+      "apps/desktop/src/worker.rs"
+    ],
+    "screen_ids": [
+      "6:6643",
+      "29:6643"
+    ],
+    "test_evidence": [
+      "reports/P03-progress.md",
+      "reports/raw/p03-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:18:26.825584+00:00"
+  },
+  {
+    "requirement_id": "DC03",
+    "phase": "P03",
+    "status": "verified",
+    "code_paths": [
+      "crates/spec-engine/src/lib.rs",
+      "crates/spec-engine/src/openapi.rs",
+      "crates/spec-engine/src/importers.rs",
+      "crates/spec-engine/src/assertions.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/views/specs.rs",
+      "apps/desktop/src/views/import_export.rs",
+      "apps/desktop/src/worker.rs"
+    ],
+    "screen_ids": [
+      "6:6643",
+      "6:6814"
+    ],
+    "test_evidence": [
+      "reports/P03-progress.md",
+      "reports/raw/p03-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:18:26.825584+00:00"
+  },
+  {
+    "requirement_id": "DC04",
+    "phase": "P03",
+    "status": "verified",
+    "code_paths": [
+      "crates/spec-engine/src/lib.rs",
+      "crates/spec-engine/src/openapi.rs",
+      "crates/spec-engine/src/importers.rs",
+      "crates/spec-engine/src/assertions.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/views/specs.rs",
+      "apps/desktop/src/views/import_export.rs",
+      "apps/desktop/src/worker.rs"
+    ],
+    "screen_ids": [
+      "6:6146",
+      "6:7204",
+      "29:8651"
+    ],
+    "test_evidence": [
+      "reports/P03-progress.md",
+      "reports/raw/p03-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:18:26.825584+00:00"
+  },
+  {
+    "requirement_id": "DC05",
+    "phase": "P03",
+    "status": "verified",
+    "code_paths": [
+      "crates/spec-engine/src/lib.rs",
+      "crates/spec-engine/src/openapi.rs",
+      "crates/spec-engine/src/importers.rs",
+      "crates/spec-engine/src/assertions.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/views/specs.rs",
+      "apps/desktop/src/views/import_export.rs",
+      "apps/desktop/src/worker.rs"
+    ],
+    "screen_ids": [
+      "6:6643",
+      "6:6814",
+      "29:8651"
+    ],
+    "test_evidence": [
+      "reports/P03-progress.md",
+      "reports/raw/p03-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:18:26.825584+00:00"
+  },
+  {
+    "requirement_id": "DC06",
+    "phase": "P03",
+    "status": "verified",
+    "code_paths": [
+      "crates/spec-engine/src/lib.rs",
+      "crates/spec-engine/src/openapi.rs",
+      "crates/spec-engine/src/importers.rs",
+      "crates/spec-engine/src/assertions.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/views/specs.rs",
+      "apps/desktop/src/views/import_export.rs",
+      "apps/desktop/src/worker.rs"
+    ],
+    "screen_ids": [
+      "6:7008",
+      "6:7204",
+      "29:8814"
+    ],
+    "test_evidence": [
+      "reports/P03-progress.md",
+      "reports/raw/p03-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:18:26.825584+00:00"
+  },
+  {
+    "requirement_id": "DC07",
+    "phase": "P07",
+    "status": "verified",
+    "code_paths": [
+      "crates/spec-engine/src/advanced.rs",
+      "apps/desktop/src/views/specs.rs"
+    ],
+    "screen_ids": [
+      "6:7008",
+      "6:9817",
+      "29:8973",
+      "29:10155"
+    ],
+    "test_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:05:54.709909+00:00"
+  },
+  {
+    "requirement_id": "DC08",
+    "phase": "P07",
+    "status": "verified",
+    "code_paths": [
+      "crates/spec-engine/src/advanced.rs",
+      "apps/desktop/src/views/specs.rs"
+    ],
+    "screen_ids": [
+      "6:7356",
+      "7:691",
+      "29:9138",
+      "29:9311"
+    ],
+    "test_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:05:54.709909+00:00"
+  },
+  {
+    "requirement_id": "DC09",
+    "phase": "P07",
+    "status": "verified",
+    "code_paths": [
+      "crates/spec-engine/src/advanced.rs",
+      "apps/desktop/src/views/specs.rs"
+    ],
+    "screen_ids": [
+      "6:7008",
+      "6:7204",
+      "6:7662",
+      "29:8814",
+      "29:9468"
+    ],
+    "test_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:05:54.709909+00:00"
+  },
+  {
+    "requirement_id": "DC10",
+    "phase": "P07",
+    "status": "verified",
+    "code_paths": [
+      "crates/spec-engine/src/advanced.rs"
+    ],
+    "screen_ids": [
+      "6:7502",
+      "29:9631"
+    ],
+    "test_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:05:54.709909+00:00"
+  },
+  {
+    "requirement_id": "CO01",
+    "phase": "P05",
+    "status": "implemented_unverified",
+    "code_paths": [
+      "crates/sync/src/lib.rs",
+      "crates/local-store/src/sync_store.rs",
+      "crates/api-contract/src/lib.rs",
+      "crates/mongo-store/src/mongo_backend.rs",
+      "crates/mongo-store/src/memory_backend.rs",
+      "apps/server/src/lib.rs",
+      "apps/desktop/src/sync_worker.rs",
+      "apps/desktop/src/views/sync.rs"
+    ],
+    "screen_ids": [
+      "6:1259",
+      "6:8029",
+      "28:237"
+    ],
+    "test_evidence": [
+      "reports/P05-progress.md",
+      "07-operations/server-openapi.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [
+      "Live MongoDB replica-set execution awaits SWAGGEN_MONGO_URI"
+    ],
+    "last_updated": "2026-11-24T11:44:27.087790+00:00"
+  },
+  {
+    "requirement_id": "CO02",
+    "phase": "P05",
+    "status": "implemented_unverified",
+    "code_paths": [
+      "crates/sync/src/lib.rs",
+      "crates/local-store/src/sync_store.rs",
+      "crates/api-contract/src/lib.rs",
+      "crates/mongo-store/src/mongo_backend.rs",
+      "crates/mongo-store/src/memory_backend.rs",
+      "apps/server/src/lib.rs",
+      "apps/desktop/src/sync_worker.rs",
+      "apps/desktop/src/views/sync.rs"
+    ],
+    "screen_ids": [
+      "6:8523",
+      "28:7145"
+    ],
+    "test_evidence": [
+      "reports/P05-progress.md",
+      "07-operations/server-openapi.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [
+      "Live MongoDB replica-set execution awaits SWAGGEN_MONGO_URI"
+    ],
+    "last_updated": "2026-11-24T11:44:27.087790+00:00"
+  },
+  {
+    "requirement_id": "CO03",
+    "phase": "P05",
+    "status": "implemented_unverified",
+    "code_paths": [
+      "crates/sync/src/lib.rs",
+      "crates/local-store/src/sync_store.rs",
+      "crates/api-contract/src/lib.rs",
+      "crates/mongo-store/src/mongo_backend.rs",
+      "crates/mongo-store/src/memory_backend.rs",
+      "apps/server/src/lib.rs",
+      "apps/desktop/src/sync_worker.rs",
+      "apps/desktop/src/views/sync.rs"
+    ],
+    "screen_ids": [
+      "6:8189",
+      "29:11881"
+    ],
+    "test_evidence": [
+      "reports/P05-progress.md",
+      "07-operations/server-openapi.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [
+      "Live MongoDB replica-set execution awaits SWAGGEN_MONGO_URI"
+    ],
+    "last_updated": "2026-11-24T11:44:27.087790+00:00"
+  },
+  {
+    "requirement_id": "CO04",
+    "phase": "P05",
+    "status": "implemented_unverified",
+    "code_paths": [
+      "crates/sync/src/lib.rs",
+      "crates/local-store/src/sync_store.rs",
+      "crates/api-contract/src/lib.rs",
+      "crates/mongo-store/src/mongo_backend.rs",
+      "crates/mongo-store/src/memory_backend.rs",
+      "apps/server/src/lib.rs",
+      "apps/desktop/src/sync_worker.rs",
+      "apps/desktop/src/views/sync.rs"
+    ],
+    "screen_ids": [
+      "6:8335",
+      "29:10315",
+      "29:11565",
+      "29:11723"
+    ],
+    "test_evidence": [
+      "reports/P05-progress.md",
+      "07-operations/server-openapi.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [
+      "Live MongoDB replica-set execution awaits SWAGGEN_MONGO_URI"
+    ],
+    "last_updated": "2026-11-24T11:44:27.087790+00:00"
+  },
+  {
+    "requirement_id": "CO05",
+    "phase": "P09",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/governance.rs",
+      "crates/mongo-store/src/memory_backend.rs",
+      "apps/server/src/lib.rs"
+    ],
+    "screen_ids": [
+      "6:8189",
+      "6:8335",
+      "29:10763",
+      "29:11565",
+      "29:11881"
+    ],
+    "test_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:25:45.562417+00:00"
+  },
+  {
+    "requirement_id": "CO06",
+    "phase": "P05",
+    "status": "implemented_unverified",
+    "code_paths": [
+      "crates/sync/src/lib.rs",
+      "crates/local-store/src/sync_store.rs",
+      "crates/api-contract/src/lib.rs",
+      "crates/mongo-store/src/mongo_backend.rs",
+      "crates/mongo-store/src/memory_backend.rs",
+      "apps/server/src/lib.rs",
+      "apps/desktop/src/sync_worker.rs",
+      "apps/desktop/src/views/sync.rs"
+    ],
+    "screen_ids": [
+      "6:1259",
+      "6:8189"
+    ],
+    "test_evidence": [
+      "reports/P05-progress.md",
+      "07-operations/server-openapi.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [
+      "Live MongoDB replica-set execution awaits SWAGGEN_MONGO_URI"
+    ],
+    "last_updated": "2026-11-24T11:44:27.087790+00:00"
+  },
+  {
+    "requirement_id": "CO07",
+    "phase": "P09",
+    "status": "verified",
+    "code_paths": [
+      "crates/api-contract/src/lib.rs",
+      "apps/server/src/lib.rs"
+    ],
+    "screen_ids": [
+      "6:9977",
+      "29:12355"
+    ],
+    "test_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:25:45.562417+00:00"
+  },
+  {
+    "requirement_id": "CO08",
+    "phase": "P09",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/governance.rs",
+      "apps/desktop/src/views/response_pane.rs"
+    ],
+    "screen_ids": [
+      "6:4863",
+      "7:518",
+      "28:8610",
+      "29:10611"
+    ],
+    "test_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:25:45.562417+00:00"
+  },
+  {
+    "requirement_id": "CO09",
+    "phase": "P09",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/governance.rs",
+      "apps/desktop/src/views/panels.rs"
+    ],
+    "screen_ids": [
+      "6:8335",
+      "29:11723",
+      "29:12044",
+      "29:12201"
+    ],
+    "test_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:25:45.562417+00:00"
+  },
+  {
+    "requirement_id": "CO10",
+    "phase": "P11",
+    "status": "verified",
+    "code_paths": [
+      "crates/sync/src/crdt.rs"
+    ],
+    "screen_ids": [
+      "6:9977",
+      "29:12355",
+      "29:12519"
+    ],
+    "test_evidence": [
+      "reports/P11-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:36:18.685810+00:00"
+  },
+  {
+    "requirement_id": "SY01",
+    "phase": "P05",
+    "status": "verified",
+    "code_paths": [
+      "crates/sync/src/lib.rs",
+      "crates/local-store/src/sync_store.rs",
+      "crates/api-contract/src/lib.rs",
+      "crates/mongo-store/src/mongo_backend.rs",
+      "crates/mongo-store/src/memory_backend.rs",
+      "apps/server/src/lib.rs",
+      "apps/desktop/src/sync_worker.rs",
+      "apps/desktop/src/views/sync.rs"
+    ],
+    "screen_ids": [
+      "6:8899",
+      "6:9049",
+      "7:5564",
+      "28:7145",
+      "29:12519",
+      "29:12676",
+      "29:13639"
+    ],
+    "test_evidence": [
+      "reports/P05-progress.md",
+      "07-operations/server-openapi.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:44:27.087790+00:00"
+  },
+  {
+    "requirement_id": "SY02",
+    "phase": "P05",
+    "status": "verified",
+    "code_paths": [
+      "crates/sync/src/lib.rs",
+      "crates/local-store/src/sync_store.rs",
+      "crates/api-contract/src/lib.rs",
+      "crates/mongo-store/src/mongo_backend.rs",
+      "crates/mongo-store/src/memory_backend.rs",
+      "apps/server/src/lib.rs",
+      "apps/desktop/src/sync_worker.rs",
+      "apps/desktop/src/views/sync.rs"
+    ],
+    "screen_ids": [
+      "6:8899",
+      "6:9049"
+    ],
+    "test_evidence": [
+      "reports/P05-progress.md",
+      "07-operations/server-openapi.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:44:27.087790+00:00"
+  },
+  {
+    "requirement_id": "SY03",
+    "phase": "P05",
+    "status": "implemented_unverified",
+    "code_paths": [
+      "crates/sync/src/lib.rs",
+      "crates/local-store/src/sync_store.rs",
+      "crates/api-contract/src/lib.rs",
+      "crates/mongo-store/src/mongo_backend.rs",
+      "crates/mongo-store/src/memory_backend.rs",
+      "apps/server/src/lib.rs",
+      "apps/desktop/src/sync_worker.rs",
+      "apps/desktop/src/views/sync.rs"
+    ],
+    "screen_ids": [
+      "6:8523",
+      "6:8677"
+    ],
+    "test_evidence": [
+      "reports/P05-progress.md",
+      "07-operations/server-openapi.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [
+      "Live MongoDB replica-set execution awaits SWAGGEN_MONGO_URI"
+    ],
+    "last_updated": "2026-11-24T11:44:27.087790+00:00"
+  },
+  {
+    "requirement_id": "SY04",
+    "phase": "P05",
+    "status": "verified",
+    "code_paths": [
+      "crates/sync/src/lib.rs",
+      "crates/local-store/src/sync_store.rs",
+      "crates/api-contract/src/lib.rs",
+      "crates/mongo-store/src/mongo_backend.rs",
+      "crates/mongo-store/src/memory_backend.rs",
+      "apps/server/src/lib.rs",
+      "apps/desktop/src/sync_worker.rs",
+      "apps/desktop/src/views/sync.rs"
+    ],
+    "screen_ids": [
+      "6:8677",
+      "29:11090",
+      "29:11257",
+      "29:13159"
+    ],
+    "test_evidence": [
+      "reports/P05-progress.md",
+      "07-operations/server-openapi.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:44:27.087790+00:00"
+  },
+  {
+    "requirement_id": "SY05",
+    "phase": "P05",
+    "status": "implemented_unverified",
+    "code_paths": [
+      "crates/sync/src/lib.rs",
+      "crates/local-store/src/sync_store.rs",
+      "crates/api-contract/src/lib.rs",
+      "crates/mongo-store/src/mongo_backend.rs",
+      "crates/mongo-store/src/memory_backend.rs",
+      "apps/server/src/lib.rs",
+      "apps/desktop/src/sync_worker.rs",
+      "apps/desktop/src/views/sync.rs"
+    ],
+    "screen_ids": [
+      "6:8899",
+      "7:5836",
+      "28:548",
+      "29:12845",
+      "29:13002"
+    ],
+    "test_evidence": [
+      "reports/P05-progress.md",
+      "07-operations/server-openapi.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [
+      "Live MongoDB replica-set execution awaits SWAGGEN_MONGO_URI"
+    ],
+    "last_updated": "2026-11-24T11:44:27.087790+00:00"
+  },
+  {
+    "requirement_id": "SY06",
+    "phase": "P05",
+    "status": "implemented_unverified",
+    "code_paths": [
+      "crates/sync/src/lib.rs",
+      "crates/local-store/src/sync_store.rs",
+      "crates/api-contract/src/lib.rs",
+      "crates/mongo-store/src/mongo_backend.rs",
+      "crates/mongo-store/src/memory_backend.rs",
+      "apps/server/src/lib.rs",
+      "apps/desktop/src/sync_worker.rs",
+      "apps/desktop/src/views/sync.rs"
+    ],
+    "screen_ids": [
+      "6:8523",
+      "6:8899",
+      "29:12845"
+    ],
+    "test_evidence": [
+      "reports/P05-progress.md",
+      "07-operations/server-openapi.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [
+      "Live MongoDB replica-set execution awaits SWAGGEN_MONGO_URI"
+    ],
+    "last_updated": "2026-11-24T11:44:27.087790+00:00"
+  },
+  {
+    "requirement_id": "SY07",
+    "phase": "P05",
+    "status": "implemented_unverified",
+    "code_paths": [
+      "crates/sync/src/lib.rs",
+      "crates/local-store/src/sync_store.rs",
+      "crates/api-contract/src/lib.rs",
+      "crates/mongo-store/src/mongo_backend.rs",
+      "crates/mongo-store/src/memory_backend.rs",
+      "apps/server/src/lib.rs",
+      "apps/desktop/src/sync_worker.rs",
+      "apps/desktop/src/views/sync.rs"
+    ],
+    "screen_ids": [
+      "6:8677",
+      "7:5975",
+      "28:2214",
+      "29:13159"
+    ],
+    "test_evidence": [
+      "reports/P05-progress.md",
+      "07-operations/server-openapi.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [
+      "Live MongoDB replica-set execution awaits SWAGGEN_MONGO_URI"
+    ],
+    "last_updated": "2026-11-24T11:44:27.087790+00:00"
+  },
+  {
+    "requirement_id": "SY08",
+    "phase": "P05",
+    "status": "implemented_unverified",
+    "code_paths": [
+      "crates/sync/src/lib.rs",
+      "crates/local-store/src/sync_store.rs",
+      "crates/api-contract/src/lib.rs",
+      "crates/mongo-store/src/mongo_backend.rs",
+      "crates/mongo-store/src/memory_backend.rs",
+      "apps/server/src/lib.rs",
+      "apps/desktop/src/sync_worker.rs",
+      "apps/desktop/src/views/sync.rs"
+    ],
+    "screen_ids": [
+      "6:9371",
+      "6:9517",
+      "29:11409",
+      "29:13486"
+    ],
+    "test_evidence": [
+      "reports/P05-progress.md",
+      "07-operations/server-openapi.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [
+      "Live MongoDB replica-set execution awaits SWAGGEN_MONGO_URI"
+    ],
+    "last_updated": "2026-11-24T11:44:27.087790+00:00"
+  },
+  {
+    "requirement_id": "SY09",
+    "phase": "P05",
+    "status": "implemented_unverified",
+    "code_paths": [
+      "crates/sync/src/lib.rs",
+      "crates/local-store/src/sync_store.rs",
+      "crates/api-contract/src/lib.rs",
+      "crates/mongo-store/src/mongo_backend.rs",
+      "crates/mongo-store/src/memory_backend.rs",
+      "apps/server/src/lib.rs",
+      "apps/desktop/src/sync_worker.rs",
+      "apps/desktop/src/views/sync.rs"
+    ],
+    "screen_ids": [
+      "6:9232",
+      "29:12519",
+      "29:13323"
+    ],
+    "test_evidence": [
+      "reports/P05-progress.md",
+      "07-operations/server-openapi.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [
+      "Live MongoDB replica-set execution awaits SWAGGEN_MONGO_URI"
+    ],
+    "last_updated": "2026-11-24T11:44:27.087790+00:00"
+  },
+  {
+    "requirement_id": "SY10",
+    "phase": "P09",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/governance.rs",
+      "crates/api-contract/src/lib.rs",
+      "apps/server/src/lib.rs"
+    ],
+    "screen_ids": [
+      "6:9671",
+      "6:9817",
+      "7:2397",
+      "29:9853",
+      "29:10001",
+      "29:10155",
+      "29:10315",
+      "29:10463",
+      "29:10921",
+      "29:11090",
+      "29:11257",
+      "29:11409",
+      "29:15281"
+    ],
+    "test_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:25:45.562417+00:00"
+  },
+  {
+    "requirement_id": "IM01",
+    "phase": "P03",
+    "status": "verified",
+    "code_paths": [
+      "crates/spec-engine/src/lib.rs",
+      "crates/spec-engine/src/openapi.rs",
+      "crates/spec-engine/src/importers.rs",
+      "crates/spec-engine/src/assertions.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/views/specs.rs",
+      "apps/desktop/src/views/import_export.rs",
+      "apps/desktop/src/worker.rs"
+    ],
+    "screen_ids": [
+      "7:1931",
+      "7:2237",
+      "29:14324",
+      "29:15117",
+      "29:15434"
+    ],
+    "test_evidence": [
+      "reports/P03-progress.md",
+      "reports/raw/p03-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:18:26.825584+00:00"
+  },
+  {
+    "requirement_id": "IM02",
+    "phase": "P03",
+    "status": "verified",
+    "code_paths": [
+      "crates/spec-engine/src/lib.rs",
+      "crates/spec-engine/src/openapi.rs",
+      "crates/spec-engine/src/importers.rs",
+      "crates/spec-engine/src/assertions.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/views/specs.rs",
+      "apps/desktop/src/views/import_export.rs",
+      "apps/desktop/src/worker.rs"
+    ],
+    "screen_ids": [
+      "7:1931",
+      "7:2085",
+      "29:14948",
+      "29:17172"
+    ],
+    "test_evidence": [
+      "reports/P03-progress.md",
+      "reports/raw/p03-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:18:26.825584+00:00"
+  },
+  {
+    "requirement_id": "IM03",
+    "phase": "P03",
+    "status": "verified",
+    "code_paths": [
+      "crates/spec-engine/src/lib.rs",
+      "crates/spec-engine/src/openapi.rs",
+      "crates/spec-engine/src/importers.rs",
+      "crates/spec-engine/src/assertions.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/views/specs.rs",
+      "apps/desktop/src/views/import_export.rs",
+      "apps/desktop/src/worker.rs"
+    ],
+    "screen_ids": [
+      "7:1931",
+      "29:14018"
+    ],
+    "test_evidence": [
+      "reports/P03-progress.md",
+      "reports/raw/p03-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:18:26.825584+00:00"
+  },
+  {
+    "requirement_id": "IM04",
+    "phase": "P03",
+    "status": "verified",
+    "code_paths": [
+      "crates/spec-engine/src/lib.rs",
+      "crates/spec-engine/src/openapi.rs",
+      "crates/spec-engine/src/importers.rs",
+      "crates/spec-engine/src/assertions.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/views/specs.rs",
+      "apps/desktop/src/views/import_export.rs",
+      "apps/desktop/src/worker.rs"
+    ],
+    "screen_ids": [
+      "6:7502",
+      "7:1931",
+      "29:5701",
+      "29:8161",
+      "29:8319",
+      "29:13864",
+      "29:15117"
+    ],
+    "test_evidence": [
+      "reports/P03-progress.md",
+      "reports/raw/p03-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:18:26.825584+00:00"
+  },
+  {
+    "requirement_id": "IM05",
+    "phase": "P03",
+    "status": "verified",
+    "code_paths": [
+      "crates/spec-engine/src/lib.rs",
+      "crates/spec-engine/src/openapi.rs",
+      "crates/spec-engine/src/importers.rs",
+      "crates/spec-engine/src/assertions.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/views/specs.rs",
+      "apps/desktop/src/views/import_export.rs",
+      "apps/desktop/src/worker.rs"
+    ],
+    "screen_ids": [
+      "7:1931",
+      "29:14638",
+      "29:14790"
+    ],
+    "test_evidence": [
+      "reports/P03-progress.md",
+      "reports/raw/p03-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:18:26.825584+00:00"
+  },
+  {
+    "requirement_id": "IM06",
+    "phase": "P03",
+    "status": "verified",
+    "code_paths": [
+      "crates/spec-engine/src/lib.rs",
+      "crates/spec-engine/src/openapi.rs",
+      "crates/spec-engine/src/importers.rs",
+      "crates/spec-engine/src/assertions.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/views/specs.rs",
+      "apps/desktop/src/views/import_export.rs",
+      "apps/desktop/src/worker.rs"
+    ],
+    "screen_ids": [
+      "7:2085",
+      "29:14172",
+      "29:14790",
+      "29:14948"
+    ],
+    "test_evidence": [
+      "reports/P03-progress.md",
+      "reports/raw/p03-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:18:26.825584+00:00"
+  },
+  {
+    "requirement_id": "IM07",
+    "phase": "P07",
+    "status": "verified",
+    "code_paths": [
+      "crates/spec-engine/src/advanced.rs",
+      "apps/desktop/src/views/import_export.rs"
+    ],
+    "screen_ids": [
+      "7:2237",
+      "29:14324",
+      "29:15117"
+    ],
+    "test_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:05:54.709909+00:00"
+  },
+  {
+    "requirement_id": "IM08",
+    "phase": "P03",
+    "status": "verified",
+    "code_paths": [
+      "crates/spec-engine/src/lib.rs",
+      "crates/spec-engine/src/openapi.rs",
+      "crates/spec-engine/src/importers.rs",
+      "crates/spec-engine/src/assertions.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/views/specs.rs",
+      "apps/desktop/src/views/import_export.rs",
+      "apps/desktop/src/worker.rs"
+    ],
+    "screen_ids": [
+      "7:2237",
+      "29:9631",
+      "29:14324"
+    ],
+    "test_evidence": [
+      "reports/P03-progress.md",
+      "reports/raw/p03-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:18:26.825584+00:00"
+  },
+  {
+    "requirement_id": "IM09",
+    "phase": "P07",
+    "status": "verified",
+    "code_paths": [
+      "crates/spec-engine/src/advanced.rs",
+      "apps/desktop/src/views/import_export.rs"
+    ],
+    "screen_ids": [
+      "7:2397",
+      "29:14486",
+      "29:15281"
+    ],
+    "test_evidence": [
+      "reports/P07-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:05:54.709909+00:00"
+  },
+  {
+    "requirement_id": "IM10",
+    "phase": "P11",
+    "status": "verified",
+    "code_paths": [
+      "crates/spec-engine/src/har_http.rs",
+      "apps/desktop/src/views/import_export.rs"
+    ],
+    "screen_ids": [
+      "29:14948"
+    ],
+    "test_evidence": [
+      "reports/P11-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:36:18.685810+00:00"
+  },
+  {
+    "requirement_id": "TS01",
+    "phase": "P03",
+    "status": "verified",
+    "code_paths": [
+      "crates/spec-engine/src/lib.rs",
+      "crates/spec-engine/src/openapi.rs",
+      "crates/spec-engine/src/importers.rs",
+      "crates/spec-engine/src/assertions.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/views/specs.rs",
+      "apps/desktop/src/views/import_export.rs",
+      "apps/desktop/src/worker.rs"
+    ],
+    "screen_ids": [
+      "7:2",
+      "29:15591"
+    ],
+    "test_evidence": [
+      "reports/P03-progress.md",
+      "reports/raw/p03-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:18:26.825584+00:00"
+  },
+  {
+    "requirement_id": "TS02",
+    "phase": "P08",
+    "status": "verified",
+    "code_paths": [
+      "crates/runner/src/collection_runner.rs",
+      "apps/desktop/src/views/runner.rs",
+      "apps/desktop/src/worker.rs"
+    ],
+    "screen_ids": [
+      "7:206",
+      "29:15745",
+      "29:16531"
+    ],
+    "test_evidence": [
+      "reports/P08-progress.md",
+      "reports/raw/p08-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:15:53.918899+00:00"
+  },
+  {
+    "requirement_id": "TS03",
+    "phase": "P08",
+    "status": "verified",
+    "code_paths": [
+      "crates/runner/src/collection_runner.rs",
+      "apps/desktop/src/views/runner.rs"
+    ],
+    "screen_ids": [
+      "7:206",
+      "29:4953",
+      "29:15745",
+      "29:15903",
+      "29:16688"
+    ],
+    "test_evidence": [
+      "reports/P08-progress.md",
+      "reports/raw/p08-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:15:53.918899+00:00"
+  },
+  {
+    "requirement_id": "TS04",
+    "phase": "P08",
+    "status": "verified",
+    "code_paths": [
+      "crates/runner/src/collection_runner.rs",
+      "apps/desktop/src/views/runner.rs"
+    ],
+    "screen_ids": [
+      "7:372",
+      "29:16063",
+      "29:16851"
+    ],
+    "test_evidence": [
+      "reports/P08-progress.md",
+      "reports/raw/p08-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:15:53.918899+00:00"
+  },
+  {
+    "requirement_id": "TS05",
+    "phase": "P08",
+    "status": "verified",
+    "code_paths": [
+      "crates/runner/src/collection_runner.rs",
+      "apps/desktop/src/views/runner.rs"
+    ],
+    "screen_ids": [
+      "7:518",
+      "29:16531",
+      "29:16688"
+    ],
+    "test_evidence": [
+      "reports/P08-progress.md",
+      "reports/raw/p08-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:15:53.918899+00:00"
+  },
+  {
+    "requirement_id": "TS06",
+    "phase": "P08",
+    "status": "verified",
+    "code_paths": [
+      "crates/runner/src/collection_runner.rs",
+      "apps/desktop/src/views/runner.rs"
+    ],
+    "screen_ids": [
+      "7:691",
+      "29:9138"
+    ],
+    "test_evidence": [
+      "reports/P08-progress.md",
+      "reports/raw/p08-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:15:53.918899+00:00"
+  },
+  {
+    "requirement_id": "TS07",
+    "phase": "P10",
+    "status": "verified",
+    "code_paths": [
+      "crates/runner/src/sandbox.rs",
+      "apps/desktop/src/views/runner.rs"
+    ],
+    "screen_ids": [
+      "7:837",
+      "29:16375",
+      "29:17014"
+    ],
+    "test_evidence": [
+      "reports/P10-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:30:16.379125+00:00"
+  },
+  {
+    "requirement_id": "TS08",
+    "phase": "P10",
+    "status": "verified",
+    "code_paths": [
+      "crates/runner/src/sandbox.rs",
+      "apps/desktop/src/views/runner.rs"
+    ],
+    "screen_ids": [
+      "7:837",
+      "7:2085",
+      "29:14948",
+      "29:17172"
+    ],
+    "test_evidence": [
+      "reports/P10-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:30:16.379125+00:00"
+  },
+  {
+    "requirement_id": "TS09",
+    "phase": "P11",
+    "status": "verified",
+    "code_paths": [
+      "crates/runner/src/collection_runner.rs"
+    ],
+    "screen_ids": [
+      "7:206",
+      "29:16219"
+    ],
+    "test_evidence": [
+      "reports/P11-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:36:18.685810+00:00"
+  },
+  {
+    "requirement_id": "TS10",
+    "phase": "P08",
+    "status": "verified",
+    "code_paths": [
+      "crates/runner/src/collection_runner.rs",
+      "apps/desktop/src/views/runner.rs"
+    ],
+    "screen_ids": [
+      "7:518",
+      "29:10611",
+      "29:17335"
+    ],
+    "test_evidence": [
+      "reports/P08-progress.md",
+      "reports/raw/p08-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:15:53.918899+00:00"
+  },
+  {
+    "requirement_id": "MK01",
+    "phase": "P08",
+    "status": "verified",
+    "code_paths": [
+      "crates/runner/src/local_mock.rs",
+      "apps/desktop/src/views/runner.rs"
+    ],
+    "screen_ids": [
+      "7:1006",
+      "7:1148"
+    ],
+    "test_evidence": [
+      "reports/P08-progress.md",
+      "reports/raw/p08-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:15:53.918899+00:00"
+  },
+  {
+    "requirement_id": "MK02",
+    "phase": "P08",
+    "status": "verified",
+    "code_paths": [
+      "crates/runner/src/local_mock.rs",
+      "apps/desktop/src/views/runner.rs"
+    ],
+    "screen_ids": [
+      "7:1006",
+      "7:1148",
+      "29:17504",
+      "29:18606"
+    ],
+    "test_evidence": [
+      "reports/P08-progress.md",
+      "reports/raw/p08-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:15:53.918899+00:00"
+  },
+  {
+    "requirement_id": "MK03",
+    "phase": "P11",
+    "status": "verified",
+    "code_paths": [
+      "crates/runner/src/advanced_protocols.rs"
+    ],
+    "screen_ids": [
+      "7:1148",
+      "7:1314",
+      "29:17662",
+      "29:18763"
+    ],
+    "test_evidence": [
+      "reports/P11-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:36:18.685810+00:00"
+  },
+  {
+    "requirement_id": "MK04",
+    "phase": "P08",
+    "status": "verified",
+    "code_paths": [
+      "crates/api-contract/src/lib.rs",
+      "apps/server/src/lib.rs"
+    ],
+    "screen_ids": [
+      "7:1006",
+      "7:1148",
+      "29:17822",
+      "29:18763"
+    ],
+    "test_evidence": [
+      "reports/P08-progress.md",
+      "reports/raw/p08-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:15:53.918899+00:00"
+  },
+  {
+    "requirement_id": "MK05",
+    "phase": "P08",
+    "status": "verified",
+    "code_paths": [
+      "apps/cli/src/lib.rs",
+      "apps/cli/src/main.rs"
+    ],
+    "screen_ids": [
+      "7:1460"
+    ],
+    "test_evidence": [
+      "reports/P08-progress.md",
+      "reports/raw/p08-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:15:53.918899+00:00"
+  },
+  {
+    "requirement_id": "MK06",
+    "phase": "P08",
+    "status": "verified",
+    "code_paths": [
+      "apps/cli/src/lib.rs",
+      "crates/runner/src/collection_runner.rs"
+    ],
+    "screen_ids": [
+      "7:518",
+      "7:1460"
+    ],
+    "test_evidence": [
+      "reports/P08-progress.md",
+      "reports/raw/p08-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:15:53.918899+00:00"
+  },
+  {
+    "requirement_id": "MK07",
+    "phase": "P11",
+    "status": "verified",
+    "code_paths": [
+      "crates/api-contract/src/lib.rs",
+      "apps/server/src/lib.rs"
+    ],
+    "screen_ids": [
+      "7:1623",
+      "29:17980",
+      "29:18920"
+    ],
+    "test_evidence": [
+      "reports/P11-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:36:18.685810+00:00"
+  },
+  {
+    "requirement_id": "MK08",
+    "phase": "P11",
+    "status": "verified",
+    "code_paths": [
+      "crates/runner/src/advanced_protocols.rs",
+      "apps/server/src/lib.rs"
+    ],
+    "screen_ids": [
+      "7:1765",
+      "29:18292",
+      "29:18920"
+    ],
+    "test_evidence": [
+      "reports/P11-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:36:18.685810+00:00"
+  },
+  {
+    "requirement_id": "MK09",
+    "phase": "P11",
+    "status": "verified",
+    "code_paths": [
+      "crates/runner/src/advanced_protocols.rs",
+      "apps/server/src/lib.rs"
+    ],
+    "screen_ids": [
+      "7:1765",
+      "29:10763",
+      "29:11881",
+      "29:18292",
+      "29:18454",
+      "29:18920"
+    ],
+    "test_evidence": [
+      "reports/P11-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:36:18.685810+00:00"
+  },
+  {
+    "requirement_id": "MK10",
+    "phase": "P08",
+    "status": "verified",
+    "code_paths": [
+      "crates/api-contract/src/lib.rs",
+      "apps/server/src/lib.rs"
+    ],
+    "screen_ids": [
+      "7:1623",
+      "29:16219",
+      "29:18134",
+      "29:19077",
+      "32:11321"
+    ],
+    "test_evidence": [
+      "reports/P08-progress.md",
+      "reports/raw/p08-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:15:53.918899+00:00"
+  },
+  {
+    "requirement_id": "PR01",
+    "phase": "P08",
+    "status": "verified",
+    "code_paths": [
+      "crates/runner/src/protocols_and_tools.rs",
+      "apps/desktop/src/views/runner.rs"
+    ],
+    "screen_ids": [
+      "7:2557",
+      "29:19306",
+      "29:20248"
+    ],
+    "test_evidence": [
+      "reports/P08-progress.md",
+      "reports/raw/p08-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:15:53.918899+00:00"
+  },
+  {
+    "requirement_id": "PR02",
+    "phase": "P11",
+    "status": "verified",
+    "code_paths": [
+      "crates/runner/src/advanced_protocols.rs"
+    ],
+    "screen_ids": [
+      "7:2557",
+      "29:19306",
+      "29:20248"
+    ],
+    "test_evidence": [
+      "reports/P11-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:36:18.685810+00:00"
+  },
+  {
+    "requirement_id": "PR03",
+    "phase": "P11",
+    "status": "verified",
+    "code_paths": [
+      "crates/runner/src/advanced_protocols.rs"
+    ],
+    "screen_ids": [
+      "7:2723",
+      "29:19462",
+      "29:20423"
+    ],
+    "test_evidence": [
+      "reports/P11-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:36:18.685810+00:00"
+  },
+  {
+    "requirement_id": "PR04",
+    "phase": "P08",
+    "status": "verified",
+    "code_paths": [
+      "crates/runner/src/protocols_and_tools.rs",
+      "apps/desktop/src/views/runner.rs"
+    ],
+    "screen_ids": [
+      "6:3839",
+      "29:20580"
+    ],
+    "test_evidence": [
+      "reports/P08-progress.md",
+      "reports/raw/p08-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:15:53.918899+00:00"
+  },
+  {
+    "requirement_id": "PR05",
+    "phase": "P11",
+    "status": "verified",
+    "code_paths": [
+      "crates/runner/src/advanced_protocols.rs"
+    ],
+    "screen_ids": [
+      "7:2869",
+      "29:19620",
+      "29:20741"
+    ],
+    "test_evidence": [
+      "reports/P11-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:36:18.685810+00:00"
+  },
+  {
+    "requirement_id": "PR06",
+    "phase": "P11",
+    "status": "verified",
+    "code_paths": [
+      "crates/runner/src/advanced_protocols.rs",
+      "apps/desktop/src/views/runner.rs"
+    ],
+    "screen_ids": [
+      "6:4185",
+      "29:19780"
+    ],
+    "test_evidence": [
+      "reports/P11-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:36:18.685810+00:00"
+  },
+  {
+    "requirement_id": "PR07",
+    "phase": "P08",
+    "status": "verified",
+    "code_paths": [
+      "crates/runner/src/protocols_and_tools.rs",
+      "apps/desktop/src/views/request_pane.rs"
+    ],
+    "screen_ids": [
+      "6:5029"
+    ],
+    "test_evidence": [
+      "reports/P08-progress.md",
+      "reports/raw/p08-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:15:53.918899+00:00"
+  },
+  {
+    "requirement_id": "PR08",
+    "phase": "P11",
+    "status": "verified",
+    "code_paths": [
+      "crates/runner/src/advanced_protocols.rs",
+      "apps/desktop/src/views/specs.rs"
+    ],
+    "screen_ids": [
+      "7:3035",
+      "29:19934",
+      "29:20910"
+    ],
+    "test_evidence": [
+      "reports/P11-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:36:18.685810+00:00"
+  },
+  {
+    "requirement_id": "PR09",
+    "phase": "P08",
+    "status": "verified",
+    "code_paths": [
+      "crates/runner/src/protocols_and_tools.rs",
+      "apps/desktop/src/views/runner.rs"
+    ],
+    "screen_ids": [
+      "7:3035",
+      "29:21115"
+    ],
+    "test_evidence": [
+      "reports/P08-progress.md",
+      "reports/raw/p08-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:15:53.918899+00:00"
+  },
+  {
+    "requirement_id": "PR10",
+    "phase": "P10",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/extensions.rs",
+      "apps/desktop/src/views/runner.rs"
+    ],
+    "screen_ids": [
+      "7:4815",
+      "29:20092"
+    ],
+    "test_evidence": [
+      "reports/P10-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:30:16.379125+00:00"
+  },
+  {
+    "requirement_id": "UX01",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "28:2546",
+      "28:7460"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "UX02",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "7:5113",
+      "7:5564",
+      "28:7303",
+      "28:7460",
+      "29:13639"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "UX03",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "7:3713",
+      "29:22514"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "UX04",
+    "phase": "P09",
+    "status": "verified",
+    "code_paths": [
+      "apps/desktop/src/app.rs",
+      "apps/desktop/src/views/panels.rs"
+    ],
+    "screen_ids": [
+      "6:1569",
+      "7:3713"
+    ],
+    "test_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:25:45.562417+00:00"
+  },
+  {
+    "requirement_id": "UX05",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "7:3547",
+      "29:22514",
+      "32:11481"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "UX06",
+    "phase": "P09",
+    "status": "verified",
+    "code_paths": [
+      "crates/ui-kit/src/lib.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "7:3547",
+      "32:11481"
+    ],
+    "test_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:25:45.562417+00:00"
+  },
+  {
+    "requirement_id": "UX07",
+    "phase": "P09",
+    "status": "verified",
+    "code_paths": [
+      "crates/ui-kit/src/lib.rs",
+      "apps/desktop/src/app.rs",
+      "apps/desktop/src/views/panels.rs"
+    ],
+    "screen_ids": [
+      "7:3547",
+      "29:22514"
+    ],
+    "test_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:25:45.562417+00:00"
+  },
+  {
+    "requirement_id": "UX08",
+    "phase": "P09",
+    "status": "verified",
+    "code_paths": [
+      "apps/desktop/src/app.rs",
+      "crates/domain/src/governance.rs"
+    ],
+    "screen_ids": [
+      "29:12044",
+      "29:15434"
+    ],
+    "test_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:25:45.562417+00:00"
+  },
+  {
+    "requirement_id": "UX09",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "apps/desktop/src/views/request_pane.rs",
+      "apps/desktop/src/views/response_pane.rs"
+    ],
+    "screen_ids": [
+      "6:476",
+      "6:9049"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/P11-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [
+      "Team publish/sync server integration completed in P04/P05"
+    ],
+    "last_updated": "2026-11-24T12:37:42.896644+00:00"
+  },
+  {
+    "requirement_id": "UX10",
+    "phase": "P02",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/workspace.rs",
+      "crates/http-engine/src/lib.rs",
+      "crates/local-store/src/workspace_store.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/app.rs"
+    ],
+    "screen_ids": [
+      "7:3867",
+      "7:5697",
+      "28:8290",
+      "29:22360",
+      "32:11640"
+    ],
+    "test_evidence": [
+      "reports/P02-progress.md",
+      "reports/raw/p02-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:08:53.175240+00:00"
+  },
+  {
+    "requirement_id": "SC01",
+    "phase": "P01",
+    "status": "verified",
+    "code_paths": [
+      "crates/secret-store/src/lib.rs",
+      "apps/desktop/src/worker.rs",
+      "apps/desktop/src/main.rs"
+    ],
+    "screen_ids": [
+      "6:5509",
+      "7:4961",
+      "29:5119"
+    ],
+    "test_evidence": [
+      "reports/p01-checks.json",
+      "reports/p01-ui-checks.json",
+      "reports/p01-dependency-check.json",
+      "reports/P11-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [
+      "Current-user DPAPI local adapter and selected native save/reveal/hide flow; team vault, session integration, permissions and cross-account matrix remain."
+    ],
+    "last_updated": "2026-11-24T12:37:42.896644+00:00"
+  },
+  {
+    "requirement_id": "SC02",
+    "phase": "P01",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/lib.rs",
+      "crates/local-store/src/lib.rs",
+      "apps/desktop/src/worker.rs"
+    ],
+    "screen_ids": [
+      "7:4033",
+      "28:8610",
+      "29:726",
+      "29:5431",
+      "29:10611"
+    ],
+    "test_evidence": [
+      "reports/p01-checks.json",
+      "reports/p01-ui-checks.json",
+      "reports/p01-dependency-check.json",
+      "reports/P11-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [
+      "Secret/Snapshot Debug redaction and payload-free errors only; header/query/body sanitization, share/export/report preview remain."
+    ],
+    "last_updated": "2026-11-24T12:37:42.896644+00:00"
+  },
+  {
+    "requirement_id": "SC03",
+    "phase": "P04",
+    "status": "implemented_unverified",
+    "code_paths": [
+      "crates/api-contract/src/lib.rs",
+      "crates/mongo-store/src/lib.rs",
+      "crates/mongo-store/src/mongo_backend.rs",
+      "crates/mongo-store/src/memory_backend.rs",
+      "crates/mongo-store/src/crypto.rs",
+      "apps/server/src/lib.rs",
+      "crates/domain/src/server_profiles.rs",
+      "crates/local-store/src/server_profiles_store.rs",
+      "apps/desktop/src/views/server.rs",
+      "apps/desktop/src/server_worker.rs"
+    ],
+    "screen_ids": [
+      "6:144",
+      "6:187",
+      "6:230",
+      "6:273",
+      "7:3381",
+      "29:21426",
+      "29:22674"
+    ],
+    "test_evidence": [
+      "reports/P04-progress.md",
+      "reports/raw/p04-audit.json",
+      "reports/raw/p04-linux-server-audit.json",
+      "07-operations/server-openapi.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [
+      "Live MongoDB replica-set smoke awaits SWAGGEN_MONGO_URI; Google OAuth screens A01-A04/S02/Z10 await external credential confirmation"
+    ],
+    "last_updated": "2026-11-24T11:35:56.167875+00:00"
+  },
+  {
+    "requirement_id": "SC04",
+    "phase": "P04",
+    "status": "implemented_unverified",
+    "code_paths": [
+      "crates/api-contract/src/lib.rs",
+      "crates/mongo-store/src/lib.rs",
+      "crates/mongo-store/src/mongo_backend.rs",
+      "crates/mongo-store/src/memory_backend.rs",
+      "crates/mongo-store/src/crypto.rs",
+      "apps/server/src/lib.rs",
+      "crates/domain/src/server_profiles.rs",
+      "crates/local-store/src/server_profiles_store.rs",
+      "apps/desktop/src/views/server.rs",
+      "apps/desktop/src/server_worker.rs"
+    ],
+    "screen_ids": [
+      "6:7879",
+      "6:9232",
+      "7:4193",
+      "7:5381",
+      "28:852",
+      "28:3157",
+      "28:3311",
+      "32:2816",
+      "29:12044",
+      "29:12201",
+      "29:13323"
+    ],
+    "test_evidence": [
+      "reports/P04-progress.md",
+      "reports/raw/p04-audit.json",
+      "reports/raw/p04-linux-server-audit.json",
+      "07-operations/server-openapi.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [
+      "Live MongoDB replica-set smoke awaits SWAGGEN_MONGO_URI; Google OAuth screens A01-A04/S02/Z10 await external credential confirmation"
+    ],
+    "last_updated": "2026-11-24T11:35:56.167875+00:00"
+  },
+  {
+    "requirement_id": "SC05",
+    "phase": "P01",
+    "status": "verified",
+    "code_paths": [
+      "apps/desktop/src/main.rs"
+    ],
+    "screen_ids": [
+      "7:4033",
+      "29:23475"
+    ],
+    "test_evidence": [
+      "reports/p01-checks.json",
+      "reports/p01-ui-checks.json",
+      "reports/p01-dependency-check.json",
+      "reports/P11-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [
+      "Native plain-text rendering observed; import formats and full malicious-content/ref/network policy remain."
+    ],
+    "last_updated": "2026-11-24T12:37:42.896644+00:00"
+  },
+  {
+    "requirement_id": "SC06",
+    "phase": "P01",
+    "status": "verified",
+    "code_paths": [
+      "apps/desktop/src/worker.rs",
+      "crates/domain/src/lib.rs",
+      "crates/local-store/src/lib.rs"
+    ],
+    "screen_ids": [
+      "7:4033",
+      "7:4815",
+      "12:2505",
+      "29:16375",
+      "29:20092"
+    ],
+    "test_evidence": [
+      "reports/p01-checks.json",
+      "reports/p01-ui-checks.json",
+      "reports/p01-dependency-check.json",
+      "reports/P11-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [
+      "Typed bounded commands, validated namespace and existing reparse-point rejection; full path/ACL/race and capability denial coverage remain."
+    ],
+    "last_updated": "2026-11-24T12:37:42.896644+00:00"
+  },
+  {
+    "requirement_id": "SC07",
+    "phase": "P01",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/security.rs",
+      "apps/desktop/src/diagnostics.rs",
+      "apps/desktop/src/main.rs"
+    ],
+    "screen_ids": [
+      "7:4033",
+      "29:22206"
+    ],
+    "test_evidence": [
+      "reports/p01-checks.json",
+      "reports/raw/p01-unit.txt",
+      "reports/p01-ui-binary.json",
+      "reports/p01-dependency-check.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T10:51:41.757306+00:00"
+  },
+  {
+    "requirement_id": "SC08",
+    "phase": "P08",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/ssrf.rs",
+      "crates/runner/src/ssrf.rs",
+      "apps/server/src/lib.rs"
+    ],
+    "screen_ids": [
+      "12:2505",
+      "29:18454",
+      "29:23317"
+    ],
+    "test_evidence": [
+      "reports/P08-progress.md",
+      "reports/raw/p08-audit.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:15:53.918899+00:00"
+  },
+  {
+    "requirement_id": "SC09",
+    "phase": "P09",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/governance.rs",
+      "crates/api-contract/src/lib.rs",
+      "apps/server/src/lib.rs"
+    ],
+    "screen_ids": [
+      "7:3381",
+      "29:22674"
+    ],
+    "test_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:25:45.562417+00:00"
+  },
+  {
+    "requirement_id": "SC10",
+    "phase": "P09",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/governance.rs",
+      "apps/server/src/lib.rs"
+    ],
+    "screen_ids": [
+      "7:4193",
+      "32:11157"
+    ],
+    "test_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:25:45.562417+00:00"
+  },
+  {
+    "requirement_id": "OP01",
+    "phase": "P06",
+    "status": "blocked",
+    "code_paths": [
+      "07-operations/vps-systemd-deployment.md",
+      "07-operations/swaggen-server.service",
+      "07-operations/swaggen.env.example",
+      "07-operations/windows-installer/package-windows.ps1",
+      "crates/mongo-store/src/backup.rs",
+      "apps/server/src/main.rs"
+    ],
+    "screen_ids": [
+      "7:4655",
+      "29:21274"
+    ],
+    "test_evidence": [
+      "reports/P06-progress.md",
+      "reports/benchmarks/p06-engine-release.json",
+      "reports/benchmarks/p06-desktop-release.json",
+      "dist/windows-x64/manifest.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [
+      "WiX Toolset MSI build and Authenticode certificate unavailable in environment; unsigned portable zip verified"
+    ],
+    "last_updated": "2026-11-24T11:51:12.070142+00:00"
+  },
+  {
+    "requirement_id": "OP02",
+    "phase": "P06",
+    "status": "verified",
+    "code_paths": [
+      "07-operations/vps-systemd-deployment.md",
+      "07-operations/swaggen-server.service",
+      "07-operations/swaggen.env.example",
+      "07-operations/windows-installer/package-windows.ps1",
+      "crates/mongo-store/src/backup.rs",
+      "apps/server/src/main.rs"
+    ],
+    "screen_ids": [
+      "28:25"
+    ],
+    "test_evidence": [
+      "reports/P06-progress.md",
+      "reports/benchmarks/p06-engine-release.json",
+      "reports/benchmarks/p06-desktop-release.json",
+      "dist/windows-x64/manifest.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:51:12.070142+00:00"
+  },
+  {
+    "requirement_id": "OP03",
+    "phase": "P06",
+    "status": "verified",
+    "code_paths": [
+      "07-operations/vps-systemd-deployment.md",
+      "07-operations/swaggen-server.service",
+      "07-operations/swaggen.env.example",
+      "07-operations/windows-installer/package-windows.ps1",
+      "crates/mongo-store/src/backup.rs",
+      "apps/server/src/main.rs"
+    ],
+    "screen_ids": [
+      "6:316",
+      "7:4339",
+      "29:21426",
+      "29:21576"
+    ],
+    "test_evidence": [
+      "reports/P06-progress.md",
+      "reports/benchmarks/p06-engine-release.json",
+      "reports/benchmarks/p06-desktop-release.json",
+      "dist/windows-x64/manifest.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:51:12.070142+00:00"
+  },
+  {
+    "requirement_id": "OP04",
+    "phase": "P06",
+    "status": "verified",
+    "code_paths": [
+      "07-operations/vps-systemd-deployment.md",
+      "07-operations/swaggen-server.service",
+      "07-operations/swaggen.env.example",
+      "07-operations/windows-installer/package-windows.ps1",
+      "crates/mongo-store/src/backup.rs",
+      "apps/server/src/main.rs"
+    ],
+    "screen_ids": [
+      "6:316",
+      "7:4339",
+      "29:21576"
+    ],
+    "test_evidence": [
+      "reports/P06-progress.md",
+      "reports/benchmarks/p06-engine-release.json",
+      "reports/benchmarks/p06-desktop-release.json",
+      "dist/windows-x64/manifest.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:51:12.070142+00:00"
+  },
+  {
+    "requirement_id": "OP05",
+    "phase": "P06",
+    "status": "implemented_unverified",
+    "code_paths": [
+      "07-operations/vps-systemd-deployment.md",
+      "07-operations/swaggen-server.service",
+      "07-operations/swaggen.env.example",
+      "07-operations/windows-installer/package-windows.ps1",
+      "crates/mongo-store/src/backup.rs",
+      "apps/server/src/main.rs"
+    ],
+    "screen_ids": [
+      "7:4509",
+      "29:21730",
+      "29:22826"
+    ],
+    "test_evidence": [
+      "reports/P06-progress.md",
+      "reports/benchmarks/p06-engine-release.json",
+      "reports/benchmarks/p06-desktop-release.json",
+      "dist/windows-x64/manifest.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [
+      "Live MongoDB backup/restore execution awaits SWAGGEN_MONGO_URI; bundle checksum verification tested"
+    ],
+    "last_updated": "2026-11-24T11:51:12.070142+00:00"
+  },
+  {
+    "requirement_id": "OP06",
+    "phase": "P06",
+    "status": "implemented_unverified",
+    "code_paths": [
+      "07-operations/vps-systemd-deployment.md",
+      "07-operations/swaggen-server.service",
+      "07-operations/swaggen.env.example",
+      "07-operations/windows-installer/package-windows.ps1",
+      "crates/mongo-store/src/backup.rs",
+      "apps/server/src/main.rs"
+    ],
+    "screen_ids": [
+      "7:4509",
+      "29:21892",
+      "29:22826",
+      "29:23001"
+    ],
+    "test_evidence": [
+      "reports/P06-progress.md",
+      "reports/benchmarks/p06-engine-release.json",
+      "reports/benchmarks/p06-desktop-release.json",
+      "dist/windows-x64/manifest.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [
+      "Live MongoDB backup/restore execution awaits SWAGGEN_MONGO_URI; bundle checksum verification tested"
+    ],
+    "last_updated": "2026-11-24T11:51:12.070142+00:00"
+  },
+  {
+    "requirement_id": "OP07",
+    "phase": "P06",
+    "status": "verified",
+    "code_paths": [
+      "07-operations/vps-systemd-deployment.md",
+      "07-operations/swaggen-server.service",
+      "07-operations/swaggen.env.example",
+      "07-operations/windows-installer/package-windows.ps1",
+      "crates/mongo-store/src/backup.rs",
+      "apps/server/src/main.rs"
+    ],
+    "screen_ids": [
+      "7:4655",
+      "7:5836",
+      "29:22050"
+    ],
+    "test_evidence": [
+      "reports/P06-progress.md",
+      "reports/benchmarks/p06-engine-release.json",
+      "reports/benchmarks/p06-desktop-release.json",
+      "dist/windows-x64/manifest.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:51:12.070142+00:00"
+  },
+  {
+    "requirement_id": "OP08",
+    "phase": "P09",
+    "status": "verified",
+    "code_paths": [
+      "crates/domain/src/governance.rs",
+      "apps/desktop/src/views/panels.rs"
+    ],
+    "screen_ids": [
+      "7:4655",
+      "29:22050",
+      "29:23159"
+    ],
+    "test_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:25:45.562417+00:00"
+  },
+  {
+    "requirement_id": "OP09",
+    "phase": "P06",
+    "status": "verified",
+    "code_paths": [
+      "07-operations/vps-systemd-deployment.md",
+      "07-operations/swaggen-server.service",
+      "07-operations/swaggen.env.example",
+      "07-operations/windows-installer/package-windows.ps1",
+      "crates/mongo-store/src/backup.rs",
+      "apps/server/src/main.rs"
+    ],
+    "screen_ids": [
+      "7:4339",
+      "29:22206"
+    ],
+    "test_evidence": [
+      "reports/P06-progress.md",
+      "reports/benchmarks/p06-engine-release.json",
+      "reports/benchmarks/p06-desktop-release.json",
+      "dist/windows-x64/manifest.json"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T11:51:12.070142+00:00"
+  },
+  {
+    "requirement_id": "OP10",
+    "phase": "P09",
+    "status": "verified",
+    "code_paths": [
+      "crates/api-contract/src/lib.rs",
+      "apps/server/src/lib.rs"
+    ],
+    "screen_ids": [
+      "7:4339",
+      "32:11321"
+    ],
+    "test_evidence": [
+      "reports/P09-progress.md"
+    ],
+    "benchmark": null,
+    "commit": null,
+    "blockers": [],
+    "last_updated": "2026-11-24T12:25:45.562417+00:00"
+  }
+]

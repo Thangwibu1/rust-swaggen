@@ -1,0 +1,55 @@
+{
+  "node": {
+    "page": "13-import-testing-mock-details",
+    "page_id": "27:324",
+    "id": "29:14018",
+    "name": "I06 / Import Postman environment values",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/13-import-testing-mock-details/i06-import-postman-environment-values__29-14018",
+    "requirements": [
+      "EV03",
+      "IM03"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:14019",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:14022",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:14168",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Import Postman environment values",
+    "DisNote API / tools / I06",
+    "Input",
+    "Development.postman_environment.json",
+    "Destination",
+    "Imported secrets",
+    "Shared values",
+    "Publish names and non-sensitive defaults"
+  ]
+}

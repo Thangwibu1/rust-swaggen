@@ -1,0 +1,60 @@
+{
+  "node": {
+    "page": "05-testing-developer-tools",
+    "page_id": "4:93",
+    "id": "7:2397",
+    "name": "I04 / Connect a Git repository",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/05-testing-developer-tools/i04-connect-a-git-repository__7-2397",
+    "requirements": [
+      "IM09",
+      "SY10"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "7:2398",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "7:2401",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "7:2553",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Connect a Git repository",
+    "DisNote API / Developer tools",
+    "Configuration",
+    "Repository",
+    "Workspace configuration",
+    "Branch",
+    "Workspace configuration",
+    "Project directory",
+    "Workspace configuration",
+    "Authentication",
+    "Workspace configuration",
+    "Access & sharing",
+    "Changes are saved locally before they are published to your team."
+  ]
+}

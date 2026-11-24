@@ -1,0 +1,58 @@
+{
+  "node": {
+    "page": "14-protocols-system-details",
+    "page_id": "27:325",
+    "id": "32:11481",
+    "name": "Z19 / Language and interface appearance",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/14-protocols-system-details/z19-language-and-interface-appearance__32-11481",
+    "requirements": [
+      "UX05",
+      "UX06"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "32:11482",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "32:11485",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "32:11636",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Language and interface appearance",
+    "DisNote API / system / Z19",
+    "Application language",
+    "Interface appearance",
+    "White · project standard",
+    "Editor font",
+    "JetBrains Mono",
+    "UI scale",
+    "Status colors",
+    "Semantic colors with labels and icons",
+    "The interface stays white. Color is reserved for statuses, valid"
+  ]
+}

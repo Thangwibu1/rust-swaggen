@@ -1,0 +1,157 @@
+{
+  "node": {
+    "page": "07-coverage-handoff",
+    "page_id": "4:95",
+    "id": "15:6464",
+    "name": "Coverage / IM",
+    "type": "frame",
+    "width": "1440",
+    "height": "716",
+    "path": "02-design/reference/07-coverage-handoff/coverage-im__15-6464",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "15:6465",
+      "name": "IM / REQUIREMENT COVERAGE",
+      "type": "text",
+      "x": "41",
+      "y": "41",
+      "width": "360",
+      "height": "34"
+    },
+    {
+      "id": "15:6466",
+      "name": "IM01",
+      "type": "frame",
+      "x": "41",
+      "y": "91",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6471",
+      "name": "IM02",
+      "type": "frame",
+      "x": "41",
+      "y": "151",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6476",
+      "name": "IM03",
+      "type": "frame",
+      "x": "41",
+      "y": "211",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6481",
+      "name": "IM04",
+      "type": "frame",
+      "x": "41",
+      "y": "271",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6486",
+      "name": "IM05",
+      "type": "frame",
+      "x": "41",
+      "y": "331",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6491",
+      "name": "IM06",
+      "type": "frame",
+      "x": "41",
+      "y": "391",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6496",
+      "name": "IM07",
+      "type": "frame",
+      "x": "41",
+      "y": "451",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6501",
+      "name": "IM08",
+      "type": "frame",
+      "x": "41",
+      "y": "511",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6506",
+      "name": "IM09",
+      "type": "frame",
+      "x": "41",
+      "y": "571",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6511",
+      "name": "IM10",
+      "type": "frame",
+      "x": "41",
+      "y": "631",
+      "width": "1360",
+      "height": "44"
+    }
+  ],
+  "text_layer_names": [
+    "IM / REQUIREMENT COVERAGE",
+    "IM01",
+    "Định dạng project mở",
+    "Stage A",
+    "I01 · I03",
+    "IM02",
+    "Postman Collection",
+    "Stage A",
+    "I01 · I02",
+    "IM03",
+    "Postman Environment",
+    "Stage A",
+    "I01",
+    "IM04",
+    "OpenAPI import export",
+    "Stage A",
+    "D11 · I01",
+    "IM05",
+    "cURL hai chiều",
+    "Stage A",
+    "I01",
+    "IM06",
+    "Xem trước import",
+    "Stage A",
+    "I02",
+    "IM07",
+    "File đính kèm",
+    "Stage B",
+    "I03",
+    "IM08",
+    "Xuất dữ liệu đã làm sạch",
+    "Stage A",
+    "I03 · M05",
+    "IM09",
+    "Tích hợp Git",
+    "Stage B",
+    "I04",
+    "IM10",
+    "Định dạng bổ sung",
+    "Stage C",
+    "I01"
+  ]
+}

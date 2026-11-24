@@ -1,0 +1,51 @@
+{
+  "node": {
+    "page": "11-openapi-contract-details",
+    "page_id": "27:322",
+    "id": "29:8973",
+    "name": "O21 / Propose a spec change from a request",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/11-openapi-contract-details/o21-propose-a-spec-change-from-a-request__29-8973",
+    "requirements": [
+      "DC07"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:8974",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:8977",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:9134",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Propose a spec change from a request",
+    "DisNote API / openapi / O21",
+    "Current specification",
+    "Proposed draft patch",
+    "A response example cannot establish a complete API contract. Rev"
+  ]
+}

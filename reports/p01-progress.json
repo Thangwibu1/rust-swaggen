@@ -1,0 +1,26 @@
+{
+  "phase": "P01",
+  "status": "passed",
+  "phase_gate_passed": true,
+  "updated_at": "2026-11-24T10:52:00+00:00",
+  "requirements_verified": [
+    "SC07"
+  ],
+  "requirements_in_progress": [
+    "SC01",
+    "SC02",
+    "SC05",
+    "SC06"
+  ],
+  "full_requirements_verified": 1,
+  "full_screens_verified": 1,
+  "code_checks": "reports/p01-checks.json",
+  "dependency_check": "reports/p01-dependency-check.json",
+  "native_checks": "reports/p01-ui-checks.json",
+  "notes": [
+    "All 6 P01 workspace checks passed (35/35 Rust unit/integration tests, 0 ignored, clippy -D warnings, desktop debug build, store-crash-probe).",
+    "200-package Windows advisory audit passed with warnings denied and 0 ignores.",
+    "SC01, SC02, SC05, SC06 foundation slices are implemented and tested; they remain in_progress until their P02/P04/P07/P08/P10 cross-phase screens (team vault, HTTP, imports, runner, extensions) are implemented.",
+    "Linux CI workflow (.github/workflows/foundation.yml) is configured for swaggen-server, swaggen-api-contract, swaggen-domain, not executed locally on this Windows host."
+  ]
+}

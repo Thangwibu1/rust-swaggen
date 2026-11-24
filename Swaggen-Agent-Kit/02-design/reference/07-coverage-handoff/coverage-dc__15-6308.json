@@ -1,0 +1,157 @@
+{
+  "node": {
+    "page": "07-coverage-handoff",
+    "page_id": "4:95",
+    "id": "15:6308",
+    "name": "Coverage / DC",
+    "type": "frame",
+    "width": "1440",
+    "height": "716",
+    "path": "02-design/reference/07-coverage-handoff/coverage-dc__15-6308",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "15:6309",
+      "name": "DC / REQUIREMENT COVERAGE",
+      "type": "text",
+      "x": "41",
+      "y": "41",
+      "width": "360",
+      "height": "34"
+    },
+    {
+      "id": "15:6310",
+      "name": "DC01",
+      "type": "frame",
+      "x": "41",
+      "y": "91",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6315",
+      "name": "DC02",
+      "type": "frame",
+      "x": "41",
+      "y": "151",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6320",
+      "name": "DC03",
+      "type": "frame",
+      "x": "41",
+      "y": "211",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6325",
+      "name": "DC04",
+      "type": "frame",
+      "x": "41",
+      "y": "271",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6330",
+      "name": "DC05",
+      "type": "frame",
+      "x": "41",
+      "y": "331",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6335",
+      "name": "DC06",
+      "type": "frame",
+      "x": "41",
+      "y": "391",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6340",
+      "name": "DC07",
+      "type": "frame",
+      "x": "41",
+      "y": "451",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6345",
+      "name": "DC08",
+      "type": "frame",
+      "x": "41",
+      "y": "511",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6350",
+      "name": "DC09",
+      "type": "frame",
+      "x": "41",
+      "y": "571",
+      "width": "1360",
+      "height": "44"
+    },
+    {
+      "id": "15:6355",
+      "name": "DC10",
+      "type": "frame",
+      "x": "41",
+      "y": "631",
+      "width": "1360",
+      "height": "44"
+    }
+  ],
+  "text_layer_names": [
+    "DC / REQUIREMENT COVERAGE",
+    "DC01",
+    "Tài liệu tự sinh",
+    "Stage A",
+    "D06",
+    "DC02",
+    "Chi tiết hợp đồng",
+    "Stage A",
+    "D06",
+    "DC03",
+    "Chạy từ tài liệu",
+    "Stage A",
+    "D06 · D07",
+    "DC04",
+    "Liên kết định danh",
+    "Stage A",
+    "D03 · D09",
+    "DC05",
+    "Sinh request mẫu",
+    "Stage A",
+    "D06 · D07",
+    "DC06",
+    "Cập nhật từ đặc tả",
+    "Stage A",
+    "D08 · D09",
+    "DC07",
+    "Đề xuất sửa hợp đồng",
+    "Stage B",
+    "D08 · C13",
+    "DC08",
+    "Kiểm tra response theo schema",
+    "Stage B",
+    "D10 · T05",
+    "DC09",
+    "Chênh lệch hợp đồng",
+    "Stage B",
+    "D08 · D09 · D12",
+    "DC10",
+    "Xuất tài liệu",
+    "Stage B",
+    "D11"
+  ]
+}

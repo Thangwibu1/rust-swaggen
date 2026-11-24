@@ -1,0 +1,60 @@
+{
+  "node": {
+    "page": "03-api-workbench",
+    "page_id": "4:91",
+    "id": "6:4863",
+    "name": "R17 / Save a response example",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/03-api-workbench/r17-save-a-response-example__6-4863",
+    "requirements": [
+      "CO08",
+      "RS08"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "6:4864",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "6:4867",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "6:5025",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Save a response example",
+    "DisNote API / Team workspace",
+    "Configuration",
+    "Example name",
+    "Workspace configuration",
+    "Status",
+    "Workspace configuration",
+    "Redaction",
+    "Workspace configuration",
+    "Linked operation",
+    "Workspace configuration",
+    "Access & sharing",
+    "Changes are saved locally before they are published to your team."
+  ]
+}

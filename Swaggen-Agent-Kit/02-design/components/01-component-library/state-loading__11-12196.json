@@ -1,0 +1,15 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "11:12196",
+    "name": "State=Loading",
+    "type": "symbol",
+    "width": "260",
+    "height": "36",
+    "path": "02-design/components/01-component-library/state-loading__11-12196",
+    "requirements": []
+  },
+  "direct_children": [],
+  "text_layer_names": []
+}

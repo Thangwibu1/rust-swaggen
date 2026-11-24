@@ -1,0 +1,15 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "5:181",
+    "name": "Kind=Danger, State=Hover",
+    "type": "symbol",
+    "width": "176",
+    "height": "40",
+    "path": "02-design/components/01-component-library/kind-danger-state-hover__5-181",
+    "requirements": []
+  },
+  "direct_children": [],
+  "text_layer_names": []
+}

@@ -1,0 +1,12 @@
+﻿   Compiling swaggen-p00 v0.0.0 (D:\code\potmen\spikes\p00)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 9.74s
+     Running `spikes\p00\target\debug\journal-crash-matrix.exe`
+PASS: compaction crash at created; recovered=2, uncommitted_orphans=1
+PASS: compaction crash at partial; recovered=2, uncommitted_orphans=1
+PASS: compaction crash at written; recovered=2, uncommitted_orphans=1
+PASS: compaction crash at synced; recovered=2, uncommitted_orphans=1
+PASS: compaction crash at replaced; recovered=1, uncommitted_orphans=0
+PASS: compaction crash at acked; recovered=1, uncommitted_orphans=0
+Evidence: D:\code\potmen\spikes\p00\../../.local/p00-crash-matrix\run-41528-1795502630196838300\results.csv
+LIMIT: forced process termination only; no disk power-loss, fsync-directory or physical disk-full acceptance
+

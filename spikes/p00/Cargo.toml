@@ -1,0 +1,33 @@
+[package]
+name = "swaggen-p00"
+version = "0.0.0"
+edition = "2024"
+rust-version = "1.100"
+publish = false
+
+[features]
+default = []
+fault-injection = []
+mongo = ["dep:mongodb", "dep:tokio", "dep:serde_json"]
+
+[dependencies]
+mongodb = { version = "=3.10.2", optional = true, features = ["redact-errors"] }
+tokio = { version = "=1.54.1", optional = true, features = ["macros", "rt-multi-thread", "net", "time"] }
+serde_json = { version = "=1.0.154", optional = true }
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "=0.61.2", features = ["Win32_Storage_FileSystem"] }
+
+[[bin]]
+name = "mongo-smoke"
+path = "src/bin/mongo-smoke.rs"
+required-features = ["mongo"]
+
+[[bin]]
+name = "journal-smoke"
+path = "src/bin/journal-smoke.rs"
+
+[[bin]]
+name = "journal-crash-matrix"
+path = "src/bin/journal-crash-matrix.rs"
+required-features = ["fault-injection"]

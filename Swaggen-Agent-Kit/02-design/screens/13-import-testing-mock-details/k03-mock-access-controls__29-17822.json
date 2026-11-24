@@ -1,0 +1,55 @@
+{
+  "node": {
+    "page": "13-import-testing-mock-details",
+    "page_id": "27:324",
+    "id": "29:17822",
+    "name": "K03 / Mock access controls",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/13-import-testing-mock-details/k03-mock-access-controls__29-17822",
+    "requirements": [
+      "MK04"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:17823",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:17826",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:17976",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Mock access controls",
+    "DisNote API / tools / K03",
+    "Endpoint",
+    "https://mock.swaggen.team/disnote",
+    "Authentication",
+    "Secret reference",
+    "Allowed members",
+    "Exposure",
+    "Team server only; no desktop tunnel"
+  ]
+}

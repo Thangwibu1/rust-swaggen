@@ -1,0 +1,51 @@
+{
+  "node": {
+    "page": "12-collaboration-sync-details",
+    "page_id": "27:323",
+    "id": "29:11257",
+    "name": "C24 / Resolve and preview the merged schema",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/12-collaboration-sync-details/c24-resolve-and-preview-the-merged-schema__29-11257",
+    "requirements": [
+      "SY04",
+      "SY10"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:11258",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:11261",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:11405",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Resolve and preview the merged schema",
+    "DisNote API / collab / C24",
+    "YAML",
+    "The losing version remains available in revision history. Save c"
+  ]
+}

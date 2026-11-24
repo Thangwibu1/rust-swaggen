@@ -1,0 +1,43 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "27:284",
+    "name": "Step",
+    "type": "frame",
+    "width": "672",
+    "height": "200",
+    "path": "02-design/components/01-component-library/step__27-284",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "27:285",
+      "name": "State=Complete",
+      "type": "symbol",
+      "x": "24",
+      "y": "56",
+      "width": "300",
+      "height": "40"
+    },
+    {
+      "id": "27:289",
+      "name": "State=Current",
+      "type": "symbol",
+      "x": "348",
+      "y": "56",
+      "width": "300",
+      "height": "40"
+    },
+    {
+      "id": "27:293",
+      "name": "State=Pending",
+      "type": "symbol",
+      "x": "24",
+      "y": "116",
+      "width": "300",
+      "height": "40"
+    }
+  ],
+  "text_layer_names": []
+}

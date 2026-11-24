@@ -1,0 +1,61 @@
+{
+  "node": {
+    "page": "05-testing-developer-tools",
+    "page_id": "4:93",
+    "id": "7:2237",
+    "name": "I03 / Export your project",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/05-testing-developer-tools/i03-export-your-project__7-2237",
+    "requirements": [
+      "IM01",
+      "IM07",
+      "IM08"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "7:2238",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "7:2241",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "7:2393",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Export your project",
+    "DisNote API / Developer tools",
+    "Configuration",
+    "Format",
+    "Workspace configuration",
+    "Include",
+    "Workspace configuration",
+    "Attachments",
+    "Workspace configuration",
+    "Secret policy",
+    "Workspace configuration",
+    "Access & sharing",
+    "Changes are saved locally before they are published to your team."
+  ]
+}

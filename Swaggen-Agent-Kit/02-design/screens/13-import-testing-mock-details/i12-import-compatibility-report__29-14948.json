@@ -1,0 +1,54 @@
+{
+  "node": {
+    "page": "13-import-testing-mock-details",
+    "page_id": "27:324",
+    "id": "29:14948",
+    "name": "I12 / Import compatibility report",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/13-import-testing-mock-details/i12-import-compatibility-report__29-14948",
+    "requirements": [
+      "IM02",
+      "IM06",
+      "IM10",
+      "TS08"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:14949",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:14952",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:15113",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Import compatibility report",
+    "DisNote API / tools / I12",
+    "INPUT FEATURE",
+    "SUPPORT",
+    "DECISION"
+  ]
+}

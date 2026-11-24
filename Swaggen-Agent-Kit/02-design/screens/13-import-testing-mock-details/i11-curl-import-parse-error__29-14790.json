@@ -1,0 +1,56 @@
+{
+  "node": {
+    "page": "13-import-testing-mock-details",
+    "page_id": "27:324",
+    "id": "29:14790",
+    "name": "I11 / cURL import parse error",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/13-import-testing-mock-details/i11-curl-import-parse-error__29-14790",
+    "requirements": [
+      "IM05",
+      "IM06"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "29:14791",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "29:14794",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "29:14944",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "cURL import parse error",
+    "DisNote API / tools / I11",
+    "Action required",
+    "Location",
+    "Line 4 · --data argument",
+    "Shell style",
+    "Windows PowerShell",
+    "Fix",
+    "Close the quoted body or choose the correct quoting style"
+  ]
+}

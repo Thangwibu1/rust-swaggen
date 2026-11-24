@@ -1,0 +1,8 @@
+{
+  "name": "iced-source-download",
+  "command": "cargo +stable info iced@0.14.0",
+  "status": "BLOCKED",
+  "exit_code": 101,
+  "timestamp": "2026-11-24T04:22:04.3763475Z",
+  "artifact_path": "reports/raw/install-iced.txt"
+}

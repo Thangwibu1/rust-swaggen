@@ -1,0 +1,59 @@
+{
+  "node": {
+    "page": "03-api-workbench",
+    "page_id": "4:91",
+    "id": "6:4697",
+    "name": "R16 / Confirm production request",
+    "type": "frame",
+    "width": "1440",
+    "height": "900",
+    "path": "02-design/screens/03-api-workbench/r16-confirm-production-request__6-4697",
+    "requirements": [
+      "EV07"
+    ]
+  },
+  "direct_children": [
+    {
+      "id": "6:4698",
+      "name": "Shell/Windows titlebar",
+      "type": "instance",
+      "x": "0",
+      "y": "0",
+      "width": "1440",
+      "height": "36"
+    },
+    {
+      "id": "6:4701",
+      "name": "Frame",
+      "type": "frame",
+      "x": "0",
+      "y": "36",
+      "width": "1440",
+      "height": "836"
+    },
+    {
+      "id": "6:4859",
+      "name": "Shell/Statusbar",
+      "type": "instance",
+      "x": "0",
+      "y": "872",
+      "width": "1440",
+      "height": "28"
+    }
+  ],
+  "text_layer_names": [
+    "Confirm production request",
+    "DisNote API / Team workspace",
+    "Configuration",
+    "Environment",
+    "Workspace configuration",
+    "Request",
+    "Workspace configuration",
+    "Target",
+    "Workspace configuration",
+    "Confirmation",
+    "Workspace configuration",
+    "Access & sharing",
+    "Review this change carefully before continuing."
+  ]
+}

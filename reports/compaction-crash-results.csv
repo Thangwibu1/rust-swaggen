@@ -1,0 +1,7 @@
+case,recovered_batches,orphan_files,status
+created,2,1,PASS
+partial,2,1,PASS
+written,2,1,PASS
+synced,2,1,PASS
+replaced,1,0,PASS
+acked,1,0,PASS

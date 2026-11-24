@@ -1,0 +1,43 @@
+{
+  "node": {
+    "page": "01-component-library",
+    "page_id": "4:89",
+    "id": "11:12191",
+    "name": "Progress",
+    "type": "frame",
+    "width": "868",
+    "height": "124",
+    "path": "02-design/components/01-component-library/progress__11-12191",
+    "requirements": []
+  },
+  "direct_children": [
+    {
+      "id": "11:12192",
+      "name": "State=Default",
+      "type": "symbol",
+      "x": "24",
+      "y": "48",
+      "width": "260",
+      "height": "36"
+    },
+    {
+      "id": "11:12196",
+      "name": "State=Loading",
+      "type": "symbol",
+      "x": "304",
+      "y": "48",
+      "width": "260",
+      "height": "36"
+    },
+    {
+      "id": "11:12200",
+      "name": "State=Error",
+      "type": "symbol",
+      "x": "584",
+      "y": "48",
+      "width": "260",
+      "height": "36"
+    }
+  ],
+  "text_layer_names": []
+}
