@@ -18,7 +18,7 @@ use swaggen_domain::{
 use swaggen_http_engine::{HttpExecutionError, HttpResponseData};
 use swaggen_local_store::{Snapshot, workspace_store::StorageStats};
 use swaggen_spec_engine::openapi::{SpecDiffEntry, SpecDocument};
-use swaggen_ui_kit::{NoticeKind, Tokens};
+use swaggen_ui_kit::{AvatarTone, Edge, IconKind, NoticeKind, Tokens};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum MainMode {
@@ -100,6 +100,8 @@ pub struct App {
     pub filter_method: Option<HttpMethod>,
     pub filter_tag: String,
     pub focus_search: bool,
+    pub show_sidebar_filters: bool,
+    pub show_new_collection_input: bool,
     pub new_collection_name: String,
     pub new_workspace_id: String,
     pub new_workspace_name: String,
@@ -157,7 +159,9 @@ pub struct App {
     pub postman_input: String,
     pub last_import_summary: String,
 
-    // P04 Team Server & Internal Auth state
+    // P04 Team Server & Firebase Auth state
+    pub show_welcome: bool,
+    pub firebase_create_account: bool,
     pub server_subtab: usize,
     pub server_profiles: swaggen_domain::server_profiles::ServerProfileStore,
     pub server_name_input: String,
@@ -300,6 +304,8 @@ impl App {
             filter_method: None,
             filter_tag: String::new(),
             focus_search: false,
+            show_sidebar_filters: false,
+            show_new_collection_input: false,
             new_collection_name: String::new(),
             new_workspace_id: String::new(),
             new_workspace_name: String::new(),
@@ -348,10 +354,12 @@ impl App {
             curl_input: "curl -X GET \"https://api.example.test/health\"".into(),
             postman_input: String::new(),
             last_import_summary: String::new(),
+            show_welcome: true,
+            firebase_create_account: false,
             server_subtab: 0,
             server_profiles: Default::default(),
-            server_name_input: "Team Server".into(),
-            server_url_input: "http://127.0.0.1:8080".into(),
+            server_name_input: crate::server_worker::DEFAULT_SERVER_NAME.into(),
+            server_url_input: crate::server_worker::default_server_url(),
             server_allow_self_signed: false,
             auth_email: String::new(),
             auth_display_name: String::new(),
@@ -568,6 +576,9 @@ impl App {
                     self.history = history;
                     self.secret_names = secret_names;
                     self.storage_stats = storage_stats;
+                    if server_profiles.active().is_some_and(|p| !p.session_id.is_empty()) {
+                        self.show_welcome = false;
+                    }
                     self.server_profiles = server_profiles;
                     self.generation = 0;
                     self.saved_generation = 0;
@@ -594,6 +605,9 @@ impl App {
                     self.history = history;
                     self.secret_names = secret_names;
                     self.storage_stats = storage_stats;
+                    if server_profiles.active().is_some_and(|p| !p.session_id.is_empty()) {
+                        self.show_welcome = false;
+                    }
                     self.server_profiles = server_profiles;
                     self.loaded = true;
                     self.recovery_needed = false;
@@ -601,6 +615,9 @@ impl App {
                     self.status = "Durable data reopened".into();
                 }
                 Event::ServerProfilesUpdated { store, message } => {
+                    if store.active().is_some_and(|p| !p.session_id.is_empty()) {
+                        self.show_welcome = false;
+                    }
                     self.server_profiles = store;
                     self.status = message;
                 }
@@ -914,6 +931,55 @@ impl App {
         }
         map
     }
+
+    pub fn user_initials(&self) -> String {
+        if let Some(prof) = self.server_profiles.active() {
+            let source = if !prof.display_name.trim().is_empty() {
+                prof.display_name.trim()
+            } else if !prof.email.trim().is_empty() {
+                prof.email.trim()
+            } else {
+                ""
+            };
+            if !source.is_empty() {
+                let letters: String = source
+                    .split(|c: char| !c.is_alphanumeric())
+                    .filter(|s| !s.is_empty())
+                    .filter_map(|s| s.chars().next())
+                    .take(2)
+                    .collect::<String>()
+                    .to_ascii_uppercase();
+                if !letters.is_empty() {
+                    return letters;
+                }
+            }
+        }
+        "SW".into()
+    }
+
+    pub fn screen_breadcrumb(&self) -> String {
+        let leaf = match self.mode {
+            MainMode::Workbench => self
+                .active_request_id()
+                .and_then(|id| self.state.requests.iter().find(|r| r.id == id))
+                .map(|r| r.name.clone())
+                .unwrap_or_else(|| "API Workbench".into()),
+            MainMode::Runner => "Testing & Developer Tools".into(),
+            MainMode::Server => "Team Server & Accounts".into(),
+            MainMode::TeamSync => "Collaboration & Sync".into(),
+            MainMode::Specs => "API Definitions & Docs".into(),
+            MainMode::ImportExport => "Import & Export".into(),
+            MainMode::Environments => "Environments".into(),
+            MainMode::History => "Request History".into(),
+            MainMode::Cookies => "Workspace Cookies".into(),
+            MainMode::Secrets => "Personal Secrets".into(),
+            MainMode::Sanitizer => "Secret Sanitizer".into(),
+            MainMode::Storage => "Storage & Retention".into(),
+            MainMode::Privacy => "Privacy & Updates".into(),
+            MainMode::Shortcuts => "Keyboard Shortcuts".into(),
+        };
+        format!("{} / {leaf}", self.state.meta.name)
+    }
 }
 
 impl eframe::App for App {
@@ -929,24 +995,47 @@ impl eframe::App for App {
             self.close_dialog = true;
         }
         if self.close_dialog {
-            egui::CentralPanel::default().show(ui, |ui| {
-                swaggen_ui_kit::section(
-                    ui,
-                    "Keep your unsaved changes",
-                    "Return to the workspace and save before closing, or discard unsaved edits.",
-                );
-                ui.horizontal(|ui| {
-                    if swaggen_ui_kit::primary_button(ui, true, "Return to workspace").clicked() {
-                        self.close_dialog = false;
-                    }
-                    if swaggen_ui_kit::danger_button(ui, !self.pending, "Close without saving")
-                        .clicked()
-                    {
-                        self.allow_close = true;
-                        ctx.send_viewport_cmd(egui::ViewportCommand::Close);
-                    }
+            egui::CentralPanel::default()
+                .frame(
+                    egui::Frame::new()
+                        .fill(swaggen_ui_kit::page_bg(ui))
+                        .inner_margin(48),
+                )
+                .show(ui, |ui| {
+                    ui.vertical_centered(|ui| {
+                        ui.set_max_width(520.0);
+                        swaggen_ui_kit::surface_card(ui, |ui| {
+                            swaggen_ui_kit::section(
+                                ui,
+                                "Keep your unsaved changes?",
+                                "Return to the workspace and save before closing, or discard unsaved edits.",
+                            );
+                            ui.horizontal(|ui| {
+                                if swaggen_ui_kit::primary_button(ui, true, "Return to workspace")
+                                    .clicked()
+                                {
+                                    self.close_dialog = false;
+                                }
+                                if swaggen_ui_kit::danger_button(
+                                    ui,
+                                    !self.pending,
+                                    "Close without saving",
+                                )
+                                .clicked()
+                                {
+                                    self.allow_close = true;
+                                    ctx.send_viewport_cmd(egui::ViewportCommand::Close);
+                                }
+                            });
+                        });
+                    });
                 });
-            });
+            return;
+        }
+
+        // Figma A01 / Welcome to Swaggen (Firebase Google + Email Sign-In).
+        if self.show_welcome {
+            views::welcome::show(self, ui);
             return;
         }
 
@@ -1001,152 +1090,213 @@ impl eframe::App for App {
             self.state.active_tab_id = self.state.open_tabs.first().map(|t| t.id.clone());
         }
 
-        // Top header bar.
-        egui::Panel::top("header").show(ui, |ui| {
-            ui.horizontal_wrapped(|ui| {
-                ui.heading(egui::RichText::new("Swaggen").color(Tokens::TEXT_BRAND));
-                ui.separator();
-                ui.label(format!(
-                    "{} ({})",
-                    self.state.meta.name,
-                    self.state.meta.id.as_str()
-                ));
-                if self.state.meta.archived {
-                    swaggen_ui_kit::status_badge(ui, NoticeKind::Warning, "Archived");
-                }
-                swaggen_ui_kit::status_badge(
-                    ui,
-                    NoticeKind::Info,
-                    "Offline local · 0 pending sync",
-                );
-                if swaggen_ui_kit::secondary_button(ui, true, swaggen_ui_kit::tr(self.locale, "Palette (Ctrl+K)", "Bảng lệnh (Ctrl+K)")).clicked() {
-                    self.show_command_palette = !self.show_command_palette;
-                }
-                if swaggen_ui_kit::secondary_button(
-                    ui,
-                    true,
-                    if self.theme == swaggen_ui_kit::UiTheme::Light {
-                        "Dark"
-                    } else {
-                        "Light"
-                    },
-                )
-                .clicked()
-                {
-                    self.theme = if self.theme == swaggen_ui_kit::UiTheme::Light {
-                        swaggen_ui_kit::UiTheme::Dark
-                    } else {
-                        swaggen_ui_kit::UiTheme::Light
-                    };
-                    swaggen_ui_kit::install_with_theme(&ctx, self.theme);
-                }
-                if swaggen_ui_kit::secondary_button(
-                    ui,
-                    true,
-                    if self.locale == swaggen_ui_kit::UiLocale::En {
-                        "VI"
-                    } else {
-                        "EN"
-                    },
-                )
-                .clicked()
-                {
-                    self.locale = if self.locale == swaggen_ui_kit::UiLocale::En {
-                        swaggen_ui_kit::UiLocale::Vi
-                    } else {
-                        swaggen_ui_kit::UiLocale::En
-                    };
-                }
-                if swaggen_ui_kit::secondary_button(ui, true, swaggen_ui_kit::tr(self.locale, "Workspaces", "Không gian"))
-                    .clicked()
-                {
-                    self.show_workspace_modal = !self.show_workspace_modal;
-                }
-                if swaggen_ui_kit::primary_button(
-                    ui,
-                    self.loaded && !self.pending && !self.recovery_needed,
-                    if self.dirty() {
-                        "Save (Ctrl+S)*"
-                    } else {
-                        "Save (Ctrl+S)"
-                    },
-                )
-                .clicked()
-                {
-                    self.save_workspace();
-                }
-            });
-        });
-
-        // Bottom status bar.
-        egui::Panel::bottom("status").show(ui, |ui| {
-            ui.horizontal_wrapped(|ui| {
-                if self.pending || self.inflight_execution_id.is_some() {
-                    ui.spinner();
-                }
-                if self.error {
-                    swaggen_ui_kit::status_badge(ui, NoticeKind::Danger, &self.status);
-                } else {
-                    ui.label(&self.status);
-                }
-                if self.dirty() {
-                    swaggen_ui_kit::status_badge(ui, NoticeKind::Warning, "Unsaved changes");
-                }
-                ui.label(
-                    egui::RichText::new(format!("Local revision {}", self.state.revision))
-                        .color(Tokens::TEXT_SECONDARY),
-                );
-            });
-            if self.recovery_needed {
-                ui.add_space(4.0);
-                swaggen_ui_kit::notice_banner(
-                    ui,
-                    NoticeKind::Warning,
-                    "Local recovery",
-                    "Editor state is preserved. Reopen verifies durable files without overwriting.",
-                );
-                ui.horizontal_wrapped(|ui| {
-                    if swaggen_ui_kit::primary_button(ui, !self.pending, "Retry local recovery")
-                        .clicked()
-                    {
-                        self.hide_secret();
-                        self.submit(Command::Reopen);
+        // 1. Full-width Figma Statusbar (28px height, single top 1px divider).
+        let status_bar_frame = egui::Frame::new()
+            .fill(swaggen_ui_kit::surface_bg(ui))
+            .stroke(egui::Stroke::NONE)
+            .inner_margin(egui::Margin::symmetric(20, 6));
+        egui::Panel::bottom("status")
+            .frame(status_bar_frame)
+            .show(ui, |ui| {
+                swaggen_ui_kit::paint_edge_divider(ui, ui.max_rect(), Edge::Top);
+                ui.horizontal(|ui| {
+                    if self.pending || self.inflight_execution_id.is_some() {
+                        ui.spinner();
                     }
-                    if !self.confirm_quarantine {
-                        if swaggen_ui_kit::danger_button(
-                            ui,
-                            !self.pending,
-                            "Quarantine corrupt journal…",
-                        )
-                        .clicked()
-                        {
-                            self.confirm_quarantine = true;
+                    let left_status = if let Some(prof) = self.server_profiles.active() {
+                        if self.error {
+                            self.status.clone()
+                        } else {
+                            let host = prof
+                                .base_url
+                                .strip_prefix("https://")
+                                .or_else(|| prof.base_url.strip_prefix("http://"))
+                                .unwrap_or(&prof.base_url);
+                            format!("{} · {host}", self.status)
                         }
                     } else {
-                        if swaggen_ui_kit::danger_button(
-                            ui,
-                            !self.pending,
-                            "Confirm quarantine & start clean",
-                        )
-                        .clicked()
+                        self.status.clone()
+                    };
+                    if self.error {
+                        ui.label(
+                            egui::RichText::new(left_status)
+                                .size(11.0)
+                                .color(Tokens::TEXT_DANGER),
+                        );
+                    } else {
+                        ui.label(
+                            egui::RichText::new(left_status)
+                                .size(11.0)
+                                .color(swaggen_ui_kit::text_primary(ui)),
+                        );
+                    }
+                    if self.dirty() {
+                        ui.label(
+                            egui::RichText::new(" · Unsaved draft")
+                                .size(11.0)
+                                .color(Tokens::TEXT_WARNING),
+                        );
+                    }
+                    ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                        ui.label(
+                            egui::RichText::new(format!(
+                                "Rev {}  /  Rust engine  /  UTF-8  /  Windows",
+                                self.state.revision
+                            ))
+                            .size(11.0)
+                            .color(swaggen_ui_kit::text_secondary(ui)),
+                        );
+                    });
+                });
+                if self.recovery_needed {
+                    ui.add_space(6.0);
+                    swaggen_ui_kit::notice_banner(
+                        ui,
+                        NoticeKind::Warning,
+                        "Local recovery",
+                        "Editor state is preserved. Reopen verifies durable files without overwriting.",
+                    );
+                    ui.horizontal_wrapped(|ui| {
+                        if swaggen_ui_kit::primary_button(ui, !self.pending, "Retry local recovery")
+                            .clicked()
                         {
                             self.hide_secret();
-                            self.submit(Command::QuarantineCorruptDraft);
+                            self.submit(Command::Reopen);
                         }
-                        if swaggen_ui_kit::secondary_button(ui, true, "Cancel").clicked() {
-                            self.confirm_quarantine = false;
+                        if !self.confirm_quarantine {
+                            if swaggen_ui_kit::danger_button(
+                                ui,
+                                !self.pending,
+                                "Quarantine corrupt journal…",
+                            )
+                            .clicked()
+                            {
+                                self.confirm_quarantine = true;
+                            }
+                        } else {
+                            if swaggen_ui_kit::danger_button(
+                                ui,
+                                !self.pending,
+                                "Confirm quarantine & start clean",
+                            )
+                            .clicked()
+                            {
+                                self.hide_secret();
+                                self.submit(Command::QuarantineCorruptDraft);
+                            }
+                            if swaggen_ui_kit::secondary_button(ui, true, "Cancel").clicked() {
+                                self.confirm_quarantine = false;
+                            }
                         }
-                    }
-                });
-            }
-        });
+                    });
+                }
+            });
 
-        // Left resizable sidebar.
+        // 2. Left 64px Figma Activity Rail (single right 1px divider).
+        let rail_frame = egui::Frame::new()
+            .fill(swaggen_ui_kit::surface_bg(ui))
+            .stroke(egui::Stroke::NONE)
+            .inner_margin(egui::Margin::symmetric(12, 16));
+        egui::Panel::left("activity_rail")
+            .exact_size(64.0)
+            .resizable(false)
+            .frame(rail_frame)
+            .show(ui, |ui| {
+                swaggen_ui_kit::paint_edge_divider(ui, ui.max_rect(), Edge::Right);
+                ui.vertical_centered(|ui| {
+                    swaggen_ui_kit::brand_mark(ui, 32.0);
+                    ui.add_space(16.0);
+                    for (mode, icon, tip) in [
+                        (
+                            MainMode::Workbench,
+                            IconKind::Blocks,
+                            "API Workbench (Ctrl+P)",
+                        ),
+                        (MainMode::Specs, IconKind::BookOpen, "API Definitions & Docs"),
+                        (
+                            MainMode::Runner,
+                            IconKind::Play,
+                            "Testing, Mocks & Protocols",
+                        ),
+                        (
+                            MainMode::TeamSync,
+                            IconKind::GitBranch,
+                            "Sync, Branches & Comments",
+                        ),
+                        (MainMode::Server, IconKind::Users, "Team Server & Accounts"),
+                        (
+                            MainMode::Environments,
+                            IconKind::Globe,
+                            "Environments & Variables",
+                        ),
+                        (
+                            MainMode::ImportExport,
+                            IconKind::Terminal,
+                            "Import, Export & Developer Tools",
+                        ),
+                        (
+                            MainMode::Storage,
+                            IconKind::Settings,
+                            "Settings, Privacy & Shortcuts",
+                        ),
+                    ] {
+                        let active = match mode {
+                            MainMode::Storage => matches!(
+                                self.mode,
+                                MainMode::Storage
+                                    | MainMode::Privacy
+                                    | MainMode::Shortcuts
+                                    | MainMode::Sanitizer
+                            ),
+                            MainMode::Environments => matches!(
+                                self.mode,
+                                MainMode::Environments
+                                    | MainMode::Secrets
+                                    | MainMode::Cookies
+                                    | MainMode::History
+                            ),
+                            _ => self.mode == mode,
+                        };
+                        if swaggen_ui_kit::rail_icon_button(ui, active, icon, tip).clicked() {
+                            self.hide_secret();
+                            self.mode = mode;
+                        }
+                        ui.add_space(8.0);
+                    }
+                    ui.with_layout(egui::Layout::bottom_up(egui::Align::Center), |ui| {
+                        let initials = self.user_initials();
+                        if swaggen_ui_kit::avatar_circle(ui, &initials, AvatarTone::Cream)
+                            .on_hover_text("Firebase account & sessions")
+                            .clicked()
+                        {
+                            self.hide_secret();
+                            if self
+                                .server_profiles
+                                .active()
+                                .is_none_or(|p| p.session_id.is_empty())
+                            {
+                                self.show_welcome = true;
+                            } else {
+                                self.mode = MainMode::Server;
+                            }
+                        }
+                    });
+                });
+            });
+
+        // 3. Left 248px Figma Project Sidebar (single right 1px divider).
+        let sidebar_frame = egui::Frame::new()
+            .fill(swaggen_ui_kit::surface_bg(ui))
+            .stroke(egui::Stroke::NONE)
+            .inner_margin(egui::Margin::symmetric(16, 18));
         let sidebar_resp = egui::Panel::left("sidebar")
             .resizable(true)
-            .default_size(self.state.layout.sidebar_width.clamp(210.0, 420.0))
-            .min_size(190.0)
+            .default_size(self.state.layout.sidebar_width.clamp(228.0, 340.0))
+            .min_size(220.0)
+            .max_size(360.0)
+            .frame(sidebar_frame)
             .show(ui, |ui| {
+                swaggen_ui_kit::paint_edge_divider(ui, ui.max_rect(), Edge::Right);
                 views::sidebar::show(self, ui);
             });
         let new_w = sidebar_resp.response.rect.width();
@@ -1154,52 +1304,176 @@ impl eframe::App for App {
             self.state.layout.sidebar_width = new_w;
         }
 
+        // 4. Right Workspace Header (64px height matching Figma Shell/Workspace header, single bottom 1px divider).
+        let header_frame = egui::Frame::new()
+            .fill(swaggen_ui_kit::surface_bg(ui))
+            .stroke(egui::Stroke::NONE)
+            .inner_margin(egui::Margin::symmetric(24, 14));
+        let signed_in = self
+            .server_profiles
+            .active()
+            .is_some_and(|p| !p.session_id.is_empty());
+        egui::Panel::top("workspace_header")
+            .frame(header_frame)
+            .show(ui, |ui| {
+                swaggen_ui_kit::paint_edge_divider(ui, ui.max_rect(), Edge::Bottom);
+                ui.horizontal(|ui| {
+                    ui.label(swaggen_ui_kit::bold_text(
+                        &self.screen_breadcrumb(),
+                        13.0,
+                        swaggen_ui_kit::text_primary(ui),
+                    ));
+                    if self.state.meta.archived {
+                        swaggen_ui_kit::pill_badge(ui, Tokens::TEXT_WARNING, "Archived");
+                    }
+
+                    ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                        if signed_in {
+                            let initials = self.user_initials();
+                            if swaggen_ui_kit::avatar_circle(ui, &initials, AvatarTone::Salmon)
+                                .on_hover_text("Signed-in Firebase account")
+                                .clicked()
+                            {
+                                self.mode = MainMode::Server;
+                                self.server_subtab = 3;
+                            }
+                        } else if swaggen_ui_kit::primary_button(ui, true, "Sign in").clicked() {
+                            self.show_welcome = true;
+                        }
+                        if swaggen_ui_kit::secondary_button(
+                            ui,
+                            self.loaded && !self.pending && !self.recovery_needed,
+                            if self.dirty() {
+                                "Save*"
+                            } else {
+                                "Save"
+                            },
+                        )
+                        .clicked()
+                        {
+                            self.save_workspace();
+                        }
+                        if swaggen_ui_kit::secondary_button(
+                            ui,
+                            true,
+                            swaggen_ui_kit::tr(self.locale, "Workspaces", "Không gian"),
+                        )
+                        .clicked()
+                        {
+                            self.show_workspace_modal = !self.show_workspace_modal;
+                        }
+                        if swaggen_ui_kit::secondary_button(
+                            ui,
+                            true,
+                            if self.locale == swaggen_ui_kit::UiLocale::En {
+                                "VI"
+                            } else {
+                                "EN"
+                            },
+                        )
+                        .clicked()
+                        {
+                            self.locale = if self.locale == swaggen_ui_kit::UiLocale::En {
+                                swaggen_ui_kit::UiLocale::Vi
+                            } else {
+                                swaggen_ui_kit::UiLocale::En
+                            };
+                        }
+                        if swaggen_ui_kit::secondary_button(
+                            ui,
+                            true,
+                            if self.theme == swaggen_ui_kit::UiTheme::Light {
+                                "Dark"
+                            } else {
+                                "Light"
+                            },
+                        )
+                        .clicked()
+                        {
+                            self.theme = if self.theme == swaggen_ui_kit::UiTheme::Light {
+                                swaggen_ui_kit::UiTheme::Dark
+                            } else {
+                                swaggen_ui_kit::UiTheme::Light
+                            };
+                            swaggen_ui_kit::install_with_theme(&ctx, self.theme);
+                        }
+                        let (sync_color, sync_label) = match self.server_profiles.active() {
+                            Some(p) if !p.session_id.is_empty() && p.mongo_ready => {
+                                (Tokens::STATUS_SUCCESS, "Synced")
+                            }
+                            Some(p) if p.mongo_ready => (Tokens::STATUS_SUCCESS, "Server OK"),
+                            Some(_) => (Tokens::STATUS_INFO, "Configured"),
+                            None => (swaggen_ui_kit::text_secondary(ui), "Local"),
+                        };
+                        swaggen_ui_kit::pill_badge(ui, sync_color, sync_label);
+                        let env_label = self
+                            .state
+                            .active_environment()
+                            .map(|e| e.name.as_str())
+                            .unwrap_or("No env");
+                        swaggen_ui_kit::pill_badge(
+                            ui,
+                            swaggen_ui_kit::text_primary(ui),
+                            env_label,
+                        );
+                    });
+                });
+            });
+
+        let main_frame = egui::Frame::new()
+            .fill(swaggen_ui_kit::page_bg(ui))
+            .inner_margin(egui::Margin::symmetric(24, 20));
+
         // Production request confirmation modal (R16 / EV07).
         if self.show_production_confirm {
-            egui::CentralPanel::default().show(ui, |ui| {
+            egui::CentralPanel::default().frame(main_frame).show(ui, |ui| {
                 views::panels::show_production_confirm(self, ui);
             });
             return;
         }
 
-        // Command Palette modal (UX04).
+        // Command Palette modal (UX04 / M03).
         if self.show_command_palette {
-            egui::CentralPanel::default().show(ui, |ui| {
+            egui::CentralPanel::default().frame(main_frame).show(ui, |ui| {
                 views::panels::show_command_palette(self, ui);
             });
             return;
         }
 
-        // Workspace management modal (WS01 / WS04 / WS08).
+        // Workspace management modal (WS01 / A08 / A09).
         if self.show_workspace_modal {
-            egui::CentralPanel::default().show(ui, |ui| {
+            egui::CentralPanel::default().frame(main_frame).show(ui, |ui| {
                 views::panels::show_workspace_manager(self, ui);
             });
             return;
         }
 
-        // Main central workspace or tool view.
-        egui::CentralPanel::default().show(ui, |ui| match self.mode {
-            MainMode::Workbench => {
-                views::request_pane::show(self, ui);
-                ui.add_space(6.0);
-                ui.separator();
-                ui.add_space(6.0);
-                views::response_pane::show(self, ui, &ctx);
-            }
-            MainMode::Runner => views::runner::show(self, ui, &ctx),
-            MainMode::Server => views::server::show(self, ui),
-            MainMode::TeamSync => views::sync::show(self, ui),
-            MainMode::Specs => views::specs::show(self, ui),
-            MainMode::ImportExport => views::import_export::show(self, ui, &ctx),
-            MainMode::Environments => views::panels::show_environments(self, ui),
-            MainMode::History => views::panels::show_history(self, ui),
-            MainMode::Cookies => views::panels::show_cookies(self, ui),
-            MainMode::Secrets => views::panels::show_secrets(self, ui),
-            MainMode::Sanitizer => views::panels::show_sanitizer(self, ui),
-            MainMode::Storage => views::panels::show_storage(self, ui),
-            MainMode::Privacy => views::panels::show_privacy(self, ui, &ctx),
-            MainMode::Shortcuts => views::panels::show_shortcuts(ui),
-        });
+        // 5. Main Central Workspace Canvas.
+        egui::CentralPanel::default()
+            .frame(main_frame)
+            .show(ui, |ui| match self.mode {
+                MainMode::Workbench => {
+                    egui::ScrollArea::vertical()
+                        .id_salt("workbench-scroll")
+                        .show(ui, |ui| {
+                            views::request_pane::show(self, ui);
+                            ui.add_space(14.0);
+                            views::response_pane::show(self, ui, &ctx);
+                        });
+                }
+                MainMode::Runner => views::runner::show(self, ui, &ctx),
+                MainMode::Server => views::server::show(self, ui),
+                MainMode::TeamSync => views::sync::show(self, ui),
+                MainMode::Specs => views::specs::show(self, ui),
+                MainMode::ImportExport => views::import_export::show(self, ui, &ctx),
+                MainMode::Environments => views::panels::show_environments(self, ui),
+                MainMode::History => views::panels::show_history(self, ui),
+                MainMode::Cookies => views::panels::show_cookies(self, ui),
+                MainMode::Secrets => views::panels::show_secrets(self, ui),
+                MainMode::Sanitizer => views::panels::show_sanitizer(self, ui),
+                MainMode::Storage => views::panels::show_storage(self, ui),
+                MainMode::Privacy => views::panels::show_privacy(self, ui, &ctx),
+                MainMode::Shortcuts => views::panels::show_shortcuts(ui),
+            });
     }
 }

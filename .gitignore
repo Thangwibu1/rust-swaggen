@@ -1,4 +1,6 @@
 /target/
+/dist/
+/result/
 /spikes/*/target/
 /spikes/*/target-software/
 /.local/

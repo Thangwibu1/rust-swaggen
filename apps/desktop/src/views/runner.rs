@@ -9,33 +9,44 @@ use swaggen_runner::{
 use swaggen_ui_kit::NoticeKind;
 
 pub fn show(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
-    swaggen_ui_kit::section(
+    let title = match app.runner_subtab {
+        0 => "Run a collection",
+        1 => "Mock servers",
+        2 => "GraphQL & SSE",
+        3 => "Developer utilities",
+        _ => "Script sandbox & extensions",
+    };
+    swaggen_ui_kit::page_header(
         ui,
-        "Runner, Mock Server, Protocols & Dev Tools (P08)",
-        "Execute collection runs with CSV/JSON datasets & JUnit reports, spin up local schema-seeded mocks, query GraphQL, listen to bounded SSE, and run offline codecs.",
+        title,
+        "Execute collection runs with CSV/JSON datasets, local schema-seeded mocks, GraphQL/SSE clients, and dev codecs.",
+        None,
+        false,
     );
 
     ui.horizontal_wrapped(|ui| {
         for (idx, lbl) in [
-            (0usize, "Collection Runner (TS02–06 / TS10)"),
-            (1, "Local Mock Server (MK01–02)"),
-            (2, "GraphQL & SSE (PR01 / PR04)"),
-            (3, "Dev Utilities (PR09)"),
-            (4, "Script Sandbox & Extensions (TS07 / TS08 / PR10)"),
+            (0usize, "Collection Runner"),
+            (1, "Mock Server"),
+            (2, "GraphQL & SSE"),
+            (3, "Dev Utilities"),
+            (4, "Sandbox & Extensions"),
         ] {
-            if ui.selectable_label(app.runner_subtab == idx, lbl).clicked() {
+            if swaggen_ui_kit::underline_tab(ui, app.runner_subtab == idx, lbl).clicked() {
                 app.runner_subtab = idx;
             }
         }
     });
-    ui.separator();
+    ui.add_space(10.0);
 
-    egui::ScrollArea::vertical().show(ui, |ui| match app.runner_subtab {
-        0 => show_collection_runner(app, ui, ctx),
-        1 => show_mock_server(app, ui),
-        2 => show_graphql_sse(app, ui),
-        3 => show_dev_utils(app, ui, ctx),
-        _ => show_sandbox_and_extensions(app, ui),
+    egui::ScrollArea::vertical().show(ui, |ui| {
+        swaggen_ui_kit::surface_card(ui, |ui| match app.runner_subtab {
+            0 => show_collection_runner(app, ui, ctx),
+            1 => show_mock_server(app, ui),
+            2 => show_graphql_sse(app, ui),
+            3 => show_dev_utils(app, ui, ctx),
+            _ => show_sandbox_and_extensions(app, ui),
+        });
     });
 }
 

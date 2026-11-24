@@ -7,3 +7,4 @@ pub mod server;
 pub mod sidebar;
 pub mod specs;
 pub mod sync;
+pub mod welcome;

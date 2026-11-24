@@ -11,63 +11,113 @@ use swaggen_domain::workspace::{
 use swaggen_ui_kit::{NoticeKind, Tokens};
 
 pub fn show(app: &mut App, ui: &mut egui::Ui) {
-    // 1. Multi-tab bar (UX02).
-    ui.horizontal_wrapped(|ui| {
-        let mut switch_tab: Option<String> = None;
-        let mut close_tab: Option<String> = None;
-        let mut toggle_pin: Option<String> = None;
-        for tab in &app.state.open_tabs {
-            let label = app
-                .state
-                .requests
-                .iter()
-                .find(|r| r.id == tab.request_id)
-                .map(|r| format!("{} {}", r.method.as_str(), r.name))
-                .unwrap_or_else(|| "Missing".into());
-            let active = app.state.active_tab_id.as_deref() == Some(tab.id.as_str());
-            let pin_tag = if tab.pinned { "[pin] " } else { "" };
-            if ui
-                .selectable_label(active, format!("{pin_tag}{label}"))
-                .clicked()
+    // 1. Clean open request tab strip (UX02).
+    if !app.state.open_tabs.is_empty() {
+        ui.horizontal_wrapped(|ui| {
+            let mut switch_tab: Option<String> = None;
+            let mut close_tab: Option<String> = None;
+            let mut toggle_pin: Option<String> = None;
+            for tab in &app.state.open_tabs {
+                let (method, name) = app
+                    .state
+                    .requests
+                    .iter()
+                    .find(|r| r.id == tab.request_id)
+                    .map(|r| (r.method.as_str(), r.name.clone()))
+                    .unwrap_or(("GET", "Missing".into()));
+                let active = app.state.active_tab_id.as_deref() == Some(tab.id.as_str());
+                let fill = if active {
+                    swaggen_ui_kit::selected_bg(ui)
+                } else {
+                    swaggen_ui_kit::surface_bg(ui)
+                };
+                egui::Frame::new()
+                    .fill(fill)
+                    .stroke(egui::Stroke::new(
+                        1.0,
+                        if active {
+                            Tokens::STATUS_INFO
+                        } else {
+                            swaggen_ui_kit::border_color(ui)
+                        },
+                    ))
+                    .corner_radius(6)
+                    .inner_margin(egui::Margin::symmetric(8, 4))
+                    .show(ui, |ui| {
+                        ui.horizontal(|ui| {
+                            ui.label(
+                                egui::RichText::new(method)
+                                    .monospace()
+                                    .size(11.0)
+                                    .color(swaggen_ui_kit::method_color(method)),
+                            );
+                            if ui
+                                .add(
+                                    egui::Button::new(
+                                        egui::RichText::new(&name)
+                                            .size(12.5)
+                                            .color(swaggen_ui_kit::text_primary(ui)),
+                                    )
+                                    .fill(egui::Color32::TRANSPARENT)
+                                    .stroke(egui::Stroke::NONE),
+                                )
+                                .clicked()
+                            {
+                                switch_tab = Some(tab.id.clone());
+                            }
+                            if ui
+                                .small_button(if tab.pinned { "*" } else { "·" })
+                                .on_hover_text(if tab.pinned { "Unpin tab" } else { "Pin tab" })
+                                .clicked()
+                            {
+                                toggle_pin = Some(tab.id.clone());
+                            }
+                            if !tab.pinned && ui.small_button("×").clicked() {
+                                close_tab = Some(tab.id.clone());
+                            }
+                        });
+                    });
+            }
+            if app.state.open_tabs.len() > 1
+                && ui.small_button("Close unpinned").clicked()
             {
-                switch_tab = Some(tab.id.clone());
+                app.state.close_unpinned_tabs();
+                app.mark_dirty();
             }
-            if ui
-                .small_button(if tab.pinned { "Unpin" } else { "Pin" })
-                .clicked()
+            if let Some(tid) = switch_tab {
+                app.state.active_tab_id = Some(tid);
+            }
+            if let Some(tid) = toggle_pin
+                && let Some(t) = app.state.open_tabs.iter_mut().find(|t| t.id == tid)
             {
-                toggle_pin = Some(tab.id.clone());
+                t.pinned = !t.pinned;
+                app.mark_dirty();
             }
-            if !tab.pinned && ui.small_button("x").clicked() {
-                close_tab = Some(tab.id.clone());
+            if let Some(tid) = close_tab {
+                app.state.open_tabs.retain(|t| t.id != tid);
+                if app.state.active_tab_id.as_deref() == Some(tid.as_str()) {
+                    app.state.active_tab_id = app.state.open_tabs.first().map(|t| t.id.clone());
+                }
+                app.mark_dirty();
             }
-            ui.separator();
-        }
-        if ui.small_button("Close unpinned").clicked() {
-            app.state.close_unpinned_tabs();
-            app.mark_dirty();
-        }
-        if let Some(tid) = switch_tab {
-            app.state.active_tab_id = Some(tid);
-        }
-        if let Some(tid) = toggle_pin
-            && let Some(t) = app.state.open_tabs.iter_mut().find(|t| t.id == tid)
-        {
-            t.pinned = !t.pinned;
-            app.mark_dirty();
-        }
-        if let Some(tid) = close_tab {
-            app.state.open_tabs.retain(|t| t.id != tid);
-            if app.state.active_tab_id.as_deref() == Some(tid.as_str()) {
-                app.state.active_tab_id = app.state.open_tabs.first().map(|t| t.id.clone());
-            }
-            app.mark_dirty();
-        }
-    });
-    ui.separator();
+        });
+        ui.add_space(10.0);
+    }
 
     let Some(req_id) = app.active_request_id() else {
-        ui.label("Select or create a request from the sidebar.");
+        swaggen_ui_kit::page_header(
+            ui,
+            "API Workbench",
+            "Select or create a request from the sidebar to inspect and test endpoints.",
+            None,
+            false,
+        );
+        swaggen_ui_kit::surface_card(ui, |ui| {
+            ui.label(
+                egui::RichText::new("No request tab open. Choose an endpoint on the left or press Ctrl+K.")
+                    .color(Tokens::TEXT_SECONDARY),
+            );
+        });
         return;
     };
 
@@ -75,6 +125,26 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
         ui.label("Selected request not found.");
         return;
     };
+
+    // Figma Page Title Header (R01 / List tasks).
+    let req_title = app.state.requests[req_idx].name.clone();
+    let col_title = app
+        .state
+        .collections
+        .iter()
+        .find(|c| c.id == app.state.requests[req_idx].collection_id)
+        .map(|c| c.name.as_str())
+        .unwrap_or("Collection")
+        .to_owned();
+    if swaggen_ui_kit::page_header(
+        ui,
+        &req_title,
+        &format!("{col_title} / {}", app.state.meta.name),
+        Some(if app.dirty() { "Save draft*" } else { "Save draft" }),
+        app.loaded && !app.pending && !app.recovery_needed,
+    ) {
+        app.save_workspace();
+    }
 
     // 2. Method + URL + Environment + Send/Cancel row (RQ01, RQ06, EV01, EV07).
     let mut changed = false;
@@ -84,15 +154,16 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
         .active_environment()
         .is_some_and(|e| e.is_production);
 
-    ui.horizontal_wrapped(|ui| {
+    ui.horizontal(|ui| {
         let mut method = app.state.requests[req_idx].method;
         egui::ComboBox::from_id_salt("req-method")
             .selected_text(
                 egui::RichText::new(method.as_str())
                     .color(swaggen_ui_kit::method_color(method.as_str()))
+                    .monospace()
                     .strong(),
             )
-            .width(95.0)
+            .width(88.0)
             .show_ui(ui, |ui| {
                 for m in HttpMethod::ALL {
                     if ui
@@ -100,6 +171,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                             &mut method,
                             m,
                             egui::RichText::new(m.as_str())
+                                .monospace()
                                 .color(swaggen_ui_kit::method_color(m.as_str())),
                         )
                         .changed()
@@ -110,14 +182,15 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
             });
         app.state.requests[req_idx].method = method;
 
-        let url_w = (ui.available_width() - 360.0).max(180.0);
-        if ui
-            .add(
-                egui::TextEdit::singleline(&mut app.state.requests[req_idx].url)
-                    .hint_text("https://api.example.test/v1/tasks")
-                    .desired_width(url_w),
-            )
-            .changed()
+        let url_w = (ui.available_width() - 320.0).max(200.0);
+        if swaggen_ui_kit::text_input(
+            ui,
+            &mut app.state.requests[req_idx].url,
+            "https://api.example.test/v1/tasks",
+            url_w,
+            false,
+        )
+        .changed()
         {
             changed = true;
         }
@@ -137,11 +210,11 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
         let env_color = if active_env_is_prod {
             Tokens::TEXT_DANGER
         } else {
-            Tokens::TEXT_BRAND
+            swaggen_ui_kit::text_primary(ui)
         };
         egui::ComboBox::from_id_salt("active-env")
             .selected_text(egui::RichText::new(env_label).color(env_color).strong())
-            .width(135.0)
+            .width(126.0)
             .show_ui(ui, |ui| {
                 if ui
                     .selectable_label(app.state.active_environment_id.is_none(), "No environment")
@@ -177,30 +250,34 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
             if swaggen_ui_kit::danger_button(ui, true, "Cancel").clicked() {
                 app.cancel_inflight();
             }
-        } else if swaggen_ui_kit::primary_button(ui, app.loaded, "Send (Ctrl+Enter)").clicked() {
+        } else if swaggen_ui_kit::primary_button(ui, app.loaded, "Send request")
+            .on_hover_text("Ctrl+Enter")
+            .clicked()
+        {
             app.send_active_request(false);
         }
     });
 
-    // Request title / tags / move / duplicate bar.
+    ui.add_space(6.0);
+    // Request title / tags / duplicate bar (clean muted metadata row).
     ui.horizontal_wrapped(|ui| {
-        ui.label("Name:");
+        ui.label(egui::RichText::new("Name").size(12.0).color(Tokens::TEXT_SECONDARY));
         if ui
             .add(
                 egui::TextEdit::singleline(&mut app.state.requests[req_idx].name)
-                    .desired_width(180.0),
+                    .desired_width(210.0),
             )
             .changed()
         {
             changed = true;
         }
         let mut tags_csv = app.state.requests[req_idx].tags.join(", ");
-        ui.label("Tags:");
+        ui.label(egui::RichText::new("Tags").size(12.0).color(Tokens::TEXT_SECONDARY));
         if ui
             .add(
                 egui::TextEdit::singleline(&mut tags_csv)
                     .hint_text("auth, v1")
-                    .desired_width(120.0),
+                    .desired_width(140.0),
             )
             .changed()
         {
@@ -218,11 +295,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
             changed = true;
         }
         if app.state.requests[req_idx].dirty_vs_shared {
-            swaggen_ui_kit::status_badge(
-                ui,
-                NoticeKind::Warning,
-                "Draft differs from shared (Q23)",
-            );
+            swaggen_ui_kit::pill_badge(ui, Tokens::TEXT_WARNING, "Draft differs from shared");
         }
     });
 
@@ -254,32 +327,32 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
         now_secs,
     );
 
-    // 3. Request sub-tabs.
+    // 3. Request sub-tabs (Figma underline tabs).
+    ui.add_space(6.0);
     ui.horizontal_wrapped(|ui| {
         for (tab, label) in [
             (RequestSubTab::Params, "Params"),
             (RequestSubTab::Headers, "Headers"),
             (RequestSubTab::Body, "Body"),
-            (RequestSubTab::Auth, "Auth"),
-            (RequestSubTab::Assertions, "Assertions (TS01)"),
+            (RequestSubTab::Auth, "Authorization"),
+            (RequestSubTab::Assertions, "Tests"),
             (RequestSubTab::Connection, "Connection"),
-            (RequestSubTab::Resolved, "Resolved preview"),
+            (RequestSubTab::Resolved, "Resolved"),
         ] {
-            if ui
-                .selectable_label(app.request_subtab == tab, label)
-                .clicked()
-            {
+            if swaggen_ui_kit::underline_tab(ui, app.request_subtab == tab, label).clicked() {
                 app.request_subtab = tab;
             }
         }
     });
-    ui.separator();
+    ui.add_space(6.0);
 
     let mut pending_oauth_cmd: Option<crate::worker::Command> = None;
-    egui::ScrollArea::vertical()
-        .id_salt("req-editor-scroll")
-        .max_height(210.0)
-        .show(ui, |ui| match app.request_subtab {
+    swaggen_ui_kit::surface_card(ui, |ui| {
+        swaggen_ui_kit::card_header(ui, "Request configuration");
+        egui::ScrollArea::vertical()
+            .id_salt("req-editor-scroll")
+            .max_height(260.0)
+            .show(ui, |ui| match app.request_subtab {
             RequestSubTab::Params => {
                 ui.label(egui::RichText::new("Effective URL preview (Q03)").strong());
                 swaggen_ui_kit::code_surface(ui, &resolved.masked_url);
@@ -1046,6 +1119,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                 swaggen_ui_kit::code_surface(ui, &snippet);
             }
         });
+    });
 
     if let Some(cmd) = pending_oauth_cmd {
         app.submit(cmd);
@@ -1061,16 +1135,24 @@ fn edit_kv_table(ui: &mut egui::Ui, id_salt: &str, rows: &mut Vec<KeyValueRow>) 
     let mut remove_idx = None;
     let mut swap: Option<(usize, usize)> = None;
     ui.push_id(id_salt, |ui| {
+        swaggen_ui_kit::table_header(
+            ui,
+            &[
+                ("NAME / OPERATION", 220.0),
+                ("VALUE / DETAILS", 340.0),
+                ("STATUS", 90.0),
+            ],
+        );
         for (i, row) in rows.iter_mut().enumerate() {
-            ui.horizontal(|ui| {
+            swaggen_ui_kit::table_row_frame(ui, |ui| {
                 if ui.checkbox(&mut row.enabled, "").changed() {
                     changed = true;
                 }
                 if ui
                     .add(
                         egui::TextEdit::singleline(&mut row.key)
-                            .hint_text("key")
-                            .desired_width(130.0),
+                            .hint_text("name")
+                            .desired_width(190.0),
                     )
                     .changed()
                 {
@@ -1080,16 +1162,16 @@ fn edit_kv_table(ui: &mut egui::Ui, id_salt: &str, rows: &mut Vec<KeyValueRow>) 
                     .add(
                         egui::TextEdit::singleline(&mut row.value)
                             .hint_text("value")
-                            .desired_width(210.0),
+                            .desired_width(320.0),
                     )
                     .changed()
                 {
                     changed = true;
                 }
-                if i > 0 && ui.small_button("Up").clicked() {
+                if i > 0 && ui.small_button("↑").on_hover_text("Move up").clicked() {
                     swap = Some((i, i - 1));
                 }
-                if ui.small_button("x").clicked() {
+                if ui.small_button("×").on_hover_text("Remove row").clicked() {
                     remove_idx = Some(i);
                 }
             });
@@ -1102,7 +1184,7 @@ fn edit_kv_table(ui: &mut egui::Ui, id_salt: &str, rows: &mut Vec<KeyValueRow>) 
             rows.remove(i);
             changed = true;
         }
-        if swaggen_ui_kit::secondary_button(ui, true, "+ Row").clicked() {
+        if swaggen_ui_kit::secondary_button(ui, true, "+ Add row").clicked() {
             rows.push(KeyValueRow::new("", ""));
             changed = true;
         }

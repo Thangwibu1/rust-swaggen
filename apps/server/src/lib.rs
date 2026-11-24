@@ -1,12 +1,14 @@
 #![recursion_limit = "256"]
-//! P04 Swaggen collaboration server: Axum transport, internal auth, workspace RBAC, and MongoDB transactions.
+//! P04 Swaggen collaboration server: Axum transport, Firebase & internal auth, workspace RBAC, and MongoDB transactions.
+pub mod firebase_auth;
+use crate::firebase_auth::{FirebaseAuthConfig, FirebaseVerifier, render_browser_signin_html};
 use axum::{
     Extension, Json, Router,
     body::Body,
     extract::{DefaultBodyLimit, OriginalUri, Path, Query, Request, State},
     http::{HeaderName, HeaderValue, Method, StatusCode, header::AUTHORIZATION},
     middleware::{self, Next},
-    response::{IntoResponse, Response},
+    response::{Html, IntoResponse, Response},
     routing::{delete, get, post},
 };
 use serde::Deserialize;
@@ -22,7 +24,7 @@ use swaggen_api_contract::{
     API_VERSION, AcceptInvitationRequest, BootstrapOwnerRequest, BranchSummary, Capabilities,
     ChangePasswordRequest, CommentListResponse, CreateBranchRequest, CreateCommentRequest,
     CreateInvitationRequest, CreateTeamMockRequest, CreateWorkspaceRequest, ErrorEnvelope,
-    LoginRequest, MarkNotificationsReadRequest, MergeRequestRecord, OpenMergeRequest,
+    FirebaseLoginRequest, LoginRequest, MarkNotificationsReadRequest, MergeRequestRecord, OpenMergeRequest,
     PresenceEntry, PresenceHeartbeatRequest, PresenceListResponse, PublishBatchRequest,
     ReplyCommentRequest, ResolveCommentRequest, RestoreRevisionRequest, RevisionListResponse, Role,
     ServiceStatus, SsrfCheckRequest, SsrfCheckResponse, TeamMockListResponse, TeamMockRoute,
@@ -76,6 +78,7 @@ pub struct VaultEntry {
 #[derive(Clone)]
 pub struct AppState {
     pub store: Arc<ServerStore>,
+    pub firebase: Option<Arc<FirebaseVerifier>>,
     pub max_body_bytes: usize,
     pub event_bus: broadcast::Sender<(String, i64)>,
     pub mock_routes: Arc<Mutex<BTreeMap<(String, String), TeamMockRoute>>>,
@@ -191,17 +194,116 @@ async fn ready(State(state): State<AppState>) -> (StatusCode, Json<ServiceStatus
 async fn capabilities(State(state): State<AppState>) -> Json<Capabilities> {
     let mongo_ready = state.store.check_ready().await.is_ok();
     let bootstrap_required = state.store.bootstrap_required().await.unwrap_or(false);
+    let mut auth_modes = Vec::new();
+    let (firebase_project_id, firebase_web_api_key, firebase_auth_domain) =
+        if let Some(ref fb) = state.firebase {
+            auth_modes.push("firebase".to_owned());
+            let c = fb.config();
+            (
+                Some(c.project_id.clone()),
+                c.web_api_key.clone(),
+                Some(c.auth_domain.clone()),
+            )
+        } else {
+            (None, None, None)
+        };
+    auth_modes.push("internal".to_owned());
     Json(Capabilities {
         api_version: API_VERSION,
         server_version: env!("CARGO_PKG_VERSION").to_owned(),
         min_desktop_api_version: API_VERSION,
         collaboration_enabled: mongo_ready,
-        auth_modes: vec!["internal".to_owned()],
+        auth_modes,
         bootstrap_required,
         mongo_ready,
         migration_version: SCHEMA_MIGRATION_VERSION as u32,
         max_body_bytes: state.max_body_bytes,
+        firebase_project_id,
+        firebase_web_api_key,
+        firebase_auth_domain,
     })
+}
+
+#[derive(Deserialize)]
+struct FirebaseBrowserQuery {
+    port: u16,
+    state: String,
+}
+
+async fn firebase_browser_signin(
+    State(state): State<AppState>,
+    Extension(RequestCorrelationId(corr)): Extension<RequestCorrelationId>,
+    Query(q): Query<FirebaseBrowserQuery>,
+) -> Result<Html<String>, (StatusCode, Json<ErrorEnvelope>)> {
+    let Some(ref fb) = state.firebase else {
+        return Err((
+            StatusCode::SERVICE_UNAVAILABLE,
+            Json(ErrorEnvelope::new(
+                "firebase_not_configured",
+                "Firebase authentication is not configured on this server (set SWAGGEN_FIREBASE_PROJECT_ID and SWAGGEN_FIREBASE_WEB_API_KEY).",
+                &corr,
+                false,
+            )),
+        ));
+    };
+    let html = render_browser_signin_html(fb.config(), q.port, &q.state).map_err(|msg| {
+        (
+            StatusCode::BAD_REQUEST,
+            Json(ErrorEnvelope::new("invalid_request", &msg, &corr, false)),
+        )
+    })?;
+    Ok(Html(html))
+}
+
+async fn firebase_login(
+    State(state): State<AppState>,
+    Extension(RequestCorrelationId(corr)): Extension<RequestCorrelationId>,
+    Json(req): Json<FirebaseLoginRequest>,
+) -> Result<Response, (StatusCode, Json<ErrorEnvelope>)> {
+    let Some(ref fb) = state.firebase else {
+        return Err((
+            StatusCode::SERVICE_UNAVAILABLE,
+            Json(ErrorEnvelope::new(
+                "firebase_not_configured",
+                "Firebase authentication is not enabled on this server (set SWAGGEN_FIREBASE_PROJECT_ID).",
+                &corr,
+                false,
+            )),
+        ));
+    };
+    let now = now_unix();
+    let claims = fb
+        .verify_id_token(&req.id_token, now)
+        .await
+        .map_err(|msg| {
+            (
+                StatusCode::UNAUTHORIZED,
+                Json(ErrorEnvelope::new("firebase_token_invalid", &msg, &corr, false)),
+            )
+        })?;
+    let display_name = req
+        .display_name
+        .as_deref()
+        .filter(|s| !s.trim().is_empty())
+        .unwrap_or(&claims.display_name);
+    let device_name = if req.device_name.trim().is_empty() {
+        "Swaggen Desktop".to_owned()
+    } else {
+        req.device_name
+    };
+    let auth = state
+        .store
+        .firebase_login(
+            &claims.uid,
+            &claims.email,
+            display_name,
+            &device_name,
+            req.bootstrap_token.as_deref(),
+            now,
+        )
+        .await
+        .map_err(|e| map_err(&corr, e))?;
+    Ok((StatusCode::OK, Json(auth)).into_response())
 }
 
 async fn health_metrics(State(state): State<AppState>) -> Json<serde_json::Value> {
@@ -1657,8 +1759,10 @@ async fn not_found(request: Request<Body>) -> (StatusCode, Json<ErrorEnvelope>) 
 
 pub fn router(store: Arc<ServerStore>) -> Router {
     let (event_bus, _) = broadcast::channel(256);
+    let firebase = FirebaseAuthConfig::from_env().map(|cfg| Arc::new(FirebaseVerifier::new(cfg)));
     let state = AppState {
         store,
+        firebase,
         max_body_bytes: DEFAULT_MAX_BODY_BYTES,
         event_bus,
         mock_routes: Arc::new(Mutex::new(BTreeMap::new())),
@@ -1679,6 +1783,8 @@ pub fn router(store: Arc<ServerStore>) -> Router {
         .route("/v1/capabilities", get(capabilities))
         .route("/v1/auth/bootstrap-owner", post(bootstrap_owner))
         .route("/v1/auth/login", post(login))
+        .route("/v1/auth/firebase", post(firebase_login))
+        .route("/v1/auth/firebase/browser", get(firebase_browser_signin))
         .route("/v1/auth/logout", post(logout))
         .route("/v1/auth/logout-all", post(logout_all))
         .route("/v1/auth/change-password", post(change_password))
@@ -1787,6 +1893,8 @@ pub fn build_server_openapi_json() -> serde_json::Value {
             "/v1/health/ready": { "get": { "summary": "Readiness probe including DB topology" } },
             "/v1/capabilities": { "get": { "summary": "Server capabilities and protocol version" } },
             "/v1/auth/bootstrap-owner": { "post": { "summary": "One-time first owner setup" } },
+            "/v1/auth/firebase": { "post": { "summary": "Verify Firebase ID token (Google or Email/Password) and issue Swaggen session" } },
+            "/v1/auth/firebase/browser": { "get": { "summary": "Browser-based Firebase Sign-In page for desktop loopback handoff" } },
             "/v1/auth/login": { "post": { "summary": "Rate-limited internal password login" } },
             "/v1/auth/logout": { "post": { "summary": "Revoke current device session" } },
             "/v1/auth/logout-all": { "post": { "summary": "Revoke all sessions for current user" } },

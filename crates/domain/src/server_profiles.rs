@@ -35,6 +35,12 @@ pub struct ServerProfile {
     pub bootstrap_required: bool,
     #[serde(default)]
     pub mongo_ready: bool,
+    #[serde(default)]
+    pub firebase_project_id: Option<String>,
+    #[serde(default)]
+    pub firebase_web_api_key: Option<String>,
+    #[serde(default)]
+    pub firebase_auth_domain: Option<String>,
 }
 
 fn default_min_api() -> u32 {
@@ -42,6 +48,36 @@ fn default_min_api() -> u32 {
 }
 
 impl ServerProfile {
+    pub fn new(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        base_url: impl Into<String>,
+        allow_self_signed_tls: bool,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            base_url: base_url.into(),
+            allow_self_signed_tls,
+            expected_min_api_version: 1,
+            email: String::new(),
+            user_id: String::new(),
+            display_name: String::new(),
+            session_id: String::new(),
+            session_expires_unix: 0,
+            last_checked_unix: 0,
+            last_server_version: String::new(),
+            last_latency_ms: None,
+            last_tls_status: String::new(),
+            last_error: String::new(),
+            bootstrap_required: false,
+            mongo_ready: false,
+            firebase_project_id: None,
+            firebase_web_api_key: None,
+            firebase_auth_domain: None,
+        }
+    }
+
     pub fn secret_key_id(&self) -> Result<LocalId, Error> {
         let cleaned: String = self
             .id

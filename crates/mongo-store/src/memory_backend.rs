@@ -84,6 +84,7 @@ struct AppliedOpRec {
 struct State {
     users_by_id: HashMap<String, UserRec>,
     user_id_by_email: HashMap<String, String>,
+    user_id_by_firebase_uid: HashMap<String, String>,
     sessions_by_id: HashMap<String, SessionRec>,
     session_id_by_hash: HashMap<String, String>,
     workspaces_by_id: HashMap<String, WorkspaceRec>,
@@ -317,6 +318,91 @@ impl WorkspaceRepository for InMemoryStore {
             "auth.login",
             &session_id,
             "Internal account session created",
+            now,
+        );
+        Ok(AuthResponse {
+            api_version: API_VERSION,
+            user: Self::user_profile(&user),
+            session_id,
+            session_token: token,
+            expires_at_unix: expires,
+        })
+    }
+
+    async fn firebase_login(
+        &self,
+        firebase_uid: &str,
+        email: &str,
+        display_name: &str,
+        device_name: &str,
+        bootstrap_token: Option<&str>,
+        now: i64,
+    ) -> Result<AuthResponse, StoreError> {
+        let uid = firebase_uid.trim();
+        if uid.is_empty() || uid.len() > 128 {
+            return Err(StoreError::Unauthorized("Invalid Firebase UID".into()));
+        }
+        let email = normalize_email(email)?;
+        let clean_name = if display_name.trim().is_empty() {
+            email.split('@').next().unwrap_or("User").to_owned()
+        } else {
+            display_name.trim().chars().take(80).collect()
+        };
+
+        let mut guard = self.state.lock().map_err(|_| StoreError::InternalSafe)?;
+        let existing_id = guard
+            .user_id_by_firebase_uid
+            .get(uid)
+            .cloned()
+            .or_else(|| guard.user_id_by_email.get(&email).cloned());
+
+        let (user, action) = if let Some(user_id) = existing_id {
+            guard
+                .user_id_by_firebase_uid
+                .insert(uid.to_owned(), user_id.clone());
+            let u = guard
+                .users_by_id
+                .get(&user_id)
+                .cloned()
+                .ok_or(StoreError::InternalSafe)?;
+            (u, "auth.firebase_login")
+        } else {
+            let is_first = guard.users_by_id.is_empty();
+            if is_first
+                && let Some(expected) = &self.bootstrap_secret
+                && bootstrap_token != Some(expected.as_str())
+            {
+                return Err(StoreError::Unauthorized(
+                    "Invalid bootstrap setup token".into(),
+                ));
+            }
+            let user_id = Uuid::new_v4().to_string();
+            let rec = UserRec {
+                user_id: user_id.clone(),
+                email_normalized: email.clone(),
+                display_name: clean_name,
+                password_hash: "!firebase-only!".to_owned(),
+                is_server_owner: is_first,
+                created_at_unix: now,
+            };
+            guard.user_id_by_email.insert(email.clone(), user_id.clone());
+            guard
+                .user_id_by_firebase_uid
+                .insert(uid.to_owned(), user_id.clone());
+            guard.users_by_id.insert(user_id, rec.clone());
+            (rec, "auth.firebase_register")
+        };
+
+        let (session_id, token, expires) =
+            Self::issue_session(&mut guard, &user.user_id, device_name, now);
+        Self::record_audit(
+            &mut guard,
+            None,
+            &user.user_id,
+            &user.email_normalized,
+            action,
+            &session_id,
+            "Firebase verified session created",
             now,
         );
         Ok(AuthResponse {

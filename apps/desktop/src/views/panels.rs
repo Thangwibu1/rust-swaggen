@@ -43,48 +43,121 @@ pub fn show_production_confirm(app: &mut App, ui: &mut egui::Ui) {
     });
 }
 
-pub fn show_workspace_manager(app: &mut App, ui: &mut egui::Ui) {
-    swaggen_ui_kit::section(
-        ui,
-        "Workspaces & Project Defaults (WS01 / WS04 / WS08)",
-        "Switch between offline personal workspaces or configure project defaults.",
-    );
-    ui.horizontal(|ui| {
-        if swaggen_ui_kit::secondary_button(ui, true, "Close").clicked() {
-            app.show_workspace_modal = false;
+fn show_env_group_tabs(app: &mut App, ui: &mut egui::Ui) {
+    ui.horizontal_wrapped(|ui| {
+        for (mode, label) in [
+            (MainMode::Environments, "Environments"),
+            (MainMode::Secrets, "Personal secrets"),
+            (MainMode::Cookies, "Cookies"),
+            (MainMode::History, "History"),
+        ] {
+            if swaggen_ui_kit::underline_tab(ui, app.mode == mode, label).clicked() {
+                app.hide_secret();
+                app.mode = mode;
+            }
         }
     });
-    ui.add_space(6.0);
+    ui.add_space(10.0);
+}
+
+fn show_settings_group_tabs(app: &mut App, ui: &mut egui::Ui) {
+    ui.horizontal_wrapped(|ui| {
+        for (mode, label) in [
+            (MainMode::Storage, "Storage & retention"),
+            (MainMode::Privacy, "Privacy & updates"),
+            (MainMode::Sanitizer, "Secret sanitizer"),
+            (MainMode::Shortcuts, "Keyboard shortcuts"),
+        ] {
+            if swaggen_ui_kit::underline_tab(ui, app.mode == mode, label).clicked() {
+                app.hide_secret();
+                app.mode = mode;
+            }
+        }
+    });
+    ui.add_space(10.0);
+}
+
+pub fn show_workspace_manager(app: &mut App, ui: &mut egui::Ui) {
+    if swaggen_ui_kit::page_header(
+        ui,
+        "Your workspaces",
+        &format!("{} / Workspace management & defaults", app.state.meta.name),
+        Some("Close"),
+        true,
+    ) {
+        app.show_workspace_modal = false;
+    }
     egui::ScrollArea::vertical().show(ui, |ui| {
-        swaggen_ui_kit::surface_card(ui, |ui| {
-            ui.heading("Available local workspaces");
-            ui.horizontal_wrapped(|ui| {
-                for ws_id in app.available_workspaces.clone() {
-                    let active = ws_id == app.workspace_id;
-                    if ui.selectable_label(active, ws_id.as_str()).clicked() && !active {
-                        app.submit(Command::SwitchWorkspace { id: ws_id });
+        let workspaces = app.available_workspaces.clone();
+        ui.columns(3.min(workspaces.len().max(1)), |cols| {
+            for (idx, ws_id) in workspaces.iter().enumerate() {
+                let col_idx = idx % cols.len();
+                let active = *ws_id == app.workspace_id;
+                swaggen_ui_kit::surface_card(&mut cols[col_idx], |ui| {
+                    ui.horizontal(|ui| {
+                        ui.label(
+                            egui::RichText::new(ws_id.as_str())
+                                .size(14.5)
+                                .strong()
+                                .color(Tokens::TEXT_PRIMARY),
+                        );
+                        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                            if active {
+                                swaggen_ui_kit::pill_badge(ui, Tokens::STATUS_SUCCESS, "Active");
+                            } else {
+                                swaggen_ui_kit::pill_badge(ui, Tokens::TEXT_SECONDARY, "Personal");
+                            }
+                        });
+                    });
+                    ui.add_space(6.0);
+                    if active {
+                        ui.label(
+                            egui::RichText::new(format!(
+                                "{} requests · {} collections",
+                                app.state.requests.len(),
+                                app.state.collections.len()
+                            ))
+                            .size(12.0)
+                            .color(Tokens::TEXT_SECONDARY),
+                        );
+                    } else {
+                        ui.label(
+                            egui::RichText::new("Local personal workspace")
+                                .size(12.0)
+                                .color(Tokens::TEXT_SECONDARY),
+                        );
+                    }
+                    ui.add_space(8.0);
+                    if swaggen_ui_kit::secondary_button(ui, !active, if active { "Current workspace" } else { "Open workspace" })
+                        .clicked()
+                    {
+                        app.submit(Command::SwitchWorkspace { id: ws_id.clone() });
                         app.show_workspace_modal = false;
                     }
-                }
-            });
-            ui.separator();
-            ui.label("Create new personal workspace (lowercase id):");
+                });
+                cols[col_idx].add_space(8.0);
+            }
+        });
+
+        ui.add_space(10.0);
+        swaggen_ui_kit::surface_card(ui, |ui| {
+            swaggen_ui_kit::card_header(ui, "Create a workspace");
             ui.horizontal(|ui| {
                 ui.add(
                     egui::TextEdit::singleline(&mut app.new_workspace_id)
-                        .hint_text("workspace-id")
-                        .desired_width(140.0),
+                        .hint_text("workspace-id (lowercase)")
+                        .desired_width(180.0),
                 );
                 ui.add(
                     egui::TextEdit::singleline(&mut app.new_workspace_name)
                         .hint_text("Display Name")
-                        .desired_width(180.0),
+                        .desired_width(240.0),
                 );
                 let parsed = LocalId::parse(app.new_workspace_id.trim());
                 if swaggen_ui_kit::primary_button(
                     ui,
                     parsed.is_ok() && !app.new_workspace_name.trim().is_empty(),
-                    "Create",
+                    "Create workspace",
                 )
                 .clicked()
                     && let Ok(id) = parsed
@@ -101,50 +174,65 @@ pub fn show_workspace_manager(app: &mut App, ui: &mut egui::Ui) {
             });
         });
 
-        ui.add_space(8.0);
+        ui.add_space(10.0);
         swaggen_ui_kit::surface_card(ui, |ui| {
-            ui.heading("Current workspace settings & defaults (WS04 / WS08)");
+            swaggen_ui_kit::card_header(ui, "Workspace settings");
             let mut changed = false;
-            ui.horizontal(|ui| {
-                ui.label("Name:");
-                if ui.text_edit_singleline(&mut app.state.meta.name).changed() {
-                    changed = true;
-                }
+            swaggen_ui_kit::config_field_row(ui, "Workspace name", "Shown in sidebar and headers", |ui| {
+                ui.horizontal(|ui| {
+                    if ui
+                        .add(egui::TextEdit::singleline(&mut app.state.meta.name).desired_width(260.0))
+                        .changed()
+                    {
+                        changed = true;
+                    }
+                    if ui.checkbox(&mut app.state.meta.archived, "Archived").changed() {
+                        changed = true;
+                    }
+                });
+            });
+            swaggen_ui_kit::config_field_row(ui, "Description", "Team or project summary", |ui| {
                 if ui
-                    .checkbox(&mut app.state.meta.archived, "Archived (W07)")
+                    .add(egui::TextEdit::singleline(&mut app.state.meta.description).desired_width(360.0))
                     .changed()
                 {
                     changed = true;
                 }
             });
-            ui.label("Description:");
-            if ui
-                .text_edit_multiline(&mut app.state.meta.description)
-                .changed()
-            {
-                changed = true;
-            }
-            ui.label("Default API Base URL:");
-            if ui
-                .text_edit_singleline(&mut app.state.meta.defaults.default_base_url)
-                .changed()
-            {
-                changed = true;
-            }
-            ui.label("Naming convention:");
-            if ui
-                .text_edit_singleline(&mut app.state.meta.defaults.naming_convention)
-                .changed()
-            {
-                changed = true;
-            }
-            ui.label("Onboarding guide:");
-            if ui
-                .text_edit_multiline(&mut app.state.meta.defaults.onboarding_guide)
-                .changed()
-            {
-                changed = true;
-            }
+            swaggen_ui_kit::config_field_row(ui, "Default API Base URL", "Workspace fallback {{base_url}}", |ui| {
+                if ui
+                    .add(
+                        egui::TextEdit::singleline(&mut app.state.meta.defaults.default_base_url)
+                            .desired_width(360.0),
+                    )
+                    .changed()
+                {
+                    changed = true;
+                }
+            });
+            swaggen_ui_kit::config_field_row(ui, "Naming convention", "Endpoint & schema lint guideline", |ui| {
+                if ui
+                    .add(
+                        egui::TextEdit::singleline(&mut app.state.meta.defaults.naming_convention)
+                            .desired_width(360.0),
+                    )
+                    .changed()
+                {
+                    changed = true;
+                }
+            });
+            swaggen_ui_kit::config_field_row(ui, "Onboarding guide", "Notes shown to teammates", |ui| {
+                if ui
+                    .add(
+                        egui::TextEdit::multiline(&mut app.state.meta.defaults.onboarding_guide)
+                            .desired_width(360.0)
+                            .desired_rows(2),
+                    )
+                    .changed()
+                {
+                    changed = true;
+                }
+            });
             if changed {
                 app.mark_dirty();
             }
@@ -153,11 +241,14 @@ pub fn show_workspace_manager(app: &mut App, ui: &mut egui::Ui) {
 }
 
 pub fn show_environments(app: &mut App, ui: &mut egui::Ui) {
-    swaggen_ui_kit::section(
+    swaggen_ui_kit::page_header(
         ui,
-        "Environments & Variable Inspector (EV01–EV07 / E01 / V01 / V02)",
+        "Environments",
         "4-level precedence: Request > Environment (Personal override > Shared) > Collection > Workspace.",
+        None,
+        false,
     );
+    show_env_group_tabs(app, ui);
     let mut changed = false;
     ui.horizontal_wrapped(|ui| {
         for (idx, env) in app.state.environments.iter().enumerate() {
@@ -361,11 +452,14 @@ pub fn show_environments(app: &mut App, ui: &mut egui::Ui) {
 }
 
 pub fn show_history(app: &mut App, ui: &mut egui::Ui) {
-    swaggen_ui_kit::section(
+    swaggen_ui_kit::page_header(
         ui,
-        "Local Request History (RS07 / R14 / Q30)",
-        "Stored locally on this machine. Open a past run as a new draft without altering shared templates.",
+        "Request history",
+        "Stored locally on this machine. Open any past run as a new draft without altering shared templates.",
+        None,
+        false,
     );
+    show_env_group_tabs(app, ui);
     ui.horizontal_wrapped(|ui| {
         ui.label("Filter:");
         ui.text_edit_singleline(&mut app.history_filter);
@@ -432,11 +526,14 @@ pub fn show_history(app: &mut App, ui: &mut egui::Ui) {
 }
 
 pub fn show_cookies(app: &mut App, ui: &mut egui::Ui) {
-    swaggen_ui_kit::section(
+    swaggen_ui_kit::page_header(
         ui,
-        "Workspace Cookie Jar (AU04 / R12 / H11)",
-        "Cookies are stored locally per workspace and automatically matched by domain, path and HTTPS flag.",
+        "Workspace cookies",
+        "Cookies are stored locally per workspace and matched automatically by domain, path and HTTPS flag.",
+        None,
+        false,
     );
+    show_env_group_tabs(app, ui);
     ui.horizontal_wrapped(|ui| {
         ui.add(
             egui::TextEdit::singleline(&mut app.cookie_domain)
@@ -503,11 +600,14 @@ pub fn show_cookies(app: &mut App, ui: &mut egui::Ui) {
 }
 
 pub fn show_secrets(app: &mut App, ui: &mut egui::Ui) {
-    swaggen_ui_kit::section(
+    swaggen_ui_kit::page_header(
         ui,
-        "Personal secrets (E03 / V09)",
-        "Protected for your Windows account via DPAPI. Values stay on this computer.",
+        "Personal secrets",
+        "Protected for your Windows account via DPAPI. Values stay strictly on this computer.",
+        None,
+        false,
     );
+    show_env_group_tabs(app, ui);
     swaggen_ui_kit::surface_card(ui, |ui| {
         ui.label(
             egui::RichText::new(format!(
@@ -616,11 +716,14 @@ pub fn show_secrets(app: &mut App, ui: &mut egui::Ui) {
 }
 
 pub fn show_sanitizer(app: &mut App, ui: &mut egui::Ui) {
-    swaggen_ui_kit::section(
+    swaggen_ui_kit::page_header(
         ui,
-        "Sanitizer & privacy-safe content (SC02 / SC05 / Z15)",
+        "Sanitizer & privacy-safe preview",
         "Preview automatic secret redaction before export and inspect untrusted markup safely.",
+        None,
+        false,
     );
+    show_settings_group_tabs(app, ui);
     egui::ScrollArea::vertical().show(ui, |ui| {
         swaggen_ui_kit::surface_card(ui, |ui| {
             ui.heading("1. Secret redaction preview (SC02)");
@@ -670,11 +773,14 @@ pub fn show_sanitizer(app: &mut App, ui: &mut egui::Ui) {
 }
 
 pub fn show_storage(app: &mut App, ui: &mut egui::Ui) {
-    swaggen_ui_kit::section(
+    swaggen_ui_kit::page_header(
         ui,
-        "Local storage, retention & folder migration (UX10 / S05 / Z08 / Z20)",
+        "Storage & retention",
         "Inspect disk usage, clean cache/history without deleting collections or secrets, and export sanitized JSON.",
+        None,
+        false,
     );
+    show_settings_group_tabs(app, ui);
     swaggen_ui_kit::surface_card(ui, |ui| {
         ui.label(format!(
             "Workspace journal: {} bytes",
@@ -748,11 +854,14 @@ pub fn show_storage(app: &mut App, ui: &mut egui::Ui) {
 }
 
 pub fn show_privacy(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
-    swaggen_ui_kit::section(
+    swaggen_ui_kit::page_header(
         ui,
-        "Privacy & permissions (S06 / Z07)",
+        "Privacy & diagnostics",
         "Analytics and automatic crash reporting are disabled. Only typed local commands are permitted.",
+        None,
+        false,
     );
+    show_settings_group_tabs(app, ui);
     egui::ScrollArea::vertical().show(ui, |ui| {
         swaggen_ui_kit::surface_card(ui, |ui| {
             ui.label(format!(
@@ -884,63 +993,99 @@ pub fn show_privacy(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
 }
 
 pub fn show_command_palette(app: &mut App, ui: &mut egui::Ui) {
-    swaggen_ui_kit::section(
-        ui,
-        swaggen_ui_kit::tr(app.locale, "Command Palette (Ctrl+K)", "Bảng lệnh (Ctrl+K)"),
-        "Jump directly to any workspace request, OpenAPI spec, tool view, or action. Escape closes.",
-    );
-    ui.horizontal(|ui| {
-        ui.add(
-            egui::TextEdit::singleline(&mut app.command_palette_query)
-                .hint_text("Filter requests, specs, modes…")
-                .desired_width(320.0),
-        );
-        if swaggen_ui_kit::secondary_button(ui, true, "Close (Esc)").clicked() {
-            app.show_command_palette = false;
-        }
-    });
-    ui.separator();
-    let q = app.command_palette_query.trim().to_ascii_lowercase();
-    egui::ScrollArea::vertical().show(ui, |ui| {
-        for (mode, label) in [
-            (MainMode::Workbench, "Open Workbench"),
-            (MainMode::Runner, "Open Collection Runner & Mock Server"),
-            (MainMode::Server, "Open Team Server & Auth"),
-            (MainMode::TeamSync, "Open Team Sync & Collaboration"),
-            (MainMode::Specs, "Open OpenAPI & Docs"),
-            (MainMode::ImportExport, "Open Import / Export"),
-            (MainMode::Privacy, "Open Privacy, Diagnostics, Updates & Links"),
-        ] {
-            if (q.is_empty() || label.to_ascii_lowercase().contains(&q))
-                && swaggen_ui_kit::secondary_button(ui, true, label).clicked()
-            {
-                app.mode = mode;
-                app.show_command_palette = false;
-            }
-        }
-        ui.separator();
-        let reqs: Vec<(String, String, String)> = app
-            .state
-            .requests
-            .iter()
-            .filter(|r| q.is_empty() || r.name.to_ascii_lowercase().contains(&q) || r.url.to_ascii_lowercase().contains(&q))
-            .map(|r| (r.id.clone(), r.method.as_str().to_owned(), r.name.clone()))
-            .collect();
-        for (rid, m, name) in reqs {
-            if ui.selectable_label(false, format!("{m} {name}")).clicked() {
-                app.state.open_or_focus_tab(&rid);
-                app.mode = MainMode::Workbench;
-                app.show_command_palette = false;
-            }
-        }
+    ui.add_space(28.0);
+    ui.vertical_centered(|ui| {
+        ui.set_max_width(540.0);
+        swaggen_ui_kit::surface_card(ui, |ui| {
+            ui.horizontal(|ui| {
+                ui.label(
+                    egui::RichText::new(swaggen_ui_kit::tr(
+                        app.locale,
+                        "Command palette",
+                        "Bảng lệnh nhanh",
+                    ))
+                    .size(20.0)
+                    .strong()
+                    .color(Tokens::TEXT_PRIMARY),
+                );
+                ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                    if swaggen_ui_kit::secondary_button(ui, true, "Esc").clicked() {
+                        app.show_command_palette = false;
+                    }
+                });
+            });
+            ui.add_space(10.0);
+            let q_resp = ui.add(
+                egui::TextEdit::singleline(&mut app.command_palette_query)
+                    .hint_text("Type a command or request…")
+                    .desired_width(ui.available_width()),
+            );
+            q_resp.request_focus();
+            ui.add_space(10.0);
+            let q = app.command_palette_query.trim().to_ascii_lowercase();
+            egui::ScrollArea::vertical()
+                .max_height(380.0)
+                .show(ui, |ui| {
+                    for (mode, label) in [
+                        (MainMode::Workbench, "Open API Workbench"),
+                        (MainMode::Specs, "Open API documentation & OpenAPI"),
+                        (MainMode::Runner, "Run collection, Mocks & Protocols"),
+                        (MainMode::TeamSync, "Open Sync queue & Collaboration"),
+                        (MainMode::Server, "Connect Team Server & Accounts"),
+                        (MainMode::Environments, "Switch Environment"),
+                        (MainMode::ImportExport, "Import APIs, Postman & cURL"),
+                        (MainMode::Storage, "Workspace Storage & Settings"),
+                    ] {
+                        if q.is_empty() || label.to_ascii_lowercase().contains(&q) {
+                            swaggen_ui_kit::table_row_frame(ui, |ui| {
+                                if ui
+                                    .add(
+                                        egui::Button::new(
+                                            egui::RichText::new(label)
+                                                .size(13.0)
+                                                .color(Tokens::TEXT_PRIMARY),
+                                        )
+                                        .fill(egui::Color32::TRANSPARENT)
+                                        .stroke(egui::Stroke::NONE),
+                                    )
+                                    .clicked()
+                                {
+                                    app.mode = mode;
+                                    app.show_command_palette = false;
+                                }
+                            });
+                        }
+                    }
+                    let reqs: Vec<(String, String, String)> = app
+                        .state
+                        .requests
+                        .iter()
+                        .filter(|r| {
+                            q.is_empty()
+                                || r.name.to_ascii_lowercase().contains(&q)
+                                || r.url.to_ascii_lowercase().contains(&q)
+                        })
+                        .map(|r| (r.id.clone(), r.method.as_str().to_owned(), r.name.clone()))
+                        .collect();
+                    for (rid, m, name) in reqs {
+                        if swaggen_ui_kit::endpoint_row(ui, &m, &name, false).clicked() {
+                            app.state.open_or_focus_tab(&rid);
+                            app.mode = MainMode::Workbench;
+                            app.show_command_palette = false;
+                        }
+                    }
+                });
+        });
     });
 }
 
 pub fn show_shortcuts(ui: &mut egui::Ui) {
-    swaggen_ui_kit::section(
+    swaggen_ui_kit::page_header(
         ui,
-        "Keyboard shortcuts (UX03 / UX04 / UX07 / S04)",
+        "Keyboard shortcuts",
         "Shortcuts avoid interfering with normal editor typing.",
+        None,
+        false,
     );
     for (keys, action) in [
         ("Ctrl + K", "Toggle Command Palette"),

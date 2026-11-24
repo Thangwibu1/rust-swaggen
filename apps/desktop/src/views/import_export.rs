@@ -12,16 +12,18 @@ use swaggen_spec_engine::openapi::SpecFormat;
 use swaggen_ui_kit::NoticeKind;
 
 pub fn show(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
-    swaggen_ui_kit::section(
+    swaggen_ui_kit::page_header(
         ui,
-        "Import & Export (IM01–IM06 / IM08)",
+        "Import APIs & collections",
         "Bidirectional cURL (without shell execution), Postman v2.1, Postman Environment, and sanitized Open Project bundles.",
+        None,
+        false,
     );
 
     egui::ScrollArea::vertical().show(ui, |ui| {
         // 1. cURL bidirectional (IM05).
         swaggen_ui_kit::surface_card(ui, |ui| {
-            ui.heading("1. cURL bidirectional (IM05 · pure-Rust parser, no shell execution)");
+            swaggen_ui_kit::card_header(ui, "cURL bidirectional (pure-Rust parser)");
             ui.add(
                 egui::TextEdit::multiline(&mut app.curl_input)
                     .desired_width(ui.available_width())

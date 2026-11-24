@@ -3,6 +3,7 @@
 .local/
 target/
 dist/
+result/
 spikes/
 tools/
 00-source/

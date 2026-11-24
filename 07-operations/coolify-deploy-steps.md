@@ -19,6 +19,11 @@ Tài liệu này dùng khi bạn đã có `SWAGGEN_MONGO_URI` trỏ tới một 
    - `SWAGGEN_MONGO_DB` *(tùy chọn)*: mặc định `swaggen`.
    - `SWAGGEN_BOOTSTRAP_TOKEN` *(tùy chọn, dùng 1 lần)*: chuỗi ngẫu nhiên (vd 32-byte hex) để tạo Server Owner đầu tiên.
    - `SWAGGEN_PORT` *(tùy chọn)*: mặc định `8080` (chỉ bind `127.0.0.1` trên host; nếu host VPS đã dùng cổng 8080 thì đổi sang số khác như `18080`).
+   - **Firebase Authentication (tùy chọn / khuyên dùng cho đăng nhập Google & Email/Password):**
+     - `SWAGGEN_FIREBASE_PROJECT_ID`: Project ID trong Firebase Console.
+     - `SWAGGEN_FIREBASE_WEB_API_KEY`: Web API Key (`AIza...`) trong Firebase Project Settings -> General -> Web App.
+     - `SWAGGEN_FIREBASE_AUTH_DOMAIN`: Auth Domain (mặc định `<project-id>.firebaseapp.com`).
+     - *Quan trọng trên Firebase Console:* vào **Authentication -> Settings -> Authorized domains** và thêm hostname API của bạn (ví dụ `swaggen-api.ngocthang.io.vn`, **không** kèm `https://`) để popup Google Sign-In hoạt động.
 5. Gắn domain HTTPS trên Coolify proxy trỏ vào service port `8080`, rồi nhấn **Deploy**.
 
 ## Cách 2: Deploy trực tiếp bằng Dockerfile trên Coolify

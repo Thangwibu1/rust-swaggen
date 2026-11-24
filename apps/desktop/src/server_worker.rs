@@ -7,22 +7,44 @@ use std::path::Path;
 use swaggen_api_contract::{
     AcceptInvitationRequest, AcceptInvitationResponse, AuditEventRecord, AuditListResponse,
     AuthResponse, BootstrapOwnerRequest, Capabilities, ChangePasswordRequest,
-    CreateInvitationRequest, CreateInvitationResponse, CreateWorkspaceRequest, LoginRequest,
-    MemberListResponse, SessionListResponse, TeamWorkspaceSummary, UpdateMemberRoleRequest,
-    WorkspaceListResponse,
+    CreateInvitationRequest, CreateInvitationResponse, CreateWorkspaceRequest,
+    FirebaseLoginRequest, LoginRequest, MemberListResponse, SessionListResponse,
+    TeamWorkspaceSummary, UpdateMemberRoleRequest, WorkspaceListResponse,
 };
 use swaggen_domain::{
     Error, LocalId, Secret, SecretRef,
     server_profiles::{ServerProfile, ServerProfileStore, validate_server_url},
-    workspace::HttpMethod,
+    workspace::{HttpMethod, RequestBody, RequestConnectionPolicy, ResolvedHeader, ResolvedRequest},
 };
+use swaggen_http_engine::execute_request;
 use swaggen_local_store::{WorkspaceDirectory, server_profiles_store::ServerProfileJournal};
 use swaggen_secret_store::SecretStore;
+use tokio::io::{AsyncReadExt, AsyncWriteExt};
+use tokio_util::sync::CancellationToken;
+
+pub const DEFAULT_SERVER_NAME: &str = "Swaggen Production";
+pub const DEFAULT_SERVER_URL: &str = "https://swaggen-api.ngocthang.io.vn";
+
+pub fn default_server_url() -> String {
+    std::env::var("SWAGGEN_SERVER_URL")
+        .ok()
+        .and_then(|raw| validate_server_url(&raw).ok().map(|(url, _, _)| url))
+        .unwrap_or_else(|| DEFAULT_SERVER_URL.to_owned())
+}
 
 pub fn load_server_profiles(root: &Path) -> ServerProfileStore {
-    ServerProfileJournal::open(root)
+    let mut store = ServerProfileJournal::open(root)
         .map(|j| j.store().clone())
-        .unwrap_or_default()
+        .unwrap_or_default();
+    if store.profiles.is_empty() {
+        store.upsert(ServerProfile::new(
+            "production",
+            DEFAULT_SERVER_NAME,
+            default_server_url(),
+            false,
+        ));
+    }
+    store
 }
 
 fn open_auth_secrets(root: &Path) -> Result<(LocalId, SecretStore), String> {
@@ -133,8 +155,16 @@ pub fn handle_server_command(
                     prof.last_error.clear();
                     prof.bootstrap_required = caps.bootstrap_required;
                     prof.mongo_ready = caps.mongo_ready;
+                    prof.firebase_project_id = caps.firebase_project_id.clone();
+                    prof.firebase_web_api_key = caps.firebase_web_api_key.clone();
+                    prof.firebase_auth_domain = caps.firebase_auth_domain.clone();
+                    let fb_note = if caps.firebase_project_id.is_some() {
+                        " · Firebase Auth active"
+                    } else {
+                        ""
+                    };
                     format!(
-                        "Connected to {} (server v{}, {} ms)",
+                        "Connected to {} (server v{}, {} ms{fb_note})",
                         prof.name, caps.server_version, latency
                     )
                 }
@@ -151,6 +181,177 @@ pub fn handle_server_command(
                 },
                 Err(e) => Event::ActionError(e),
             })
+        }
+        Command::FirebaseBrowserLogin {
+            profile_id,
+            bootstrap_token,
+        } => {
+            let (mut store, mut prof) = match get_profile(root, &profile_id) {
+                Ok(v) => v,
+                Err(m) => return Ok(Event::ActionError(m)),
+            };
+            let result: Result<(AuthResponse, Capabilities), String> = runtime.block_on(async {
+                let (caps, _) = server_call::<(), Capabilities>(
+                    &prof,
+                    HttpMethod::Get,
+                    "/v1/capabilities",
+                    None,
+                    None,
+                    downloads,
+                )
+                .await?;
+                if caps.firebase_project_id.is_none() || caps.firebase_web_api_key.is_none() {
+                    return Err(
+                        "Server does not have SWAGGEN_FIREBASE_PROJECT_ID and SWAGGEN_FIREBASE_WEB_API_KEY configured."
+                            .into(),
+                    );
+                }
+                let listener = tokio::net::TcpListener::bind("127.0.0.1:0")
+                    .await
+                    .map_err(|e| format!("Failed to bind local auth callback: {e}"))?;
+                let port = listener
+                    .local_addr()
+                    .map_err(|e| e.to_string())?
+                    .port();
+                let state_token = uuid::Uuid::new_v4().simple().to_string();
+                let base = prof.base_url.trim_end_matches('/');
+                let browser_url = format!(
+                    "{base}/v1/auth/firebase/browser?port={port}&state={state_token}"
+                );
+                open_system_browser(&browser_url)?;
+
+                let (id_token, browser_display_name) =
+                    await_firebase_loopback_callback(listener, &state_token).await?;
+
+                let req = FirebaseLoginRequest {
+                    id_token,
+                    display_name: browser_display_name.filter(|s| !s.trim().is_empty()),
+                    device_name: "Swaggen Desktop (Windows · Firebase)".into(),
+                    bootstrap_token,
+                };
+                let (auth, _) = server_call::<FirebaseLoginRequest, AuthResponse>(
+                    &prof,
+                    HttpMethod::Post,
+                    "/v1/auth/firebase",
+                    None,
+                    Some(&req),
+                    downloads,
+                )
+                .await?;
+                Ok((auth, caps))
+            });
+            match result {
+                Ok((auth, caps)) => {
+                    if let Err(e) = save_session_token(root, &prof, &auth.session_token) {
+                        return Ok(Event::ActionError(e));
+                    }
+                    prof.email = auth.user.email.clone();
+                    prof.user_id = auth.user.user_id.clone();
+                    prof.display_name = auth.user.display_name.clone();
+                    prof.session_id = auth.session_id.clone();
+                    prof.session_expires_unix = auth.expires_at_unix;
+                    prof.bootstrap_required = false;
+                    prof.mongo_ready = caps.mongo_ready;
+                    prof.last_server_version = caps.server_version;
+                    prof.firebase_project_id = caps.firebase_project_id;
+                    prof.firebase_web_api_key = caps.firebase_web_api_key;
+                    prof.firebase_auth_domain = caps.firebase_auth_domain;
+                    prof.last_error.clear();
+                    store.upsert(prof);
+                    Ok(match save_profiles(root, store) {
+                        Ok(saved) => Event::ServerProfilesUpdated {
+                            store: saved,
+                            message: format!("Signed in via Firebase as {}", auth.user.email),
+                        },
+                        Err(e) => Event::ActionError(e),
+                    })
+                }
+                Err(msg) => Ok(Event::ActionError(msg)),
+            }
+        }
+        Command::FirebaseEmailAuth {
+            profile_id,
+            email,
+            password,
+            display_name,
+            create_account,
+            bootstrap_token,
+        } => {
+            let (mut store, mut prof) = match get_profile(root, &profile_id) {
+                Ok(v) => v,
+                Err(m) => return Ok(Event::ActionError(m)),
+            };
+            let result: Result<(AuthResponse, Capabilities), String> = runtime.block_on(async {
+                let (caps, _) = server_call::<(), Capabilities>(
+                    &prof,
+                    HttpMethod::Get,
+                    "/v1/capabilities",
+                    None,
+                    None,
+                    downloads,
+                )
+                .await?;
+                let api_key = caps.firebase_web_api_key.as_deref().ok_or_else(|| {
+                    "Server does not expose SWAGGEN_FIREBASE_WEB_API_KEY in /v1/capabilities."
+                        .to_owned()
+                })?;
+                let id_token = firebase_rest_email_signin(
+                    api_key,
+                    &email,
+                    &password,
+                    create_account,
+                    downloads,
+                )
+                .await?;
+                let req = FirebaseLoginRequest {
+                    id_token,
+                    display_name: if display_name.trim().is_empty() {
+                        None
+                    } else {
+                        Some(display_name)
+                    },
+                    device_name: "Swaggen Desktop (Windows · Firebase)".into(),
+                    bootstrap_token,
+                };
+                let (auth, _) = server_call::<FirebaseLoginRequest, AuthResponse>(
+                    &prof,
+                    HttpMethod::Post,
+                    "/v1/auth/firebase",
+                    None,
+                    Some(&req),
+                    downloads,
+                )
+                .await?;
+                Ok((auth, caps))
+            });
+            match result {
+                Ok((auth, caps)) => {
+                    if let Err(e) = save_session_token(root, &prof, &auth.session_token) {
+                        return Ok(Event::ActionError(e));
+                    }
+                    prof.email = auth.user.email.clone();
+                    prof.user_id = auth.user.user_id.clone();
+                    prof.display_name = auth.user.display_name.clone();
+                    prof.session_id = auth.session_id.clone();
+                    prof.session_expires_unix = auth.expires_at_unix;
+                    prof.bootstrap_required = false;
+                    prof.mongo_ready = caps.mongo_ready;
+                    prof.last_server_version = caps.server_version;
+                    prof.firebase_project_id = caps.firebase_project_id;
+                    prof.firebase_web_api_key = caps.firebase_web_api_key;
+                    prof.firebase_auth_domain = caps.firebase_auth_domain;
+                    prof.last_error.clear();
+                    store.upsert(prof);
+                    Ok(match save_profiles(root, store) {
+                        Ok(saved) => Event::ServerProfilesUpdated {
+                            store: saved,
+                            message: format!("Signed in via Firebase as {}", auth.user.email),
+                        },
+                        Err(e) => Event::ActionError(e),
+                    })
+                }
+                Err(msg) => Ok(Event::ActionError(msg)),
+            }
         }
         Command::BootstrapServerOwner {
             profile_id,
@@ -625,6 +826,223 @@ pub fn handle_server_command(
     }
 }
 
+fn open_system_browser(url: &str) -> Result<(), String> {
+    let valid = url.starts_with("https://")
+        || url.starts_with("http://127.0.0.1")
+        || url.starts_with("http://localhost");
+    if !valid {
+        return Err("Refusing to open non-HTTPS sign-in URL in browser.".into());
+    }
+    #[cfg(target_os = "windows")]
+    {
+        std::process::Command::new("cmd")
+            .args(["/C", "start", "", url])
+            .spawn()
+            .map_err(|e| format!("Failed to open default browser: {e}"))?;
+        Ok(())
+    }
+    #[cfg(not(target_os = "windows"))]
+    {
+        std::process::Command::new("xdg-open")
+            .arg(url)
+            .spawn()
+            .map_err(|e| format!("Failed to open default browser: {e}"))?;
+        Ok(())
+    }
+}
+
+#[derive(serde::Deserialize)]
+struct FirebaseCallbackPayload {
+    id_token: String,
+    state: String,
+    #[serde(default)]
+    display_name: Option<String>,
+}
+
+async fn await_firebase_loopback_callback(
+    listener: tokio::net::TcpListener,
+    expected_state: &str,
+) -> Result<(String, Option<String>), String> {
+    let deadline = tokio::time::Instant::now() + std::time::Duration::from_secs(180);
+    loop {
+        let remaining = deadline.saturating_duration_since(tokio::time::Instant::now());
+        if remaining.is_zero() {
+            return Err(
+                "Timed out waiting for Firebase sign-in in browser (180s). Please try again."
+                    .into(),
+            );
+        }
+        let accept_res = tokio::time::timeout(remaining, listener.accept())
+            .await
+            .map_err(|_| {
+                "Timed out waiting for Firebase sign-in in browser (180s). Please try again."
+                    .to_owned()
+            })?;
+        let (mut sock, _) = accept_res.map_err(|e| format!("Loopback callback error: {e}"))?;
+
+        let mut buf = Vec::with_capacity(4096);
+        let mut tmp = [0u8; 4096];
+        let mut header_end: Option<usize> = None;
+        let mut content_len: usize = 0;
+
+        loop {
+            let n = tokio::time::timeout(std::time::Duration::from_secs(5), sock.read(&mut tmp))
+                .await
+                .ok()
+                .and_then(|r| r.ok())
+                .unwrap_or(0);
+            if n == 0 {
+                break;
+            }
+            buf.extend_from_slice(&tmp[..n]);
+            if buf.len() > 65_536 {
+                break;
+            }
+            if header_end.is_none()
+                && let Some(pos) = buf.windows(4).position(|w| w == b"\r\n\r\n")
+            {
+                let end = pos + 4;
+                header_end = Some(end);
+                let head_str = String::from_utf8_lossy(&buf[..pos]);
+                for line in head_str.lines().skip(1) {
+                    if let Some((k, v)) = line.split_once(':')
+                        && k.trim().eq_ignore_ascii_case("content-length")
+                    {
+                        content_len = v.trim().parse::<usize>().unwrap_or(0);
+                    }
+                }
+            }
+            if let Some(end) = header_end
+                && buf.len() >= end + content_len
+            {
+                break;
+            }
+        }
+
+        let Some(end) = header_end else {
+            continue;
+        };
+        let head = String::from_utf8_lossy(&buf[..end]);
+        let first_line = head.lines().next().unwrap_or("");
+        let cors = "Access-Control-Allow-Origin: *\r\nAccess-Control-Allow-Methods: POST, OPTIONS\r\nAccess-Control-Allow-Headers: Content-Type\r\nConnection: close\r\n";
+
+        if first_line.starts_with("OPTIONS ") {
+            let resp = format!("HTTP/1.1 204 No Content\r\n{cors}Content-Length: 0\r\n\r\n");
+            let _ = sock.write_all(resp.as_bytes()).await;
+            continue;
+        }
+        if !first_line.starts_with("POST /callback") {
+            let body = r#"{"error":"not_found"}"#;
+            let resp = format!(
+                "HTTP/1.1 404 Not Found\r\n{cors}Content-Type: application/json\r\nContent-Length: {}\r\n\r\n{body}",
+                body.len()
+            );
+            let _ = sock.write_all(resp.as_bytes()).await;
+            continue;
+        }
+
+        let body_bytes = &buf[end..buf.len().min(end + content_len)];
+        match serde_json::from_slice::<FirebaseCallbackPayload>(body_bytes) {
+            Ok(payload)
+                if payload.state == expected_state && !payload.id_token.trim().is_empty() =>
+            {
+                let ok_body = r#"{"ok":true}"#;
+                let resp = format!(
+                    "HTTP/1.1 200 OK\r\n{cors}Content-Type: application/json\r\nContent-Length: {}\r\n\r\n{ok_body}",
+                    ok_body.len()
+                );
+                let _ = sock.write_all(resp.as_bytes()).await;
+                return Ok((payload.id_token, payload.display_name));
+            }
+            _ => {
+                let err_body = r#"{"error":"invalid_state_or_token"}"#;
+                let resp = format!(
+                    "HTTP/1.1 400 Bad Request\r\n{cors}Content-Type: application/json\r\nContent-Length: {}\r\n\r\n{err_body}",
+                    err_body.len()
+                );
+                let _ = sock.write_all(resp.as_bytes()).await;
+                return Err(
+                    "Firebase callback rejected due to invalid state or missing ID token.".into(),
+                );
+            }
+        }
+    }
+}
+
+async fn firebase_rest_email_signin(
+    api_key: &str,
+    email: &str,
+    password: &str,
+    create_account: bool,
+    scratch_dir: &Path,
+) -> Result<String, String> {
+    let endpoint = if create_account {
+        "accounts:signUp"
+    } else {
+        "accounts:signInWithPassword"
+    };
+    let url = format!("https://identitytoolkit.googleapis.com/v1/{endpoint}?key={api_key}");
+    let payload = serde_json::json!({
+        "email": email.trim(),
+        "password": password,
+        "returnSecureToken": true
+    })
+    .to_string();
+
+    let headers = vec![
+        ResolvedHeader {
+            name: "Content-Type".into(),
+            value: "application/json".into(),
+            generated: true,
+        },
+        ResolvedHeader {
+            name: "Accept".into(),
+            value: "application/json".into(),
+            generated: true,
+        },
+    ];
+    let resolved = ResolvedRequest {
+        method: HttpMethod::Post,
+        url: url.clone(),
+        masked_url: format!("https://identitytoolkit.googleapis.com/v1/{endpoint}?key=••••"),
+        headers: headers.clone(),
+        masked_headers: headers,
+        body: RequestBody::Json(payload),
+        masked_body_preview: String::new(),
+        auth_source: "FirebaseIdentityToolkit".into(),
+        warnings: Vec::new(),
+        blocking_errors: Vec::new(),
+        requires_production_confirm: false,
+        connection: RequestConnectionPolicy {
+            timeout_ms: 15_000,
+            follow_redirects: false,
+            max_redirects: 0,
+            send_auth_on_cross_host_redirect: false,
+            ..Default::default()
+        },
+    };
+
+    let cancel = CancellationToken::new();
+    let resp = execute_request(&resolved, scratch_dir, cancel)
+        .await
+        .map_err(|e| format!("Firebase Identity Toolkit request failed: {}", e.message))?;
+
+    let val: serde_json::Value = serde_json::from_slice(&resp.preview_bytes)
+        .unwrap_or_else(|_| serde_json::json!({}));
+    if !(200..300).contains(&resp.status_code) {
+        let fb_msg = val
+            .pointer("/error/message")
+            .and_then(|v| v.as_str())
+            .unwrap_or("Firebase authentication rejected");
+        return Err(format!("Firebase Auth error ({}): {fb_msg}", resp.status_code));
+    }
+    val.get("idToken")
+        .and_then(|v| v.as_str())
+        .filter(|s| !s.is_empty())
+        .map(str::to_owned)
+        .ok_or_else(|| "Firebase response did not contain an idToken.".to_owned())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -675,25 +1093,12 @@ mod tests {
         ));
 
         let mut store = ServerProfileStore::default();
-        store.upsert(ServerProfile {
-            id: "local-dev".into(),
-            name: "Local Dev".into(),
-            base_url: format!("http://{addr}"),
-            allow_self_signed_tls: false,
-            expected_min_api_version: 1,
-            email: String::new(),
-            user_id: String::new(),
-            display_name: String::new(),
-            session_id: String::new(),
-            session_expires_unix: 0,
-            last_checked_unix: 0,
-            last_server_version: String::new(),
-            last_latency_ms: None,
-            last_tls_status: String::new(),
-            last_error: String::new(),
-            bootstrap_required: false,
-            mongo_ready: false,
-        });
+        store.upsert(ServerProfile::new(
+            "local-dev",
+            "Local Dev",
+            format!("http://{addr}"),
+            false,
+        ));
         worker.commands.send(Command::SaveServerProfiles { store }).unwrap();
         assert!(matches!(
             worker.events.recv_timeout(Duration::from_secs(5)).unwrap(),
@@ -744,6 +1149,79 @@ mod tests {
 
         drop(worker);
         let _ = std::fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn empty_workspace_seeds_default_production_server_profile() {
+        let root = std::env::temp_dir().join(format!(
+            "swaggen-default-srv-{}",
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        let store = load_server_profiles(&root);
+        let active = store.active().expect("default production profile should be active");
+        assert_eq!(active.base_url, DEFAULT_SERVER_URL);
+        assert!(!active.allow_self_signed_tls);
+        let _ = std::fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn firebase_loopback_callback_accepts_matching_state_and_rejects_mismatch() {
+        let rt = tokio::runtime::Runtime::new().unwrap();
+        rt.block_on(async {
+            // 1. Valid state + OPTIONS preflight + POST /callback
+            let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+            let addr = listener.local_addr().unwrap();
+            let client = tokio::spawn(async move {
+                let mut s1 = tokio::net::TcpStream::connect(addr).await.unwrap();
+                s1.write_all(b"OPTIONS /callback HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n")
+                    .await
+                    .unwrap();
+                let mut r1 = vec![0u8; 512];
+                let n1 = s1.read(&mut r1).await.unwrap();
+                assert!(String::from_utf8_lossy(&r1[..n1]).contains("204 No Content"));
+
+                let mut s2 = tokio::net::TcpStream::connect(addr).await.unwrap();
+                let body = r#"{"id_token":"fb.jwt.token","state":"state-ok","display_name":"Minh Tran"}"#;
+                let req = format!(
+                    "POST /callback HTTP/1.1\r\nHost: 127.0.0.1\r\nContent-Type: application/json\r\nContent-Length: {}\r\n\r\n{body}",
+                    body.len()
+                );
+                s2.write_all(req.as_bytes()).await.unwrap();
+                let mut r2 = vec![0u8; 512];
+                let n2 = s2.read(&mut r2).await.unwrap();
+                assert!(String::from_utf8_lossy(&r2[..n2]).contains("200 OK"));
+            });
+            let (tok, name) = await_firebase_loopback_callback(listener, "state-ok")
+                .await
+                .unwrap();
+            assert_eq!(tok, "fb.jwt.token");
+            assert_eq!(name.as_deref(), Some("Minh Tran"));
+            client.await.unwrap();
+
+            // 2. Mismatched state is rejected with error
+            let listener2 = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+            let addr2 = listener2.local_addr().unwrap();
+            let client2 = tokio::spawn(async move {
+                let mut s = tokio::net::TcpStream::connect(addr2).await.unwrap();
+                let body = r#"{"id_token":"fb.jwt.token","state":"wrong-state"}"#;
+                let req = format!(
+                    "POST /callback HTTP/1.1\r\nHost: 127.0.0.1\r\nContent-Type: application/json\r\nContent-Length: {}\r\n\r\n{body}",
+                    body.len()
+                );
+                s.write_all(req.as_bytes()).await.unwrap();
+                let mut r = vec![0u8; 512];
+                let n = s.read(&mut r).await.unwrap();
+                assert!(String::from_utf8_lossy(&r[..n]).contains("400 Bad Request"));
+            });
+            let err = await_firebase_loopback_callback(listener2, "expected-state")
+                .await
+                .unwrap_err();
+            assert!(err.contains("invalid state"));
+            client2.await.unwrap();
+        });
     }
 }
 

@@ -41,6 +41,16 @@ pub trait WorkspaceRepository: Send + Sync {
         now: i64,
     ) -> Result<AuthResponse, StoreError>;
 
+    async fn firebase_login(
+        &self,
+        firebase_uid: &str,
+        email: &str,
+        display_name: &str,
+        device_name: &str,
+        bootstrap_token: Option<&str>,
+        now: i64,
+    ) -> Result<AuthResponse, StoreError>;
+
     async fn authenticate_bearer(
         &self,
         bearer_token: &str,

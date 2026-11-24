@@ -543,6 +543,132 @@ impl WorkspaceRepository for MongoStore {
         })
     }
 
+    async fn firebase_login(
+        &self,
+        firebase_uid: &str,
+        email: &str,
+        display_name: &str,
+        device_name: &str,
+        bootstrap_token: Option<&str>,
+        now: i64,
+    ) -> Result<AuthResponse, StoreError> {
+        let uid = firebase_uid.trim();
+        if uid.is_empty() || uid.len() > 128 {
+            return Err(StoreError::Unauthorized("Invalid Firebase UID".into()));
+        }
+        let email = normalize_email(email)?;
+        let clean_name: String = if display_name.trim().is_empty() {
+            email.split('@').next().unwrap_or("User").to_owned()
+        } else {
+            display_name.trim().chars().take(80).collect()
+        };
+
+        let mut session = self
+            .client
+            .start_session()
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        session
+            .start_transaction()
+            .read_concern(ReadConcern::snapshot())
+            .write_concern(WriteConcern::majority())
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+
+        let users: Collection<Document> = self.db.collection("users");
+        let existing = match users
+            .find_one(doc! { "firebase_uid": uid })
+            .session(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?
+        {
+            Some(d) => Some(d),
+            None => users
+                .find_one(doc! { "email_normalized": &email })
+                .session(&mut session)
+                .await
+                .map_err(|e| map_mongo_err(&e))?,
+        };
+
+        let (user_id, final_name, is_owner, created_at, action) = if let Some(doc) = existing {
+            let user_id = doc.get_str("user_id").unwrap_or("").to_owned();
+            let final_name = doc.get_str("display_name").unwrap_or(&clean_name).to_owned();
+            let is_owner = doc.get_bool("is_server_owner").unwrap_or(false);
+            let created_at = doc.get_i64("created_at_unix").unwrap_or(now);
+            if doc.get_str("firebase_uid").ok() != Some(uid) {
+                users
+                    .update_one(
+                        doc! { "user_id": &user_id },
+                        doc! { "$set": { "firebase_uid": uid } },
+                    )
+                    .session(&mut session)
+                    .await
+                    .map_err(|e| map_mongo_err(&e))?;
+            }
+            (user_id, final_name, is_owner, created_at, "auth.firebase_login")
+        } else {
+            let is_first = users
+                .find_one(doc! {})
+                .session(&mut session)
+                .await
+                .map_err(|e| map_mongo_err(&e))?
+                .is_none();
+            if is_first
+                && let Some(expected) = &self.bootstrap_secret
+                && bootstrap_token != Some(expected.as_str())
+            {
+                let _ = session.abort_transaction().await;
+                return Err(StoreError::Unauthorized(
+                    "Invalid bootstrap setup token".into(),
+                ));
+            }
+            let user_id = Uuid::new_v4().to_string();
+            users
+                .insert_one(doc! {
+                    "user_id": &user_id,
+                    "firebase_uid": uid,
+                    "email_normalized": &email,
+                    "display_name": &clean_name,
+                    "password_hash": "!firebase-only!",
+                    "is_server_owner": is_first,
+                    "created_at_unix": now,
+                })
+                .session(&mut session)
+                .await
+                .map_err(|e| map_mongo_err(&e))?;
+            (user_id, clean_name, is_first, now, "auth.firebase_register")
+        };
+
+        let (session_id, token, expires) = self
+            .issue_session_tx(&mut session, &user_id, device_name, now)
+            .await?;
+        self.record_audit_tx(
+            &mut session,
+            None,
+            &user_id,
+            &email,
+            action,
+            &session_id,
+            "Firebase verified session created",
+            now,
+        )
+        .await?;
+        commit_with_retry(&mut session).await?;
+        Ok(AuthResponse {
+            api_version: API_VERSION,
+            user: swaggen_api_contract::UserProfile {
+                user_id,
+                email,
+                display_name: final_name,
+                is_server_owner: is_owner,
+                created_at_unix: created_at,
+            },
+            session_id,
+            session_token: token,
+            expires_at_unix: expires,
+        })
+    }
+
     async fn authenticate_bearer(
         &self,
         bearer_token: &str,

@@ -6,15 +6,23 @@ rust-version.workspace = true
 publish.workspace = true
 [dependencies]
 axum.workspace = true
+base64.workspace = true
+http.workspace = true
+http-body-util.workspace = true
+hyper.workspace = true
+hyper-util.workspace = true
+ring.workspace = true
+rustls.workspace = true
+rustls-pki-types.workspace = true
 serde.workspace = true
 serde_json.workspace = true
+time.workspace = true
 tokio.workspace = true
+tokio-rustls.workspace = true
 uuid.workspace = true
+webpki-roots.workspace = true
 swaggen-api-contract.workspace = true
 swaggen-domain.workspace = true
 swaggen-mongo-store.workspace = true
 [dev-dependencies]
-http-body-util.workspace = true
-hyper.workspace = true
-hyper-util.workspace = true
 tokio-util.workspace = true

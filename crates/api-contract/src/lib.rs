@@ -75,6 +75,12 @@ pub struct Capabilities {
     pub migration_version: u32,
     #[serde(default)]
     pub max_body_bytes: usize,
+    #[serde(default)]
+    pub firebase_project_id: Option<String>,
+    #[serde(default)]
+    pub firebase_web_api_key: Option<String>,
+    #[serde(default)]
+    pub firebase_auth_domain: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -126,6 +132,18 @@ pub struct LoginRequest {
     pub email: String,
     pub password: String,
     pub device_name: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct FirebaseLoginRequest {
+    pub id_token: String,
+    #[serde(default)]
+    pub display_name: Option<String>,
+    #[serde(default)]
+    pub device_name: String,
+    #[serde(default)]
+    pub bootstrap_token: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]

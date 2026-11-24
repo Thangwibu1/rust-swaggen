@@ -112,6 +112,18 @@ pub enum Command {
         email: String,
         password: String,
     },
+    FirebaseBrowserLogin {
+        profile_id: String,
+        bootstrap_token: Option<String>,
+    },
+    FirebaseEmailAuth {
+        profile_id: String,
+        email: String,
+        password: String,
+        display_name: String,
+        create_account: bool,
+        bootstrap_token: Option<String>,
+    },
     AcceptServerInvitation {
         profile_id: String,
         invite_token: String,
@@ -1366,6 +1378,8 @@ impl Worker {
                     | Command::MigrateDataRoot { .. }
                     | Command::SaveServerProfiles { .. }
                     | Command::TestServerConnection { .. }
+                    | Command::FirebaseBrowserLogin { .. }
+                    | Command::FirebaseEmailAuth { .. }
                     | Command::BootstrapServerOwner { .. }
                     | Command::ServerLogin { .. }
                     | Command::AcceptServerInvitation { .. }

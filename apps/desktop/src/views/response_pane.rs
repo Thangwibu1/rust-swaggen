@@ -15,135 +15,157 @@ pub fn show(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
     };
 
     let Some(result) = app.responses.get(&req_id).cloned() else {
-        ui.label(
-            egui::RichText::new("Response will appear here after sending.")
-                .color(Tokens::TEXT_SECONDARY),
-        );
+        swaggen_ui_kit::surface_card(ui, |ui| {
+            swaggen_ui_kit::card_header(ui, "Response");
+            ui.label(
+                egui::RichText::new("Response will appear here after sending.")
+                    .size(12.5)
+                    .color(Tokens::TEXT_SECONDARY),
+            );
+        });
         return;
     };
 
-    match result {
-        Err(err) => {
-            swaggen_ui_kit::notice_banner(
-                ui,
-                NoticeKind::Danger,
-                &format!("{} ({} ms)", err.kind.as_str(), err.duration_ms),
-                &format!("{} — {}", err.message, err.kind.guidance()),
-            );
-        }
-        Ok(resp) => {
-            let status_kind = match resp.status_code {
-                200..=299 => NoticeKind::Success,
-                300..=399 => NoticeKind::Warning,
-                _ => NoticeKind::Danger,
-            };
-            ui.horizontal_wrapped(|ui| {
-                swaggen_ui_kit::status_badge(
-                    ui,
-                    status_kind,
-                    &format!("{} {}", resp.status_code, resp.reason),
-                );
-                ui.label(format!("{} ms", resp.duration_ms));
-                ui.label(format!(
-                    "Wire: {} B · Decoded: {} B · Timings(ms): DNS={:?} TCP={:?} TLS={:?} TTFB={:?} Total={}",
-                    resp.wire_bytes,
-                    resp.decoded_bytes,
-                    resp.timings.dns_ms,
-                    resp.timings.tcp_ms,
-                    resp.timings.tls_ms,
-                    resp.timings.ttfb_ms,
-                    resp.timings.total_ms
-                ));
-                if resp.tls_exception_used {
-                    swaggen_ui_kit::status_badge(
-                        ui,
-                        NoticeKind::Warning,
-                        "Host-scoped TLS exception used",
-                    );
-                }
-            });
-
-            if resp.preview_truncated {
-                ui.add_space(4.0);
+    swaggen_ui_kit::surface_card(ui, |ui| {
+        swaggen_ui_kit::card_header(ui, "Response");
+        match result {
+            Err(err) => {
                 swaggen_ui_kit::notice_banner(
                     ui,
-                    NoticeKind::Warning,
-                    "Large response preview capped (RS06)",
-                    &format!(
-                        "Showing first {} bytes of {} bytes. Full body was streamed to local cache.",
-                        resp.preview_bytes.len(),
-                        resp.decoded_bytes
-                    ),
+                    NoticeKind::Danger,
+                    &format!("{} ({} ms)", err.kind.as_str(), err.duration_ms),
+                    &format!("{} — {}", err.message, err.kind.guidance()),
                 );
             }
-
-            ui.horizontal_wrapped(|ui| {
-                ui.label("Save raw file to:");
-                ui.add(
-                    egui::TextEdit::singleline(&mut app.save_response_path).desired_width(260.0),
-                );
-                if swaggen_ui_kit::secondary_button(ui, true, "Save raw response").clicked() {
-                    app.submit(Command::SaveResponseFile {
-                        source: resp.raw_body_path.clone(),
-                        destination: PathBuf::from(app.save_response_path.trim()),
-                    });
-                }
-            });
-
-            ui.horizontal_wrapped(|ui| {
-                for (tab, label) in [
-                    (ResponseSubTab::Body, "Body"),
-                    (
-                        ResponseSubTab::HeadersCookies,
-                        &format!(
-                            "Headers ({}) & Cookies ({})",
-                            resp.headers.len(),
-                            resp.captured_cookies.len()
-                        ),
-                    ),
-                    (ResponseSubTab::Assertions, "Assertions (TS01)"),
-                    (
-                        ResponseSubTab::Redirects,
-                        &format!("Redirects ({})", resp.redirect_chain.len()),
-                    ),
-                    (ResponseSubTab::Diff, "Diff (RS09)"),
-                    (ResponseSubTab::SaveExample, "Save shared example (RS08)"),
-                ] {
-                    if ui
-                        .selectable_label(app.response_subtab == tab, label)
-                        .clicked()
-                    {
-                        app.response_subtab = tab;
+            Ok(resp) => {
+                let status_kind = match resp.status_code {
+                    200..=299 => NoticeKind::Success,
+                    300..=399 => NoticeKind::Warning,
+                    _ => NoticeKind::Danger,
+                };
+                ui.horizontal_wrapped(|ui| {
+                    swaggen_ui_kit::status_badge(
+                        ui,
+                        status_kind,
+                        &format!("{} {}", resp.status_code, resp.reason),
+                    );
+                    ui.label(
+                        egui::RichText::new(format!("{} ms", resp.duration_ms))
+                            .size(12.0)
+                            .color(Tokens::TEXT_SECONDARY),
+                    );
+                    ui.label(
+                        egui::RichText::new(format!(
+                            "{:.2} KB decoded · {} B wire",
+                            resp.decoded_bytes as f64 / 1024.0,
+                            resp.wire_bytes
+                        ))
+                        .size(12.0)
+                        .color(Tokens::TEXT_SECONDARY),
+                    );
+                    ui.label(
+                        egui::RichText::new(format!(
+                            "DNS {:?}ms · TCP {:?}ms · TLS {:?}ms · TTFB {:?}ms",
+                            resp.timings.dns_ms.unwrap_or(0),
+                            resp.timings.tcp_ms.unwrap_or(0),
+                            resp.timings.tls_ms.unwrap_or(0),
+                            resp.timings.ttfb_ms.unwrap_or(0),
+                        ))
+                        .size(11.5)
+                        .color(Tokens::TEXT_SECONDARY),
+                    );
+                    if resp.tls_exception_used {
+                        swaggen_ui_kit::status_badge(
+                            ui,
+                            NoticeKind::Warning,
+                            "Host-scoped TLS exception",
+                        );
                     }
-                }
-            });
-            ui.separator();
+                });
 
-            egui::ScrollArea::vertical()
-                .id_salt("resp-scroll")
-                .show(ui, |ui| match app.response_subtab {
-                    ResponseSubTab::Body => {
-                        ui.horizontal_wrapped(|ui| {
-                            for (fmt, label) in [
-                                (ResponseBodyFormat::PrettyJson, "Pretty JSON"),
-                                (ResponseBodyFormat::Raw, "Raw"),
-                                (ResponseBodyFormat::Xml, "XML"),
-                                (ResponseBodyFormat::Binary, "Binary"),
-                            ] {
-                                if ui
-                                    .selectable_label(app.response_format == fmt, label)
+                if resp.preview_truncated {
+                    ui.add_space(6.0);
+                    swaggen_ui_kit::notice_banner(
+                        ui,
+                        NoticeKind::Warning,
+                        "Large response preview capped",
+                        &format!(
+                            "Showing first {} bytes of {} bytes. Full body was streamed to local cache.",
+                            resp.preview_bytes.len(),
+                            resp.decoded_bytes
+                        ),
+                    );
+                }
+
+                ui.add_space(6.0);
+                ui.horizontal_wrapped(|ui| {
+                    for (tab, label) in [
+                        (ResponseSubTab::Body, "Body"),
+                        (
+                            ResponseSubTab::HeadersCookies,
+                            &format!(
+                                "Headers ({}) & Cookies ({})",
+                                resp.headers.len(),
+                                resp.captured_cookies.len()
+                            ),
+                        ),
+                        (ResponseSubTab::Assertions, "Assertions"),
+                        (
+                            ResponseSubTab::Redirects,
+                            &format!("Redirects ({})", resp.redirect_chain.len()),
+                        ),
+                        (ResponseSubTab::Diff, "Diff"),
+                        (ResponseSubTab::SaveExample, "Save example"),
+                    ] {
+                        if swaggen_ui_kit::underline_tab(ui, app.response_subtab == tab, label)
+                            .clicked()
+                        {
+                            app.response_subtab = tab;
+                        }
+                    }
+                });
+                ui.add_space(6.0);
+
+                egui::ScrollArea::vertical()
+                    .id_salt("resp-scroll")
+                    .show(ui, |ui| match app.response_subtab {
+                        ResponseSubTab::Body => {
+                            ui.horizontal_wrapped(|ui| {
+                                for (fmt, label) in [
+                                    (ResponseBodyFormat::PrettyJson, "Pretty"),
+                                    (ResponseBodyFormat::Raw, "Raw"),
+                                    (ResponseBodyFormat::Xml, "XML"),
+                                    (ResponseBodyFormat::Binary, "Binary"),
+                                ] {
+                                    if swaggen_ui_kit::underline_tab(
+                                        ui,
+                                        app.response_format == fmt,
+                                        label,
+                                    )
                                     .clicked()
-                                {
-                                    app.response_format = fmt;
+                                    {
+                                        app.response_format = fmt;
+                                    }
                                 }
-                            }
-                            ui.separator();
-                            ui.label("Search:");
-                            ui.add(
-                                egui::TextEdit::singleline(&mut app.response_search)
-                                    .desired_width(140.0),
-                            );
-                        });
+                                ui.add_space(12.0);
+                                ui.add(
+                                    egui::TextEdit::singleline(&mut app.response_search)
+                                        .hint_text("Search preview…")
+                                        .desired_width(160.0),
+                                );
+                                ui.add(
+                                    egui::TextEdit::singleline(&mut app.save_response_path)
+                                        .hint_text("Save path…")
+                                        .desired_width(210.0),
+                                );
+                                if swaggen_ui_kit::secondary_button(ui, true, "Save raw").clicked() {
+                                    app.submit(Command::SaveResponseFile {
+                                        source: resp.raw_body_path.clone(),
+                                        destination: PathBuf::from(app.save_response_path.trim()),
+                                    });
+                                }
+                            });
+                            ui.add_space(6.0);
 
                         let text = String::from_utf8_lossy(&resp.preview_bytes);
                         if !app.response_search.trim().is_empty() {
@@ -380,8 +402,9 @@ pub fn show(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
                         }
                     }
                 });
+            }
         }
-    }
+    });
 }
 
 fn render_json_tree(

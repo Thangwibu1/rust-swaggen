@@ -76,6 +76,40 @@ impl WorkspaceRepository for ServerStore {
             Self::Memory(m) => m.login(req, client_key, now).await,
         }
     }
+    async fn firebase_login(
+        &self,
+        firebase_uid: &str,
+        email: &str,
+        display_name: &str,
+        device_name: &str,
+        bootstrap_token: Option<&str>,
+        now: i64,
+    ) -> Result<AuthResponse, StoreError> {
+        match self {
+            Self::Mongo(m) => {
+                m.firebase_login(
+                    firebase_uid,
+                    email,
+                    display_name,
+                    device_name,
+                    bootstrap_token,
+                    now,
+                )
+                .await
+            }
+            Self::Memory(m) => {
+                m.firebase_login(
+                    firebase_uid,
+                    email,
+                    display_name,
+                    device_name,
+                    bootstrap_token,
+                    now,
+                )
+                .await
+            }
+        }
+    }
     async fn authenticate_bearer(
         &self,
         bearer_token: &str,

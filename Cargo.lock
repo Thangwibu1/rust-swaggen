@@ -4109,17 +4109,25 @@ name = "swaggen-server"
 version = "0.1.0"
 dependencies = [
  "axum",
+ "base64",
+ "http",
  "http-body-util",
  "hyper",
  "hyper-util",
+ "ring",
+ "rustls",
+ "rustls-pki-types",
  "serde",
  "serde_json",
  "swaggen-api-contract",
  "swaggen-domain",
  "swaggen-mongo-store",
+ "time",
  "tokio",
+ "tokio-rustls",
  "tokio-util",
  "uuid",
+ "webpki-roots",
 ]
 
 [[package]]

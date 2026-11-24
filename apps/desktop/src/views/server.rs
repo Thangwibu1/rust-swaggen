@@ -7,28 +7,36 @@ use swaggen_ui_kit::{NoticeKind, Tokens};
 
 pub fn show(app: &mut App, ui: &mut egui::Ui) {
     egui::ScrollArea::vertical().show(ui, |ui| {
-        swaggen_ui_kit::section(
+        let header_title = match app.server_subtab {
+            0 => "Connect your team server",
+            1 => "Sign in & owner setup",
+            2 => "Team workspaces & members",
+            _ => "Sessions & security",
+        };
+        swaggen_ui_kit::page_header(
             ui,
-            "Team Server & Internal Accounts",
-            "Connect to a self-hosted Swaggen server over HTTPS/TLS, manage multiple server profiles, sign in with internal accounts or single-use invitations, and administer team roles.",
+            header_title,
+            "Connect to your self-hosted Swaggen server over HTTPS, authenticate accounts, and administer workspace roles.",
+            None,
+            false,
         );
 
         ui.horizontal_wrapped(|ui| {
             for (idx, label) in [
-                "1. Server Profiles (W03/W04/A05)",
-                "2. Sign In & Setup (A01/Z02)",
-                "3. Team Workspaces & Roles (C01/C02/W06)",
-                "4. Sessions & Password (WS03/Z10)",
+                "Server Profiles",
+                "Sign In & Setup",
+                "Workspaces & Roles",
+                "Sessions & Password",
             ]
             .iter()
             .enumerate()
             {
-                if ui.selectable_label(app.server_subtab == idx, *label).clicked() {
+                if swaggen_ui_kit::underline_tab(ui, app.server_subtab == idx, label).clicked() {
                     app.server_subtab = idx;
                 }
             }
         });
-        ui.separator();
+        ui.add_space(10.0);
 
         match app.server_subtab {
             0 => show_server_profiles(app, ui),
@@ -40,34 +48,54 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
 }
 
 fn show_server_profiles(app: &mut App, ui: &mut egui::Ui) {
+    swaggen_ui_kit::notice_banner(
+        ui,
+        NoticeKind::Info,
+        "",
+        "Your workspace lives on your team server. API requests run from your PC.",
+    );
+    ui.add_space(10.0);
+
     swaggen_ui_kit::surface_card(ui, |ui| {
-        ui.strong("Saved server profiles (WS02)");
+        swaggen_ui_kit::card_header(ui, "Overview");
         if app.server_profiles.profiles.is_empty() {
             ui.label(
                 egui::RichText::new("No server profiles saved yet. Add one below.")
                     .color(Tokens::TEXT_SECONDARY),
             );
         } else {
+            swaggen_ui_kit::table_header(
+                ui,
+                &[
+                    ("NAME / OPERATION", 200.0),
+                    ("VALUE / DETAILS", 340.0),
+                    ("STATUS", 260.0),
+                ],
+            );
             let mut select_id: Option<String> = None;
             let mut test_id: Option<String> = None;
             let mut remove_id: Option<String> = None;
             for prof in &app.server_profiles.profiles {
                 let is_active = app.server_profiles.active_profile_id.as_deref() == Some(&prof.id);
-                ui.horizontal_wrapped(|ui| {
+                swaggen_ui_kit::table_row_frame(ui, |ui| {
                     if ui.selectable_label(is_active, &prof.name).clicked() {
                         select_id = Some(prof.id.clone());
                     }
-                    ui.label(&prof.base_url);
+                    ui.label(
+                        egui::RichText::new(&prof.base_url)
+                            .size(12.0)
+                            .color(Tokens::TEXT_SECONDARY),
+                    );
                     if prof.allow_self_signed_tls {
-                        swaggen_ui_kit::status_badge(ui, NoticeKind::Warning, "Host-scoped TLS");
+                        swaggen_ui_kit::pill_badge(ui, Tokens::TEXT_WARNING, "Host TLS");
                     }
                     if !prof.last_server_version.is_empty() {
-                        swaggen_ui_kit::status_badge(
+                        swaggen_ui_kit::pill_badge(
                             ui,
                             if prof.mongo_ready {
-                                NoticeKind::Success
+                                Tokens::STATUS_SUCCESS
                             } else {
-                                NoticeKind::Warning
+                                Tokens::TEXT_WARNING
                             },
                             &format!(
                                 "v{} · {}ms · {}",
@@ -78,26 +106,26 @@ fn show_server_profiles(app: &mut App, ui: &mut egui::Ui) {
                         );
                     }
                     if !prof.email.is_empty() {
-                        ui.label(
-                            egui::RichText::new(format!("Signed in: {}", prof.email))
-                                .color(Tokens::TEXT_SECONDARY),
-                        );
+                        swaggen_ui_kit::pill_badge(ui, Tokens::STATUS_INFO, &prof.email);
                     }
-                    if ui.small_button("Check TLS & protocol").clicked() {
-                        select_id = Some(prof.id.clone());
-                        test_id = Some(prof.id.clone());
-                    }
-                    if ui.small_button("Remove").clicked() {
-                        remove_id = Some(prof.id.clone());
-                    }
+                    ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                        if swaggen_ui_kit::secondary_button(ui, true, "Remove").clicked() {
+                            remove_id = Some(prof.id.clone());
+                        }
+                        if swaggen_ui_kit::primary_button(ui, true, "Connect server").clicked() {
+                            select_id = Some(prof.id.clone());
+                            test_id = Some(prof.id.clone());
+                        }
+                    });
                 });
                 if !prof.last_error.is_empty() {
                     swaggen_ui_kit::notice_banner(
                         ui,
                         NoticeKind::Danger,
-                        "Unable to reach server (A06)",
+                        "Unable to reach server",
                         &prof.last_error,
                     );
+                    ui.add_space(4.0);
                 }
             }
             if let Some(id) = select_id {
@@ -122,32 +150,33 @@ fn show_server_profiles(app: &mut App, ui: &mut egui::Ui) {
         }
     });
 
-    ui.add_space(6.0);
+    ui.add_space(10.0);
     swaggen_ui_kit::surface_card(ui, |ui| {
-        ui.strong("Add / update server connection (A05 / W04)");
-        ui.horizontal(|ui| {
-            ui.label("Profile name:");
-            ui.add(egui::TextEdit::singleline(&mut app.server_name_input).desired_width(220.0));
+        swaggen_ui_kit::card_header(ui, "Configuration");
+        swaggen_ui_kit::config_field_row(ui, "Profile name", "Workspace server alias", |ui| {
+            ui.add(egui::TextEdit::singleline(&mut app.server_name_input).desired_width(360.0));
         });
-        ui.horizontal(|ui| {
-            ui.label("Server URL:");
+        swaggen_ui_kit::config_field_row(ui, "Server address", "HTTPS origin of Swaggen server", |ui| {
             ui.add(
                 egui::TextEdit::singleline(&mut app.server_url_input)
-                    .hint_text("https://api-team.example.com or http://127.0.0.1:8080")
+                    .hint_text("https://swaggen-api.ngocthang.io.vn")
                     .desired_width(360.0),
             );
+            if let Err(reason) = validate_server_url(&app.server_url_input) {
+                ui.label(egui::RichText::new(reason).size(11.5).color(Tokens::TEXT_WARNING));
+            }
         });
-        ui.checkbox(
-            &mut app.server_allow_self_signed,
-            "Trust self-signed TLS certificate strictly for this host only",
-        );
-        if let Err(reason) = validate_server_url(&app.server_url_input) {
-            ui.label(egui::RichText::new(reason).color(Tokens::TEXT_WARNING));
-        }
+        swaggen_ui_kit::config_field_row(ui, "TLS verification", "Host-scoped exception only", |ui| {
+            ui.checkbox(
+                &mut app.server_allow_self_signed,
+                "Trust self-signed TLS certificate strictly for this host only",
+            );
+        });
+        ui.add_space(4.0);
         if swaggen_ui_kit::primary_button(
             ui,
             !app.server_name_input.trim().is_empty() && validate_server_url(&app.server_url_input).is_ok(),
-            "Save & check server connection",
+            "Save & connect server",
         )
         .clicked()
         {
@@ -159,25 +188,12 @@ fn show_server_profiles(app: &mut App, ui: &mut egui::Ui) {
                 .map(|c| if c.is_ascii_alphanumeric() { c } else { '-' })
                 .collect();
             let prof_id = if id.is_empty() { "team-server".into() } else { id };
-            let prof = ServerProfile {
-                id: prof_id.clone(),
-                name: app.server_name_input.trim().to_owned(),
-                base_url: app.server_url_input.trim().trim_end_matches('/').to_owned(),
-                allow_self_signed_tls: app.server_allow_self_signed,
-                expected_min_api_version: 1,
-                email: String::new(),
-                user_id: String::new(),
-                display_name: String::new(),
-                session_id: String::new(),
-                session_expires_unix: 0,
-                last_checked_unix: 0,
-                last_server_version: String::new(),
-                last_latency_ms: None,
-                last_tls_status: String::new(),
-                last_error: String::new(),
-                bootstrap_required: false,
-                mongo_ready: false,
-            };
+            let prof = ServerProfile::new(
+                prof_id.clone(),
+                app.server_name_input.trim(),
+                app.server_url_input.trim().trim_end_matches('/'),
+                app.server_allow_self_signed,
+            );
             app.server_profiles.upsert(prof);
             app.server_profiles.active_profile_id = Some(prof_id.clone());
             app.submit(Command::SaveServerProfiles {
@@ -199,81 +215,142 @@ fn show_auth_and_bootstrap(app: &mut App, ui: &mut egui::Ui) {
         return;
     };
 
-    swaggen_ui_kit::notice_banner(
-        ui,
-        NoticeKind::Info,
-        "Authentication policy",
-        "Internal email + Argon2id accounts are active on self-hosted servers. External Google OAuth (A01-A04/S02) remains unconfigured until OAuth credentials are provisioned.",
-    );
-    ui.add_space(4.0);
+    let firebase_ready = active.firebase_project_id.is_some() && active.firebase_web_api_key.is_some();
+    if firebase_ready {
+        swaggen_ui_kit::notice_banner(
+            ui,
+            NoticeKind::Success,
+            "Firebase Authentication enabled",
+            &format!(
+                "Connected to Firebase project '{}' via {}. Google Sign-In and Email/Password tokens are verified cryptographically on the server.",
+                active.firebase_project_id.as_deref().unwrap_or(""),
+                active.base_url
+            ),
+        );
+    } else {
+        swaggen_ui_kit::notice_banner(
+            ui,
+            NoticeKind::Info,
+            "Firebase Authentication",
+            "Click 'Connect server' in Server Profiles to refresh Firebase capabilities, or sign in directly below (requires SWAGGEN_FIREBASE_PROJECT_ID & SWAGGEN_FIREBASE_WEB_API_KEY on the server).",
+        );
+    }
+    ui.add_space(12.0);
 
     ui.columns(2, |cols| {
         swaggen_ui_kit::surface_card(&mut cols[0], |ui| {
-            ui.strong(if active.bootstrap_required {
-                "First Server Owner Setup (Z02 — Required)"
-            } else {
-                "Internal Sign In (WS03 / SC03)"
-            });
-            ui.horizontal(|ui| {
-                ui.label("Email:");
-                ui.text_edit_singleline(&mut app.auth_email);
-            });
-            ui.horizontal(|ui| {
-                ui.label("Password (min 10):");
-                ui.add(egui::TextEdit::singleline(&mut app.auth_password).password(true));
-            });
-            if active.bootstrap_required {
-                ui.horizontal(|ui| {
-                    ui.label("Display name:");
-                    ui.text_edit_singleline(&mut app.auth_display_name);
-                });
-                ui.horizontal(|ui| {
-                    ui.label("Bootstrap token (optional):");
-                    ui.add(egui::TextEdit::singleline(&mut app.auth_bootstrap_token).password(true));
-                });
-                if swaggen_ui_kit::primary_button(ui, !app.pending, "Initialize Server Owner").clicked() {
-                    let pw = std::mem::take(&mut app.auth_password);
-                    let bt = std::mem::take(&mut app.auth_bootstrap_token);
-                    app.submit(Command::BootstrapServerOwner {
-                        profile_id: active.id.clone(),
-                        email: app.auth_email.clone(),
-                        display_name: app.auth_display_name.clone(),
-                        password: pw,
-                        bootstrap_token: if bt.trim().is_empty() { None } else { Some(bt) },
-                    });
-                }
-            } else if swaggen_ui_kit::primary_button(ui, !app.pending, "Sign In").clicked() {
-                let pw = std::mem::take(&mut app.auth_password);
-                app.submit(Command::ServerLogin {
+            swaggen_ui_kit::card_header(ui, "Firebase Sign In (Google & Email)");
+            if swaggen_ui_kit::google_button(ui, !app.pending, "Continue with Google (Browser)")
+                .clicked()
+            {
+                let bt = app.auth_bootstrap_token.trim().to_owned();
+                app.submit(Command::FirebaseBrowserLogin {
                     profile_id: active.id.clone(),
-                    email: app.auth_email.clone(),
-                    password: pw,
+                    bootstrap_token: if bt.is_empty() { None } else { Some(bt) },
                 });
             }
+            ui.add_space(12.0);
+            ui.label(
+                egui::RichText::new("Or authenticate with Firebase Email & Password:")
+                    .size(12.0)
+                    .color(swaggen_ui_kit::text_secondary(ui)),
+            );
+            ui.add_space(8.0);
+            let field_w = ui.available_width();
+            swaggen_ui_kit::text_input(ui, &mut app.auth_email, "Email address", field_w, false);
+            ui.add_space(8.0);
+            swaggen_ui_kit::text_input(ui, &mut app.auth_password, "Password", field_w, true);
+            if app.firebase_create_account {
+                ui.add_space(8.0);
+                swaggen_ui_kit::text_input(
+                    ui,
+                    &mut app.auth_display_name,
+                    "Display name",
+                    field_w,
+                    false,
+                );
+            }
+            if active.bootstrap_required {
+                ui.add_space(8.0);
+                swaggen_ui_kit::text_input(
+                    ui,
+                    &mut app.auth_bootstrap_token,
+                    "Optional server bootstrap token",
+                    field_w,
+                    true,
+                );
+            }
+            ui.add_space(8.0);
+            ui.checkbox(
+                &mut app.firebase_create_account,
+                "Create new Firebase account",
+            );
+            ui.add_space(8.0);
+            ui.horizontal_wrapped(|ui| {
+                let can_fb = !app.pending
+                    && !app.auth_email.trim().is_empty()
+                    && !app.auth_password.is_empty();
+                if swaggen_ui_kit::primary_button(
+                    ui,
+                    can_fb,
+                    if app.firebase_create_account {
+                        "Create Firebase account"
+                    } else {
+                        "Sign in with Firebase"
+                    },
+                )
+                .clicked()
+                {
+                    let pw = std::mem::take(&mut app.auth_password);
+                    let bt = app.auth_bootstrap_token.trim().to_owned();
+                    app.submit(Command::FirebaseEmailAuth {
+                        profile_id: active.id.clone(),
+                        email: app.auth_email.trim().to_owned(),
+                        password: pw,
+                        display_name: app.auth_display_name.trim().to_owned(),
+                        create_account: app.firebase_create_account,
+                        bootstrap_token: if bt.is_empty() { None } else { Some(bt) },
+                    });
+                }
+                if swaggen_ui_kit::secondary_button(ui, true, "Open A01 Welcome").clicked() {
+                    app.show_welcome = true;
+                }
+            });
         });
 
         swaggen_ui_kit::surface_card(&mut cols[1], |ui| {
-            ui.strong("Accept Single-Use Team Invitation (A10 / W19 / W20)");
-            ui.horizontal(|ui| {
-                ui.label("Invite token:");
-                ui.add(egui::TextEdit::singleline(&mut app.invite_token_input).password(true));
-            });
-            ui.horizontal(|ui| {
-                ui.label("Email:");
-                ui.text_edit_singleline(&mut app.auth_email);
-            });
-            ui.horizontal(|ui| {
-                ui.label("Display name:");
-                ui.text_edit_singleline(&mut app.auth_display_name);
-            });
-            ui.horizontal(|ui| {
-                ui.label("Password:");
-                ui.add(egui::TextEdit::singleline(&mut app.auth_password).password(true));
-            });
+            swaggen_ui_kit::card_header(ui, "Accept Single-Use Team Invitation");
+            let field_w = ui.available_width();
+            swaggen_ui_kit::text_input(
+                ui,
+                &mut app.invite_token_input,
+                "One-time invitation token",
+                field_w,
+                true,
+            );
+            ui.add_space(8.0);
+            swaggen_ui_kit::text_input(ui, &mut app.auth_email, "Email address", field_w, false);
+            ui.add_space(8.0);
+            swaggen_ui_kit::text_input(
+                ui,
+                &mut app.auth_display_name,
+                "Display name",
+                field_w,
+                false,
+            );
+            ui.add_space(8.0);
+            swaggen_ui_kit::text_input(
+                ui,
+                &mut app.auth_password,
+                "Password (if creating internal fallback account)",
+                field_w,
+                true,
+            );
+            ui.add_space(10.0);
             if swaggen_ui_kit::primary_button(
                 ui,
                 !app.pending && !app.invite_token_input.trim().is_empty(),
-                "Accept Invitation & Join Workspace",
+                "Accept invitation & join workspace",
             )
             .clicked()
             {
@@ -285,6 +362,68 @@ fn show_auth_and_bootstrap(app: &mut App, ui: &mut egui::Ui) {
                     email: app.auth_email.clone(),
                     display_name: app.auth_display_name.clone(),
                     password: if pw.is_empty() { None } else { Some(pw) },
+                });
+            }
+        });
+    });
+
+    ui.add_space(12.0);
+    swaggen_ui_kit::surface_card(ui, |ui| {
+        egui::CollapsingHeader::new(
+            egui::RichText::new("Legacy Internal Account (Self-hosted fallback)")
+                .size(13.0)
+                .color(swaggen_ui_kit::text_secondary(ui)),
+        )
+        .default_open(false)
+        .show(ui, |ui| {
+            ui.horizontal_wrapped(|ui| {
+                ui.label("Email:");
+                ui.add(egui::TextEdit::singleline(&mut app.auth_email).desired_width(200.0));
+                ui.label("Password (min 10):");
+                ui.add(
+                    egui::TextEdit::singleline(&mut app.auth_password)
+                        .password(true)
+                        .desired_width(180.0),
+                );
+            });
+            if active.bootstrap_required {
+                ui.horizontal_wrapped(|ui| {
+                    ui.label("Display name:");
+                    ui.add(
+                        egui::TextEdit::singleline(&mut app.auth_display_name).desired_width(180.0),
+                    );
+                    ui.label("Bootstrap token:");
+                    ui.add(
+                        egui::TextEdit::singleline(&mut app.auth_bootstrap_token)
+                            .password(true)
+                            .desired_width(180.0),
+                    );
+                });
+                if swaggen_ui_kit::secondary_button(
+                    ui,
+                    !app.pending,
+                    "Initialize Internal Owner",
+                )
+                .clicked()
+                {
+                    let pw = std::mem::take(&mut app.auth_password);
+                    let bt = std::mem::take(&mut app.auth_bootstrap_token);
+                    app.submit(Command::BootstrapServerOwner {
+                        profile_id: active.id.clone(),
+                        email: app.auth_email.clone(),
+                        display_name: app.auth_display_name.clone(),
+                        password: pw,
+                        bootstrap_token: if bt.trim().is_empty() { None } else { Some(bt) },
+                    });
+                }
+            } else if swaggen_ui_kit::secondary_button(ui, !app.pending, "Internal Password Sign In")
+                .clicked()
+            {
+                let pw = std::mem::take(&mut app.auth_password);
+                app.submit(Command::ServerLogin {
+                    profile_id: active.id.clone(),
+                    email: app.auth_email.clone(),
+                    password: pw,
                 });
             }
         });
