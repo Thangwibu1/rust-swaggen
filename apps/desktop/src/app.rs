@@ -75,6 +75,7 @@ pub struct App {
     pub root: PathBuf,
     pub workspace_id: LocalId,
     pub available_workspaces: Vec<LocalId>,
+    pub workspace_summaries: Vec<crate::worker::WorkspaceListEntry>,
     pub state: WorkspaceState,
     pub legacy_snapshot: Snapshot,
     pub history: Vec<HistoryEntry>,
@@ -190,6 +191,11 @@ pub struct App {
     pub invite_email_input: String,
     pub invite_role: swaggen_api_contract::Role,
     pub last_created_invite_token: String,
+    pub public_invite_links: Vec<swaggen_api_contract::PublicInviteLinkSummary>,
+    pub invite_link_role: swaggen_api_contract::Role,
+    pub invite_link_expiry_hours: u32,
+    pub invite_link_max_uses_input: String,
+    pub invite_link_paste_input: String,
     pub server_sessions: Vec<swaggen_api_contract::SessionSummary>,
     pub pw_current_input: String,
     pub pw_new_input: String,
@@ -313,13 +319,19 @@ impl App {
         let worker = Worker::start(root.clone(), workspace_id.clone(), move || {
             context.request_repaint();
         });
+        let default_display_name = if workspace_id.as_str() == "personal" {
+            "Personal".to_owned()
+        } else {
+            workspace_id.as_str().to_owned()
+        };
         let initial_state =
-            WorkspaceState::new_personal(workspace_id.clone(), workspace_id.as_str().to_owned());
+            WorkspaceState::new_personal(workspace_id.clone(), default_display_name);
         Self {
             worker,
             root: root.clone(),
             workspace_id: workspace_id.clone(),
             available_workspaces: vec![workspace_id.clone()],
+            workspace_summaries: Vec::new(),
             state: initial_state,
             legacy_snapshot: Snapshot {
                 version: 1,
@@ -431,6 +443,11 @@ impl App {
             invite_email_input: String::new(),
             invite_role: swaggen_api_contract::Role::Editor,
             last_created_invite_token: String::new(),
+            public_invite_links: Vec::new(),
+            invite_link_role: swaggen_api_contract::Role::Editor,
+            invite_link_expiry_hours: 72,
+            invite_link_max_uses_input: String::new(),
+            invite_link_paste_input: String::new(),
             server_sessions: Vec::new(),
             pw_current_input: String::new(),
             pw_new_input: String::new(),
@@ -797,6 +814,7 @@ impl App {
                     workspace,
                     specs,
                     workspaces,
+                    workspace_summaries,
                     history,
                     secret_names,
                     storage_stats,
@@ -812,6 +830,7 @@ impl App {
                         .map(|s| s.raw_text.clone())
                         .unwrap_or_default();
                     self.available_workspaces = workspaces;
+                    self.workspace_summaries = workspace_summaries;
                     self.history = history;
                     self.secret_names = secret_names;
                     self.storage_stats = storage_stats;
@@ -837,6 +856,7 @@ impl App {
                     workspace,
                     specs,
                     workspaces,
+                    workspace_summaries,
                     history,
                     secret_names,
                     storage_stats,
@@ -849,6 +869,7 @@ impl App {
                         self.saved_generation = self.generation;
                     }
                     self.available_workspaces = workspaces;
+                    self.workspace_summaries = workspace_summaries;
                     self.history = history;
                     self.secret_names = secret_names;
                     self.storage_stats = storage_stats;
@@ -879,6 +900,7 @@ impl App {
                     if signed_in_id.is_none() {
                         self.team_workspaces.clear();
                         self.pending_invitations.clear();
+                        self.public_invite_links.clear();
                         self.selected_team_workspace_id = None;
                     } else if let Some(pid) = signed_in_id {
                         self.submit(Command::RefreshTeamWorkspaces {
@@ -900,9 +922,14 @@ impl App {
                     self.team_workspaces = list;
                     self.status = format!("Loaded {} team workspaces", self.team_workspaces.len());
                 }
-                Event::TeamWorkspaceDetailsLoaded { members, audit } => {
+                Event::TeamWorkspaceDetailsLoaded {
+                    members,
+                    audit,
+                    public_links,
+                } => {
                     self.team_member_details = Some(members);
                     self.team_audit_events = audit;
+                    self.public_invite_links = public_links;
                     self.status = "Loaded workspace members & audit".into();
                 }
                 Event::InvitationCreated(inv) => {
@@ -921,6 +948,20 @@ impl App {
                         );
                     }
                 }
+                Event::PublicInviteLinkCreated(link) => {
+                    self.public_invite_links
+                        .retain(|existing| existing.link_id != link.link_id);
+                    self.public_invite_links.insert(0, link.clone());
+                    self.status =
+                        format!("Created public expiring invite link ({})", link.share_link);
+                }
+                Event::PublicInviteLinksLoaded(links) => {
+                    self.public_invite_links = links;
+                    self.status = format!(
+                        "Loaded {} public invite link(s)",
+                        self.public_invite_links.len()
+                    );
+                }
                 Event::InAppInvitationAccepted(joined) => {
                     self.pending_invitations
                         .retain(|i| i.workspace_id != joined.workspace.workspace_id);
@@ -931,7 +972,9 @@ impl App {
                     {
                         self.team_workspaces.push(joined.workspace.clone());
                     }
+                    self.invite_link_paste_input.clear();
                     self.selected_team_workspace_id = Some(joined.workspace.workspace_id.clone());
+                    self.state.meta.name = joined.workspace.name.clone();
                     self.status = format!(
                         "Joined team workspace '{}' as {}",
                         joined.workspace.name,
@@ -941,7 +984,13 @@ impl App {
                         self.submit(Command::RefreshTeamWorkspaces {
                             profile_id: pid.clone(),
                         });
-                        self.submit(Command::RefreshPendingInvitations { profile_id: pid });
+                        self.submit(Command::RefreshPendingInvitations {
+                            profile_id: pid.clone(),
+                        });
+                        self.submit(Command::LoadTeamWorkspaceDetails {
+                            profile_id: pid,
+                            workspace_id: joined.workspace.workspace_id,
+                        });
                     }
                 }
                 Event::SyncStateUpdated { state, message } => {
@@ -1369,6 +1418,39 @@ impl App {
         "SW".into()
     }
 
+    pub fn active_workspace_display_name(&self) -> String {
+        if let Some(tid) = &self.selected_team_workspace_id
+            && let Some(tw) = self.team_workspaces.iter().find(|w| w.workspace_id == *tid)
+            && !tw.name.trim().is_empty()
+        {
+            return tw.name.clone();
+        }
+        if let Some(summary) = self
+            .workspace_summaries
+            .iter()
+            .find(|w| w.id == self.workspace_id)
+            && !summary.name.trim().is_empty()
+        {
+            if summary.id.as_str() == "personal" && summary.name == "personal" {
+                return "Personal".into();
+            }
+            return summary.name.clone();
+        }
+        let raw = self.state.meta.name.trim();
+        if raw.is_empty()
+            || (raw == "personal" && self.workspace_id.as_str() == "personal")
+            || raw.starts_with("team-")
+        {
+            if self.workspace_id.as_str() == "personal" {
+                "Personal".into()
+            } else {
+                self.workspace_id.as_str().to_owned()
+            }
+        } else {
+            raw.to_owned()
+        }
+    }
+
     pub fn screen_breadcrumb(&self) -> String {
         let leaf = match self.mode {
             MainMode::Workbench => self
@@ -1390,7 +1472,7 @@ impl App {
             MainMode::Privacy => "Privacy & Updates".into(),
             MainMode::Shortcuts => "Keyboard Shortcuts".into(),
         };
-        format!("{} / {leaf}", self.state.meta.name)
+        format!("{} / {leaf}", self.active_workspace_display_name())
     }
 }
 
@@ -1502,7 +1584,7 @@ impl eframe::App for App {
                     .and_then(|n| n.to_str())
                     .unwrap_or("dropped-spec")
                     .to_owned();
-                let doc = swaggen_spec_engine::openapi::parse_and_validate(
+                let doc = swaggen_spec_engine::openapi::parse_api_documentation(
                     swaggen_domain::workspace::new_uid(),
                     name.clone(),
                     &raw,
@@ -1519,7 +1601,7 @@ impl eframe::App for App {
             if self.mode == MainMode::Specs
                 && let Some(cur_spec) = self.specs.get(self.selected_spec_idx)
             {
-                let updated = swaggen_spec_engine::openapi::parse_and_validate(
+                let updated = swaggen_spec_engine::openapi::parse_api_documentation(
                     cur_spec.id.clone(),
                     cur_spec.name.clone(),
                     &self.spec_editor_text,
@@ -2318,6 +2400,7 @@ mod tests {
             root: root.clone(),
             workspace_id: LocalId::parse("personal").unwrap(),
             available_workspaces: vec![LocalId::parse("personal").unwrap()],
+            workspace_summaries: Vec::new(),
             state: ws,
             legacy_snapshot: Snapshot {
                 version: 1,
@@ -2429,6 +2512,11 @@ mod tests {
             invite_email_input: String::new(),
             invite_role: swaggen_api_contract::Role::Editor,
             last_created_invite_token: String::new(),
+            public_invite_links: Vec::new(),
+            invite_link_role: swaggen_api_contract::Role::Editor,
+            invite_link_expiry_hours: 72,
+            invite_link_max_uses_input: String::new(),
+            invite_link_paste_input: String::new(),
             server_sessions: Vec::new(),
             pw_current_input: String::new(),
             pw_new_input: String::new(),

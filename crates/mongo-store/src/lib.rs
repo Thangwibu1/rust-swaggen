@@ -14,11 +14,12 @@ use swaggen_api_contract::{
     AcceptInvitationRequest, AcceptInvitationResponse, AuditEventRecord, AuthResponse,
     BootstrapOwnerRequest, ChangePasswordRequest, ChangesFeedResponse, CommentThreadRecord,
     CreateCommentRequest, CreateInvitationRequest, CreateInvitationResponse,
-    CreateWorkspaceRequest, EntityRevisionRecord, InvitationSummary, LoginRequest,
-    MemberListResponse, MemberSummary, NotificationListResponse, PublishBatchRequest,
-    PublishBatchResponse, ReplyCommentRequest, ResolveCommentRequest, RestoreRevisionRequest,
-    SessionSummary, SnapshotResponse, TeamWorkspaceSummary, UpdateMemberRoleRequest,
-    UpsertEntityRequest, WorkspaceEntityRecord,
+    CreatePublicInviteLinkRequest, CreatePublicInviteLinkResponse, CreateWorkspaceRequest,
+    EntityRevisionRecord, InvitationSummary, LoginRequest, MemberListResponse, MemberSummary,
+    NotificationListResponse, PublicInviteLinkSummary, PublishBatchRequest, PublishBatchResponse,
+    ReplyCommentRequest, ResolveCommentRequest, RestoreRevisionRequest, SessionSummary,
+    SnapshotResponse, TeamWorkspaceSummary, UpdateMemberRoleRequest, UpsertEntityRequest,
+    WorkspaceEntityRecord,
 };
 
 #[allow(clippy::large_enum_variant)]
@@ -267,6 +268,70 @@ impl WorkspaceRepository for ServerStore {
         match self {
             Self::Mongo(m) => m.decline_invitation(auth, invitation_id, now).await,
             Self::Memory(m) => m.decline_invitation(auth, invitation_id, now).await,
+        }
+    }
+    async fn create_public_invite_link(
+        &self,
+        auth: &AuthContext,
+        workspace_id: &str,
+        req: CreatePublicInviteLinkRequest,
+        now: i64,
+    ) -> Result<CreatePublicInviteLinkResponse, StoreError> {
+        match self {
+            Self::Mongo(m) => {
+                m.create_public_invite_link(auth, workspace_id, req, now)
+                    .await
+            }
+            Self::Memory(m) => {
+                m.create_public_invite_link(auth, workspace_id, req, now)
+                    .await
+            }
+        }
+    }
+    async fn list_public_invite_links(
+        &self,
+        auth: &AuthContext,
+        workspace_id: &str,
+    ) -> Result<Vec<PublicInviteLinkSummary>, StoreError> {
+        match self {
+            Self::Mongo(m) => m.list_public_invite_links(auth, workspace_id).await,
+            Self::Memory(m) => m.list_public_invite_links(auth, workspace_id).await,
+        }
+    }
+    async fn revoke_public_invite_link(
+        &self,
+        auth: &AuthContext,
+        workspace_id: &str,
+        link_id: &str,
+        now: i64,
+    ) -> Result<(), StoreError> {
+        match self {
+            Self::Mongo(m) => {
+                m.revoke_public_invite_link(auth, workspace_id, link_id, now)
+                    .await
+            }
+            Self::Memory(m) => {
+                m.revoke_public_invite_link(auth, workspace_id, link_id, now)
+                    .await
+            }
+        }
+    }
+    async fn join_by_public_invite_link(
+        &self,
+        auth: &AuthContext,
+        link_or_code: &str,
+        device_name: &str,
+        now: i64,
+    ) -> Result<AcceptInvitationResponse, StoreError> {
+        match self {
+            Self::Mongo(m) => {
+                m.join_by_public_invite_link(auth, link_or_code, device_name, now)
+                    .await
+            }
+            Self::Memory(m) => {
+                m.join_by_public_invite_link(auth, link_or_code, device_name, now)
+                    .await
+            }
         }
     }
     async fn update_member_role(

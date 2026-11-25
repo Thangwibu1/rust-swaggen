@@ -11,9 +11,10 @@ use swaggen_api_contract::{
     AcceptDirectInvitationRequest, AcceptInvitationRequest, AcceptInvitationResponse,
     AuditEventRecord, AuditListResponse, AuthResponse, BootstrapOwnerRequest, Capabilities,
     ChangePasswordRequest, CreateInvitationRequest, CreateInvitationResponse,
-    CreateWorkspaceRequest, FirebaseLoginRequest, LoginRequest, MemberListResponse,
-    PendingInvitationsResponse, SessionListResponse, TeamWorkspaceSummary, UpdateMemberRoleRequest,
-    WorkspaceListResponse,
+    CreatePublicInviteLinkRequest, CreatePublicInviteLinkResponse, CreateWorkspaceRequest,
+    FirebaseLoginRequest, JoinByInviteLinkRequest, LoginRequest, MemberListResponse,
+    PendingInvitationsResponse, PublicInviteLinkListResponse, SessionListResponse,
+    TeamWorkspaceSummary, UpdateMemberRoleRequest, WorkspaceListResponse,
 };
 use swaggen_domain::{
     Error, LocalId, Secret, SecretRef,
@@ -860,7 +861,23 @@ pub fn handle_server_command(
                 ))
                 .map(|(a, _)| a.events)
                 .unwrap_or_default();
-            Ok(Event::TeamWorkspaceDetailsLoaded { members, audit })
+            let links_path = format!("/v1/workspaces/{workspace_id}/invite-links");
+            let public_links = runtime
+                .block_on(server_call::<(), PublicInviteLinkListResponse>(
+                    &prof,
+                    HttpMethod::Get,
+                    &links_path,
+                    Some(&tok),
+                    None,
+                    downloads,
+                ))
+                .map(|(r, _)| r.links)
+                .unwrap_or_default();
+            Ok(Event::TeamWorkspaceDetailsLoaded {
+                members,
+                audit,
+                public_links,
+            })
         }
         Command::CreateServerInvitation {
             profile_id,
@@ -926,6 +943,134 @@ pub fn handle_server_command(
                     Ok(()) => Event::FileSaved {
                         message: "Invitation revoked".into(),
                     },
+                    Err(e) => Event::ActionError(e),
+                },
+            )
+        }
+        Command::CreatePublicInviteLink {
+            profile_id,
+            workspace_id,
+            role,
+            expires_in_hours,
+            max_uses,
+        } => {
+            let (_, prof) = match get_profile(root, &profile_id) {
+                Ok(v) => v,
+                Err(m) => return Ok(Event::ActionError(m)),
+            };
+            let tok = match read_session_token(root, &prof) {
+                Ok(t) => t,
+                Err(m) => return Ok(Event::ActionError(m)),
+            };
+            let body = CreatePublicInviteLinkRequest {
+                role,
+                expires_in_hours,
+                max_uses,
+            };
+            let path = format!("/v1/workspaces/{workspace_id}/invite-links");
+            Ok(
+                match runtime.block_on(server_call::<
+                    CreatePublicInviteLinkRequest,
+                    CreatePublicInviteLinkResponse,
+                >(
+                    &prof,
+                    HttpMethod::Post,
+                    &path,
+                    Some(&tok),
+                    Some(&body),
+                    downloads,
+                )) {
+                    Ok((resp, _)) => Event::PublicInviteLinkCreated(resp.link),
+                    Err(e) => Event::ActionError(e),
+                },
+            )
+        }
+        Command::LoadPublicInviteLinks {
+            profile_id,
+            workspace_id,
+        } => {
+            let (_, prof) = match get_profile(root, &profile_id) {
+                Ok(v) => v,
+                Err(m) => return Ok(Event::ActionError(m)),
+            };
+            let tok = match read_session_token(root, &prof) {
+                Ok(t) => t,
+                Err(m) => return Ok(Event::ActionError(m)),
+            };
+            let path = format!("/v1/workspaces/{workspace_id}/invite-links");
+            Ok(
+                match runtime.block_on(server_call::<(), PublicInviteLinkListResponse>(
+                    &prof,
+                    HttpMethod::Get,
+                    &path,
+                    Some(&tok),
+                    None,
+                    downloads,
+                )) {
+                    Ok((resp, _)) => Event::PublicInviteLinksLoaded(resp.links),
+                    Err(e) => Event::ActionError(e),
+                },
+            )
+        }
+        Command::RevokePublicInviteLink {
+            profile_id,
+            workspace_id,
+            link_id,
+        } => {
+            let (_, prof) = match get_profile(root, &profile_id) {
+                Ok(v) => v,
+                Err(m) => return Ok(Event::ActionError(m)),
+            };
+            let tok = match read_session_token(root, &prof) {
+                Ok(t) => t,
+                Err(m) => return Ok(Event::ActionError(m)),
+            };
+            let path = format!("/v1/workspaces/{workspace_id}/invite-links/{link_id}/revoke");
+            Ok(
+                match runtime.block_on(server_call_empty::<()>(
+                    &prof,
+                    HttpMethod::Post,
+                    &path,
+                    Some(&tok),
+                    None,
+                    downloads,
+                )) {
+                    Ok(()) => Event::FileSaved {
+                        message: "Public invite link revoked".into(),
+                    },
+                    Err(e) => Event::ActionError(e),
+                },
+            )
+        }
+        Command::JoinByPublicInviteLink {
+            profile_id,
+            link_or_code,
+        } => {
+            let (_, prof) = match get_profile(root, &profile_id) {
+                Ok(v) => v,
+                Err(m) => return Ok(Event::ActionError(m)),
+            };
+            let tok = match read_session_token(root, &prof) {
+                Ok(t) => t,
+                Err(m) => return Ok(Event::ActionError(m)),
+            };
+            let body = JoinByInviteLinkRequest {
+                link_or_code,
+                device_name: "Swaggen Desktop Windows".into(),
+            };
+            Ok(
+                match runtime.block_on(server_call::<
+                    JoinByInviteLinkRequest,
+                    AcceptInvitationResponse,
+                >(
+                    &prof,
+                    HttpMethod::Post,
+                    "/v1/auth/invite-links/join",
+                    Some(&tok),
+                    Some(&body),
+                    downloads,
+                )) {
+                    Ok((joined, _)) => Event::InAppInvitationAccepted(joined),
                     Err(e) => Event::ActionError(e),
                 },
             )

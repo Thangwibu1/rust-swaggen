@@ -24,11 +24,23 @@ use swaggen_http_engine::{
 };
 use swaggen_local_store::{
     Snapshot, Store, WorkspaceDirectory, quarantine_corrupt_draft,
-    workspace_store::{StorageStats, WorkspaceStore, list_workspaces, migrate_workspace_root},
+    workspace_store::{
+        StorageStats, WorkspaceStore, list_workspace_summaries, list_workspaces,
+        migrate_workspace_root,
+    },
 };
 use swaggen_secret_store::SecretStore;
-use swaggen_spec_engine::openapi::{SpecDocument, parse_and_validate};
+use swaggen_spec_engine::openapi::{
+    SpecDocument, extract_swagger_urls_from_html, parse_api_documentation,
+};
 use tokio_util::sync::CancellationToken;
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct WorkspaceListEntry {
+    pub id: LocalId,
+    pub name: String,
+    pub kind: WorkspaceKind,
+}
 
 pub enum Command {
     /// Drop uncertain handles and replay durable data before accepting more writes.
@@ -183,6 +195,26 @@ pub enum Command {
         workspace_id: String,
         invitation_id: String,
     },
+    CreatePublicInviteLink {
+        profile_id: String,
+        workspace_id: String,
+        role: swaggen_api_contract::Role,
+        expires_in_hours: u32,
+        max_uses: Option<u32>,
+    },
+    LoadPublicInviteLinks {
+        profile_id: String,
+        workspace_id: String,
+    },
+    RevokePublicInviteLink {
+        profile_id: String,
+        workspace_id: String,
+        link_id: String,
+    },
+    JoinByPublicInviteLink {
+        profile_id: String,
+        link_or_code: String,
+    },
     UpdateMemberRole {
         profile_id: String,
         workspace_id: String,
@@ -329,6 +361,7 @@ pub enum Event {
         workspace: WorkspaceState,
         specs: Vec<SpecDocument>,
         workspaces: Vec<LocalId>,
+        workspace_summaries: Vec<WorkspaceListEntry>,
         history: Vec<HistoryEntry>,
         secret_names: Vec<LocalId>,
         storage_stats: StorageStats,
@@ -339,6 +372,7 @@ pub enum Event {
         workspace: WorkspaceState,
         specs: Vec<SpecDocument>,
         workspaces: Vec<LocalId>,
+        workspace_summaries: Vec<WorkspaceListEntry>,
         history: Vec<HistoryEntry>,
         secret_names: Vec<LocalId>,
         storage_stats: StorageStats,
@@ -354,10 +388,13 @@ pub enum Event {
     TeamWorkspaceDetailsLoaded {
         members: swaggen_api_contract::MemberListResponse,
         audit: Vec<swaggen_api_contract::AuditEventRecord>,
+        public_links: Vec<swaggen_api_contract::PublicInviteLinkSummary>,
     },
     InvitationCreated(swaggen_api_contract::CreateInvitationResponse),
     PendingInvitationsLoaded(Vec<swaggen_api_contract::InvitationSummary>),
     InAppInvitationAccepted(swaggen_api_contract::AcceptInvitationResponse),
+    PublicInviteLinkCreated(swaggen_api_contract::PublicInviteLinkSummary),
+    PublicInviteLinksLoaded(Vec<swaggen_api_contract::PublicInviteLinkSummary>),
     SyncStateUpdated {
         state: Box<swaggen_sync::TeamSyncState>,
         message: String,
@@ -486,6 +523,10 @@ fn build_snapshot_event(s: &Session, root: &Path, workspace: &LocalId, recovered
     let ws = s.ws_store.state().clone();
     let specs = s.ws_store.specs().to_vec();
     let workspaces = list_workspaces(root).unwrap_or_else(|_| vec![workspace.clone()]);
+    let workspace_summaries = list_workspace_summaries(root)
+        .into_iter()
+        .map(|(id, name, kind)| WorkspaceListEntry { id, name, kind })
+        .collect();
     let history = s.ws_store.history().to_vec();
     let secret_names = s.secrets.list_names();
     let storage_stats = s.ws_store.storage_stats().unwrap_or(StorageStats {
@@ -501,6 +542,7 @@ fn build_snapshot_event(s: &Session, root: &Path, workspace: &LocalId, recovered
             workspace: ws,
             specs,
             workspaces,
+            workspace_summaries,
             history,
             secret_names,
             storage_stats,
@@ -512,6 +554,7 @@ fn build_snapshot_event(s: &Session, root: &Path, workspace: &LocalId, recovered
             workspace: ws,
             specs,
             workspaces,
+            workspace_summaries,
             history,
             secret_names,
             storage_stats,
@@ -2024,7 +2067,56 @@ impl Worker {
                             Ok(resp) => {
                                 let text =
                                     String::from_utf8_lossy(&resp.preview_bytes).into_owned();
-                                let doc = parse_and_validate(new_uid(), name, &text, &[]);
+                                let mut doc =
+                                    parse_api_documentation(new_uid(), name.clone(), &text, &[]);
+                                let trimmed_lower = text
+                                    .trim_start()
+                                    .chars()
+                                    .take(24)
+                                    .collect::<String>()
+                                    .to_ascii_lowercase();
+                                if doc.operations.is_empty()
+                                    && (trimmed_lower.starts_with("<!doctype html")
+                                        || trimmed_lower.starts_with("<html"))
+                                {
+                                    let candidates =
+                                        extract_swagger_urls_from_html(&text, &resolved.url);
+                                    for cand_url in candidates {
+                                        let cand_req = RequestItem::new(
+                                            "spec-fetch-cand",
+                                            name.clone(),
+                                            swaggen_domain::workspace::HttpMethod::Get,
+                                            cand_url,
+                                        );
+                                        let cand_resolved = resolve_request_preview(
+                                            &cand_req,
+                                            None,
+                                            &[],
+                                            &ctx,
+                                            &[],
+                                            0,
+                                        );
+                                        if let Ok(cand_resp) = runtime.block_on(execute_request(
+                                            &cand_resolved,
+                                            &dl,
+                                            CancellationToken::new(),
+                                        )) {
+                                            let cand_text =
+                                                String::from_utf8_lossy(&cand_resp.preview_bytes)
+                                                    .into_owned();
+                                            let cand_doc = parse_api_documentation(
+                                                new_uid(),
+                                                name.clone(),
+                                                &cand_text,
+                                                &[],
+                                            );
+                                            if !cand_doc.operations.is_empty() {
+                                                doc = cand_doc;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
                                 Event::SpecFetched(Box::new(doc))
                             }
                             Err(err) => Event::ActionError(format!(
@@ -2083,6 +2175,10 @@ impl Worker {
                     | Command::LoadTeamWorkspaceDetails { .. }
                     | Command::CreateServerInvitation { .. }
                     | Command::RevokeServerInvitation { .. }
+                    | Command::CreatePublicInviteLink { .. }
+                    | Command::LoadPublicInviteLinks { .. }
+                    | Command::RevokePublicInviteLink { .. }
+                    | Command::JoinByPublicInviteLink { .. }
                     | Command::UpdateMemberRole { .. }
                     | Command::StageAndPublishEntity { .. }
                     | Command::SyncNow { .. }

@@ -700,6 +700,82 @@ async fn decline_invitation_handler(
     Ok(StatusCode::NO_CONTENT)
 }
 
+async fn create_public_invite_link_handler(
+    State(state): State<AppState>,
+    Extension(RequestCorrelationId(corr)): Extension<RequestCorrelationId>,
+    headers: axum::http::HeaderMap,
+    Path(workspace_id): Path<String>,
+    Json(req): Json<swaggen_api_contract::CreatePublicInviteLinkRequest>,
+) -> Result<Response, (StatusCode, Json<ErrorEnvelope>)> {
+    let ctx = require_auth(&state, &headers)
+        .await
+        .map_err(|e| map_err(&corr, e))?;
+    let res = state
+        .store
+        .create_public_invite_link(&ctx, &workspace_id, req, now_unix())
+        .await
+        .map_err(|e| map_err(&corr, e))?;
+    Ok((StatusCode::CREATED, Json(res)).into_response())
+}
+
+async fn list_public_invite_links_handler(
+    State(state): State<AppState>,
+    Extension(RequestCorrelationId(corr)): Extension<RequestCorrelationId>,
+    headers: axum::http::HeaderMap,
+    Path(workspace_id): Path<String>,
+) -> Result<
+    Json<swaggen_api_contract::PublicInviteLinkListResponse>,
+    (StatusCode, Json<ErrorEnvelope>),
+> {
+    let ctx = require_auth(&state, &headers)
+        .await
+        .map_err(|e| map_err(&corr, e))?;
+    let links = state
+        .store
+        .list_public_invite_links(&ctx, &workspace_id)
+        .await
+        .map_err(|e| map_err(&corr, e))?;
+    Ok(Json(swaggen_api_contract::PublicInviteLinkListResponse {
+        api_version: API_VERSION,
+        links,
+    }))
+}
+
+async fn revoke_public_invite_link_handler(
+    State(state): State<AppState>,
+    Extension(RequestCorrelationId(corr)): Extension<RequestCorrelationId>,
+    headers: axum::http::HeaderMap,
+    Path((workspace_id, link_id)): Path<(String, String)>,
+) -> Result<StatusCode, (StatusCode, Json<ErrorEnvelope>)> {
+    let ctx = require_auth(&state, &headers)
+        .await
+        .map_err(|e| map_err(&corr, e))?;
+    state
+        .store
+        .revoke_public_invite_link(&ctx, &workspace_id, &link_id, now_unix())
+        .await
+        .map_err(|e| map_err(&corr, e))?;
+    Ok(StatusCode::NO_CONTENT)
+}
+
+async fn join_by_invite_link_handler(
+    State(state): State<AppState>,
+    Extension(RequestCorrelationId(corr)): Extension<RequestCorrelationId>,
+    headers: axum::http::HeaderMap,
+    Json(req): Json<swaggen_api_contract::JoinByInviteLinkRequest>,
+) -> Result<Json<swaggen_api_contract::AcceptInvitationResponse>, (StatusCode, Json<ErrorEnvelope>)>
+{
+    let ctx = require_auth(&state, &headers)
+        .await
+        .map_err(|e| map_err(&corr, e))?;
+    let resp = state
+        .store
+        .join_by_public_invite_link(&ctx, &req.link_or_code, &req.device_name, now_unix())
+        .await
+        .map_err(|e| map_err(&corr, e))?;
+    Ok(Json(resp))
+}
+
 async fn list_workspaces(
     State(state): State<AppState>,
     Extension(RequestCorrelationId(corr)): Extension<RequestCorrelationId>,
@@ -2197,6 +2273,10 @@ pub fn router(store: Arc<ServerStore>) -> Router {
             post(decline_invitation_handler),
         )
         .route(
+            "/v1/auth/invite-links/join",
+            post(join_by_invite_link_handler),
+        )
+        .route(
             "/v1/workspaces",
             get(list_workspaces).post(create_workspace),
         )
@@ -2208,6 +2288,14 @@ pub fn router(store: Arc<ServerStore>) -> Router {
         .route(
             "/v1/workspaces/{workspace_id}/invitations/{invitation_id}/revoke",
             post(revoke_invitation),
+        )
+        .route(
+            "/v1/workspaces/{workspace_id}/invite-links",
+            get(list_public_invite_links_handler).post(create_public_invite_link_handler),
+        )
+        .route(
+            "/v1/workspaces/{workspace_id}/invite-links/{link_id}/revoke",
+            post(revoke_public_invite_link_handler),
         )
         .route(
             "/v1/workspaces/{workspace_id}/members/{user_id}/role",
@@ -2375,6 +2463,12 @@ pub fn build_server_openapi_json() -> serde_json::Value {
             "/v1/auth/invitations/pending": { "get": { "summary": "List signed-in user's pending in-app workspace invitations" } },
             "/v1/auth/invitations/{invitation_id}/accept": { "post": { "summary": "Accept an in-app workspace invitation by ID" } },
             "/v1/auth/invitations/{invitation_id}/decline": { "post": { "summary": "Decline an in-app workspace invitation by ID" } },
+            "/v1/auth/invite-links/join": { "post": { "summary": "Join a workspace by pasting an expiring public invite link or code" } },
+            "/v1/workspaces/{workspace_id}/invite-links": {
+                "get": { "summary": "List shareable expiring workspace invite links" },
+                "post": { "summary": "Create an expiring shareable public invite link" }
+            },
+            "/v1/workspaces/{workspace_id}/invite-links/{link_id}/revoke": { "post": { "summary": "Revoke a shareable invite link" } },
             "/v1/workspaces": {
                 "get": { "summary": "List workspaces user belongs to" },
                 "post": { "summary": "Create a new team workspace as Owner" }
@@ -2661,10 +2755,50 @@ mod tests {
         .await;
         assert_eq!(st, 201);
         let ws3: TeamWorkspaceSummary = serde_json::from_str(&ws3_body).unwrap();
+        let (st, ws4_body) = http_call(
+            &base,
+            Method::POST,
+            "/v1/workspaces",
+            Some(&owner_auth.session_token),
+            Some(json!({ "slug": "team-locked", "name": "Team Locked" })),
+        )
+        .await;
+        assert_eq!(st, 201);
+        let ws4: TeamWorkspaceSummary = serde_json::from_str(&ws4_body).unwrap();
+
+        // Expiring public invite link flow: Owner generates swaggen://join/... link -> Viewer pastes link to join ws3
+        let (st, link_body) = http_call(
+            &base,
+            Method::POST,
+            &format!("/v1/workspaces/{}/invite-links", ws3.workspace_id),
+            Some(&owner_auth.session_token),
+            Some(json!({ "role": "editor", "expires_in_hours": 24, "max_uses": 5 })),
+        )
+        .await;
+        assert_eq!(st, 201);
+        let link_res: swaggen_api_contract::CreatePublicInviteLinkResponse =
+            serde_json::from_str(&link_body).unwrap();
+        assert!(link_res.link.share_link.starts_with("swaggen://join/"));
+
+        let (st, join_link_body) = http_call(
+            &base,
+            Method::POST,
+            "/v1/auth/invite-links/join",
+            Some(&viewer_joined.session_token),
+            Some(json!({
+                "link_or_code": link_res.link.share_link,
+                "device_name": "ViewerWin"
+            })),
+        )
+        .await;
+        assert_eq!(st, 200);
+        let joined3: AcceptInvitationResponse = serde_json::from_str(&join_link_body).unwrap();
+        assert_eq!(joined3.workspace.workspace_id, ws3.workspace_id);
+
         let (st, _) = http_call(
             &base,
             Method::GET,
-            &format!("/v1/workspaces/{}/entities", ws3.workspace_id),
+            &format!("/v1/workspaces/{}/entities", ws4.workspace_id),
             Some(&viewer_joined.session_token),
             None,
         )

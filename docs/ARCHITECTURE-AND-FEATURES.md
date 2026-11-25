@@ -1,4 +1,4 @@
-# Swaggen — Tài liệu Kiến trúc Hệ thống & Tổng hợp Tính năng (`v0.1.15`)
+# Swaggen — Tài liệu Kiến trúc Hệ thống & Tổng hợp Tính năng (`v0.1.18`)
 
 > **Swaggen** là nền tảng kiểm thử, thiết kế và cộng tác API (REST, GraphQL, SSE, OpenAPI) viết hoàn toàn bằng **Rust** (`edition = "2024"`, MSRV `1.100`) theo kiến trúc **Windows Native Desktop + Cloud Collaboration Backend**.
 >
@@ -26,14 +26,14 @@ Dự án được tổ chức theo mô hình **Rust Cargo Workspace** gồm **3 
 
 ```text
 d:\code\potmen\
-├── Cargo.toml                  # Cấu hình Workspace, version (0.1.14) và pin dependency tập trung
+├── Cargo.toml                  # Cấu hình Workspace, version (0.1.18) và pin dependency tập trung
 ├── Dockerfile                  # Build image production cho swaggen-server
 ├── docker-compose.yml          # Triển khai Server + MongoDB Replica Set
 ├── 07-operations/              # Hướng dẫn triển khai Coolify VPS & Windows Installer
 ├── assets/                     # Icon ứng dụng (.ico, .png) và bộ icon Figma (assets/icons/)
 ├── tools/                      # Script kiểm tra P00-P01, bundle-result.ps1, build-installer.ps1
 ├── docs/                       # Tài liệu tổng hợp kiến trúc & tính năng
-├── result/                     # Output build release theo từng phiên bản (gitignored), vd: result/v0.1.14/
+├── result/                     # Output build release theo từng phiên bản (gitignored), vd: result/v0.1.18/
 │
 ├── apps/                       # === CÁC ỨNG DỤNG CHÍNH (BINARIES) ===
 │   ├── desktop/                # [FRONTEND] Ứng dụng Windows Desktop (swaggen-desktop.exe)
@@ -139,8 +139,8 @@ Backend (`axum 0.8.9`) phục vụ đồng bộ đội nhóm, quản lý quyền
 ### Các nhóm Endpoint chính của Backend
 - **Health & Metadata**: `/health/live`, `/health/ready`, `/v1/health/metrics`, `/v1/capabilities`.
 - **GraphQL API** ([`graphql_api.rs`](file:///d:/code/potmen/apps/server/src/graphql_api.rs)): `GET/POST /v1/graphql` (hỗ trợ `__schema` introspection, chặn mutation trên `GET` với `405`, giới hạn `depth <= 8` & `fields <= 120`, DataLoader batching `batch_load_workspaces_children`).
-- **Auth & Sessions**: `/v1/auth/bootstrap-owner`, `/v1/auth/login`, `/v1/auth/firebase`, `/v1/auth/firebase/browser`, `/v1/auth/logout`, `/v1/auth/logout-all`, `/v1/auth/sessions`, `/v1/auth/invitations/accept`, `/v1/auth/mfa/*`.
-- **Workspaces, RBAC & Audit**: `/v1/workspaces`, `/v1/workspaces/{id}/members`, `/v1/workspaces/{id}/invitations`, `/v1/workspaces/{id}/audit`, `/v1/workspaces/{id}/quotas`, `/v1/workspaces/{id}/archive`, `/v1/workspaces/{id}/transfer-ownership`, `/v1/workspaces/{id}/leave`.
+- **Auth & Sessions**: `/v1/auth/bootstrap-owner`, `/v1/auth/login`, `/v1/auth/firebase`, `/v1/auth/firebase/browser`, `/v1/auth/logout`, `/v1/auth/logout-all`, `/v1/auth/sessions`, `/v1/auth/invitations/pending`, `/v1/auth/invitations/{id}/accept`, `/v1/auth/invitations/{id}/decline`, `/v1/auth/invite-links/join`, `/v1/auth/mfa/*`.
+- **Workspaces, RBAC & Audit**: `/v1/workspaces`, `/v1/workspaces/{id}/members`, `/v1/workspaces/{id}/invitations`, `/v1/workspaces/{id}/invite-links`, `/v1/workspaces/{id}/invite-links/{link_id}/revoke`, `/v1/workspaces/{id}/audit`, `/v1/workspaces/{id}/quotas`, `/v1/workspaces/{id}/archive`, `/v1/workspaces/{id}/transfer-ownership`, `/v1/workspaces/{id}/leave`.
 - **Sync, Branches & Collaboration**: `/v1/workspaces/{id}/entities`, `/v1/workspaces/{id}/publish`, `/v1/workspaces/{id}/changes`, `/v1/workspaces/{id}/snapshot`, `/v1/workspaces/{id}/events` (SSE), `/v1/workspaces/{id}/entities/{eid}/revisions`, `/v1/workspaces/{id}/entities/{eid}/restore`, `/v1/workspaces/{id}/comments/*`, `/v1/workspaces/{id}/notifications/*`, `/v1/workspaces/{id}/branches`, `/v1/workspaces/{id}/merge-requests/*`.
 - **Team Vault, Mocks, Runners & Schedules**: `/v1/workspaces/{id}/vault/*`, `/v1/workspaces/{id}/mocks/*`, `/mock/{workspace_id}/{*tail}`, `/v1/workspaces/{id}/runners/*`, `/v1/workspaces/{id}/schedules`, `/v1/security/check-ssrf`.
 
@@ -153,7 +153,7 @@ Backend (`axum 0.8.9`) phục vụ đồng bộ đội nhóm, quản lý quyền
 
 ---
 
-## 6. Tổng hợp Toàn bộ Tính năng Đã Hoàn thiện (Tính đến `v0.1.17`)
+## 6. Tổng hợp Toàn bộ Tính năng Đã Hoàn thiện (Tính đến `v0.1.18`)
 
 ### A. API Workbench (Postman-Style Flat UI, REST & GraphQL)
 1. **Thực thi HTTP cục bộ trực tiếp từ PC**: Hỗ trợ `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `HEAD`, `OPTIONS` và `GRAPHQL` qua `swaggen-http-engine`, tuỳ chọn `HTTP Version` (`Auto / HTTP/1.1 / HTTP/2`), Local HTTP Proxy, Custom Root CA & mTLS Client Certificate, hiển thị tiến độ upload/download và `Cancel` tức thì.
@@ -182,13 +182,13 @@ Backend (`axum 0.8.9`) phục vụ đồng bộ đội nhóm, quản lý quyền
 8. **Scenario Mock Server & Giao thức Realtime (`WebSocket · SSE · gRPC`)**:
    - Local Mock Server tuỳ chỉnh cổng (`Port`), hỗ trợ **Conditional Scenario Rules** (khớp method/path/query/header để trả status code và độ trễ giả lập `delay_ms`).
    - Hỗ trợ kết nối trực tiếp **WebSocket (`ws://`/`wss://`)**, **Server-Sent Events (`SSE`)**, và **gRPC Unary over HTTP/2**.
-9. **OpenAPI / Swagger Studio 3 Chế độ & Import/Export Hub (`v0.1.16`)**:
-   - Có nút `×` xoá từng tab Spec, tự động phát hiện và cảnh báo thân thiện khi URL trả về trang HTML thay vì JSON/YAML, nạp file `.yaml`/`.json` từ ổ đĩa, và 3 chế độ: **Swagger Docs Preview** (mặc định), **Split YAML/JSON Editor + Docs**, **Linter, Contract Drift & SDK Generator**.
-   - **Import & Export Hub** gọn 2 tab: Import từ `OpenAPI / Swagger`, `Postman v2.1` (kèm scripts), `cURL`, `HAR 1.2`, `.http` có **Import Preview** trước khi nạp; Export ra Collection/OpenAPI/Git Sync/Offline Encrypted Bundle.
+9. **OpenAPI / Swagger Docs Studio đa định dạng & Import/Export Hub (`v0.1.18`)**:
+   - Hỗ trợ đầy đủ **OpenAPI 3.0 / 3.1 (JSON/YAML)**, **Swagger 2.0 (JSON/YAML)**, **Swagger UI / ReDoc HTML** (tự động trích xuất URL spec hoặc JSON nhúng bên trong HTML khi Fetch URL), và **Postman Collection v2.1 JSON**; 3 chế độ: **Swagger Docs Preview** (Hero API Card, Tag filter chips, Server/Security pills, Endpoint Accordion chi tiết kèm Parameters grid, Request/Response JSON tự sinh + Copy JSON, Schemas Explorer & nút `Try in Workbench →`), **Split YAML/JSON Editor + Docs**, **Linter, Contract Drift & SDK Generator**.
+   - **Import & Export Hub** gọn 2 tab: Import từ `OpenAPI / Swagger / Postman JSON`, `cURL`, `HAR 1.2`, `.http` có **Import Preview** trước khi nạp; Export ra Collection/OpenAPI/Git Sync/Offline Encrypted Bundle.
 10. **Headless CLI (`swaggen-cli`)**: Chạy test suite trong CI/CD (`swaggen-cli run`) và xuất code snippet (`cURL`, `Rust`, `JavaScript`, `Python`, `Go`, `C#`, `Java`, `PHP`, `Dart`).
 
 ### C. Cộng tác Đội nhóm, Bảo mật, Giao diện Light/Dark & Đóng gói
-11. **Auth & RBAC**: Đăng nhập **Google qua Firebase** (loopback browser), tài khoản nội bộ Argon2id, TOTP MFA, quản lý & thu hồi phiên thiết bị, phân quyền `Owner / Admin / Editor / Viewer`, one-time invite token.
+11. **Auth, RBAC & 2 Luồng Cộng tác (`v0.1.18`)**: Đăng nhập **Google qua Firebase** (loopback browser), tài khoản nội bộ Argon2id, TOTP MFA, quản lý & thu hồi phiên thiết bị, phân quyền `Owner / Admin / Editor / Viewer`, cùng **2 cách mời vào Team Workspace**: (1) **In-App Direct Invitation** (gửi thẳng theo email & bấm `Accept & Join` / `Decline` ngay trong ứng dụng) và (2) **Public Expiring Invite Link** (`swaggen://join/...` có thời hạn & giới hạn lượt dùng để đồng đội paste trực tiếp vào app và tham gia ngay).
 12. **Offline-First Sync & Versioning**: Hàng đợi Outbox bền vững trên ổ đĩa, đồng bộ delta/cursor, giải quyết xung đột 3 chiều (Base / Local / Server), lịch sử Revision & Restore, Branch & Merge Request, Comment Thread trên từng API, Realtime SSE Notifications.
 13. **End-to-End Idempotency**: Chống double-click trên UI, tự động sinh `Idempotency-Key` SHA-256 cho `POST`/`PATCH`/GraphQL `mutation`, nút `Rotate Key`, và middleware Server replay `2xx` / chặn `409 Conflict`.
-14. **Bảo mật, Đa giao diện & Đóng gói Windows**: Lưu secret bằng **Windows DPAPI**, **SSRF Guard**, Production Environment confirmation dialog, tuỳ chọn giao diện **Light (Pure White chuẩn Figma mặc định) / Dark (Slate)** + ngôn ngữ `English / Tiếng Việt`, đóng gói Portable `.zip`, Inno Setup `.exe`, `.msi`, `SHA256SUMS.txt` và cập nhật ký số (`latest.json`).
+14. **Bảo mật, Typography Segoe UI & Đóng gói Windows**: Tách rạch ròi font `Segoe UI` cho toàn bộ UI văn bản/bảng và `JetBrains Mono` cho URL/code, lưới KV & Environment có clipping + padding từng ô chống tràn chữ, lưu secret bằng **Windows DPAPI**, **SSRF Guard**, Production Environment confirmation dialog, Light/Dark theme + `English / Tiếng Việt`, đóng gói Portable `.zip`, Inno Setup `.exe`, `.msi`, `SHA256SUMS.txt` và cập nhật ký số (`latest.json`).

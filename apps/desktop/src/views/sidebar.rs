@@ -45,18 +45,16 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
         };
         let ws_btn_w = (ui.available_width() - 2.0).max(86.0);
         let max_ws_chars = ((ws_btn_w - 58.0) / 6.5).max(5.0) as usize;
-        let ws_short: String = if app.state.meta.name.chars().count() > max_ws_chars {
-            let mut s: String = app
-                .state
-                .meta
-                .name
+        let ws_display = app.active_workspace_display_name();
+        let ws_short: String = if ws_display.chars().count() > max_ws_chars {
+            let mut s: String = ws_display
                 .chars()
                 .take(max_ws_chars.saturating_sub(1))
                 .collect();
             s.push('…');
             s
         } else {
-            app.state.meta.name.clone()
+            ws_display
         };
         let ws_btn = ui
             .add_sized(
@@ -76,7 +74,37 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
         let mut switch_local_ws: Option<swaggen_domain::LocalId> = None;
         let mut switch_team_ws: Option<(String, String)> = None;
         let mut open_ws_manager = false;
-        let local_ws_list = app.available_workspaces.clone();
+        let local_ws_list: Vec<(swaggen_domain::LocalId, String)> =
+            if app.workspace_summaries.is_empty() {
+                app.available_workspaces
+                    .iter()
+                    .filter(|w| !w.as_str().starts_with("team-"))
+                    .map(|id| {
+                        let label = if id.as_str() == "personal" {
+                            "Personal".to_owned()
+                        } else {
+                            id.as_str().to_owned()
+                        };
+                        (id.clone(), label)
+                    })
+                    .collect()
+            } else {
+                app.workspace_summaries
+                    .iter()
+                    .filter(|w| {
+                        w.kind == swaggen_domain::workspace::WorkspaceKind::Personal
+                            && !w.id.as_str().starts_with("team-")
+                    })
+                    .map(|w| {
+                        let label = if w.id.as_str() == "personal" && w.name == "personal" {
+                            "Personal".to_owned()
+                        } else {
+                            w.name.clone()
+                        };
+                        (w.id.clone(), label)
+                    })
+                    .collect()
+            };
         let cur_ws_id = app.workspace_id.clone();
         let cur_team_id = app.selected_team_workspace_id.clone();
         let team_ws_list: Vec<(String, String, String)> = app
@@ -102,10 +130,10 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                         .color(swaggen_ui_kit::text_secondary(ui))
                         .strong(),
                 );
-                for wid in &local_ws_list {
+                for (wid, wname) in &local_ws_list {
                     let is_active = cur_team_id.is_none() && *wid == cur_ws_id;
                     if ui
-                        .selectable_label(is_active, format!("📁 {}", wid.as_str()))
+                        .selectable_label(is_active, format!("📁 {wname}"))
                         .clicked()
                     {
                         switch_local_ws = Some(wid.clone());
@@ -146,9 +174,14 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
         }
         if let Some((tid, tname)) = switch_team_ws {
             app.selected_team_workspace_id = Some(tid.clone());
+            app.state.meta.name = tname.clone();
             app.status = format!("Active team workspace: {tname}");
             if let Some(pid) = app.server_profiles.active().map(|p| p.id.clone()) {
                 app.submit(crate::worker::Command::LoadTeamWorkspaceDetails {
+                    profile_id: pid.clone(),
+                    workspace_id: tid.clone(),
+                });
+                app.submit(crate::worker::Command::SyncNow {
                     profile_id: pid,
                     workspace_id: tid,
                 });

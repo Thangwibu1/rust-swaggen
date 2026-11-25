@@ -91,7 +91,7 @@ pub fn show_workspace_manager(app: &mut App, ui: &mut egui::Ui) {
         "Your workspaces",
         &format!(
             "{} · Switch between Individual (local-only) & Team workspaces",
-            app.state.meta.name
+            app.active_workspace_display_name()
         ),
         Some("Close"),
         true,
@@ -109,21 +109,50 @@ pub fn show_workspace_manager(app: &mut App, ui: &mut egui::Ui) {
                 Tokens::TEXT_PRIMARY,
             ));
             ui.add_space(6.0);
-            let workspaces = app.available_workspaces.clone();
+            let workspaces: Vec<_> = if app.workspace_summaries.is_empty() {
+                app.available_workspaces
+                    .iter()
+                    .filter(|w| !w.as_str().starts_with("team-"))
+                    .map(|id| crate::worker::WorkspaceListEntry {
+                        name: if id.as_str() == "personal" {
+                            "Personal".into()
+                        } else {
+                            id.as_str().to_owned()
+                        },
+                        id: id.clone(),
+                        kind: WorkspaceKind::Personal,
+                    })
+                    .collect()
+            } else {
+                app.workspace_summaries
+                    .iter()
+                    .filter(|w| {
+                        w.kind == WorkspaceKind::Personal && !w.id.as_str().starts_with("team-")
+                    })
+                    .cloned()
+                    .collect()
+            };
             let ws_cols = if ui.available_width() < 640.0 {
                 1
             } else {
                 3.min(workspaces.len().max(1))
             };
             ui.columns(ws_cols, |cols| {
-                for (idx, ws_id) in workspaces.iter().enumerate() {
+                for (idx, ws_entry) in workspaces.iter().enumerate() {
+                    let ws_id = &ws_entry.id;
+                    let ws_display =
+                        if ws_entry.id.as_str() == "personal" && ws_entry.name == "personal" {
+                            "Personal"
+                        } else {
+                            ws_entry.name.as_str()
+                        };
                     let col_idx = idx % cols.len();
                     let active =
                         *ws_id == app.workspace_id && app.selected_team_workspace_id.is_none();
                     swaggen_ui_kit::surface_card(&mut cols[col_idx], |ui| {
                         ui.horizontal(|ui| {
                             ui.label(
-                                egui::RichText::new(ws_id.as_str())
+                                egui::RichText::new(ws_display)
                                     .size(14.5)
                                     .strong()
                                     .color(Tokens::TEXT_PRIMARY),
@@ -148,7 +177,7 @@ pub fn show_workspace_manager(app: &mut App, ui: &mut egui::Ui) {
                             );
                         });
                         ui.add_space(6.0);
-                        if *ws_id == app.workspace_id {
+                        if ws_entry.id == app.workspace_id {
                             ui.label(
                                 egui::RichText::new(format!(
                                     "{} requests · {} collections",
@@ -177,8 +206,10 @@ pub fn show_workspace_manager(app: &mut App, ui: &mut egui::Ui) {
                         )
                         .clicked()
                         {
-                            if *ws_id != app.workspace_id {
-                                app.submit(Command::SwitchWorkspace { id: ws_id.clone() });
+                            if ws_entry.id != app.workspace_id {
+                                app.submit(Command::SwitchWorkspace {
+                                    id: ws_entry.id.clone(),
+                                });
                             }
                             app.selected_team_workspace_id = None;
                             app.show_workspace_modal = false;
@@ -824,6 +855,14 @@ fn env_fixed_cell(
     ui.allocate_ui_with_layout(egui::vec2(width, height), layout, |ui| {
         ui.set_min_size(egui::vec2(width, height));
         ui.set_max_size(egui::vec2(width, height));
+        let clip = ui
+            .max_rect()
+            .shrink2(egui::vec2(2.0, 0.0))
+            .intersect(ui.clip_rect());
+        ui.set_clip_rect(clip);
+        if !centered {
+            ui.add_space(10.0);
+        }
         add_contents(ui);
     });
 }
@@ -840,16 +879,17 @@ fn edit_flat_variable_table(
     let border_col = swaggen_ui_kit::border_color(ui);
     let total_w = ui.available_width().max(260.0);
     let has_override_col = personal_overrides.is_some() && total_w >= 540.0;
-    let chk_w = 30.0_f32;
-    let sec_w = 54.0_f32;
-    let act_w = 28.0_f32;
+    let chk_w = 34.0_f32;
+    let sec_w = 64.0_f32;
+    let act_w = 32.0_f32;
     let rem_w = (total_w - chk_w - sec_w - act_w).max(150.0);
     let (key_w, val_w, ov_w) = if has_override_col {
         (rem_w * 0.28, rem_w * 0.36, rem_w * 0.36)
     } else {
         (rem_w * 0.36, rem_w * 0.64, 0.0)
     };
-    let row_h = 26.0_f32;
+    let header_h = 28.0_f32;
+    let row_h = 32.0_f32;
 
     ui.push_id(id_salt, |ui| {
         let table_resp = egui::Frame::new()
@@ -873,49 +913,46 @@ fn edit_flat_variable_table(
                     .show(ui, |ui| {
                         ui.horizontal(|ui| {
                             ui.spacing_mut().item_spacing = egui::Vec2::ZERO;
-                            env_fixed_cell(ui, chk_w, 24.0, true, |_| {});
-                            env_fixed_cell(ui, key_w, 24.0, false, |ui| {
-                                ui.add_space(8.0);
+                            env_fixed_cell(ui, chk_w, header_h, true, |_| {});
+                            env_fixed_cell(ui, key_w, header_h, false, |ui| {
                                 ui.label(
                                     egui::RichText::new("VARIABLE")
-                                        .size(10.0)
+                                        .size(10.5)
                                         .color(swaggen_ui_kit::text_secondary(ui))
                                         .strong(),
                                 );
                             });
-                            env_fixed_cell(ui, val_w, 24.0, false, |ui| {
-                                ui.add_space(8.0);
+                            env_fixed_cell(ui, val_w, header_h, false, |ui| {
                                 ui.label(
                                     egui::RichText::new(if has_override_col {
                                         "INITIAL VALUE"
                                     } else {
                                         "VALUE"
                                     })
-                                    .size(10.0)
+                                    .size(10.5)
                                     .color(swaggen_ui_kit::text_secondary(ui))
                                     .strong(),
                                 );
                             });
                             if has_override_col {
-                                env_fixed_cell(ui, ov_w, 24.0, false, |ui| {
-                                    ui.add_space(8.0);
+                                env_fixed_cell(ui, ov_w, header_h, false, |ui| {
                                     ui.label(
                                         egui::RichText::new("CURRENT (LOCAL)")
-                                            .size(10.0)
+                                            .size(10.5)
                                             .color(swaggen_ui_kit::text_secondary(ui))
                                             .strong(),
                                     );
                                 });
                             }
-                            env_fixed_cell(ui, sec_w, 24.0, true, |ui| {
+                            env_fixed_cell(ui, sec_w, header_h, true, |ui| {
                                 ui.label(
                                     egui::RichText::new("SECRET")
-                                        .size(10.0)
+                                        .size(10.5)
                                         .color(swaggen_ui_kit::text_secondary(ui))
                                         .strong(),
                                 );
                             });
-                            env_fixed_cell(ui, act_w, 24.0, true, |_| {});
+                            env_fixed_cell(ui, act_w, header_h, true, |_| {});
                         });
                     });
                 ui.painter().line_segment(
@@ -945,9 +982,9 @@ fn edit_flat_variable_table(
                                                 .id(egui::Id::unique((id_salt, "vk", i)))
                                                 .hint_text("variable_name")
                                                 .align(egui::Align2::LEFT_CENTER)
-                                                .margin(egui::Margin::symmetric(8, 0))
+                                                .margin(egui::Margin::ZERO)
                                                 .frame(egui::Frame::NONE)
-                                                .desired_width((key_w - 2.0).max(40.0)),
+                                                .desired_width((key_w - 20.0).max(32.0)),
                                         )
                                         .changed()
                                     {
@@ -967,9 +1004,9 @@ fn edit_flat_variable_table(
                                                     .id(egui::Id::unique((id_salt, "vsec", i)))
                                                     .hint_text("DPAPI secret key (e.g. api-token)")
                                                     .align(egui::Align2::LEFT_CENTER)
-                                                    .margin(egui::Margin::symmetric(8, 0))
+                                                    .margin(egui::Margin::ZERO)
                                                     .frame(egui::Frame::NONE)
-                                                    .desired_width((val_w - 2.0).max(40.0)),
+                                                    .desired_width((val_w - 20.0).max(32.0)),
                                             )
                                             .changed()
                                         {
@@ -982,9 +1019,9 @@ fn edit_flat_variable_table(
                                                 .id(egui::Id::unique((id_salt, "vv", i)))
                                                 .hint_text("https://api.example.test")
                                                 .align(egui::Align2::LEFT_CENTER)
-                                                .margin(egui::Margin::symmetric(8, 0))
+                                                .margin(egui::Margin::ZERO)
                                                 .frame(egui::Frame::NONE)
-                                                .desired_width((val_w - 2.0).max(40.0)),
+                                                .desired_width((val_w - 20.0).max(32.0)),
                                         )
                                         .changed()
                                     {
@@ -1006,9 +1043,9 @@ fn edit_flat_variable_table(
                                                     .id(egui::Id::unique((id_salt, "vov", i)))
                                                     .hint_text("(Same as initial)")
                                                     .align(egui::Align2::LEFT_CENTER)
-                                                    .margin(egui::Margin::symmetric(8, 0))
+                                                    .margin(egui::Margin::ZERO)
                                                     .frame(egui::Frame::NONE)
-                                                    .desired_width((ov_w - 2.0).max(40.0)),
+                                                    .desired_width((ov_w - 20.0).max(32.0)),
                                             )
                                             .changed()
                                             && !v.key.trim().is_empty()
@@ -1107,9 +1144,9 @@ fn edit_flat_variable_table(
                                                 .id(egui::Id::unique((id_salt, "vk", next_i)))
                                                 .hint_text("Add new variable")
                                                 .align(egui::Align2::LEFT_CENTER)
-                                                .margin(egui::Margin::symmetric(8, 0))
+                                                .margin(egui::Margin::ZERO)
                                                 .frame(egui::Frame::NONE)
-                                                .desired_width((key_w - 2.0).max(40.0)),
+                                                .desired_width((key_w - 20.0).max(32.0)),
                                         )
                                         .changed();
                                 });
@@ -1120,9 +1157,9 @@ fn edit_flat_variable_table(
                                                 .id(egui::Id::unique((id_salt, "vv", next_i)))
                                                 .hint_text("Value")
                                                 .align(egui::Align2::LEFT_CENTER)
-                                                .margin(egui::Margin::symmetric(8, 0))
+                                                .margin(egui::Margin::ZERO)
                                                 .frame(egui::Frame::NONE)
-                                                .desired_width((val_w - 2.0).max(40.0)),
+                                                .desired_width((val_w - 20.0).max(32.0)),
                                         )
                                         .changed();
                                 });

@@ -64,64 +64,94 @@ fn show_server_profiles(app: &mut App, ui: &mut egui::Ui) {
                     .color(Tokens::TEXT_SECONDARY),
             );
         } else {
-            swaggen_ui_kit::table_header(
-                ui,
-                &[
-                    ("NAME / OPERATION", 200.0),
-                    ("VALUE / DETAILS", 340.0),
-                    ("STATUS", 260.0),
-                ],
-            );
             let mut select_id: Option<String> = None;
             let mut test_id: Option<String> = None;
             let mut remove_id: Option<String> = None;
             for prof in &app.server_profiles.profiles {
                 let is_active = app.server_profiles.active_profile_id.as_deref() == Some(&prof.id);
-                swaggen_ui_kit::table_row_frame(ui, |ui| {
-                    if ui.selectable_label(is_active, &prof.name).clicked() {
-                        select_id = Some(prof.id.clone());
-                    }
-                    ui.label(
-                        egui::RichText::new(&prof.base_url)
-                            .size(12.0)
-                            .color(Tokens::TEXT_SECONDARY),
-                    );
-                    if prof.allow_self_signed_tls {
-                        swaggen_ui_kit::pill_badge(ui, Tokens::TEXT_WARNING, "Host TLS");
-                    }
-                    if !prof.last_server_version.is_empty() {
-                        swaggen_ui_kit::pill_badge(
-                            ui,
-                            if prof.mongo_ready {
-                                Tokens::STATUS_SUCCESS
-                            } else {
-                                Tokens::TEXT_WARNING
-                            },
-                            &format!(
-                                "v{} · {}ms · {}",
-                                prof.last_server_version,
-                                prof.last_latency_ms.unwrap_or(0),
-                                if prof.mongo_ready {
-                                    "DB ready"
-                                } else {
-                                    "DB degraded"
-                                }
-                            ),
-                        );
-                    }
-                    if !prof.email.is_empty() {
-                        swaggen_ui_kit::pill_badge(ui, Tokens::STATUS_INFO, &prof.email);
-                    }
-                    ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                        if swaggen_ui_kit::secondary_button(ui, true, "Remove").clicked() {
-                            remove_id = Some(prof.id.clone());
-                        }
-                        if swaggen_ui_kit::primary_button(ui, true, "Connect server").clicked() {
-                            select_id = Some(prof.id.clone());
-                            test_id = Some(prof.id.clone());
-                        }
+                egui::Frame::new()
+                    .fill(swaggen_ui_kit::subtle_bg(ui))
+                    .stroke(egui::Stroke::new(
+                        1.0,
+                        if is_active {
+                            Tokens::STATUS_INFO
+                        } else {
+                            swaggen_ui_kit::border_color(ui)
+                        },
+                    ))
+                    .corner_radius(8)
+                    .inner_margin(egui::Margin::symmetric(12, 10))
+                    .show(ui, |ui| {
+                        ui.set_min_width(ui.available_width());
+                        ui.horizontal_wrapped(|ui| {
+                            if ui
+                                .selectable_label(
+                                    is_active,
+                                    swaggen_ui_kit::bold_text(
+                                        &prof.name,
+                                        13.5,
+                                        Tokens::TEXT_PRIMARY,
+                                    ),
+                                )
+                                .clicked()
+                            {
+                                select_id = Some(prof.id.clone());
+                            }
+                            if is_active {
+                                swaggen_ui_kit::pill_badge(ui, Tokens::STATUS_INFO, "Active");
+                            }
+                            ui.label(
+                                egui::RichText::new(&prof.base_url)
+                                    .size(12.0)
+                                    .monospace()
+                                    .color(Tokens::TEXT_SECONDARY),
+                            );
+                            if prof.allow_self_signed_tls {
+                                swaggen_ui_kit::pill_badge(ui, Tokens::TEXT_WARNING, "Host TLS");
+                            }
+                            if !prof.last_server_version.is_empty() {
+                                swaggen_ui_kit::pill_badge(
+                                    ui,
+                                    if prof.mongo_ready {
+                                        Tokens::STATUS_SUCCESS
+                                    } else {
+                                        Tokens::TEXT_WARNING
+                                    },
+                                    &format!(
+                                        "v{} · {}ms · {}",
+                                        prof.last_server_version,
+                                        prof.last_latency_ms.unwrap_or(0),
+                                        if prof.mongo_ready {
+                                            "DB ready"
+                                        } else {
+                                            "DB degraded"
+                                        }
+                                    ),
+                                );
+                            }
+                            if !prof.email.is_empty() {
+                                swaggen_ui_kit::pill_badge(ui, Tokens::STATUS_INFO, &prof.email);
+                            }
+                        });
+                        ui.add_space(6.0);
+                        ui.horizontal_wrapped(|ui| {
+                            if swaggen_ui_kit::primary_button(ui, true, "Connect server").clicked()
+                            {
+                                select_id = Some(prof.id.clone());
+                                test_id = Some(prof.id.clone());
+                            }
+                            if !is_active
+                                && swaggen_ui_kit::secondary_button(ui, true, "Set active")
+                                    .clicked()
+                            {
+                                select_id = Some(prof.id.clone());
+                            }
+                            if swaggen_ui_kit::secondary_button(ui, true, "Remove").clicked() {
+                                remove_id = Some(prof.id.clone());
+                            }
+                        });
                     });
-                });
+                ui.add_space(6.0);
                 if !prof.last_error.is_empty() {
                     swaggen_ui_kit::notice_banner(
                         ui,
@@ -390,6 +420,47 @@ fn show_auth_and_bootstrap(app: &mut App, ui: &mut egui::Ui) {
                 ui.add_space(8.0);
             }
 
+            if !active.session_id.is_empty() {
+                swaggen_ui_kit::surface_card(ui, |ui| {
+                    ui.label(swaggen_ui_kit::bold_text(
+                        "Join workspace via public invite link",
+                        13.0,
+                        Tokens::TEXT_PRIMARY,
+                    ));
+                    ui.label(
+                        egui::RichText::new(
+                            "Paste a shared swaggen://join/... link or token shared by a workspace owner.",
+                        )
+                        .size(11.5)
+                        .color(swaggen_ui_kit::text_secondary(ui)),
+                    );
+                    ui.add_space(6.0);
+                    let input_w = (ui.available_width() - 140.0).max(180.0);
+                    ui.horizontal_wrapped(|ui| {
+                        swaggen_ui_kit::text_input(
+                            ui,
+                            &mut app.invite_link_paste_input,
+                            "swaggen://join/<workspace>/<token>",
+                            input_w,
+                            false,
+                        );
+                        if swaggen_ui_kit::primary_button(
+                            ui,
+                            !app.pending && !app.invite_link_paste_input.trim().is_empty(),
+                            "Join via link",
+                        )
+                        .clicked()
+                        {
+                            app.submit(Command::JoinByPublicInviteLink {
+                                profile_id: active.id.clone(),
+                                link_or_code: app.invite_link_paste_input.trim().to_owned(),
+                            });
+                        }
+                    });
+                });
+                ui.add_space(8.0);
+            }
+
             egui::CollapsingHeader::new(
                 egui::RichText::new("Join with manual invite code (optional fallback)")
                     .size(12.0)
@@ -551,6 +622,33 @@ fn show_team_workspaces(app: &mut App, ui: &mut egui::Ui) {
         }
     });
 
+    ui.add_space(6.0);
+    swaggen_ui_kit::surface_card(ui, |ui| {
+        ui.horizontal_wrapped(|ui| {
+            ui.strong("Join via public invite link:");
+            let w = (ui.available_width() - 320.0).clamp(180.0, 380.0);
+            swaggen_ui_kit::text_input(
+                ui,
+                &mut app.invite_link_paste_input,
+                "Paste swaggen://join/<workspace>/<token>",
+                w,
+                false,
+            );
+            if swaggen_ui_kit::secondary_button(
+                ui,
+                !app.pending && !app.invite_link_paste_input.trim().is_empty(),
+                "Join via link",
+            )
+            .clicked()
+            {
+                app.submit(Command::JoinByPublicInviteLink {
+                    profile_id: active.id.clone(),
+                    link_or_code: app.invite_link_paste_input.trim().to_owned(),
+                });
+            }
+        });
+    });
+
     if !app.pending_invitations.is_empty() {
         ui.add_space(6.0);
         swaggen_ui_kit::surface_card(ui, |ui| {
@@ -671,6 +769,126 @@ fn show_team_workspaces(app: &mut App, ui: &mut egui::Ui) {
                         ui.ctx().copy_text(app.last_created_invite_token.clone());
                     }
                 });
+            }
+        });
+
+        ui.add_space(6.0);
+        swaggen_ui_kit::surface_card(ui, |ui| {
+            ui.horizontal_wrapped(|ui| {
+                ui.strong("Method 2 · Public expiring invite links");
+                if ui.small_button("↻ Refresh links").clicked() {
+                    app.submit(Command::LoadPublicInviteLinks {
+                        profile_id: active.id.clone(),
+                        workspace_id: wid.clone(),
+                    });
+                }
+            });
+            ui.label(
+                egui::RichText::new(
+                    "Generate a time-limited swaggen://join/... link that any signed-in teammate can paste to join this workspace.",
+                )
+                .size(11.5)
+                .color(swaggen_ui_kit::text_secondary(ui)),
+            );
+            ui.add_space(6.0);
+            ui.horizontal_wrapped(|ui| {
+                ui.label("Role:");
+                egui::ComboBox::from_id_salt("pub-link-role")
+                    .selected_text(app.invite_link_role.as_str())
+                    .show_ui(ui, |ui| {
+                        ui.selectable_value(&mut app.invite_link_role, Role::Admin, "admin");
+                        ui.selectable_value(&mut app.invite_link_role, Role::Editor, "editor");
+                        ui.selectable_value(&mut app.invite_link_role, Role::Viewer, "viewer");
+                    });
+                ui.label("Expires:");
+                egui::ComboBox::from_id_salt("pub-link-expiry")
+                    .selected_text(format!("{}h", app.invite_link_expiry_hours))
+                    .show_ui(ui, |ui| {
+                        ui.selectable_value(&mut app.invite_link_expiry_hours, 1, "1 hour");
+                        ui.selectable_value(&mut app.invite_link_expiry_hours, 24, "24 hours");
+                        ui.selectable_value(&mut app.invite_link_expiry_hours, 72, "3 days (72h)");
+                        ui.selectable_value(
+                            &mut app.invite_link_expiry_hours,
+                            168,
+                            "7 days (168h)",
+                        );
+                    });
+                ui.label("Max uses:");
+                ui.add(
+                    egui::TextEdit::singleline(&mut app.invite_link_max_uses_input)
+                        .hint_text("Unlimited")
+                        .desired_width(84.0),
+                );
+                if swaggen_ui_kit::primary_button(ui, !app.pending, "Create public invite link")
+                    .clicked()
+                {
+                    let max_uses = app.invite_link_max_uses_input.trim().parse::<u32>().ok();
+                    app.submit(Command::CreatePublicInviteLink {
+                        profile_id: active.id.clone(),
+                        workspace_id: wid.clone(),
+                        role: app.invite_link_role,
+                        expires_in_hours: app.invite_link_expiry_hours,
+                        max_uses,
+                    });
+                }
+            });
+
+            if !app.public_invite_links.is_empty() {
+                ui.add_space(6.0);
+                let links = app.public_invite_links.clone();
+                for lnk in links {
+                    let is_revoked = lnk.revoked_at_unix.is_some();
+                    egui::Frame::new()
+                        .fill(swaggen_ui_kit::subtle_bg(ui))
+                        .stroke(egui::Stroke::new(1.0, swaggen_ui_kit::border_color(ui)))
+                        .corner_radius(6)
+                        .inner_margin(egui::Margin::symmetric(10, 8))
+                        .show(ui, |ui| {
+                            ui.horizontal_wrapped(|ui| {
+                                swaggen_ui_kit::pill_badge(
+                                    ui,
+                                    Tokens::STATUS_INFO,
+                                    lnk.role.as_str(),
+                                );
+                                let status_txt = if is_revoked { "Revoked" } else { "Active" };
+                                swaggen_ui_kit::pill_badge(
+                                    ui,
+                                    if is_revoked {
+                                        Tokens::TEXT_DANGER
+                                    } else {
+                                        Tokens::STATUS_SUCCESS
+                                    },
+                                    status_txt,
+                                );
+                                let uses_txt = match lnk.max_uses {
+                                    Some(m) => format!("Uses: {}/{m}", lnk.uses_count),
+                                    None => format!("Uses: {}/∞", lnk.uses_count),
+                                };
+                                ui.label(
+                                    egui::RichText::new(uses_txt)
+                                        .size(11.5)
+                                        .color(swaggen_ui_kit::text_secondary(ui)),
+                                );
+                                ui.monospace(&lnk.share_link);
+                                if swaggen_ui_kit::secondary_button(ui, true, "Copy link").clicked()
+                                {
+                                    ui.ctx().copy_text(lnk.share_link.clone());
+                                    app.status = "Copied public invite link".into();
+                                }
+                                if !is_revoked
+                                    && swaggen_ui_kit::danger_button(ui, !app.pending, "Revoke")
+                                        .clicked()
+                                {
+                                    app.submit(Command::RevokePublicInviteLink {
+                                        profile_id: active.id.clone(),
+                                        workspace_id: wid.clone(),
+                                        link_id: lnk.link_id.clone(),
+                                    });
+                                }
+                            });
+                        });
+                    ui.add_space(4.0);
+                }
             }
         });
 

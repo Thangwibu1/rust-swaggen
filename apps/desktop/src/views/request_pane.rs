@@ -3059,8 +3059,8 @@ pub fn edit_postman_kv_grid(
     ui.push_id(id_salt, |ui| {
         let total_w = ui.available_width().max(260.0);
         let show_desc = total_w >= 540.0;
-        let chk_w = 30.0_f32;
-        let act_w = 28.0_f32;
+        let chk_w = 34.0_f32;
+        let act_w = 32.0_f32;
         let usable_w = (total_w - chk_w - act_w).max(160.0);
         let key_w = (usable_w * (*key_ratio).clamp(0.22, 0.56)).max(76.0);
         let (val_w, desc_w) = if show_desc {
@@ -3069,7 +3069,8 @@ pub fn edit_postman_kv_grid(
         } else {
             ((usable_w - key_w).max(76.0), 0.0)
         };
-        let row_h = 26.0_f32;
+        let header_h = 28.0_f32;
+        let row_h = 32.0_f32;
 
         let table_resp = egui::Frame::new()
             .fill(swaggen_ui_kit::surface_bg(ui))
@@ -3091,37 +3092,34 @@ pub fn edit_postman_kv_grid(
                     .show(ui, |ui| {
                         ui.horizontal(|ui| {
                             ui.spacing_mut().item_spacing = egui::Vec2::ZERO;
-                            kv_fixed_cell(ui, chk_w, 24.0, true, |_| {});
-                            kv_fixed_cell(ui, key_w, 24.0, false, |ui| {
-                                ui.add_space(8.0);
+                            kv_fixed_cell(ui, chk_w, header_h, true, |_| {});
+                            kv_fixed_cell(ui, key_w, header_h, false, |ui| {
                                 ui.label(
                                     egui::RichText::new("KEY")
-                                        .size(10.0)
+                                        .size(10.5)
                                         .color(swaggen_ui_kit::text_secondary(ui))
                                         .strong(),
                                 );
                             });
-                            kv_fixed_cell(ui, val_w, 24.0, false, |ui| {
-                                ui.add_space(8.0);
+                            kv_fixed_cell(ui, val_w, header_h, false, |ui| {
                                 ui.label(
                                     egui::RichText::new("VALUE")
-                                        .size(10.0)
+                                        .size(10.5)
                                         .color(swaggen_ui_kit::text_secondary(ui))
                                         .strong(),
                                 );
                             });
                             if show_desc {
-                                kv_fixed_cell(ui, desc_w, 24.0, false, |ui| {
-                                    ui.add_space(8.0);
+                                kv_fixed_cell(ui, desc_w, header_h, false, |ui| {
                                     ui.label(
                                         egui::RichText::new("DESCRIPTION")
-                                            .size(10.0)
+                                            .size(10.5)
                                             .color(swaggen_ui_kit::text_secondary(ui))
                                             .strong(),
                                     );
                                 });
                             }
-                            kv_fixed_cell(ui, act_w, 24.0, true, |_| {});
+                            kv_fixed_cell(ui, act_w, header_h, true, |_| {});
                         });
                     });
                 paint_h_hairline(ui, hdr.response.rect, border_col);
@@ -3170,9 +3168,9 @@ pub fn edit_postman_kv_grid(
                                                 .hint_text(key_hint)
                                                 .text_color(text_col)
                                                 .align(egui::Align2::LEFT_CENTER)
-                                                .margin(egui::Margin::symmetric(8, 0))
+                                                .margin(egui::Margin::ZERO)
                                                 .frame(egui::Frame::NONE)
-                                                .desired_width((key_w - 2.0).max(40.0)),
+                                                .desired_width((key_w - 20.0).max(32.0)),
                                         )
                                         .changed()
                                     {
@@ -3187,9 +3185,9 @@ pub fn edit_postman_kv_grid(
                                                 .hint_text(val_hint)
                                                 .text_color(text_col)
                                                 .align(egui::Align2::LEFT_CENTER)
-                                                .margin(egui::Margin::symmetric(8, 0))
+                                                .margin(egui::Margin::ZERO)
                                                 .frame(egui::Frame::NONE)
-                                                .desired_width((val_w - 2.0).max(40.0)),
+                                                .desired_width((val_w - 20.0).max(32.0)),
                                         )
                                         .changed()
                                     {
@@ -3205,9 +3203,9 @@ pub fn edit_postman_kv_grid(
                                                     .hint_text("Description")
                                                     .text_color(swaggen_ui_kit::text_secondary(ui))
                                                     .align(egui::Align2::LEFT_CENTER)
-                                                    .margin(egui::Margin::symmetric(8, 0))
+                                                    .margin(egui::Margin::ZERO)
                                                     .frame(egui::Frame::NONE)
-                                                    .desired_width((desc_w - 2.0).max(40.0)),
+                                                    .desired_width((desc_w - 20.0).max(32.0)),
                                             )
                                             .changed()
                                         {
@@ -3262,9 +3260,9 @@ pub fn edit_postman_kv_grid(
                                                 .id(egui::Id::unique((id_salt, "flat_k", next_idx)))
                                                 .hint_text(key_hint)
                                                 .align(egui::Align2::LEFT_CENTER)
-                                                .margin(egui::Margin::symmetric(8, 0))
+                                                .margin(egui::Margin::ZERO)
                                                 .frame(egui::Frame::NONE)
-                                                .desired_width((key_w - 2.0).max(40.0)),
+                                                .desired_width((key_w - 20.0).max(32.0)),
                                         )
                                         .changed();
                                 });
@@ -3275,9 +3273,9 @@ pub fn edit_postman_kv_grid(
                                                 .id(egui::Id::unique((id_salt, "flat_v", next_idx)))
                                                 .hint_text(val_hint)
                                                 .align(egui::Align2::LEFT_CENTER)
-                                                .margin(egui::Margin::symmetric(8, 0))
+                                                .margin(egui::Margin::ZERO)
                                                 .frame(egui::Frame::NONE)
-                                                .desired_width((val_w - 2.0).max(40.0)),
+                                                .desired_width((val_w - 20.0).max(32.0)),
                                         )
                                         .changed();
                                 });
@@ -3291,9 +3289,9 @@ pub fn edit_postman_kv_grid(
                                                     )))
                                                     .hint_text("Description")
                                                     .align(egui::Align2::LEFT_CENTER)
-                                                    .margin(egui::Margin::symmetric(8, 0))
+                                                    .margin(egui::Margin::ZERO)
                                                     .frame(egui::Frame::NONE)
-                                                    .desired_width((desc_w - 2.0).max(40.0)),
+                                                    .desired_width((desc_w - 20.0).max(32.0)),
                                             )
                                             .changed();
                                     });
@@ -3387,6 +3385,14 @@ fn kv_fixed_cell(
     ui.allocate_ui_with_layout(egui::vec2(width, height), layout, |ui| {
         ui.set_min_size(egui::vec2(width, height));
         ui.set_max_size(egui::vec2(width, height));
+        let clip = ui
+            .max_rect()
+            .shrink2(egui::vec2(2.0, 0.0))
+            .intersect(ui.clip_rect());
+        ui.set_clip_rect(clip);
+        if !centered {
+            ui.add_space(10.0);
+        }
         add_contents(ui);
     });
 }

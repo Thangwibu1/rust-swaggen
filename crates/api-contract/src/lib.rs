@@ -251,6 +251,52 @@ pub struct AcceptDirectInvitationRequest {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
+pub struct CreatePublicInviteLinkRequest {
+    pub role: Role,
+    pub expires_in_hours: u32,
+    #[serde(default)]
+    pub max_uses: Option<u32>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct PublicInviteLinkSummary {
+    pub link_id: String,
+    pub workspace_id: String,
+    pub workspace_name: String,
+    pub role: Role,
+    pub invite_code: String,
+    pub share_link: String,
+    pub created_at_unix: i64,
+    pub expires_at_unix: i64,
+    pub max_uses: Option<u32>,
+    pub uses_count: u32,
+    pub revoked_at_unix: Option<i64>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct CreatePublicInviteLinkResponse {
+    pub api_version: u32,
+    pub link: PublicInviteLinkSummary,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct PublicInviteLinkListResponse {
+    pub api_version: u32,
+    pub links: Vec<PublicInviteLinkSummary>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct JoinByInviteLinkRequest {
+    pub link_or_code: String,
+    pub device_name: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct CreateInvitationResponse {
     pub api_version: u32,
     pub invitation: InvitationSummary,

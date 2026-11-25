@@ -232,69 +232,92 @@ fn load_first_existing(paths: &[PathBuf]) -> Option<Vec<u8>> {
     None
 }
 
-/// Loads JetBrains Mono Regular + Bold (falling back to Cascadia Mono / Consolas + Segoe UI
-/// for full Vietnamese diacritic support) without embedding external proprietary font binaries.
+/// Loads Segoe UI / Segoe UI Bold for crisp Windows UI typography (`Proportional` & `bold`),
+/// and JetBrains Mono / Cascadia Mono / Consolas strictly for `Monospace` code & URLs.
 fn configure_fonts(context: &egui::Context) {
     let mut defs = egui::FontDefinitions::default();
     let local_fonts = std::env::var_os("LOCALAPPDATA")
         .map(|p| PathBuf::from(p).join("Microsoft\\Windows\\Fonts"));
     let win_fonts = std::env::var_os("WINDIR").map(|p| PathBuf::from(p).join("Fonts"));
 
-    let mut reg_candidates = Vec::new();
-    let mut bold_candidates = Vec::new();
-    let mut fallback_candidates = Vec::new();
+    let mut ui_candidates = Vec::new();
+    let mut ui_bold_candidates = Vec::new();
+    let mut mono_candidates = Vec::new();
+    let mut mono_bold_candidates = Vec::new();
 
-    if let Some(ref lf) = local_fonts {
-        reg_candidates.push(lf.join("JetBrainsMono-Regular.ttf"));
-        reg_candidates.push(lf.join("JetBrainsMonoNL-Regular.ttf"));
-        bold_candidates.push(lf.join("JetBrainsMono-Bold.ttf"));
-        bold_candidates.push(lf.join("JetBrainsMonoNL-Bold.ttf"));
-        bold_candidates.push(lf.join("JetBrainsMono-SemiBold.ttf"));
-    }
     if let Some(ref wf) = win_fonts {
-        reg_candidates.push(wf.join("JetBrainsMono-Regular.ttf"));
-        reg_candidates.push(wf.join("CascadiaMono.ttf"));
-        reg_candidates.push(wf.join("consola.ttf"));
-        bold_candidates.push(wf.join("JetBrainsMono-Bold.ttf"));
-        bold_candidates.push(wf.join("consolab.ttf"));
-        bold_candidates.push(wf.join("segoeuib.ttf"));
-        fallback_candidates.push(wf.join("segoeui.ttf"));
+        ui_candidates.push(wf.join("segoeui.ttf"));
+        ui_candidates.push(wf.join("arial.ttf"));
+        ui_bold_candidates.push(wf.join("segoeuib.ttf"));
+        ui_bold_candidates.push(wf.join("arialbd.ttf"));
+        mono_candidates.push(wf.join("JetBrainsMono-Regular.ttf"));
+        mono_candidates.push(wf.join("CascadiaMono.ttf"));
+        mono_candidates.push(wf.join("consola.ttf"));
+        mono_bold_candidates.push(wf.join("JetBrainsMono-Bold.ttf"));
+        mono_bold_candidates.push(wf.join("consolab.ttf"));
+    }
+    if let Some(ref lf) = local_fonts {
+        mono_candidates.insert(0, lf.join("JetBrainsMono-Regular.ttf"));
+        mono_candidates.insert(1, lf.join("JetBrainsMonoNL-Regular.ttf"));
+        mono_bold_candidates.insert(0, lf.join("JetBrainsMono-Bold.ttf"));
+        mono_bold_candidates.insert(1, lf.join("JetBrainsMonoNL-Bold.ttf"));
+        mono_bold_candidates.insert(2, lf.join("JetBrainsMono-SemiBold.ttf"));
     }
 
-    let mut reg_stack = Vec::new();
+    let mut ui_stack = Vec::new();
+    let mut mono_stack = Vec::new();
     let mut bold_stack = Vec::new();
 
-    if let Some(bytes) = load_first_existing(&reg_candidates) {
+    if let Some(bytes) = load_first_existing(&ui_candidates) {
+        defs.font_data.insert(
+            "ui_regular".into(),
+            std::sync::Arc::new(egui::FontData::from_owned(bytes)),
+        );
+        ui_stack.push("ui_regular".to_owned());
+    }
+    if let Some(bytes) = load_first_existing(&ui_bold_candidates) {
+        defs.font_data.insert(
+            "ui_bold".into(),
+            std::sync::Arc::new(egui::FontData::from_owned(bytes)),
+        );
+        bold_stack.push("ui_bold".to_owned());
+    }
+    if let Some(bytes) = load_first_existing(&mono_candidates) {
         defs.font_data.insert(
             "jb_regular".into(),
             std::sync::Arc::new(egui::FontData::from_owned(bytes)),
         );
-        reg_stack.push("jb_regular".to_owned());
+        mono_stack.push("jb_regular".to_owned());
+        ui_stack.push("jb_regular".to_owned());
     }
-    if let Some(bytes) = load_first_existing(&bold_candidates) {
+    if let Some(bytes) = load_first_existing(&mono_bold_candidates) {
         defs.font_data.insert(
             "jb_bold".into(),
             std::sync::Arc::new(egui::FontData::from_owned(bytes)),
         );
         bold_stack.push("jb_bold".to_owned());
-    } else if !reg_stack.is_empty() {
-        bold_stack.push("jb_regular".to_owned());
-    }
-    if let Some(bytes) = load_first_existing(&fallback_candidates) {
-        defs.font_data.insert(
-            "vn_fallback".into(),
-            std::sync::Arc::new(egui::FontData::from_owned(bytes)),
-        );
-        reg_stack.push("vn_fallback".to_owned());
-        bold_stack.push("vn_fallback".to_owned());
     }
 
-    if !reg_stack.is_empty() {
-        for family in [egui::FontFamily::Proportional, egui::FontFamily::Monospace] {
-            let entry = defs.families.entry(family).or_default();
-            for (pos, name) in reg_stack.iter().enumerate() {
-                entry.insert(pos, name.clone());
-            }
+    if !ui_stack.is_empty() {
+        let entry = defs
+            .families
+            .entry(egui::FontFamily::Proportional)
+            .or_default();
+        for (pos, name) in ui_stack.iter().enumerate() {
+            entry.insert(pos, name.clone());
+        }
+    }
+    if !mono_stack.is_empty() {
+        let entry = defs
+            .families
+            .entry(egui::FontFamily::Monospace)
+            .or_default();
+        for (pos, name) in mono_stack.iter().enumerate() {
+            entry.insert(pos, name.clone());
+        }
+        // Keep Segoe UI fallback on Monospace for glyphs not present in JetBrains Mono
+        if defs.font_data.contains_key("ui_regular") {
+            entry.push("ui_regular".to_owned());
         }
     }
     let mut bold_family = bold_stack;
@@ -311,14 +334,14 @@ fn configure_fonts(context: &egui::Context) {
     context.set_fonts(defs);
 }
 
-/// Installs the authentic Figma white-surface Light design system & JetBrains Mono fonts.
+/// Installs the authentic Figma white-surface Light design system & crisp Windows fonts.
 pub fn install(context: &egui::Context) {
     configure_fonts(context);
 
     let egui_theme = egui::Theme::Light;
     let mut style = (*context.style_of(egui_theme)).clone();
-    style.spacing.item_spacing = egui::vec2(6.0, 4.0);
-    style.spacing.button_padding = egui::vec2(8.0, 4.0);
+    style.spacing.item_spacing = egui::vec2(7.0, 5.0);
+    style.spacing.button_padding = egui::vec2(10.0, 5.0);
     style.spacing.interact_size = egui::vec2(26.0, 26.0);
     style.spacing.window_margin = egui::Margin::same(14);
     style.spacing.indent = 14.0;
@@ -1021,10 +1044,13 @@ pub fn table_header(ui: &mut egui::Ui, cols: &[(&str, f32)]) {
                 egui::vec2(*w, 24.0),
                 egui::Layout::left_to_right(egui::Align::Center),
                 |ui| {
+                    ui.set_min_size(egui::vec2(*w, 24.0));
+                    ui.set_max_size(egui::vec2(*w, 24.0));
                     ui.label(
                         egui::RichText::new(*title)
                             .size(11.0)
-                            .color(text_secondary(ui)),
+                            .color(text_secondary(ui))
+                            .strong(),
                     );
                 },
             );

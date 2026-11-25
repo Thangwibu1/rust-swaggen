@@ -137,7 +137,39 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                             ui.add_space(14.0);
 
                             let mut switch_target = None;
-                            for ws_id in &app.available_workspaces {
+                            let local_list: Vec<(swaggen_domain::LocalId, String)> =
+                                if app.workspace_summaries.is_empty() {
+                                    app.available_workspaces
+                                        .iter()
+                                        .filter(|w| !w.as_str().starts_with("team-"))
+                                        .map(|id| {
+                                            let label = if id.as_str() == "personal" {
+                                                "Personal".to_owned()
+                                            } else {
+                                                id.as_str().to_owned()
+                                            };
+                                            (id.clone(), label)
+                                        })
+                                        .collect()
+                                } else {
+                                    app.workspace_summaries
+                                        .iter()
+                                        .filter(|w| {
+                                            w.kind == WorkspaceKind::Personal
+                                                && !w.id.as_str().starts_with("team-")
+                                        })
+                                        .map(|w| {
+                                            let label =
+                                                if w.id.as_str() == "personal" && w.name == "personal" {
+                                                    "Personal".to_owned()
+                                                } else {
+                                                    w.name.clone()
+                                                };
+                                            (w.id.clone(), label)
+                                        })
+                                        .collect()
+                                };
+                            for (ws_id, ws_label) in &local_list {
                                 let is_loaded = *ws_id == app.workspace_id;
                                 egui::Frame::new()
                                     .fill(Tokens::BG_SURFACE)
@@ -149,7 +181,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                                         ui.horizontal(|ui| {
                                             ui.vertical(|ui| {
                                                 ui.label(swaggen_ui_kit::bold_text(
-                                                    ws_id.as_str(),
+                                                    ws_label,
                                                     13.5,
                                                     Tokens::TEXT_PRIMARY,
                                                 ));
@@ -474,7 +506,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                                         .color(Tokens::TEXT_SECONDARY),
                                     );
                                 } else {
-                                    let mut open_team_ws: Option<String> = None;
+                                    let mut open_team_ws: Option<(String, String)> = None;
                                     for ws in &app.team_workspaces {
                                         egui::Frame::new()
                                             .fill(Tokens::BG_SURFACE)
@@ -513,9 +545,10 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                                                             )
                                                             .clicked()
                                                             {
-                                                                open_team_ws = Some(
+                                                                open_team_ws = Some((
                                                                     ws.workspace_id.clone(),
-                                                                );
+                                                                    ws.name.clone(),
+                                                                ));
                                                             }
                                                         },
                                                     );
@@ -523,8 +556,13 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                                             });
                                         ui.add_space(6.0);
                                     }
-                                    if let Some(wid) = open_team_ws {
+                                    if let Some((wid, wname)) = open_team_ws {
                                         app.selected_team_workspace_id = Some(wid.clone());
+                                        app.state.meta.name = wname;
+                                        app.submit(Command::LoadTeamWorkspaceDetails {
+                                            profile_id: prof_id.clone(),
+                                            workspace_id: wid.clone(),
+                                        });
                                         app.submit(Command::SyncNow {
                                             profile_id: prof_id.clone(),
                                             workspace_id: wid.clone(),
@@ -537,6 +575,40 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                                         app.navigate_to(MainMode::Workbench);
                                     }
                                 }
+
+                                ui.add_space(10.0);
+                                ui.label(swaggen_ui_kit::bold_text(
+                                    "Join via public invite link",
+                                    13.0,
+                                    Tokens::TEXT_PRIMARY,
+                                ));
+                                ui.add_space(4.0);
+                                let link_w = (ui.available_width() - 140.0).max(150.0);
+                                ui.horizontal(|ui| {
+                                    swaggen_ui_kit::text_input(
+                                        ui,
+                                        &mut app.invite_link_paste_input,
+                                        "Paste swaggen://join/... link",
+                                        link_w,
+                                        false,
+                                    );
+                                    if swaggen_ui_kit::secondary_button(
+                                        ui,
+                                        !app.pending
+                                            && !app.invite_link_paste_input.trim().is_empty(),
+                                        "Join via link",
+                                    )
+                                    .clicked()
+                                    {
+                                        app.submit(Command::JoinByPublicInviteLink {
+                                            profile_id: prof_id.clone(),
+                                            link_or_code: app
+                                                .invite_link_paste_input
+                                                .trim()
+                                                .to_owned(),
+                                        });
+                                    }
+                                });
 
                                 ui.add_space(10.0);
                                 ui.label(swaggen_ui_kit::bold_text(

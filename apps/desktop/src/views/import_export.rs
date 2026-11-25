@@ -15,7 +15,7 @@ use swaggen_spec_engine::importers::{
     export_open_project_bundle, import_postman_collection_v2_1, import_postman_environment,
     parse_curl_command, preview_request_import, to_curl_command,
 };
-use swaggen_spec_engine::openapi::parse_and_validate;
+use swaggen_spec_engine::openapi::parse_api_documentation;
 use swaggen_ui_kit::{NoticeKind, Tokens};
 
 pub fn show(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
@@ -247,7 +247,7 @@ fn show_import_tab(app: &mut App, ui: &mut egui::Ui) {
             2 => {
                 ui.add(
                     egui::TextEdit::multiline(&mut app.postman_input)
-                        .hint_text("Paste OpenAPI 3.0 / 3.1 YAML or JSON here…")
+                        .hint_text("Paste OpenAPI 3.0/3.1 YAML/JSON, Swagger 2.0 JSON/YAML, Swagger HTML, or Postman Collection JSON here…")
                         .desired_width(ui.available_width())
                         .desired_rows(9)
                         .code_editor(),
@@ -260,9 +260,9 @@ fn show_import_tab(app: &mut App, ui: &mut egui::Ui) {
                 )
                 .clicked()
                 {
-                    let doc = parse_and_validate(
+                    let doc = parse_api_documentation(
                         swaggen_domain::workspace::new_uid(),
-                        format!("Imported OpenAPI {}", app.specs.len() + 1),
+                        format!("Imported API Docs {}", app.specs.len() + 1),
                         &app.postman_input,
                         &[],
                     );

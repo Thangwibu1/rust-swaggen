@@ -15,7 +15,7 @@ use swaggen_spec_engine::advanced::{
 };
 use swaggen_spec_engine::openapi::{
     IssueSeverity, SpecDocument, SpecFormat, add_endpoint_to_spec, diff_and_sync_linked_requests,
-    find_replace_spec, format_spec_text, generate_linked_request, parse_and_validate,
+    find_replace_spec, format_spec_text, generate_linked_request, parse_api_documentation,
 };
 use swaggen_ui_kit::{NoticeKind, Tokens};
 
@@ -31,8 +31,8 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
         ),
         swaggen_ui_kit::tr(
             app.locale,
-            "Browse interactive Swagger API docs, test endpoints in 1 click, or edit OpenAPI 3.0/3.1 YAML/JSON.",
-            "Xem tài liệu Swagger trực quan, bấm Try it để gọi thử ngay trong Workbench, hoặc chỉnh sửa OpenAPI YAML/JSON.",
+            "Browse interactive Swagger API docs (OpenAPI 3.0/3.1, Swagger 2.0 JSON/YAML, Swagger HTML, Postman JSON) & test in 1 click.",
+            "Xem tài liệu API tương tác hỗ trợ OpenAPI 3.0/3.1, Swagger JSON/HTML và Postman JSON, bấm Try để test ngay trong Workbench.",
         ),
         Some("+ New Sample OpenAPI 3.1"),
         true,
@@ -40,20 +40,20 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
         add_sample_spec(app);
     }
 
-    // 1. Clean Import Bar (URL OR Local `.yaml`/`.json` File)
+    // 1. Clean Import Bar (OpenAPI/Swagger JSON/YAML, Swagger HTML URL, or Postman Collection JSON)
     ui.horizontal_wrapped(|ui| {
         ui.spacing_mut().item_spacing.x = 6.0;
         swaggen_ui_kit::text_input(
             ui,
             &mut app.spec_import_url,
-            "https://petstore3.swagger.io/api/v3/openapi.json",
-            270.0,
+            "OpenAPI/Swagger JSON, Swagger HTML, or Postman JSON URL…",
+            310.0,
             false,
         );
         if swaggen_ui_kit::secondary_button(
             ui,
             !app.spec_import_url.trim().is_empty(),
-            "Fetch OpenAPI URL",
+            "Fetch Docs URL",
         )
         .clicked()
         {
@@ -75,8 +75,8 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
         swaggen_ui_kit::text_input(
             ui,
             &mut app.spec_local_file_path,
-            "C:\\path\\to\\openapi.yaml (or drag & drop file into window)",
-            250.0,
+            "C:\\path\\to\\openapi.yaml, swagger.json/html, or postman.json",
+            270.0,
             false,
         );
         if swaggen_ui_kit::secondary_button(
@@ -94,15 +94,19 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                         .and_then(|n| n.to_str())
                         .unwrap_or("Local Spec")
                         .to_owned();
-                    let doc =
-                        parse_and_validate(swaggen_domain::workspace::new_uid(), fname, &raw, &[]);
+                    let doc = parse_api_documentation(
+                        swaggen_domain::workspace::new_uid(),
+                        fname,
+                        &raw,
+                        &[],
+                    );
                     app.spec_editor_text = doc.raw_text.clone();
                     app.specs.push(doc);
                     app.selected_spec_idx = app.specs.len() - 1;
                     app.submit(Command::SaveSpecs {
                         specs: app.specs.clone(),
                     });
-                    app.status = "Loaded local OpenAPI file".into();
+                    app.status = "Loaded API documentation file".into();
                 }
                 Err(e) => {
                     app.error = true;
@@ -252,7 +256,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
             if swaggen_ui_kit::primary_button(ui, true, "Replace with Sample OpenAPI 3.1").clicked()
             {
                 app.spec_editor_text = SAMPLE_OPENAPI_YAML.into();
-                let updated = parse_and_validate(
+                let updated = parse_api_documentation(
                     app.specs[idx].id.clone(),
                     "Sample Tasks API",
                     &app.spec_editor_text,
@@ -298,7 +302,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
             if swaggen_ui_kit::primary_button(ui, true, "Save Spec").clicked() {
                 let old_ops = app.specs[idx].operations.clone();
-                let updated = parse_and_validate(
+                let updated = parse_api_documentation(
                     app.specs[idx].id.clone(),
                     app.specs[idx].name.clone(),
                     &app.spec_editor_text,
@@ -350,7 +354,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
 }
 
 fn add_sample_spec(app: &mut App) {
-    let doc = parse_and_validate(
+    let doc = parse_api_documentation(
         swaggen_domain::workspace::new_uid(),
         format!("Sample API {}", app.specs.len() + 1),
         SAMPLE_OPENAPI_YAML,
@@ -443,35 +447,157 @@ fn show_spec_editor_pane(app: &mut App, ui: &mut egui::Ui, _idx: usize, doc_clon
     });
 }
 
+fn method_accent_colors(method: &str) -> (egui::Color32, egui::Color32) {
+    match method {
+        "GET" => (
+            egui::Color32::from_rgb(37, 99, 235),
+            egui::Color32::from_rgba_unmultiplied(37, 99, 235, 16),
+        ),
+        "POST" => (
+            egui::Color32::from_rgb(16, 185, 129),
+            egui::Color32::from_rgba_unmultiplied(16, 185, 129, 16),
+        ),
+        "PUT" => (
+            egui::Color32::from_rgb(217, 119, 6),
+            egui::Color32::from_rgba_unmultiplied(217, 119, 6, 16),
+        ),
+        "PATCH" => (
+            egui::Color32::from_rgb(124, 58, 237),
+            egui::Color32::from_rgba_unmultiplied(124, 58, 237, 16),
+        ),
+        "DELETE" => (
+            egui::Color32::from_rgb(220, 38, 38),
+            egui::Color32::from_rgba_unmultiplied(220, 38, 38, 16),
+        ),
+        _ => (
+            Tokens::STATUS_INFO,
+            egui::Color32::from_rgba_unmultiplied(71, 85, 105, 14),
+        ),
+    }
+}
+
 fn show_swagger_docs_pane(app: &mut App, ui: &mut egui::Ui, doc_clone: &SpecDocument) {
+    let tag_filter_id = egui::Id::unique(("spec_tag_filter", &doc_clone.id));
+    let mut selected_tag: Option<String> = ui.data_mut(|d| d.get_temp(tag_filter_id)).flatten();
+
     swaggen_ui_kit::surface_card(ui, |ui| {
+        // API Hero Header
+        let heading = if !doc_clone.title.trim().is_empty() && doc_clone.title != "Untitled" {
+            &doc_clone.title
+        } else {
+            &doc_clone.name
+        };
         ui.horizontal_wrapped(|ui| {
             ui.label(swaggen_ui_kit::bold_text(
-                &doc_clone.name,
-                16.0,
+                heading,
+                18.0,
                 swaggen_ui_kit::text_primary(ui),
             ));
+            if !doc_clone.api_version.is_empty() {
+                swaggen_ui_kit::pill_badge(
+                    ui,
+                    Tokens::STATUS_INFO,
+                    &format!("v{}", doc_clone.api_version),
+                );
+            }
+            let spec_ver_lbl = match &doc_clone.version {
+                Some(swaggen_spec_engine::openapi::OpenApiVersion::V3_1(_)) => "OpenAPI 3.1",
+                Some(swaggen_spec_engine::openapi::OpenApiVersion::V3_0(_)) => "OpenAPI 3.0",
+                _ => "API Docs",
+            };
+            swaggen_ui_kit::pill_badge(ui, Tokens::STATUS_INFO, spec_ver_lbl);
             swaggen_ui_kit::pill_badge(
                 ui,
                 Tokens::STATUS_SUCCESS,
                 &format!("{} endpoints", doc_clone.operations.len()),
             );
+            if !doc_clone.schemas.is_empty() {
+                swaggen_ui_kit::pill_badge(
+                    ui,
+                    Tokens::TEXT_SECONDARY,
+                    &format!("{} schemas", doc_clone.schemas.len()),
+                );
+            }
             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                 swaggen_ui_kit::text_input(
                     ui,
                     &mut app.spec_doc_search,
-                    "Filter endpoints or schemas…",
-                    210.0,
+                    "Filter path, summary, schema…",
+                    220.0,
                     false,
                 );
             });
         });
+
+        // Base Servers & Security Schemes strip
+        if !doc_clone.servers.is_empty() || !doc_clone.security_schemes.is_empty() {
+            ui.add_space(6.0);
+            ui.horizontal_wrapped(|ui| {
+                for srv in &doc_clone.servers {
+                    if ui
+                        .add(
+                            egui::Button::new(
+                                egui::RichText::new(format!("🌐 {srv}"))
+                                    .size(11.0)
+                                    .monospace()
+                                    .color(swaggen_ui_kit::text_primary(ui)),
+                            )
+                            .fill(swaggen_ui_kit::subtle_bg(ui))
+                            .stroke(egui::Stroke::new(1.0, swaggen_ui_kit::border_color(ui)))
+                            .corner_radius(5),
+                        )
+                        .on_hover_text("Click to copy server URL")
+                        .clicked()
+                    {
+                        ui.ctx().copy_text(srv.clone());
+                        app.status = format!("Copied server URL: {srv}");
+                    }
+                }
+                for (sname, stype) in &doc_clone.security_schemes {
+                    swaggen_ui_kit::pill_badge(
+                        ui,
+                        Tokens::TEXT_WARNING,
+                        &format!("🔐 {sname} ({stype})"),
+                    );
+                }
+            });
+        }
+
+        // Tag Filter Bar
+        let mut all_tags: Vec<String> = Vec::new();
+        for op in &doc_clone.operations {
+            let t = op.tags.first().cloned().unwrap_or_else(|| "Default".into());
+            if !all_tags.contains(&t) {
+                all_tags.push(t);
+            }
+        }
+        if all_tags.len() > 1 {
+            ui.add_space(6.0);
+            ui.horizontal_wrapped(|ui| {
+                if ui
+                    .selectable_label(selected_tag.is_none(), "All tags")
+                    .clicked()
+                {
+                    selected_tag = None;
+                }
+                for t in &all_tags {
+                    let active = selected_tag.as_deref() == Some(t.as_str());
+                    if ui.selectable_label(active, t).clicked() {
+                        selected_tag = if active { None } else { Some(t.clone()) };
+                    }
+                }
+            });
+        }
+        ui.data_mut(|d| d.insert_temp(tag_filter_id, selected_tag.clone()));
         ui.add_space(8.0);
 
         let (ops, schemas) = doc_clone.search(&app.spec_doc_search);
         let mut by_tag: BTreeMap<String, Vec<_>> = BTreeMap::new();
         for op in ops {
             let tag = op.tags.first().cloned().unwrap_or_else(|| "Default".into());
+            if selected_tag.as_deref().is_some_and(|f| f != tag) {
+                continue;
+            }
             by_tag.entry(tag).or_default().push(op);
         }
 
@@ -485,77 +611,344 @@ fn show_swagger_docs_pane(app: &mut App, ui: &mut egui::Ui, doc_clone: &SpecDocu
             .show(ui, |ui| {
                 if by_tag.is_empty() && schemas.is_empty() {
                     ui.label(
-                        egui::RichText::new("No matching endpoints in this specification.")
+                        egui::RichText::new("No matching endpoints or schemas in this specification.")
                             .color(swaggen_ui_kit::text_secondary(ui)),
                     );
                 }
                 for (tag, group_ops) in by_tag {
                     egui::CollapsingHeader::new(swaggen_ui_kit::bold_text(
                         &format!("{tag} ({})", group_ops.len()),
-                        13.5,
+                        14.0,
                         swaggen_ui_kit::text_primary(ui),
                     ))
                     .default_open(true)
                     .show(ui, |ui| {
+                        let default_open = group_ops.len() <= 3;
                         for op in group_ops {
+                            let (accent, tint) = method_accent_colors(op.method.as_str());
+                            let card_id =
+                                egui::Id::unique(("spec_op_open", &doc_clone.id, &op.operation_uid));
+                            let mut is_open = ui
+                                .data_mut(|d| d.get_temp::<bool>(card_id))
+                                .unwrap_or(default_open);
+
                             egui::Frame::new()
-                                .fill(swaggen_ui_kit::subtle_bg(ui))
+                                .fill(swaggen_ui_kit::surface_bg(ui))
                                 .stroke(egui::Stroke::new(1.0, swaggen_ui_kit::border_color(ui)))
-                                .corner_radius(6)
-                                .inner_margin(egui::Margin::symmetric(12, 8))
+                                .corner_radius(7)
+                                .inner_margin(egui::Margin::ZERO)
                                 .show(ui, |ui| {
-                                    ui.horizontal_wrapped(|ui| {
-                                        swaggen_ui_kit::method_badge(ui, op.method.as_str());
-                                        ui.label(swaggen_ui_kit::bold_text(
-                                            &op.path,
-                                            12.5,
-                                            swaggen_ui_kit::text_primary(ui),
-                                        ));
-                                        if !op.summary.is_empty() {
-                                            ui.label(
-                                                egui::RichText::new(&op.summary)
-                                                    .size(11.5)
-                                                    .color(swaggen_ui_kit::text_secondary(ui)),
-                                            );
-                                        }
-                                        if op.deprecated {
-                                            swaggen_ui_kit::pill_badge(
-                                                ui,
-                                                Tokens::TEXT_WARNING,
-                                                "Deprecated",
-                                            );
-                                        }
-                                        ui.with_layout(
-                                            egui::Layout::right_to_left(egui::Align::Center),
-                                            |ui| {
-                                                if swaggen_ui_kit::primary_button(
-                                                    ui,
-                                                    true,
-                                                    "Try in Workbench →",
-                                                )
-                                                .clicked()
+                                    // Colored Swagger Accordion Header Bar
+                                    let hdr = egui::Frame::new()
+                                        .fill(tint)
+                                        .inner_margin(egui::Margin::symmetric(12, 8))
+                                        .show(ui, |ui| {
+                                            ui.horizontal_wrapped(|ui| {
+                                                let arrow = if is_open { "▾" } else { "▸" };
+                                                if ui
+                                                    .add(
+                                                        egui::Button::new(
+                                                            egui::RichText::new(arrow)
+                                                                .size(12.5)
+                                                                .color(accent)
+                                                                .strong(),
+                                                        )
+                                                        .frame(false),
+                                                    )
+                                                    .clicked()
                                                 {
-                                                    try_op_uid = Some(op.operation_uid.clone());
+                                                    is_open = !is_open;
                                                 }
-                                            },
-                                        );
-                                    });
-                                    if !op.parameters.is_empty() {
-                                        ui.add_space(4.0);
-                                        for p in &op.parameters {
-                                            ui.monospace(
-                                                egui::RichText::new(format!(
-                                                    "  • {} ({}) : {}{}",
-                                                    p.name,
-                                                    p.location,
-                                                    p.schema_type,
-                                                    if p.required { " *required" } else { "" }
-                                                ))
-                                                .size(11.0),
-                                            );
-                                        }
+                                                swaggen_ui_kit::method_badge(ui, op.method.as_str());
+                                                if ui
+                                                    .add(
+                                                        egui::Button::new(
+                                                            egui::RichText::new(&op.path)
+                                                                .size(13.0)
+                                                                .monospace()
+                                                                .strong()
+                                                                .color(swaggen_ui_kit::text_primary(ui)),
+                                                        )
+                                                        .frame(false),
+                                                    )
+                                                    .on_hover_text("Click to expand/collapse endpoint details")
+                                                    .clicked()
+                                                {
+                                                    is_open = !is_open;
+                                                }
+                                                if !op.summary.is_empty() {
+                                                    ui.label(
+                                                        egui::RichText::new(&op.summary)
+                                                            .size(12.0)
+                                                            .color(swaggen_ui_kit::text_secondary(ui)),
+                                                    );
+                                                }
+                                                if let Some(op_id) = &op.operation_id {
+                                                    swaggen_ui_kit::pill_badge(
+                                                        ui,
+                                                        Tokens::TEXT_SECONDARY,
+                                                        op_id,
+                                                    );
+                                                }
+                                                if op.deprecated {
+                                                    swaggen_ui_kit::pill_badge(
+                                                        ui,
+                                                        Tokens::TEXT_WARNING,
+                                                        "Deprecated",
+                                                    );
+                                                }
+                                                ui.with_layout(
+                                                    egui::Layout::right_to_left(egui::Align::Center),
+                                                    |ui| {
+                                                        if swaggen_ui_kit::primary_button(
+                                                            ui,
+                                                            true,
+                                                            "Try in Workbench →",
+                                                        )
+                                                        .clicked()
+                                                        {
+                                                            try_op_uid =
+                                                                Some(op.operation_uid.clone());
+                                                        }
+                                                    },
+                                                );
+                                            });
+                                        });
+                                    // Accent 3px left stripe on card header
+                                    let r = hdr.response.rect;
+                                    ui.painter().line_segment(
+                                        [r.left_top(), r.left_bottom()],
+                                        egui::Stroke::new(3.0, accent),
+                                    );
+
+                                    if is_open {
+                                        egui::Frame::new()
+                                            .fill(swaggen_ui_kit::surface_bg(ui))
+                                            .inner_margin(egui::Margin::symmetric(14, 10))
+                                            .show(ui, |ui| {
+                                                if !op.description.is_empty() {
+                                                    ui.label(
+                                                        egui::RichText::new(&op.description)
+                                                            .size(12.0)
+                                                            .color(swaggen_ui_kit::text_secondary(ui)),
+                                                    );
+                                                    ui.add_space(6.0);
+                                                }
+
+                                                // Parameters Grid
+                                                if !op.parameters.is_empty() {
+                                                    ui.label(swaggen_ui_kit::bold_text(
+                                                        "Parameters",
+                                                        12.5,
+                                                        swaggen_ui_kit::text_primary(ui),
+                                                    ));
+                                                    ui.add_space(4.0);
+                                                    egui::Grid::new(egui::Id::unique((
+                                                        "doc_params",
+                                                        &doc_clone.id,
+                                                        &op.operation_uid,
+                                                    )))
+                                                    .striped(true)
+                                                    .min_col_width(72.0)
+                                                    .spacing([12.0, 5.0])
+                                                    .show(ui, |ui| {
+                                                        for h in ["NAME", "IN", "TYPE", "DESCRIPTION"] {
+                                                            ui.label(
+                                                                egui::RichText::new(h)
+                                                                    .size(10.0)
+                                                                    .strong()
+                                                                    .color(swaggen_ui_kit::text_secondary(ui)),
+                                                            );
+                                                        }
+                                                        ui.end_row();
+                                                        for p in &op.parameters {
+                                                            ui.horizontal(|ui| {
+                                                                ui.label(
+                                                                    egui::RichText::new(&p.name)
+                                                                        .monospace()
+                                                                        .strong()
+                                                                        .size(11.5),
+                                                                );
+                                                                if p.required {
+                                                                    ui.label(
+                                                                        egui::RichText::new("*")
+                                                                            .color(Tokens::TEXT_DANGER)
+                                                                            .strong(),
+                                                                    );
+                                                                }
+                                                            });
+                                                            swaggen_ui_kit::pill_badge(
+                                                                ui,
+                                                                Tokens::STATUS_INFO,
+                                                                &p.location,
+                                                            );
+                                                            let mut t_desc = p.schema_type.clone();
+                                                            if p.nullable {
+                                                                t_desc.push_str(" | null");
+                                                            }
+                                                            if let Some(def) = &p.default_value {
+                                                                t_desc.push_str(&format!(" = {def}"));
+                                                            }
+                                                            if !p.enum_values.is_empty() {
+                                                                t_desc.push_str(&format!(
+                                                                    " [{}]",
+                                                                    p.enum_values.join(", ")
+                                                                ));
+                                                            }
+                                                            ui.label(
+                                                                egui::RichText::new(t_desc)
+                                                                    .monospace()
+                                                                    .size(11.0)
+                                                                    .color(swaggen_ui_kit::text_secondary(ui)),
+                                                            );
+                                                            ui.label(
+                                                                egui::RichText::new(if p.description.is_empty() {
+                                                                    "—"
+                                                                } else {
+                                                                    &p.description
+                                                                })
+                                                                .size(11.5)
+                                                                .color(swaggen_ui_kit::text_secondary(ui)),
+                                                            );
+                                                            ui.end_row();
+                                                        }
+                                                    });
+                                                    ui.add_space(8.0);
+                                                }
+
+                                                // Request Body
+                                                if let Some(rb) = &op.request_body {
+                                                    ui.horizontal_wrapped(|ui| {
+                                                        ui.label(swaggen_ui_kit::bold_text(
+                                                            "Request Body",
+                                                            12.5,
+                                                            swaggen_ui_kit::text_primary(ui),
+                                                        ));
+                                                        if rb.required {
+                                                            swaggen_ui_kit::pill_badge(
+                                                                ui,
+                                                                Tokens::TEXT_DANGER,
+                                                                "required",
+                                                            );
+                                                        }
+                                                        for ct in &rb.content_types {
+                                                            swaggen_ui_kit::pill_badge(
+                                                                ui,
+                                                                Tokens::STATUS_INFO,
+                                                                ct,
+                                                            );
+                                                        }
+                                                        if let Some(ex) = &rb.example_json
+                                                            && ui.small_button("Copy JSON").clicked()
+                                                        {
+                                                            ui.ctx().copy_text(ex.clone());
+                                                            app.status = "Copied request body JSON".into();
+                                                        }
+                                                    });
+                                                    if let Some(ex) = &rb.example_json {
+                                                        ui.add_space(4.0);
+                                                        egui::Frame::new()
+                                                            .fill(swaggen_ui_kit::subtle_bg(ui))
+                                                            .stroke(egui::Stroke::new(
+                                                                1.0,
+                                                                swaggen_ui_kit::border_color(ui),
+                                                            ))
+                                                            .corner_radius(5)
+                                                            .inner_margin(egui::Margin::same(8))
+                                                            .show(ui, |ui| {
+                                                                let mut preview = ex.clone();
+                                                                ui.add(
+                                                                    egui::TextEdit::multiline(&mut preview)
+                                                                        .desired_width(ui.available_width())
+                                                                        .desired_rows(
+                                                                            ex.lines().count().clamp(2, 10),
+                                                                        )
+                                                                        .code_editor()
+                                                                        .interactive(false),
+                                                                );
+                                                            });
+                                                    }
+                                                    ui.add_space(8.0);
+                                                }
+
+                                                // Responses
+                                                if !op.responses.is_empty() {
+                                                    ui.label(swaggen_ui_kit::bold_text(
+                                                        "Responses",
+                                                        12.5,
+                                                        swaggen_ui_kit::text_primary(ui),
+                                                    ));
+                                                    ui.add_space(4.0);
+                                                    for resp in &op.responses {
+                                                        let r_col = if resp.status.starts_with('2') {
+                                                            Tokens::STATUS_SUCCESS
+                                                        } else if resp.status.starts_with('4') {
+                                                            Tokens::TEXT_WARNING
+                                                        } else if resp.status.starts_with('5') {
+                                                            Tokens::TEXT_DANGER
+                                                        } else {
+                                                            Tokens::STATUS_INFO
+                                                        };
+                                                        ui.horizontal_wrapped(|ui| {
+                                                            swaggen_ui_kit::pill_badge(
+                                                                ui,
+                                                                r_col,
+                                                                &resp.status,
+                                                            );
+                                                            if !resp.description.is_empty() {
+                                                                ui.label(
+                                                                    egui::RichText::new(&resp.description)
+                                                                        .size(12.0)
+                                                                        .color(swaggen_ui_kit::text_primary(ui)),
+                                                                );
+                                                            }
+                                                            for ct in &resp.content_types {
+                                                                swaggen_ui_kit::pill_badge(
+                                                                    ui,
+                                                                    Tokens::TEXT_SECONDARY,
+                                                                    ct,
+                                                                );
+                                                            }
+                                                            if let Some(ex) = &resp.example_json
+                                                                && ui.small_button("Copy JSON").clicked()
+                                                            {
+                                                                ui.ctx().copy_text(ex.clone());
+                                                                app.status = format!(
+                                                                    "Copied {} response JSON",
+                                                                    resp.status
+                                                                );
+                                                            }
+                                                        });
+                                                        if let Some(ex) = &resp.example_json {
+                                                            ui.add_space(3.0);
+                                                            egui::Frame::new()
+                                                                .fill(swaggen_ui_kit::subtle_bg(ui))
+                                                                .stroke(egui::Stroke::new(
+                                                                    1.0,
+                                                                    swaggen_ui_kit::border_color(ui),
+                                                                ))
+                                                                .corner_radius(5)
+                                                                .inner_margin(egui::Margin::same(8))
+                                                                .show(ui, |ui| {
+                                                                    let mut preview = ex.clone();
+                                                                    ui.add(
+                                                                        egui::TextEdit::multiline(&mut preview)
+                                                                            .desired_width(ui.available_width())
+                                                                            .desired_rows(
+                                                                                ex.lines().count().clamp(2, 10),
+                                                                            )
+                                                                            .code_editor()
+                                                                            .interactive(false),
+                                                                    );
+                                                                });
+                                                        }
+                                                        ui.add_space(4.0);
+                                                    }
+                                                }
+                                            });
                                     }
                                 });
+                            ui.data_mut(|d| d.insert_temp(card_id, is_open));
                             ui.add_space(6.0);
                         }
                     });
@@ -565,26 +958,82 @@ fn show_swagger_docs_pane(app: &mut App, ui: &mut egui::Ui, doc_clone: &SpecDocu
                 if !schemas.is_empty() {
                     ui.add_space(8.0);
                     egui::CollapsingHeader::new(swaggen_ui_kit::bold_text(
-                        &format!("Data Models / Schemas ({})", schemas.len()),
-                        13.0,
+                        &format!("Schemas / Models ({})", schemas.len()),
+                        13.5,
                         swaggen_ui_kit::text_primary(ui),
                     ))
                     .default_open(false)
                     .show(ui, |ui| {
                         for s in schemas {
-                            ui.label(swaggen_ui_kit::bold_text(
-                                &format!("{} ({})", s.name, s.schema_type),
-                                12.0,
-                                Tokens::STATUS_INFO,
-                            ));
-                            for p in &s.properties {
-                                ui.monospace(format!(
-                                    "  {}: {}{}",
-                                    p.name,
-                                    p.schema_type,
-                                    if p.required { " [required]" } else { "" }
-                                ));
-                            }
+                            egui::Frame::new()
+                                .fill(swaggen_ui_kit::subtle_bg(ui))
+                                .stroke(egui::Stroke::new(1.0, swaggen_ui_kit::border_color(ui)))
+                                .corner_radius(6)
+                                .inner_margin(egui::Margin::symmetric(10, 8))
+                                .show(ui, |ui| {
+                                ui.horizontal_wrapped(|ui| {
+                                    ui.label(swaggen_ui_kit::bold_text(
+                                        &s.name,
+                                        13.0,
+                                        Tokens::STATUS_INFO,
+                                    ));
+                                    swaggen_ui_kit::pill_badge(
+                                        ui,
+                                        Tokens::TEXT_SECONDARY,
+                                        &s.schema_type,
+                                    );
+                                    swaggen_ui_kit::pill_badge(
+                                        ui,
+                                        Tokens::TEXT_SECONDARY,
+                                        &format!("{} properties", s.properties.len()),
+                                    );
+                                });
+                                if !s.properties.is_empty() {
+                                    ui.add_space(4.0);
+                                    egui::Grid::new(egui::Id::unique((
+                                        "doc_schema_props",
+                                        &doc_clone.id,
+                                        &s.name,
+                                    )))
+                                    .striped(true)
+                                    .spacing([14.0, 4.0])
+                                    .show(ui, |ui| {
+                                        for p in &s.properties {
+                                            ui.horizontal(|ui| {
+                                                ui.label(
+                                                    egui::RichText::new(&p.name)
+                                                        .monospace()
+                                                        .strong()
+                                                        .size(11.5),
+                                                );
+                                                if p.required {
+                                                    ui.label(
+                                                        egui::RichText::new("*")
+                                                            .color(Tokens::TEXT_DANGER)
+                                                            .strong(),
+                                                    );
+                                                }
+                                            });
+                                            ui.label(
+                                                egui::RichText::new(if p.nullable {
+                                                    format!("{} | null", p.schema_type)
+                                                } else {
+                                                    p.schema_type.clone()
+                                                })
+                                                .monospace()
+                                                .size(11.0)
+                                                .color(Tokens::STATUS_INFO),
+                                            );
+                                            ui.label(
+                                                egui::RichText::new(&p.constraints)
+                                                    .size(11.0)
+                                                    .color(swaggen_ui_kit::text_secondary(ui)),
+                                            );
+                                            ui.end_row();
+                                        }
+                                    });
+                                }
+                            });
                             ui.add_space(4.0);
                         }
                     });

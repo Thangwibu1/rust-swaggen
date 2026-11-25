@@ -4,11 +4,12 @@ use swaggen_api_contract::{
     AcceptInvitationRequest, AcceptInvitationResponse, AuditEventRecord, AuthResponse,
     BootstrapOwnerRequest, ChangePasswordRequest, ChangesFeedResponse, CommentThreadRecord,
     CreateCommentRequest, CreateInvitationRequest, CreateInvitationResponse,
-    CreateWorkspaceRequest, EntityRevisionRecord, InvitationSummary, LoginRequest,
-    MemberListResponse, MemberSummary, NotificationListResponse, NotificationRecord,
-    PublishBatchRequest, PublishBatchResponse, ReplyCommentRequest, ResolveCommentRequest,
-    RestoreRevisionRequest, SessionSummary, SnapshotResponse, TeamWorkspaceSummary,
-    UpdateMemberRoleRequest, UpsertEntityRequest, WorkspaceEntityRecord,
+    CreatePublicInviteLinkRequest, CreatePublicInviteLinkResponse, CreateWorkspaceRequest,
+    EntityRevisionRecord, InvitationSummary, LoginRequest, MemberListResponse, MemberSummary,
+    NotificationListResponse, NotificationRecord, PublicInviteLinkSummary, PublishBatchRequest,
+    PublishBatchResponse, ReplyCommentRequest, ResolveCommentRequest, RestoreRevisionRequest,
+    SessionSummary, SnapshotResponse, TeamWorkspaceSummary, UpdateMemberRoleRequest,
+    UpsertEntityRequest, WorkspaceEntityRecord,
 };
 
 #[derive(Debug, Clone)]
@@ -141,6 +142,36 @@ pub trait WorkspaceRepository: Send + Sync {
         invitation_id: &str,
         now: i64,
     ) -> Result<(), StoreError>;
+
+    async fn create_public_invite_link(
+        &self,
+        auth: &AuthContext,
+        workspace_id: &str,
+        req: CreatePublicInviteLinkRequest,
+        now: i64,
+    ) -> Result<CreatePublicInviteLinkResponse, StoreError>;
+
+    async fn list_public_invite_links(
+        &self,
+        auth: &AuthContext,
+        workspace_id: &str,
+    ) -> Result<Vec<PublicInviteLinkSummary>, StoreError>;
+
+    async fn revoke_public_invite_link(
+        &self,
+        auth: &AuthContext,
+        workspace_id: &str,
+        link_id: &str,
+        now: i64,
+    ) -> Result<(), StoreError>;
+
+    async fn join_by_public_invite_link(
+        &self,
+        auth: &AuthContext,
+        link_or_code: &str,
+        device_name: &str,
+        now: i64,
+    ) -> Result<AcceptInvitationResponse, StoreError>;
 
     async fn update_member_role(
         &self,

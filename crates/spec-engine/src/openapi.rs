@@ -948,7 +948,13 @@ fn summarize_request_body(raw: Option<&Value>, root: &Value) -> Option<SpecBodyS
                         .and_then(|m| m.values().next())
                         .and_then(|e| e.get("value"))
                 })
-                .and_then(|v| serde_json::to_string_pretty(v).ok())
+                .cloned()
+                .or_else(|| {
+                    media
+                        .get("schema")
+                        .map(|s| synthesize_example_from_schema(s, root, 0))
+                })
+                .and_then(|v| serde_json::to_string_pretty(&v).ok())
         });
     Some(SpecBodySummary {
         required,
@@ -976,8 +982,13 @@ fn summarize_responses(raw: Option<&Value>, root: &Value) -> Vec<SpecResponseSum
             let example_json = content.and_then(|c| {
                 c.get("application/json")
                     .or_else(|| c.values().next())
-                    .and_then(|m| m.get("example"))
-                    .and_then(|v| serde_json::to_string_pretty(v).ok())
+                    .and_then(|m| {
+                        m.get("example").cloned().or_else(|| {
+                            m.get("schema")
+                                .map(|s| synthesize_example_from_schema(s, root, 0))
+                        })
+                    })
+                    .and_then(|v| serde_json::to_string_pretty(&v).ok())
             });
             SpecResponseSummary {
                 status: status.clone(),
@@ -987,6 +998,658 @@ fn summarize_responses(raw: Option<&Value>, root: &Value) -> Vec<SpecResponseSum
             }
         })
         .collect()
+}
+
+fn synthesize_example_from_schema(schema: &Value, root: &Value, depth: usize) -> Value {
+    if depth >= 5 {
+        return Value::Object(Map::new());
+    }
+    let resolved = resolve_maybe_ref(schema, root);
+    if let Some(ex) = resolved.get("example") {
+        return ex.clone();
+    }
+    if let Some(def) = resolved.get("default") {
+        return def.clone();
+    }
+    if let Some(en) = resolved
+        .get("enum")
+        .and_then(Value::as_array)
+        .and_then(|a| a.first())
+    {
+        return en.clone();
+    }
+    if let Some(one_of) = resolved
+        .get("oneOf")
+        .or_else(|| resolved.get("anyOf"))
+        .and_then(Value::as_array)
+        .and_then(|a| a.first())
+    {
+        return synthesize_example_from_schema(one_of, root, depth + 1);
+    }
+    if let Some(all_of) = resolved.get("allOf").and_then(Value::as_array) {
+        let mut merged = Map::new();
+        for sub in all_of {
+            if let Value::Object(m) = synthesize_example_from_schema(sub, root, depth + 1) {
+                for (k, v) in m {
+                    merged.insert(k, v);
+                }
+            }
+        }
+        return Value::Object(merged);
+    }
+    let ty = resolved
+        .get("type")
+        .and_then(|t| {
+            t.as_str().or_else(|| {
+                t.as_array()
+                    .and_then(|a| a.iter().filter_map(Value::as_str).find(|s| *s != "null"))
+            })
+        })
+        .unwrap_or_else(|| {
+            if resolved.get("properties").is_some() {
+                "object"
+            } else if resolved.get("items").is_some() {
+                "array"
+            } else {
+                "string"
+            }
+        });
+    match ty {
+        "integer" => Value::Number(0.into()),
+        "number" => serde_json::json!(0.0),
+        "boolean" => Value::Bool(true),
+        "array" => {
+            let item = resolved
+                .get("items")
+                .map(|it| synthesize_example_from_schema(it, root, depth + 1))
+                .unwrap_or_else(|| Value::String("item".into()));
+            Value::Array(vec![item])
+        }
+        "object" => {
+            let mut map = Map::new();
+            if let Some(props) = resolved.get("properties").and_then(Value::as_object) {
+                for (k, v) in props {
+                    map.insert(
+                        k.clone(),
+                        synthesize_example_from_schema(v, root, depth + 1),
+                    );
+                }
+            }
+            Value::Object(map)
+        }
+        _ => match resolved.get("format").and_then(Value::as_str) {
+            Some("date-time") => Value::String("2026-01-01T00:00:00Z".into()),
+            Some("date") => Value::String("2026-01-01".into()),
+            Some("email") => Value::String("user@example.com".into()),
+            Some("uuid") => Value::String("00000000-0000-0000-0000-000000000000".into()),
+            Some("uri") | Some("url") => Value::String("https://example.com".into()),
+            _ => Value::String("string".into()),
+        },
+    }
+}
+
+/// Universal API documentation parser supporting OpenAPI 3.0/3.1 (JSON/YAML), Swagger 2.0 (JSON/YAML),
+/// Postman Collection v2.1/v2.0 JSON, and Swagger/ReDoc HTML with embedded spec JSON!
+pub fn parse_api_documentation(
+    id: impl Into<String>,
+    name: impl Into<String>,
+    raw_text: &str,
+    previous_ops: &[SpecOperation],
+) -> SpecDocument {
+    let id_str = id.into();
+    let name_str = name.into();
+    let trimmed = raw_text.trim_start();
+    let trimmed_low: String = trimmed
+        .chars()
+        .take(64)
+        .collect::<String>()
+        .to_ascii_lowercase();
+
+    // 1. HTML containing embedded inline JSON spec (`spec: { ... }` or `<script type="application/json">`)
+    if trimmed_low.starts_with("<!doctype html") || trimmed_low.starts_with("<html") {
+        if let Some(embedded_json) = extract_inline_json_from_html(raw_text) {
+            return parse_api_documentation(id_str, name_str, &embedded_json, previous_ops);
+        }
+        return parse_and_validate(id_str, name_str, raw_text, previous_ops);
+    }
+
+    let parsed = if trimmed.starts_with('{') {
+        serde_json::from_str::<Value>(raw_text).ok()
+    } else {
+        parse_yaml_value(raw_text).ok()
+    };
+
+    if let Some(ref root) = parsed
+        && let Some(obj) = root.as_object()
+    {
+        // 2. Swagger 2.0 JSON or YAML -> auto-upgrade cleanly to OpenAPI 3.0.3 JSON
+        if obj.contains_key("swagger")
+            && !obj.contains_key("openapi")
+            && let Some(oa3_json) = swagger2_value_to_openapi3_json(root)
+        {
+            let mut doc = parse_and_validate(id_str, name_str, &oa3_json, previous_ops);
+            if !doc.title.trim().is_empty() && doc.title != doc.name {
+                doc.name = doc.title.clone();
+            }
+            return doc;
+        }
+
+        // 3. Postman Collection v2.1 / v2.0 JSON -> auto-convert to OpenAPI 3.0.3 JSON
+        let is_postman = obj.contains_key("item")
+            && obj
+                .get("info")
+                .and_then(|i| i.get("schema"))
+                .and_then(Value::as_str)
+                .is_some_and(|s| s.contains("getpostman.com"))
+            || (obj.contains_key("item") && obj.get("info").and_then(|i| i.get("name")).is_some());
+        if is_postman && !obj.contains_key("openapi") && !obj.contains_key("paths") {
+            let oa3_json = postman_value_to_openapi3_json(root);
+            let mut doc = parse_and_validate(id_str, name_str, &oa3_json, previous_ops);
+            if !doc.title.trim().is_empty() {
+                doc.name = doc.title.clone();
+            }
+            return doc;
+        }
+    }
+
+    let mut doc = parse_and_validate(id_str, name_str, raw_text, previous_ops);
+    if !doc.title.trim().is_empty()
+        && (doc.name.eq_ignore_ascii_case("Imported URL Spec")
+            || doc.name.eq_ignore_ascii_case("openapi.json")
+            || doc.name.eq_ignore_ascii_case("swagger.json")
+            || doc.name.eq_ignore_ascii_case("openapi.yaml"))
+    {
+        doc.name = doc.title.clone();
+    }
+    doc
+}
+
+/// Extracts candidate OpenAPI/Swagger JSON/YAML URLs from Swagger UI or ReDoc HTML,
+/// resolving relative paths cleanly against `base_url`.
+pub fn extract_swagger_urls_from_html(html: &str, base_url: &str) -> Vec<String> {
+    let mut raw_candidates: Vec<String> = Vec::new();
+    for needle in [
+        "url:",
+        "url :",
+        "spec-url=",
+        "data-spec-url=",
+        "Redoc.init(",
+        "SwaggerUIBundle",
+    ] {
+        let mut search_from = 0usize;
+        while let Some(pos) = html[search_from..].find(needle) {
+            let abs = search_from + pos + needle.len();
+            let slice = &html[abs..html.len().min(abs + 420)];
+            if let Some(q) = extract_first_quoted_string(slice)
+                && (q.contains(".json")
+                    || q.contains(".yaml")
+                    || q.contains(".yml")
+                    || q.contains("openapi")
+                    || q.contains("swagger")
+                    || q.contains("api-docs"))
+                && !raw_candidates.contains(&q)
+            {
+                raw_candidates.push(q);
+            }
+            search_from = abs;
+        }
+    }
+
+    // Fallback well-known Swagger/OpenAPI endpoints on the same origin if HTML omitted config URL
+    if raw_candidates.is_empty() {
+        for fallback in [
+            "/openapi.json",
+            "/api/v3/openapi.json",
+            "/v3/api-docs",
+            "/swagger/v1/swagger.json",
+            "/swagger.json",
+            "/openapi.yaml",
+        ] {
+            raw_candidates.push(fallback.to_owned());
+        }
+    }
+
+    let Ok(base) = url::Url::parse(base_url) else {
+        return raw_candidates;
+    };
+    let mut resolved = Vec::new();
+    for cand in raw_candidates {
+        let final_url = if cand.starts_with("http://") || cand.starts_with("https://") {
+            cand
+        } else if let Ok(joined) = base.join(&cand) {
+            joined.into()
+        } else {
+            continue;
+        };
+        if !resolved.contains(&final_url) {
+            resolved.push(final_url);
+        }
+    }
+    resolved
+}
+
+fn extract_first_quoted_string(s: &str) -> Option<String> {
+    let trimmed = s.trim_start();
+    let quote_pos = trimmed.find(['"', '\''])?;
+    if quote_pos > 140 {
+        return None;
+    }
+    let quote = trimmed.as_bytes()[quote_pos] as char;
+    let rest = &trimmed[quote_pos + 1..];
+    let end = rest.find(quote)?;
+    let val = rest[..end].trim();
+    if val.is_empty() || val.len() > 512 {
+        None
+    } else {
+        Some(val.to_owned())
+    }
+}
+
+fn extract_inline_json_from_html(html: &str) -> Option<String> {
+    for marker in ["\"openapi\":", "\"swagger\":", "'openapi':"] {
+        if let Some(idx) = html.find(marker) {
+            let prefix = &html[..idx];
+            if let Some(open_brace) = prefix.rfind('{') {
+                let candidate = &html[open_brace..];
+                let mut depth = 0i32;
+                let mut in_str = false;
+                let mut esc = false;
+                for (offset, ch) in candidate.char_indices() {
+                    if in_str {
+                        if esc {
+                            esc = false;
+                        } else if ch == '\\' {
+                            esc = true;
+                        } else if ch == '"' {
+                            in_str = false;
+                        }
+                        continue;
+                    }
+                    match ch {
+                        '"' => in_str = true,
+                        '{' => depth += 1,
+                        '}' => {
+                            depth -= 1;
+                            if depth == 0 {
+                                let json_slice = &candidate[..=offset];
+                                if serde_json::from_str::<Value>(json_slice).is_ok() {
+                                    return Some(json_slice.to_owned());
+                                }
+                                break;
+                            }
+                        }
+                        _ => {}
+                    }
+                }
+            }
+        }
+    }
+    None
+}
+
+fn swagger2_value_to_openapi3_json(v: &Value) -> Option<String> {
+    let title = v
+        .pointer("/info/title")
+        .and_then(Value::as_str)
+        .unwrap_or("Swagger 2.0 API");
+    let version = v
+        .pointer("/info/version")
+        .and_then(Value::as_str)
+        .unwrap_or("1.0.0");
+    let description = v
+        .pointer("/info/description")
+        .and_then(Value::as_str)
+        .unwrap_or_default();
+    let host = v
+        .get("host")
+        .and_then(Value::as_str)
+        .unwrap_or("api.example.test");
+    let base_path = v.get("basePath").and_then(Value::as_str).unwrap_or("");
+    let scheme = v
+        .get("schemes")
+        .and_then(Value::as_array)
+        .and_then(|a| a.first())
+        .and_then(Value::as_str)
+        .unwrap_or("https");
+
+    let mut new_paths = Map::new();
+    if let Some(paths) = v.get("paths").and_then(Value::as_object) {
+        for (p, pitem) in paths {
+            let mut new_pitem = Map::new();
+            if let Some(obj) = pitem.as_object() {
+                for (m, op) in obj {
+                    let mut new_op = op.clone();
+                    if let Some(op_obj) = new_op.as_object_mut() {
+                        if let Some(params) =
+                            op_obj.get("parameters").and_then(Value::as_array).cloned()
+                        {
+                            let mut kept = Vec::new();
+                            for mut pr in params {
+                                let loc = pr.get("in").and_then(Value::as_str).unwrap_or("");
+                                if loc == "body" {
+                                    let schema = pr
+                                        .get("schema")
+                                        .cloned()
+                                        .unwrap_or(serde_json::json!({"type":"object"}));
+                                    op_obj.insert(
+                                        "requestBody".into(),
+                                        serde_json::json!({
+                                            "required": pr.get("required").and_then(Value::as_bool).unwrap_or(false),
+                                            "content": { "application/json": { "schema": schema } }
+                                        }),
+                                    );
+                                } else {
+                                    // Lift Swagger 2.0 parameter `type`/`format`/`enum` into `schema` if missing
+                                    if pr.get("schema").is_none()
+                                        && let Some(pobj) = pr.as_object_mut()
+                                    {
+                                        let mut sch = Map::new();
+                                        for k in ["type", "format", "enum", "default"] {
+                                            if let Some(val) = pobj.get(k) {
+                                                sch.insert(k.into(), val.clone());
+                                            }
+                                        }
+                                        if !sch.is_empty() {
+                                            pobj.insert("schema".into(), Value::Object(sch));
+                                        }
+                                    }
+                                    kept.push(pr);
+                                }
+                            }
+                            op_obj.insert("parameters".into(), Value::Array(kept));
+                        }
+                        if let Some(resps) =
+                            op_obj.get_mut("responses").and_then(Value::as_object_mut)
+                        {
+                            for (_, rv) in resps.iter_mut() {
+                                if let Some(robj) = rv.as_object_mut()
+                                    && let Some(schema) = robj.remove("schema")
+                                {
+                                    robj.insert(
+                                        "content".into(),
+                                        serde_json::json!({"application/json":{"schema":schema}}),
+                                    );
+                                }
+                            }
+                        }
+                    }
+                    new_pitem.insert(m.clone(), new_op);
+                }
+            }
+            new_paths.insert(p.clone(), Value::Object(new_pitem));
+        }
+    }
+    let mut components = Map::new();
+    if let Some(defs) = v.get("definitions") {
+        components.insert("schemas".into(), defs.clone());
+    }
+    if let Some(sec_defs) = v.get("securityDefinitions") {
+        components.insert("securitySchemes".into(), sec_defs.clone());
+    }
+    let converted = serde_json::json!({
+        "openapi": "3.0.3",
+        "info": { "title": title, "version": version, "description": description },
+        "servers": [{ "url": format!("{scheme}://{host}{base_path}") }],
+        "paths": Value::Object(new_paths),
+        "components": Value::Object(components),
+    });
+    let text = serde_json::to_string_pretty(&converted).ok()?;
+    Some(text.replace("#/definitions/", "#/components/schemas/"))
+}
+
+fn postman_value_to_openapi3_json(root: &Value) -> String {
+    let title = root
+        .pointer("/info/name")
+        .and_then(Value::as_str)
+        .unwrap_or("Postman API Collection");
+    let description = root
+        .pointer("/info/description")
+        .and_then(Value::as_str)
+        .unwrap_or_default();
+
+    let mut servers: Vec<String> = Vec::new();
+    let mut paths_map: Map<String, Value> = Map::new();
+
+    fn walk_pm(
+        items: &[Value],
+        tag: &str,
+        servers: &mut Vec<String>,
+        paths_map: &mut Map<String, Value>,
+    ) {
+        for item in items {
+            if let Some(sub_items) = item.get("item").and_then(Value::as_array) {
+                let next_tag = item
+                    .get("name")
+                    .and_then(Value::as_str)
+                    .filter(|s| !s.is_empty())
+                    .unwrap_or(tag);
+                walk_pm(sub_items, next_tag, servers, paths_map);
+                continue;
+            }
+            let Some(req) = item.get("request").and_then(Value::as_object) else {
+                continue;
+            };
+            let req_name = item
+                .get("name")
+                .and_then(Value::as_str)
+                .unwrap_or("")
+                .to_owned();
+            let method = req
+                .get("method")
+                .and_then(Value::as_str)
+                .unwrap_or("GET")
+                .to_ascii_lowercase();
+            let raw_url = match req.get("url") {
+                Some(Value::String(s)) => s.clone(),
+                Some(Value::Object(u)) => u
+                    .get("raw")
+                    .and_then(Value::as_str)
+                    .unwrap_or("/")
+                    .to_owned(),
+                _ => "/".into(),
+            };
+            let (server_url, path_only) = split_postman_url_for_openapi(&raw_url);
+            if !server_url.is_empty() && !servers.contains(&server_url) {
+                servers.push(server_url);
+            }
+
+            let mut params = Vec::new();
+            if let Some(url_obj) = req.get("url").and_then(Value::as_object) {
+                if let Some(qlist) = url_obj.get("query").and_then(Value::as_array) {
+                    for q in qlist {
+                        if let Some(key) = q.get("key").and_then(Value::as_str)
+                            && !key.is_empty()
+                        {
+                            params.push(serde_json::json!({
+                                "name": key,
+                                "in": "query",
+                                "required": false,
+                                "description": q.get("description").and_then(Value::as_str).unwrap_or(""),
+                                "schema": {
+                                    "type": "string",
+                                    "default": q.get("value").and_then(Value::as_str).unwrap_or("")
+                                }
+                            }));
+                        }
+                    }
+                }
+                if let Some(vars) = url_obj.get("variable").and_then(Value::as_array) {
+                    for v in vars {
+                        if let Some(key) = v.get("key").and_then(Value::as_str)
+                            && !key.is_empty()
+                        {
+                            params.push(serde_json::json!({
+                                "name": key,
+                                "in": "path",
+                                "required": true,
+                                "description": v.get("description").and_then(Value::as_str).unwrap_or(""),
+                                "schema": {
+                                    "type": "string",
+                                    "default": v.get("value").and_then(Value::as_str).unwrap_or("")
+                                }
+                            }));
+                        }
+                    }
+                }
+            }
+            for tp in extract_path_template_params(&path_only) {
+                if !params
+                    .iter()
+                    .any(|p| p.get("name").and_then(Value::as_str) == Some(tp.as_str()))
+                {
+                    params.push(serde_json::json!({
+                        "name": tp,
+                        "in": "path",
+                        "required": true,
+                        "schema": { "type": "string" }
+                    }));
+                }
+            }
+            if let Some(hdrs) = req.get("header").and_then(Value::as_array) {
+                for h in hdrs {
+                    if let Some(key) = h.get("key").and_then(Value::as_str)
+                        && !key.is_empty()
+                    {
+                        params.push(serde_json::json!({
+                            "name": key,
+                            "in": "header",
+                            "required": false,
+                            "schema": {
+                                "type": "string",
+                                "default": h.get("value").and_then(Value::as_str).unwrap_or("")
+                            }
+                        }));
+                    }
+                }
+            }
+
+            let mut op_obj = Map::new();
+            op_obj.insert("summary".into(), Value::String(req_name));
+            op_obj.insert(
+                "description".into(),
+                Value::String(
+                    req.get("description")
+                        .and_then(Value::as_str)
+                        .unwrap_or("")
+                        .to_owned(),
+                ),
+            );
+            op_obj.insert("tags".into(), serde_json::json!([tag]));
+            op_obj.insert("parameters".into(), Value::Array(params));
+
+            if let Some(body) = req.get("body").and_then(Value::as_object)
+                && let Some(raw_body) = body.get("raw").and_then(Value::as_str)
+                && !raw_body.trim().is_empty()
+            {
+                let example_val = serde_json::from_str::<Value>(raw_body)
+                    .unwrap_or_else(|_| Value::String(raw_body.to_owned()));
+                op_obj.insert(
+                    "requestBody".into(),
+                    serde_json::json!({
+                        "required": true,
+                        "content": { "application/json": { "example": example_val } }
+                    }),
+                );
+            }
+
+            let mut resps = Map::new();
+            if let Some(examples) = item.get("response").and_then(Value::as_array) {
+                for ex in examples {
+                    let code = ex
+                        .get("code")
+                        .and_then(Value::as_u64)
+                        .map(|c| c.to_string())
+                        .unwrap_or_else(|| "200".into());
+                    let ex_name = ex
+                        .get("status")
+                        .or_else(|| ex.get("name"))
+                        .and_then(Value::as_str)
+                        .unwrap_or("Response");
+                    let body_str = ex.get("body").and_then(Value::as_str).unwrap_or("");
+                    let body_val = serde_json::from_str::<Value>(body_str)
+                        .unwrap_or_else(|_| Value::String(body_str.to_owned()));
+                    resps.insert(
+                        code,
+                        serde_json::json!({
+                            "description": ex_name,
+                            "content": { "application/json": { "example": body_val } }
+                        }),
+                    );
+                }
+            }
+            if resps.is_empty() {
+                resps.insert(
+                    "200".into(),
+                    serde_json::json!({ "description": "Successful response" }),
+                );
+            }
+            op_obj.insert("responses".into(), Value::Object(resps));
+
+            let p_entry = paths_map
+                .entry(path_only)
+                .or_insert_with(|| Value::Object(Map::new()));
+            if let Some(pmap) = p_entry.as_object_mut() {
+                pmap.insert(method, Value::Object(op_obj));
+            }
+        }
+    }
+
+    if let Some(items) = root.get("item").and_then(Value::as_array) {
+        walk_pm(items, "Collection", &mut servers, &mut paths_map);
+    }
+    if servers.is_empty() {
+        servers.push("{{base_url}}".into());
+    }
+    let srv_objs: Vec<Value> = servers
+        .into_iter()
+        .map(|s| serde_json::json!({ "url": s }))
+        .collect();
+    let doc = serde_json::json!({
+        "openapi": "3.0.3",
+        "info": { "title": title, "version": "1.0.0", "description": description },
+        "servers": srv_objs,
+        "paths": Value::Object(paths_map)
+    });
+    serde_json::to_string_pretty(&doc).unwrap_or_default()
+}
+
+fn split_postman_url_for_openapi(raw: &str) -> (String, String) {
+    let before_q = raw.split(['?', '#']).next().unwrap_or(raw).trim();
+    let (host, raw_path) = if let Some(scheme_pos) = before_q.find("://") {
+        let after_scheme = &before_q[scheme_pos + 3..];
+        if let Some(slash) = after_scheme.find('/') {
+            (
+                before_q[..scheme_pos + 3 + slash].to_owned(),
+                &after_scheme[slash..],
+            )
+        } else {
+            (before_q.to_owned(), "/")
+        }
+    } else if before_q.starts_with("{{")
+        && let Some(end_var) = before_q.find("}}")
+    {
+        (before_q[..end_var + 2].to_owned(), &before_q[end_var + 2..])
+    } else {
+        (String::new(), before_q)
+    };
+    let mut normalized = if raw_path.starts_with('/') {
+        raw_path.to_owned()
+    } else {
+        format!("/{raw_path}")
+    };
+    // Convert Postman `:id` path vars into OpenAPI `{id}` path template params
+    let segs: Vec<String> = normalized
+        .split('/')
+        .map(|seg| {
+            if let Some(name) = seg.strip_prefix(':') {
+                format!("{{{name}}}")
+            } else {
+                seg.to_owned()
+            }
+        })
+        .collect();
+    normalized = segs.join("/");
+    (host, normalized)
 }
 
 fn extract_path_template_params(path: &str) -> Vec<String> {
@@ -1220,5 +1883,47 @@ components:
             reqs[0].auth,
             swaggen_domain::workspace::AuthConfig::Bearer { .. }
         ));
+    }
+
+    #[test]
+    fn universal_docs_parser_handles_swagger2_postman_and_swagger_html() {
+        let sw2 = r#"{
+          "swagger": "2.0",
+          "info": { "title": "Petstore V2", "version": "2.0.1" },
+          "host": "petstore.swagger.io",
+          "basePath": "/v2",
+          "paths": {
+            "/pets": {
+              "get": { "tags": ["Pets"], "summary": "List pets", "responses": { "200": { "description": "OK" } } }
+            }
+          }
+        }"#;
+        let d_sw2 = parse_api_documentation("id1", "Imported URL Spec", sw2, &[]);
+        assert_eq!(d_sw2.title, "Petstore V2");
+        assert_eq!(d_sw2.operations.len(), 1);
+
+        let pm = r#"{
+          "info": { "name": "Orders Postman", "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json" },
+          "item": [{
+            "name": "Orders",
+            "item": [{
+              "name": "Create Order",
+              "request": {
+                "method": "POST",
+                "url": "{{base_url}}/orders/:id?dry=true",
+                "body": { "mode": "raw", "raw": "{\"item\":\"book\"}" }
+              }
+            }]
+          }]
+        }"#;
+        let d_pm = parse_api_documentation("id2", "Orders", pm, &[]);
+        assert_eq!(d_pm.title, "Orders Postman");
+        assert_eq!(d_pm.operations.len(), 1);
+        assert_eq!(d_pm.operations[0].path, "/orders/{id}");
+        assert!(d_pm.operations[0].request_body.is_some());
+
+        let html = r#"<!doctype html><html><script>SwaggerUIBundle({ url: "/api/v3/openapi.json" })</script></html>"#;
+        let urls = extract_swagger_urls_from_html(html, "https://petstore3.swagger.io/");
+        assert_eq!(urls[0], "https://petstore3.swagger.io/api/v3/openapi.json");
     }
 }

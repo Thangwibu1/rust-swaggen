@@ -18,12 +18,13 @@ use swaggen_api_contract::{
     API_VERSION, AcceptInvitationRequest, AcceptInvitationResponse, AuditEventRecord, AuthResponse,
     BootstrapOwnerRequest, ChangeEventRecord, ChangePasswordRequest, ChangesFeedResponse,
     CommentReplyRecord, CommentThreadRecord, CreateCommentRequest, CreateInvitationRequest,
-    CreateInvitationResponse, CreateWorkspaceRequest, EntityRevisionRecord, InvitationSummary,
-    LoginRequest, MemberListResponse, MemberSummary, NotificationListResponse, NotificationRecord,
-    PublishBatchRequest, PublishBatchResponse, PublishOperationResult, PublishResultKind,
-    ReplyCommentRequest, ResolveCommentRequest, RestoreRevisionRequest, Role, SessionSummary,
-    SnapshotResponse, TeamWorkspaceSummary, UpdateMemberRoleRequest, UpsertEntityRequest,
-    WorkspaceEntityRecord,
+    CreateInvitationResponse, CreatePublicInviteLinkRequest, CreatePublicInviteLinkResponse,
+    CreateWorkspaceRequest, EntityRevisionRecord, InvitationSummary, LoginRequest,
+    MemberListResponse, MemberSummary, NotificationListResponse, NotificationRecord,
+    PublicInviteLinkSummary, PublishBatchRequest, PublishBatchResponse, PublishOperationResult,
+    PublishResultKind, ReplyCommentRequest, ResolveCommentRequest, RestoreRevisionRequest, Role,
+    SessionSummary, SnapshotResponse, TeamWorkspaceSummary, UpdateMemberRoleRequest,
+    UpsertEntityRequest, WorkspaceEntityRecord,
 };
 use uuid::Uuid;
 
@@ -152,6 +153,12 @@ impl MongoStore {
             doc! { "workspace_id": 1, "email_normalized": 1 },
         )
         .await?;
+        self.create_unique("public_invite_links", doc! { "link_id": 1 })
+            .await?;
+        self.create_unique("public_invite_links", doc! { "code_hash": 1 })
+            .await?;
+        self.create_index("public_invite_links", doc! { "workspace_id": 1 })
+            .await?;
         self.create_unique("workspaces", doc! { "workspace_id": 1 })
             .await?;
         self.create_unique("workspaces", doc! { "slug": 1 }).await?;
@@ -1849,6 +1856,384 @@ impl WorkspaceRepository for MongoStore {
         .await?;
         commit_with_retry(&mut session).await?;
         Ok(())
+    }
+
+    async fn create_public_invite_link(
+        &self,
+        auth: &AuthContext,
+        workspace_id: &str,
+        req: CreatePublicInviteLinkRequest,
+        now: i64,
+    ) -> Result<CreatePublicInviteLinkResponse, StoreError> {
+        if req.role == Role::Owner {
+            return Err(StoreError::InvalidInput(
+                "Invite links cannot grant Owner role directly".into(),
+            ));
+        }
+        let hours = req.expires_in_hours.clamp(1, 720) as i64;
+        let max_uses = req.max_uses.filter(|&m| m > 0);
+        let mut session = self
+            .client
+            .start_session()
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        session
+            .start_transaction()
+            .read_concern(ReadConcern::snapshot())
+            .write_concern(WriteConcern::majority())
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        let (ws, caller_role, _) = self
+            .require_membership_tx(&mut session, workspace_id, &auth.user_id)
+            .await?;
+        if !caller_role.can_manage_members() {
+            let _ = session.abort_transaction().await;
+            return Err(StoreError::Forbidden(
+                "Only Owner or Admin can create shareable invite links".into(),
+            ));
+        }
+        let ws_name = ws.get_str("name").unwrap_or("").to_owned();
+        let link_id = Uuid::new_v4().to_string();
+        let invite_code = generate_opaque_token("lnk");
+        let code_hash = sha256_hex(&invite_code);
+        let share_link = format!("swaggen://join/{workspace_id}/{invite_code}");
+        let expires = now + hours * 3600;
+        let links_col: Collection<Document> = self.db.collection("public_invite_links");
+        links_col
+            .insert_one(doc! {
+                "link_id": &link_id,
+                "code_hash": &code_hash,
+                "invite_code": &invite_code,
+                "share_link": &share_link,
+                "workspace_id": workspace_id,
+                "workspace_name": &ws_name,
+                "role": req.role.as_str(),
+                "created_at_unix": now,
+                "expires_at_unix": expires,
+                "max_uses": max_uses.map(|m| m as i64),
+                "uses_count": 0i64,
+                "revoked_at_unix": bson::Bson::Null,
+            })
+            .session(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        self.record_audit_tx(
+            &mut session,
+            Some(workspace_id),
+            &auth.user_id,
+            &auth.email,
+            "workspace.public_link_created",
+            &link_id,
+            &format!(
+                "Created shareable {} invite link (expires in {hours}h)",
+                req.role.as_str()
+            ),
+            now,
+        )
+        .await?;
+        commit_with_retry(&mut session).await?;
+        Ok(CreatePublicInviteLinkResponse {
+            api_version: API_VERSION,
+            link: PublicInviteLinkSummary {
+                link_id,
+                workspace_id: workspace_id.to_owned(),
+                workspace_name: ws_name,
+                role: req.role,
+                invite_code,
+                share_link,
+                created_at_unix: now,
+                expires_at_unix: expires,
+                max_uses,
+                uses_count: 0,
+                revoked_at_unix: None,
+            },
+        })
+    }
+
+    async fn list_public_invite_links(
+        &self,
+        auth: &AuthContext,
+        workspace_id: &str,
+    ) -> Result<Vec<PublicInviteLinkSummary>, StoreError> {
+        let mut session = self
+            .client
+            .start_session()
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        session
+            .start_transaction()
+            .read_concern(ReadConcern::snapshot())
+            .write_concern(WriteConcern::majority())
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        let (_, caller_role, _) = self
+            .require_membership_tx(&mut session, workspace_id, &auth.user_id)
+            .await?;
+        if !caller_role.can_manage_members() {
+            let _ = session.abort_transaction().await;
+            return Err(StoreError::Forbidden(
+                "Only Owner or Admin can list shareable invite links".into(),
+            ));
+        }
+        let links_col: Collection<Document> = self.db.collection("public_invite_links");
+        let mut cursor = links_col
+            .find(doc! { "workspace_id": workspace_id })
+            .session(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        let mut out = Vec::new();
+        while cursor
+            .advance(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?
+        {
+            let d = cursor
+                .deserialize_current()
+                .map_err(|e| map_mongo_err(&e))?;
+            out.push(PublicInviteLinkSummary {
+                link_id: d.get_str("link_id").unwrap_or("").to_owned(),
+                workspace_id: workspace_id.to_owned(),
+                workspace_name: d.get_str("workspace_name").unwrap_or("").to_owned(),
+                role: parse_role(d.get_str("role").unwrap_or("viewer")),
+                invite_code: d.get_str("invite_code").unwrap_or("").to_owned(),
+                share_link: d.get_str("share_link").unwrap_or("").to_owned(),
+                created_at_unix: d.get_i64("created_at_unix").unwrap_or(0),
+                expires_at_unix: d.get_i64("expires_at_unix").unwrap_or(0),
+                max_uses: d.get_i64("max_uses").ok().map(|v| v as u32),
+                uses_count: d.get_i64("uses_count").unwrap_or(0) as u32,
+                revoked_at_unix: d.get_i64("revoked_at_unix").ok(),
+            });
+        }
+        commit_with_retry(&mut session).await?;
+        out.sort_by_key(|a| std::cmp::Reverse(a.created_at_unix));
+        Ok(out)
+    }
+
+    async fn revoke_public_invite_link(
+        &self,
+        auth: &AuthContext,
+        workspace_id: &str,
+        link_id: &str,
+        now: i64,
+    ) -> Result<(), StoreError> {
+        let mut session = self
+            .client
+            .start_session()
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        session
+            .start_transaction()
+            .read_concern(ReadConcern::snapshot())
+            .write_concern(WriteConcern::majority())
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        let (_, caller_role, _) = self
+            .require_membership_tx(&mut session, workspace_id, &auth.user_id)
+            .await?;
+        if !caller_role.can_manage_members() {
+            let _ = session.abort_transaction().await;
+            return Err(StoreError::Forbidden(
+                "Only Owner or Admin can revoke invite links".into(),
+            ));
+        }
+        let links_col: Collection<Document> = self.db.collection("public_invite_links");
+        let existing = links_col
+            .find_one(doc! { "link_id": link_id, "workspace_id": workspace_id })
+            .session(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        if existing.is_none() {
+            let _ = session.abort_transaction().await;
+            return Err(StoreError::NotFound("Invite link not found".into()));
+        }
+        links_col
+            .update_one(
+                doc! { "link_id": link_id },
+                doc! { "$set": { "revoked_at_unix": now } },
+            )
+            .session(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        self.record_audit_tx(
+            &mut session,
+            Some(workspace_id),
+            &auth.user_id,
+            &auth.email,
+            "workspace.public_link_revoked",
+            link_id,
+            "Shareable invite link revoked",
+            now,
+        )
+        .await?;
+        commit_with_retry(&mut session).await?;
+        Ok(())
+    }
+
+    async fn join_by_public_invite_link(
+        &self,
+        auth: &AuthContext,
+        link_or_code: &str,
+        _device_name: &str,
+        now: i64,
+    ) -> Result<AcceptInvitationResponse, StoreError> {
+        let trimmed = link_or_code.trim();
+        let code = trimmed
+            .rsplit('/')
+            .next()
+            .unwrap_or(trimmed)
+            .split('?')
+            .next()
+            .unwrap_or(trimmed)
+            .trim();
+        if code.is_empty() {
+            return Err(StoreError::InvalidInput(
+                "Invite link or code is required".into(),
+            ));
+        }
+        let code_hash = sha256_hex(code);
+        let mut session = self
+            .client
+            .start_session()
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        session
+            .start_transaction()
+            .read_concern(ReadConcern::snapshot())
+            .write_concern(WriteConcern::majority())
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+
+        let links_col: Collection<Document> = self.db.collection("public_invite_links");
+        let ldoc = links_col
+            .find_one(doc! { "code_hash": &code_hash })
+            .session(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?
+            .ok_or_else(|| StoreError::NotFound("Invite link not recognized".into()))?;
+        if !ldoc
+            .get("revoked_at_unix")
+            .is_some_and(|b| b.as_null().is_some())
+        {
+            let _ = session.abort_transaction().await;
+            return Err(StoreError::InvitationRevoked);
+        }
+        if ldoc.get_i64("expires_at_unix").unwrap_or(0) <= now {
+            let _ = session.abort_transaction().await;
+            return Err(StoreError::InvitationExpired);
+        }
+        let link_id = ldoc.get_str("link_id").unwrap_or("").to_owned();
+        let max_uses = ldoc.get_i64("max_uses").ok().map(|v| v as u32);
+        let uses_count = ldoc.get_i64("uses_count").unwrap_or(0) as u32;
+        if let Some(max_u) = max_uses
+            && uses_count >= max_u
+        {
+            let _ = session.abort_transaction().await;
+            return Err(StoreError::InvitationAlreadyUsed);
+        }
+        let workspace_id = ldoc.get_str("workspace_id").unwrap_or("").to_owned();
+        let role = parse_role(ldoc.get_str("role").unwrap_or("viewer"));
+
+        links_col
+            .update_one(
+                doc! { "link_id": &link_id },
+                doc! { "$inc": { "uses_count": 1i64 } },
+            )
+            .session(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+
+        let mem_col: Collection<Document> = self.db.collection("memberships");
+        if mem_col
+            .find_one(doc! { "workspace_id": &workspace_id, "user_id": &auth.user_id })
+            .session(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?
+            .is_none()
+        {
+            mem_col
+                .insert_one(doc! {
+                    "workspace_id": &workspace_id,
+                    "user_id": &auth.user_id,
+                    "role": role.as_str(),
+                    "joined_at_unix": now,
+                })
+                .session(&mut session)
+                .await
+                .map_err(|e| map_mongo_err(&e))?;
+        }
+        let fences: Collection<Document> = self.db.collection("workspace_permission_fences");
+        fences
+            .update_one(
+                doc! { "workspace_id": &workspace_id },
+                doc! { "$inc": { "membership_revision": 1i64 } },
+            )
+            .session(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        let ws_col: Collection<Document> = self.db.collection("workspaces");
+        let ws = ws_col
+            .find_one(doc! { "workspace_id": &workspace_id })
+            .session(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?
+            .ok_or_else(|| StoreError::NotFound("Workspace not found".into()))?;
+        let fence_doc = fences
+            .find_one(doc! { "workspace_id": &workspace_id })
+            .session(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        let mem_rev = fence_doc
+            .and_then(|d| d.get_i64("membership_revision").ok())
+            .unwrap_or(1);
+        let users: Collection<Document> = self.db.collection("users");
+        let created_at = users
+            .find_one(doc! { "user_id": &auth.user_id })
+            .session(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?
+            .and_then(|u| u.get_i64("created_at_unix").ok())
+            .unwrap_or(now);
+
+        self.record_audit_tx(
+            &mut session,
+            Some(&workspace_id),
+            &auth.user_id,
+            &auth.email,
+            "workspace.public_link_joined",
+            &link_id,
+            &format!("Joined via public invite link as {}", role.as_str()),
+            now,
+        )
+        .await?;
+        commit_with_retry(&mut session).await?;
+        let member_count = mem_col
+            .count_documents(doc! { "workspace_id": &workspace_id })
+            .await
+            .unwrap_or(1) as usize;
+        Ok(AcceptInvitationResponse {
+            api_version: API_VERSION,
+            workspace: TeamWorkspaceSummary {
+                workspace_id,
+                slug: ws.get_str("slug").unwrap_or("").to_owned(),
+                name: ws.get_str("name").unwrap_or("").to_owned(),
+                description: ws.get_str("description").unwrap_or("").to_owned(),
+                role,
+                member_count,
+                current_revision: ws.get_i64("current_revision").unwrap_or(1),
+                membership_revision: mem_rev,
+                archived: ws.get_bool("archived").unwrap_or(false),
+            },
+            user: swaggen_api_contract::UserProfile {
+                user_id: auth.user_id.clone(),
+                email: auth.email.clone(),
+                display_name: auth.display_name.clone(),
+                is_server_owner: auth.is_server_owner,
+                created_at_unix: created_at,
+            },
+            session_id: auth.session_id.clone(),
+            session_token: String::new(),
+            expires_at_unix: now + SESSION_TTL_SECS,
+        })
     }
 
     async fn update_member_role(

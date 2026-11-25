@@ -64,10 +64,13 @@ impl WorkspaceStore {
         let (specs_journal, specs_batches) =
             Journal::open(&directory.specs_path()).map_err(|_| Error::Recovery)?;
 
-        let mut state = WorkspaceState::new_personal(
-            directory.workspace().clone(),
-            directory.workspace().as_str().to_owned(),
-        );
+        let default_display_name = if directory.workspace().as_str() == "personal" {
+            "Personal".to_owned()
+        } else {
+            directory.workspace().as_str().to_owned()
+        };
+        let mut state =
+            WorkspaceState::new_personal(directory.workspace().clone(), default_display_name);
         for batch in &ws_batches {
             if !batch.outbox.is_empty() {
                 return Err(Error::Version);
@@ -361,6 +364,41 @@ pub fn list_workspaces(root: &Path) -> Result<Vec<LocalId>, Error> {
     }
     ids.sort();
     Ok(ids)
+}
+
+/// Lists valid workspace IDs along with their stored display name and WorkspaceKind (`Personal` / `Team`).
+pub fn list_workspace_summaries(
+    root: &Path,
+) -> Vec<(LocalId, String, swaggen_domain::workspace::WorkspaceKind)> {
+    let Ok(ids) = list_workspaces(root) else {
+        return Vec::new();
+    };
+    let mut out = Vec::with_capacity(ids.len());
+    for id in ids {
+        let fallback_name = if id.as_str() == "personal" {
+            "Personal".to_owned()
+        } else {
+            id.as_str().to_owned()
+        };
+        if let Ok(dir) = WorkspaceDirectory::open(root, id.clone())
+            && let Ok(store) = WorkspaceStore::open(dir)
+        {
+            let st = store.state();
+            let name = if st.meta.name.trim().is_empty() || st.meta.name == "personal" {
+                fallback_name
+            } else {
+                st.meta.name.clone()
+            };
+            out.push((id, name, st.meta.kind.clone()));
+        } else {
+            out.push((
+                id,
+                fallback_name,
+                swaggen_domain::workspace::WorkspaceKind::Personal,
+            ));
+        }
+    }
+    out
 }
 
 /// Migrates a workspace directory into a new absolute root directory cleanly,

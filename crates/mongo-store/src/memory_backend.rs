@@ -15,12 +15,13 @@ use swaggen_api_contract::{
     API_VERSION, AcceptInvitationRequest, AcceptInvitationResponse, AuditEventRecord, AuthResponse,
     BootstrapOwnerRequest, ChangeEventRecord, ChangePasswordRequest, ChangesFeedResponse,
     CommentReplyRecord, CommentThreadRecord, CreateCommentRequest, CreateInvitationRequest,
-    CreateInvitationResponse, CreateWorkspaceRequest, EntityRevisionRecord, InvitationSummary,
-    LoginRequest, MemberListResponse, MemberSummary, NotificationListResponse, NotificationRecord,
-    PublishBatchRequest, PublishBatchResponse, PublishOperationResult, PublishResultKind,
-    ReplyCommentRequest, ResolveCommentRequest, RestoreRevisionRequest, Role, SessionSummary,
-    SnapshotResponse, TeamWorkspaceSummary, UpdateMemberRoleRequest, UpsertEntityRequest,
-    UserProfile, WorkspaceEntityRecord,
+    CreateInvitationResponse, CreatePublicInviteLinkRequest, CreatePublicInviteLinkResponse,
+    CreateWorkspaceRequest, EntityRevisionRecord, InvitationSummary, LoginRequest,
+    MemberListResponse, MemberSummary, NotificationListResponse, NotificationRecord,
+    PublicInviteLinkSummary, PublishBatchRequest, PublishBatchResponse, PublishOperationResult,
+    PublishResultKind, ReplyCommentRequest, ResolveCommentRequest, RestoreRevisionRequest, Role,
+    SessionSummary, SnapshotResponse, TeamWorkspaceSummary, UpdateMemberRoleRequest,
+    UpsertEntityRequest, UserProfile, WorkspaceEntityRecord,
 };
 use uuid::Uuid;
 
@@ -99,6 +100,8 @@ struct State {
     memberships: BTreeMap<(String, String), MembershipRec>,
     invitations_by_id: HashMap<String, InvitationRec>,
     invitation_id_by_hash: HashMap<String, String>,
+    public_links_by_id: HashMap<String, PublicInviteLinkSummary>,
+    public_link_id_by_hash: HashMap<String, String>,
     entities: BTreeMap<(String, String), WorkspaceEntityRecord>,
     revisions: BTreeMap<(String, String, i64), EntityRevisionRecord>,
     applied_ops: HashMap<(String, String, String), AppliedOpRec>,
@@ -1079,6 +1082,215 @@ impl WorkspaceRepository for InMemoryStore {
             now,
         );
         Ok(())
+    }
+
+    async fn create_public_invite_link(
+        &self,
+        auth: &AuthContext,
+        workspace_id: &str,
+        req: CreatePublicInviteLinkRequest,
+        now: i64,
+    ) -> Result<CreatePublicInviteLinkResponse, StoreError> {
+        if req.role == Role::Owner {
+            return Err(StoreError::InvalidInput(
+                "Invite links cannot grant Owner role directly".into(),
+            ));
+        }
+        let hours = req.expires_in_hours.clamp(1, 720) as i64;
+        let max_uses = req.max_uses.filter(|&m| m > 0);
+        let mut guard = self.state.lock().map_err(|_| StoreError::InternalSafe)?;
+        let (ws, caller_mem) = Self::require_membership(&guard, workspace_id, &auth.user_id)?;
+        if !caller_mem.role.can_manage_members() {
+            return Err(StoreError::Forbidden(
+                "Only Owner or Admin can create shareable invite links".into(),
+            ));
+        }
+        let ws_name = ws.name.clone();
+        let link_id = Uuid::new_v4().to_string();
+        let invite_code = generate_opaque_token("lnk");
+        let code_hash = sha256_hex(&invite_code);
+        let share_link = format!("swaggen://join/{workspace_id}/{invite_code}");
+        let link = PublicInviteLinkSummary {
+            link_id: link_id.clone(),
+            workspace_id: workspace_id.to_owned(),
+            workspace_name: ws_name,
+            role: req.role,
+            invite_code,
+            share_link,
+            created_at_unix: now,
+            expires_at_unix: now + hours * 3600,
+            max_uses,
+            uses_count: 0,
+            revoked_at_unix: None,
+        };
+        guard
+            .public_link_id_by_hash
+            .insert(code_hash, link_id.clone());
+        guard
+            .public_links_by_id
+            .insert(link_id.clone(), link.clone());
+        Self::record_audit(
+            &mut guard,
+            Some(workspace_id),
+            &auth.user_id,
+            &auth.email,
+            "workspace.public_link_created",
+            &link_id,
+            &format!(
+                "Created shareable {} invite link (expires in {hours}h)",
+                req.role.as_str()
+            ),
+            now,
+        );
+        Ok(CreatePublicInviteLinkResponse {
+            api_version: API_VERSION,
+            link,
+        })
+    }
+
+    async fn list_public_invite_links(
+        &self,
+        auth: &AuthContext,
+        workspace_id: &str,
+    ) -> Result<Vec<PublicInviteLinkSummary>, StoreError> {
+        let guard = self.state.lock().map_err(|_| StoreError::InternalSafe)?;
+        let (_, caller_mem) = Self::require_membership(&guard, workspace_id, &auth.user_id)?;
+        if !caller_mem.role.can_manage_members() {
+            return Err(StoreError::Forbidden(
+                "Only Owner or Admin can view shareable invite links".into(),
+            ));
+        }
+        let mut out: Vec<PublicInviteLinkSummary> = guard
+            .public_links_by_id
+            .values()
+            .filter(|l| l.workspace_id == workspace_id)
+            .cloned()
+            .collect();
+        out.sort_by_key(|a| std::cmp::Reverse(a.created_at_unix));
+        Ok(out)
+    }
+
+    async fn revoke_public_invite_link(
+        &self,
+        auth: &AuthContext,
+        workspace_id: &str,
+        link_id: &str,
+        now: i64,
+    ) -> Result<(), StoreError> {
+        let mut guard = self.state.lock().map_err(|_| StoreError::InternalSafe)?;
+        let (_, caller_mem) = Self::require_membership(&guard, workspace_id, &auth.user_id)?;
+        if !caller_mem.role.can_manage_members() {
+            return Err(StoreError::Forbidden(
+                "Only Owner or Admin can revoke invite links".into(),
+            ));
+        }
+        let l = guard
+            .public_links_by_id
+            .get_mut(link_id)
+            .ok_or_else(|| StoreError::NotFound("Invite link not found".into()))?;
+        if l.workspace_id != workspace_id {
+            return Err(StoreError::Forbidden(
+                "Invite link belongs to another workspace".into(),
+            ));
+        }
+        l.revoked_at_unix = Some(now);
+        Self::record_audit(
+            &mut guard,
+            Some(workspace_id),
+            &auth.user_id,
+            &auth.email,
+            "workspace.public_link_revoked",
+            link_id,
+            "Shareable invite link revoked",
+            now,
+        );
+        Ok(())
+    }
+
+    async fn join_by_public_invite_link(
+        &self,
+        auth: &AuthContext,
+        link_or_code: &str,
+        _device_name: &str,
+        now: i64,
+    ) -> Result<AcceptInvitationResponse, StoreError> {
+        let trimmed = link_or_code.trim();
+        let code = trimmed
+            .rsplit('/')
+            .next()
+            .unwrap_or(trimmed)
+            .split('?')
+            .next()
+            .unwrap_or(trimmed)
+            .trim();
+        if code.is_empty() {
+            return Err(StoreError::InvalidInput(
+                "Invite link or code is required".into(),
+            ));
+        }
+        let code_hash = sha256_hex(code);
+        let mut guard = self.state.lock().map_err(|_| StoreError::InternalSafe)?;
+        let link_id = guard
+            .public_link_id_by_hash
+            .get(&code_hash)
+            .cloned()
+            .ok_or_else(|| StoreError::NotFound("Invite link not recognized".into()))?;
+        let link = guard
+            .public_links_by_id
+            .get(&link_id)
+            .cloned()
+            .ok_or_else(|| StoreError::NotFound("Invite link not found".into()))?;
+        if link.revoked_at_unix.is_some() {
+            return Err(StoreError::InvitationRevoked);
+        }
+        if link.expires_at_unix <= now {
+            return Err(StoreError::InvitationExpired);
+        }
+        if let Some(max_u) = link.max_uses
+            && link.uses_count >= max_u
+        {
+            return Err(StoreError::InvitationAlreadyUsed);
+        }
+        let user = guard
+            .users_by_id
+            .get(&auth.user_id)
+            .cloned()
+            .ok_or(StoreError::Unauthorized("Account not found".into()))?;
+        if let Some(lm) = guard.public_links_by_id.get_mut(&link_id) {
+            lm.uses_count += 1;
+        }
+        guard
+            .memberships
+            .entry((link.workspace_id.clone(), user.user_id.clone()))
+            .or_insert(MembershipRec {
+                role: link.role,
+                joined_at_unix: now,
+            });
+        let ws = guard
+            .workspaces_by_id
+            .get_mut(&link.workspace_id)
+            .ok_or_else(|| StoreError::NotFound("Workspace not found".into()))?;
+        ws.membership_revision += 1;
+        let ws_clone = ws.clone();
+        Self::record_audit(
+            &mut guard,
+            Some(&link.workspace_id),
+            &user.user_id,
+            &user.email_normalized,
+            "workspace.public_link_joined",
+            &link_id,
+            &format!("Joined via public invite link as {}", link.role.as_str()),
+            now,
+        );
+        let workspace = Self::workspace_summary(&guard, &ws_clone, link.role);
+        Ok(AcceptInvitationResponse {
+            api_version: API_VERSION,
+            workspace,
+            user: Self::user_profile(&user),
+            session_id: auth.session_id.clone(),
+            session_token: String::new(),
+            expires_at_unix: now + SESSION_TTL_SECS,
+        })
     }
 
     async fn update_member_role(
