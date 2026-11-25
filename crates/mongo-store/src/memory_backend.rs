@@ -101,6 +101,7 @@ struct State {
     comments: BTreeMap<(String, String), CommentThreadRecord>,
     notifications: Vec<NotificationRecord>,
     audit_events: Vec<AuditEventRecord>,
+    kv_docs: BTreeMap<(String, String), String>,
 }
 
 impl InMemoryStore {
@@ -1770,5 +1771,49 @@ impl WorkspaceRepository for InMemoryStore {
             now,
         );
         Ok(())
+    }
+
+    async fn kv_get(&self, namespace: &str, key: &str) -> Result<Option<String>, StoreError> {
+        let guard = self.state.lock().map_err(|_| StoreError::InternalSafe)?;
+        Ok(guard
+            .kv_docs
+            .get(&(namespace.to_owned(), key.to_owned()))
+            .cloned())
+    }
+
+    async fn kv_put(
+        &self,
+        namespace: &str,
+        key: &str,
+        value_json: &str,
+        _now: i64,
+    ) -> Result<(), StoreError> {
+        let mut guard = self.state.lock().map_err(|_| StoreError::InternalSafe)?;
+        guard
+            .kv_docs
+            .insert((namespace.to_owned(), key.to_owned()), value_json.to_owned());
+        Ok(())
+    }
+
+    async fn kv_delete(&self, namespace: &str, key: &str) -> Result<bool, StoreError> {
+        let mut guard = self.state.lock().map_err(|_| StoreError::InternalSafe)?;
+        Ok(guard
+            .kv_docs
+            .remove(&(namespace.to_owned(), key.to_owned()))
+            .is_some())
+    }
+
+    async fn kv_list(
+        &self,
+        namespace: &str,
+        key_prefix: &str,
+    ) -> Result<Vec<(String, String)>, StoreError> {
+        let guard = self.state.lock().map_err(|_| StoreError::InternalSafe)?;
+        Ok(guard
+            .kv_docs
+            .iter()
+            .filter(|((ns, k), _)| ns == namespace && k.starts_with(key_prefix))
+            .map(|((_, k), v)| (k.clone(), v.clone()))
+            .collect())
     }
 }

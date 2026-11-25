@@ -452,6 +452,40 @@ impl WorkspaceRepository for ServerStore {
             Self::Memory(m) => m.leave_workspace(auth, workspace_id, now).await,
         }
     }
+    async fn kv_get(&self, namespace: &str, key: &str) -> Result<Option<String>, StoreError> {
+        match self {
+            Self::Mongo(m) => m.kv_get(namespace, key).await,
+            Self::Memory(m) => m.kv_get(namespace, key).await,
+        }
+    }
+    async fn kv_put(
+        &self,
+        namespace: &str,
+        key: &str,
+        value_json: &str,
+        now: i64,
+    ) -> Result<(), StoreError> {
+        match self {
+            Self::Mongo(m) => m.kv_put(namespace, key, value_json, now).await,
+            Self::Memory(m) => m.kv_put(namespace, key, value_json, now).await,
+        }
+    }
+    async fn kv_delete(&self, namespace: &str, key: &str) -> Result<bool, StoreError> {
+        match self {
+            Self::Mongo(m) => m.kv_delete(namespace, key).await,
+            Self::Memory(m) => m.kv_delete(namespace, key).await,
+        }
+    }
+    async fn kv_list(
+        &self,
+        namespace: &str,
+        key_prefix: &str,
+    ) -> Result<Vec<(String, String)>, StoreError> {
+        match self {
+            Self::Mongo(m) => m.kv_list(namespace, key_prefix).await,
+            Self::Memory(m) => m.kv_list(namespace, key_prefix).await,
+        }
+    }
 }
 
 #[cfg(test)]

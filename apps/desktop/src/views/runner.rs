@@ -131,35 +131,70 @@ fn show_collection_runner(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context)
         }
     });
     if let Some(rep) = &app.last_run_report {
+        ui.add_space(10.0);
+        ui.horizontal_wrapped(|ui| {
+            swaggen_ui_kit::pill_badge(
+                ui,
+                swaggen_ui_kit::Tokens::STATUS_SUCCESS,
+                &format!("Passed: {}", rep.passed),
+            );
+            swaggen_ui_kit::pill_badge(
+                ui,
+                if rep.failed_assertions + rep.failed_contract + rep.infra_errors > 0 {
+                    swaggen_ui_kit::Tokens::TEXT_DANGER
+                } else {
+                    swaggen_ui_kit::text_secondary(ui)
+                },
+                &format!(
+                    "Failed: {}",
+                    rep.failed_assertions + rep.failed_contract + rep.infra_errors
+                ),
+            );
+            swaggen_ui_kit::pill_badge(
+                ui,
+                swaggen_ui_kit::text_secondary(ui),
+                &format!("Skipped: {}", rep.skipped),
+            );
+            swaggen_ui_kit::pill_badge(
+                ui,
+                swaggen_ui_kit::Tokens::STATUS_INFO,
+                &format!("{} ms", rep.total_duration_ms),
+            );
+        });
         ui.add_space(6.0);
-        ui.monospace(format!(
-            "Manifest SHA-256 (TS10): {} · Passed={} FailedAssert={} FailedContract={} Skipped={} Infra={} ({} ms)",
-            rep.manifest.content_sha256,
-            rep.passed,
-            rep.failed_assertions,
-            rep.failed_contract,
-            rep.skipped,
-            rep.infra_errors,
-            rep.total_duration_ms
-        ));
+        swaggen_ui_kit::table_header(
+            ui,
+            &[
+                ("STATUS", 110.0),
+                ("ENDPOINT", 260.0),
+                ("RESULT", 260.0),
+            ],
+        );
         for s in &rep.steps {
-            let tag = match s.outcome {
-                StepOutcome::Passed => "PASS",
-                StepOutcome::FailedAssertions => "FAIL_ASSERT",
-                StepOutcome::FailedContract => "FAIL_CONTRACT",
-                StepOutcome::Skipped => "SKIPPED",
-                StepOutcome::InfraError => "INFRA_ERR",
+            let (tag, col) = match s.outcome {
+                StepOutcome::Passed => ("PASS", swaggen_ui_kit::Tokens::STATUS_SUCCESS),
+                StepOutcome::FailedAssertions => ("FAIL_ASSERT", swaggen_ui_kit::Tokens::TEXT_DANGER),
+                StepOutcome::FailedContract => ("FAIL_CONTRACT", swaggen_ui_kit::Tokens::TEXT_DANGER),
+                StepOutcome::Skipped => ("SKIPPED", swaggen_ui_kit::text_secondary(ui)),
+                StepOutcome::InfraError => ("INFRA_ERR", swaggen_ui_kit::Tokens::TEXT_DANGER),
             };
-            ui.monospace(format!(
-                "[iter {}] [{}] {} {} -> {:?} ({} ms): {}",
-                s.iteration + 1,
-                tag,
-                s.method,
-                s.request_name,
-                s.status_code,
-                s.duration_ms,
-                s.detail
-            ));
+            swaggen_ui_kit::table_row_frame(ui, |ui| {
+                swaggen_ui_kit::pill_badge(ui, col, tag);
+                swaggen_ui_kit::method_badge(ui, &s.method);
+                ui.label(swaggen_ui_kit::bold_text(
+                    &format!("{} (iter {})", s.request_name, s.iteration + 1),
+                    12.5,
+                    swaggen_ui_kit::text_primary(ui),
+                ));
+                ui.label(
+                    egui::RichText::new(format!(
+                        "{:?} · {} ms · {}",
+                        s.status_code, s.duration_ms, s.detail
+                    ))
+                    .size(12.0)
+                    .color(swaggen_ui_kit::text_secondary(ui)),
+                );
+            });
         }
     }
 }
@@ -203,10 +238,16 @@ fn show_mock_server(app: &mut App, ui: &mut egui::Ui) {
 }
 
 fn show_graphql_sse(app: &mut App, ui: &mut egui::Ui) {
-    ui.heading("GraphQL Composer (PR01)");
+    swaggen_ui_kit::card_header(ui, "GraphQL Explorer");
     ui.horizontal(|ui| {
-        ui.label("Endpoint:");
-        ui.add(egui::TextEdit::singleline(&mut app.gql_endpoint).desired_width(360.0));
+        let ep_w = (ui.available_width() - 130.0).max(200.0);
+        swaggen_ui_kit::text_input(
+            ui,
+            &mut app.gql_endpoint,
+            "https://api.example.test/graphql",
+            ep_w,
+            false,
+        );
         if swaggen_ui_kit::primary_button(ui, !app.gql_endpoint.trim().is_empty(), "Run GraphQL")
             .clicked()
         {
@@ -217,27 +258,59 @@ fn show_graphql_sse(app: &mut App, ui: &mut egui::Ui) {
             });
         }
     });
-    ui.label("Query:");
-    ui.add(
-        egui::TextEdit::multiline(&mut app.gql_query)
-            .desired_width(ui.available_width())
-            .desired_rows(4)
-            .code_editor(),
-    );
-    ui.label("Variables JSON:");
-    ui.add(
-        egui::TextEdit::multiline(&mut app.gql_vars)
-            .desired_width(ui.available_width())
-            .desired_rows(2)
-            .code_editor(),
-    );
-    if let Some(res) = &app.gql_result {
-        ui.monospace(format!(
-            "HTTP {} ({} ms) · errors={:?}",
-            res.http_status, res.duration_ms, res.errors
-        ));
-        swaggen_ui_kit::code_surface(ui, &res.data_pretty);
-    }
+    ui.add_space(10.0);
+    ui.columns(2, |cols| {
+        swaggen_ui_kit::surface_card(&mut cols[0], |ui| {
+            swaggen_ui_kit::card_header(ui, "Query & Variables");
+            ui.add(
+                egui::TextEdit::multiline(&mut app.gql_query)
+                    .desired_width(ui.available_width())
+                    .desired_rows(7)
+                    .code_editor(),
+            );
+            ui.add_space(8.0);
+            ui.label(
+                egui::RichText::new("Variables JSON")
+                    .size(11.5)
+                    .color(swaggen_ui_kit::text_secondary(ui)),
+            );
+            ui.add(
+                egui::TextEdit::multiline(&mut app.gql_vars)
+                    .desired_width(ui.available_width())
+                    .desired_rows(3)
+                    .code_editor(),
+            );
+        });
+        swaggen_ui_kit::surface_card(&mut cols[1], |ui| {
+            swaggen_ui_kit::card_header(ui, "GraphQL Response");
+            if let Some(res) = &app.gql_result {
+                ui.horizontal_wrapped(|ui| {
+                    swaggen_ui_kit::pill_badge(
+                        ui,
+                        if (200..300).contains(&res.http_status) {
+                            swaggen_ui_kit::Tokens::STATUS_SUCCESS
+                        } else {
+                            swaggen_ui_kit::Tokens::TEXT_DANGER
+                        },
+                        &format!("HTTP {}", res.http_status),
+                    );
+                    swaggen_ui_kit::pill_badge(
+                        ui,
+                        swaggen_ui_kit::text_secondary(ui),
+                        &format!("{} ms", res.duration_ms),
+                    );
+                });
+                ui.add_space(6.0);
+                swaggen_ui_kit::code_surface_numbered(ui, &res.data_pretty);
+            } else {
+                ui.label(
+                    egui::RichText::new("Execute a GraphQL query to inspect the response payload.")
+                        .size(12.0)
+                        .color(swaggen_ui_kit::text_secondary(ui)),
+                );
+            }
+        });
+    });
 
     ui.separator();
     ui.heading("Bounded SSE Client (PR04)");

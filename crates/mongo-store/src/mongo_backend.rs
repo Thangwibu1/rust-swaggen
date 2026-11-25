@@ -194,6 +194,8 @@ impl MongoStore {
             doc! { "workspace_id": 1, "created_at_unix": -1 },
         )
         .await?;
+        self.create_unique("server_kv_docs", doc! { "namespace": 1, "key": 1 })
+            .await?;
 
         let mig = self.db.collection::<Document>("schema_migrations");
         if mig
@@ -2889,5 +2891,71 @@ impl WorkspaceRepository for MongoStore {
         .await?;
         commit_with_retry(&mut session).await?;
         Ok(())
+    }
+
+    async fn kv_get(&self, namespace: &str, key: &str) -> Result<Option<String>, StoreError> {
+        let col: Collection<Document> = self.db.collection("server_kv_docs");
+        let found = col
+            .find_one(doc! { "namespace": namespace, "key": key })
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        Ok(found.and_then(|d| d.get_str("value_json").ok().map(str::to_owned)))
+    }
+
+    async fn kv_put(
+        &self,
+        namespace: &str,
+        key: &str,
+        value_json: &str,
+        now: i64,
+    ) -> Result<(), StoreError> {
+        let col: Collection<Document> = self.db.collection("server_kv_docs");
+        col.update_one(
+            doc! { "namespace": namespace, "key": key },
+            doc! {
+                "$set": {
+                    "namespace": namespace,
+                    "key": key,
+                    "value_json": value_json,
+                    "updated_at_unix": now,
+                }
+            },
+        )
+        .upsert(true)
+        .await
+        .map_err(|e| map_mongo_err(&e))?;
+        Ok(())
+    }
+
+    async fn kv_delete(&self, namespace: &str, key: &str) -> Result<bool, StoreError> {
+        let col: Collection<Document> = self.db.collection("server_kv_docs");
+        let res = col
+            .delete_one(doc! { "namespace": namespace, "key": key })
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        Ok(res.deleted_count > 0)
+    }
+
+    async fn kv_list(
+        &self,
+        namespace: &str,
+        key_prefix: &str,
+    ) -> Result<Vec<(String, String)>, StoreError> {
+        let col: Collection<Document> = self.db.collection("server_kv_docs");
+        let mut cursor = col
+            .find(doc! { "namespace": namespace })
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        let mut out = Vec::new();
+        while cursor.advance().await.map_err(|e| map_mongo_err(&e))? {
+            let d = cursor.deserialize_current().map_err(|e| map_mongo_err(&e))?;
+            if let (Ok(k), Ok(v)) = (d.get_str("key"), d.get_str("value_json"))
+                && k.starts_with(key_prefix)
+            {
+                out.push((k.to_owned(), v.to_owned()));
+            }
+        }
+        out.sort_by(|a, b| a.0.cmp(&b.0));
+        Ok(out)
     }
 }

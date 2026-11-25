@@ -223,21 +223,58 @@ fn show_conflicts(app: &mut App, ui: &mut egui::Ui, profile_id: &str, wid: &str)
                     server_payload_json,
                     reason,
                 } => {
-                    ui.strong(format!(
-                        "3-Way Conflict: {} (your base r{} vs server r{})",
-                        entry.name, entry.base_revision, server_revision
-                    ));
-                    ui.label(reason);
-                    for d in compute_three_way_diff(
+                    ui.horizontal_wrapped(|ui| {
+                        ui.label(swaggen_ui_kit::bold_text(
+                            &entry.name,
+                            15.0,
+                            swaggen_ui_kit::text_primary(ui),
+                        ));
+                        swaggen_ui_kit::pill_badge(
+                            ui,
+                            Tokens::TEXT_WARNING,
+                            &format!("Base r{} vs Server r{}", entry.base_revision, server_revision),
+                        );
+                    });
+                    ui.label(
+                        egui::RichText::new(reason)
+                            .size(12.0)
+                            .color(swaggen_ui_kit::text_secondary(ui)),
+                    );
+                    ui.add_space(8.0);
+                    let diffs = compute_three_way_diff(
                         &entry.base_payload_json,
                         &entry.local_payload_json,
                         server_payload_json,
-                    ) {
-                        ui.label(format!(
-                            "• {}: Base={} | Yours={} | Server={}",
-                            d.path, d.base_val, d.local_val, d.server_val
-                        ));
-                    }
+                    );
+                    ui.columns(3, |cols| {
+                        swaggen_ui_kit::surface_card(&mut cols[0], |ui| {
+                            swaggen_ui_kit::card_header(ui, "Base (Common Ancestor)");
+                            for d in &diffs {
+                                ui.monospace(format!("{}: {}", d.path, d.base_val));
+                            }
+                        });
+                        swaggen_ui_kit::surface_card(&mut cols[1], |ui| {
+                            swaggen_ui_kit::card_header(ui, "Your Local Version");
+                            for d in &diffs {
+                                ui.label(
+                                    egui::RichText::new(format!("{}: {}", d.path, d.local_val))
+                                        .monospace()
+                                        .color(Tokens::STATUS_INFO),
+                                );
+                            }
+                        });
+                        swaggen_ui_kit::surface_card(&mut cols[2], |ui| {
+                            swaggen_ui_kit::card_header(ui, "Server Version");
+                            for d in &diffs {
+                                ui.label(
+                                    egui::RichText::new(format!("{}: {}", d.path, d.server_val))
+                                        .monospace()
+                                        .color(Tokens::TEXT_WARNING),
+                                );
+                            }
+                        });
+                    });
+                    ui.add_space(10.0);
                     ui.horizontal_wrapped(|ui| {
                         if swaggen_ui_kit::primary_button(
                             ui,
@@ -252,7 +289,9 @@ fn show_conflicts(app: &mut App, ui: &mut egui::Ui, profile_id: &str, wid: &str)
                                 operation_id: entry.operation_id.clone(),
                                 choice: ConflictChoice::RebaseWithPayload {
                                     merged_payload_json: entry.local_payload_json.clone(),
-                                    note: format!("Resolved conflict cleanly over r{server_revision}"),
+                                    note: format!(
+                                        "Resolved conflict cleanly over r{server_revision}"
+                                    ),
                                 },
                             });
                         }

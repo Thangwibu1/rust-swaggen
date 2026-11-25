@@ -56,20 +56,20 @@ pub const MAX_ACTIVE_JOBS_PER_WORKSPACE: usize = 10;
 static REQUEST_COUNTER: AtomicU64 = AtomicU64::new(1);
 static HEADER_REQUEST_ID: HeaderName = HeaderName::from_static("x-request-id");
 
-#[derive(Clone)]
+#[derive(Clone, serde::Serialize, serde::Deserialize)]
 pub struct UserMfaState {
     pub secret_b32: String,
     pub verified: bool,
     pub recovery_hashes: Vec<String>,
 }
 
-#[derive(Clone)]
+#[derive(Clone, serde::Serialize, serde::Deserialize)]
 pub struct BranchData {
     pub summary: BranchSummary,
     pub changes: Vec<BranchChange>,
 }
 
-#[derive(Clone)]
+#[derive(Clone, serde::Serialize, serde::Deserialize)]
 pub struct VaultEntry {
     pub summary: VaultSecretSummary,
     pub stored_value: String,
@@ -81,14 +81,23 @@ pub struct AppState {
     pub firebase: Option<Arc<FirebaseVerifier>>,
     pub max_body_bytes: usize,
     pub event_bus: broadcast::Sender<(String, i64)>,
-    pub mock_routes: Arc<Mutex<BTreeMap<(String, String), TeamMockRoute>>>,
     pub presence: Arc<Mutex<BTreeMap<(String, String), PresenceEntry>>>,
-    pub mfa_by_user: Arc<Mutex<BTreeMap<String, UserMfaState>>>,
-    pub branches: Arc<Mutex<BTreeMap<(String, String), BranchData>>>,
-    pub merge_requests: Arc<Mutex<BTreeMap<(String, String), MergeRequestRecord>>>,
-    pub team_vault: Arc<Mutex<BTreeMap<(String, String), VaultEntry>>>,
-    pub runner_leases: Arc<Mutex<BTreeMap<(String, String), RunnerLeaseRecord>>>,
-    pub schedules: Arc<Mutex<BTreeMap<(String, String), ScheduleRecord>>>,
+}
+
+const KV_MOCKS: &str = "team_mocks";
+const KV_MFA: &str = "mfa_users";
+const KV_BRANCHES: &str = "branches";
+const KV_MERGE_REQUESTS: &str = "merge_requests";
+const KV_TEAM_VAULT: &str = "team_vault";
+const KV_RUNNERS: &str = "runner_leases";
+const KV_SCHEDULES: &str = "schedules";
+
+fn ws_kv_key(workspace_id: &str, item_id: &str) -> String {
+    format!("{workspace_id}:{item_id}")
+}
+
+fn ws_kv_prefix(workspace_id: &str) -> String {
+    format!("{workspace_id}:")
 }
 
 #[derive(Deserialize)]
@@ -923,13 +932,14 @@ async fn list_team_mocks(
     let _ = caller_workspace_role(&state, &ctx, &workspace_id)
         .await
         .map_err(|e| map_err(&corr, e))?;
-    let routes: Vec<TeamMockRoute> = state
-        .mock_routes
-        .lock()
-        .map_err(|_| map_err(&corr, StoreError::InternalSafe))?
-        .iter()
-        .filter(|((wid, _), _)| wid == &workspace_id)
-        .map(|(_, r)| r.clone())
+    let rows = state
+        .store
+        .kv_list(KV_MOCKS, &ws_kv_prefix(&workspace_id))
+        .await
+        .map_err(|e| map_err(&corr, e))?;
+    let routes: Vec<TeamMockRoute> = rows
+        .into_iter()
+        .filter_map(|(_, v)| serde_json::from_str(&v).ok())
         .collect();
     Ok(Json(TeamMockListResponse {
         api_version: API_VERSION,
@@ -958,13 +968,14 @@ async fn create_team_mock(
             StoreError::Forbidden("Viewer cannot publish team mock routes".into()),
         ));
     }
-    let mut guard = state
-        .mock_routes
-        .lock()
-        .map_err(|_| map_err(&corr, StoreError::InternalSafe))?;
-    let existing_count = guard.keys().filter(|(w, _)| w == &workspace_id).count();
-    let key = (workspace_id.clone(), req.mock_id.clone());
-    if !guard.contains_key(&key) && existing_count >= MAX_MOCK_ROUTES_PER_WORKSPACE {
+    let key = ws_kv_key(&workspace_id, &req.mock_id);
+    let existing_rows = state
+        .store
+        .kv_list(KV_MOCKS, &ws_kv_prefix(&workspace_id))
+        .await
+        .map_err(|e| map_err(&corr, e))?;
+    let already_exists = existing_rows.iter().any(|(k, _)| k == &key);
+    if !already_exists && existing_rows.len() >= MAX_MOCK_ROUTES_PER_WORKSPACE {
         return Err((
             StatusCode::TOO_MANY_REQUESTS,
             Json(ErrorEnvelope::new(
@@ -975,6 +986,7 @@ async fn create_team_mock(
             )),
         ));
     }
+    let now = now_unix();
     let route = TeamMockRoute {
         mock_id: req.mock_id,
         workspace_id,
@@ -987,9 +999,14 @@ async fn create_team_mock(
         match_header: req.match_header,
         match_query: req.match_query,
         created_by: ctx.user_id,
-        created_at_unix: now_unix(),
+        created_at_unix: now,
     };
-    guard.insert(key, route.clone());
+    let val = serde_json::to_string(&route).map_err(|_| map_err(&corr, StoreError::InternalSafe))?;
+    state
+        .store
+        .kv_put(KV_MOCKS, &key, &val, now)
+        .await
+        .map_err(|e| map_err(&corr, e))?;
     Ok((StatusCode::CREATED, Json(route)))
 }
 
@@ -1011,12 +1028,13 @@ async fn delete_team_mock(
             StoreError::Forbidden("Viewer cannot delete team mock routes".into()),
         ));
     }
-    let mut guard = state
-        .mock_routes
-        .lock()
-        .map_err(|_| map_err(&corr, StoreError::InternalSafe))?;
-    let key = (workspace_id, mock_id);
-    if let Some(existing) = guard.get(&key)
+    let key = ws_kv_key(&workspace_id, &mock_id);
+    if let Some(raw) = state
+        .store
+        .kv_get(KV_MOCKS, &key)
+        .await
+        .map_err(|e| map_err(&corr, e))?
+        && let Ok(existing) = serde_json::from_str::<TeamMockRoute>(&raw)
         && existing.created_by != ctx.user_id
         && !matches!(role, Role::Owner | Role::Admin)
     {
@@ -1025,7 +1043,11 @@ async fn delete_team_mock(
             StoreError::Forbidden("Only creator or Admin/Owner can delete this mock route".into()),
         ));
     }
-    guard.remove(&key);
+    let _ = state
+        .store
+        .kv_delete(KV_MOCKS, &key)
+        .await
+        .map_err(|e| map_err(&corr, e))?;
     Ok(Json(json!({"api_version": API_VERSION, "deleted": true})))
 }
 
@@ -1038,29 +1060,29 @@ async fn serve_team_mock(
 ) -> Response {
     let norm_path = format!("/{}", tail.trim_start_matches('/'));
     let query = uri.query().unwrap_or("");
-    let matched = {
-        let Ok(guard) = state.mock_routes.lock() else {
-            return StatusCode::INTERNAL_SERVER_ERROR.into_response();
-        };
-        guard
-            .iter()
-            .filter(|((wid, _), _)| wid == &workspace_id)
-            .map(|(_, r)| r)
-            .find(|r| {
-                r.method.eq_ignore_ascii_case(method.as_str())
-                    && r.path == norm_path
-                    && r.match_header.as_ref().is_none_or(|(hk, hv)| {
-                        headers
-                            .get(hk.as_str())
-                            .and_then(|v| v.to_str().ok())
-                            .is_some_and(|actual| actual == hv)
-                    })
-                    && r.match_query
-                        .as_ref()
-                        .is_none_or(|(qk, qv)| query.contains(&format!("{qk}={qv}")))
-            })
-            .cloned()
+    let Ok(rows) = state
+        .store
+        .kv_list(KV_MOCKS, &ws_kv_prefix(&workspace_id))
+        .await
+    else {
+        return StatusCode::INTERNAL_SERVER_ERROR.into_response();
     };
+    let matched = rows
+        .into_iter()
+        .filter_map(|(_, v)| serde_json::from_str::<TeamMockRoute>(&v).ok())
+        .find(|r| {
+            r.method.eq_ignore_ascii_case(method.as_str())
+                && r.path == norm_path
+                && r.match_header.as_ref().is_none_or(|(hk, hv)| {
+                    headers
+                        .get(hk.as_str())
+                        .and_then(|v| v.to_str().ok())
+                        .is_some_and(|actual| actual == hv)
+                })
+                && r.match_query
+                    .as_ref()
+                    .is_none_or(|(qk, qv)| query.contains(&format!("{qk}={qv}")))
+        });
     let Some(m) = matched else {
         return (StatusCode::NOT_FOUND, "No matching team mock route").into_response();
     };
@@ -1089,12 +1111,11 @@ async fn get_workspace_quotas(
         .await
         .map_err(|e| map_err(&corr, e))?;
     let used = state
-        .mock_routes
-        .lock()
-        .map_err(|_| map_err(&corr, StoreError::InternalSafe))?
-        .keys()
-        .filter(|(w, _)| w == &workspace_id)
-        .count();
+        .store
+        .kv_list(KV_MOCKS, &ws_kv_prefix(&workspace_id))
+        .await
+        .map_err(|e| map_err(&corr, e))?
+        .len();
     Ok(Json(WorkspaceQuotaStatus {
         api_version: API_VERSION,
         workspace_id,
@@ -1271,7 +1292,8 @@ async fn enroll_mfa(
     let ctx = require_auth(&state, &headers)
         .await
         .map_err(|e| map_err(&corr, e))?;
-    let raw_secret = format!("{:020}", now_unix()).into_bytes();
+    let now = now_unix();
+    let raw_secret = format!("{:020}", now).into_bytes();
     let secret_b32 = encode_base32(&raw_secret);
     let rec_plain = vec![
         format!("SWG-{}-A1", &ctx.user_id.chars().take(4).collect::<String>()),
@@ -1279,18 +1301,17 @@ async fn enroll_mfa(
     ];
     let recovery_hashes = rec_plain.iter().map(|c| hash_recovery_code(c)).collect();
     let uri = build_otpauth_uri("Swaggen", &ctx.email, &secret_b32);
+    let mfa = UserMfaState {
+        secret_b32: secret_b32.clone(),
+        verified: false,
+        recovery_hashes,
+    };
+    let val = serde_json::to_string(&mfa).map_err(|_| map_err(&corr, StoreError::InternalSafe))?;
     state
-        .mfa_by_user
-        .lock()
-        .map_err(|_| map_err(&corr, StoreError::InternalSafe))?
-        .insert(
-            ctx.user_id,
-            UserMfaState {
-                secret_b32: secret_b32.clone(),
-                verified: false,
-                recovery_hashes,
-            },
-        );
+        .store
+        .kv_put(KV_MFA, &ctx.user_id, &val, now)
+        .await
+        .map_err(|e| map_err(&corr, e))?;
     Ok(Json(TotpEnrollResponse {
         secret_b32,
         otpauth_uri: uri,
@@ -1307,15 +1328,17 @@ async fn verify_mfa(
     let ctx = require_auth(&state, &headers)
         .await
         .map_err(|e| map_err(&corr, e))?;
-    let mut guard = state
-        .mfa_by_user
-        .lock()
-        .map_err(|_| map_err(&corr, StoreError::InternalSafe))?;
-    let entry = guard
-        .get_mut(&ctx.user_id)
+    let raw = state
+        .store
+        .kv_get(KV_MFA, &ctx.user_id)
+        .await
+        .map_err(|e| map_err(&corr, e))?
         .ok_or_else(|| map_err(&corr, StoreError::NotFound("MFA not enrolled".into())))?;
+    let mut entry: UserMfaState =
+        serde_json::from_str(&raw).map_err(|_| map_err(&corr, StoreError::InternalSafe))?;
+    let now = now_unix();
     let ok = if let Some(code) = &req.code {
-        verify_totp_sha256(&entry.secret_b32, code, now_unix(), 1)
+        verify_totp_sha256(&entry.secret_b32, code, now, 1)
     } else if let Some(rc) = &req.recovery_code {
         verify_and_consume_recovery_code(&mut entry.recovery_hashes, rc)
     } else {
@@ -1328,6 +1351,13 @@ async fn verify_mfa(
         ));
     }
     entry.verified = true;
+    let updated =
+        serde_json::to_string(&entry).map_err(|_| map_err(&corr, StoreError::InternalSafe))?;
+    state
+        .store
+        .kv_put(KV_MFA, &ctx.user_id, &updated, now)
+        .await
+        .map_err(|e| map_err(&corr, e))?;
     Ok(Json(TotpStatusResponse {
         enabled: true,
         verified: entry.verified,
@@ -1353,11 +1383,11 @@ async fn owner_reset_member_mfa(
             StoreError::Forbidden("Only workspace Owner/Admin can reset member MFA".into()),
         ));
     }
-    state
-        .mfa_by_user
-        .lock()
-        .map_err(|_| map_err(&corr, StoreError::InternalSafe))?
-        .remove(&target_user_id);
+    let _ = state
+        .store
+        .kv_delete(KV_MFA, &target_user_id)
+        .await
+        .map_err(|e| map_err(&corr, e))?;
     Ok(Json(json!({"api_version": API_VERSION, "mfa_reset": true})))
 }
 
@@ -1417,12 +1447,13 @@ async fn create_branch(
         .map(|e| format!("rev-{}", e.revision))
         .unwrap_or_else(|| req.base_hash.clone());
     let branch_id = uuid::Uuid::new_v4().to_string();
+    let now = now_unix();
     let summary = BranchSummary {
         branch_id: branch_id.clone(),
         workspace_id: workspace_id.clone(),
         name: req.name,
         created_by: ctx.user_id,
-        created_at_unix: now_unix(),
+        created_at_unix: now,
         changes_count: 1,
     };
     let change = BranchChange {
@@ -1432,17 +1463,16 @@ async fn create_branch(
         branch_hash: req.branch_hash,
         branch_payload: req.branch_payload,
     };
+    let data = BranchData {
+        summary: summary.clone(),
+        changes: vec![change],
+    };
+    let val = serde_json::to_string(&data).map_err(|_| map_err(&corr, StoreError::InternalSafe))?;
     state
-        .branches
-        .lock()
-        .map_err(|_| map_err(&corr, StoreError::InternalSafe))?
-        .insert(
-            (workspace_id, branch_id),
-            BranchData {
-                summary: summary.clone(),
-                changes: vec![change],
-            },
-        );
+        .store
+        .kv_put(KV_BRANCHES, &ws_kv_key(&workspace_id, &branch_id), &val, now)
+        .await
+        .map_err(|e| map_err(&corr, e))?;
     Ok((StatusCode::CREATED, Json(summary)))
 }
 
@@ -1462,13 +1492,14 @@ async fn open_merge_request(
     if !role.can_write_entities() {
         return Err(map_err(&corr, StoreError::Forbidden("Viewer cannot open merge requests".into())));
     }
-    let branches = state
-        .branches
-        .lock()
-        .map_err(|_| map_err(&corr, StoreError::InternalSafe))?;
-    let bdata = branches
-        .get(&(workspace_id.clone(), req.branch_id.clone()))
+    let raw_branch = state
+        .store
+        .kv_get(KV_BRANCHES, &ws_kv_key(&workspace_id, &req.branch_id))
+        .await
+        .map_err(|e| map_err(&corr, e))?
         .ok_or_else(|| map_err(&corr, StoreError::NotFound("Branch not found".into())))?;
+    let bdata: BranchData =
+        serde_json::from_str(&raw_branch).map_err(|_| map_err(&corr, StoreError::InternalSafe))?;
     let eval = evaluate_branch_merge(&bdata.changes, vec![ctx.user_id]);
     let mr = MergeRequestRecord {
         merge_id: uuid::Uuid::new_v4().to_string(),
@@ -1483,11 +1514,17 @@ async fn open_merge_request(
         approved_by: eval.approved_by,
         conflicts_count: eval.conflicts.len(),
     };
+    let val = serde_json::to_string(&mr).map_err(|_| map_err(&corr, StoreError::InternalSafe))?;
     state
-        .merge_requests
-        .lock()
-        .map_err(|_| map_err(&corr, StoreError::InternalSafe))?
-        .insert((workspace_id, mr.merge_id.clone()), mr.clone());
+        .store
+        .kv_put(
+            KV_MERGE_REQUESTS,
+            &ws_kv_key(&workspace_id, &mr.merge_id),
+            &val,
+            now_unix(),
+        )
+        .await
+        .map_err(|e| map_err(&corr, e))?;
     Ok((StatusCode::CREATED, Json(mr)))
 }
 
@@ -1506,13 +1543,15 @@ async fn execute_merge_request(
     if !role.can_write_entities() {
         return Err(map_err(&corr, StoreError::Forbidden("Viewer cannot merge".into())));
     }
-    let mut mrs = state
-        .merge_requests
-        .lock()
-        .map_err(|_| map_err(&corr, StoreError::InternalSafe))?;
-    let mr = mrs
-        .get_mut(&(workspace_id, merge_id))
+    let key = ws_kv_key(&workspace_id, &merge_id);
+    let raw = state
+        .store
+        .kv_get(KV_MERGE_REQUESTS, &key)
+        .await
+        .map_err(|e| map_err(&corr, e))?
         .ok_or_else(|| map_err(&corr, StoreError::NotFound("Merge request not found".into())))?;
+    let mut mr: MergeRequestRecord =
+        serde_json::from_str(&raw).map_err(|_| map_err(&corr, StoreError::InternalSafe))?;
     if mr.conflicts_count > 0 {
         return Err(map_err(
             &corr,
@@ -1523,7 +1562,13 @@ async fn execute_merge_request(
         mr.approved_by.push(ctx.user_id);
     }
     mr.status = "merged".into();
-    Ok(Json(mr.clone()))
+    let val = serde_json::to_string(&mr).map_err(|_| map_err(&corr, StoreError::InternalSafe))?;
+    state
+        .store
+        .kv_put(KV_MERGE_REQUESTS, &key, &val, now_unix())
+        .await
+        .map_err(|e| map_err(&corr, e))?;
+    Ok(Json(mr))
 }
 
 const VAULT_TRUST_BOUNDARY: &str = "Server-managed encrypted transport vault: RBAC-enforced with rotation history; server administrators with raw DB/process access are within the trust boundary unless client-side key wrapping (BYOK) is configured.";
@@ -1540,13 +1585,14 @@ async fn list_vault_secrets(
     let _ = caller_workspace_role(&state, &ctx, &workspace_id)
         .await
         .map_err(|e| map_err(&corr, e))?;
-    let secrets = state
-        .team_vault
-        .lock()
-        .map_err(|_| map_err(&corr, StoreError::InternalSafe))?
-        .iter()
-        .filter(|((wid, _), _)| wid == &workspace_id)
-        .map(|(_, v)| v.summary.clone())
+    let rows = state
+        .store
+        .kv_list(KV_TEAM_VAULT, &ws_kv_prefix(&workspace_id))
+        .await
+        .map_err(|e| map_err(&corr, e))?;
+    let secrets = rows
+        .into_iter()
+        .filter_map(|(_, v)| serde_json::from_str::<VaultEntry>(&v).ok().map(|e| e.summary))
         .collect();
     Ok(Json(VaultSecretListResponse {
         api_version: API_VERSION,
@@ -1575,29 +1621,34 @@ async fn put_vault_secret(
             StoreError::Forbidden("Viewer cannot write or rotate workspace vault secrets".into()),
         ));
     }
-    let mut guard = state
-        .team_vault
-        .lock()
-        .map_err(|_| map_err(&corr, StoreError::InternalSafe))?;
-    let next_ver = guard
-        .get(&(workspace_id.clone(), key.clone()))
+    let kv_key = ws_kv_key(&workspace_id, &key);
+    let next_ver = state
+        .store
+        .kv_get(KV_TEAM_VAULT, &kv_key)
+        .await
+        .map_err(|e| map_err(&corr, e))?
+        .and_then(|raw| serde_json::from_str::<VaultEntry>(&raw).ok())
         .map(|v| v.summary.version + 1)
         .unwrap_or(1);
+    let now = now_unix();
     let summary = VaultSecretSummary {
         key: key.clone(),
         version: next_ver,
         updated_by: ctx.email,
-        updated_at_unix: now_unix(),
+        updated_at_unix: now,
         note: req.note,
         trust_boundary: VAULT_TRUST_BOUNDARY.into(),
     };
-    guard.insert(
-        (workspace_id, key),
-        VaultEntry {
-            summary: summary.clone(),
-            stored_value: req.value,
-        },
-    );
+    let entry = VaultEntry {
+        summary: summary.clone(),
+        stored_value: req.value,
+    };
+    let val = serde_json::to_string(&entry).map_err(|_| map_err(&corr, StoreError::InternalSafe))?;
+    state
+        .store
+        .kv_put(KV_TEAM_VAULT, &kv_key, &val, now)
+        .await
+        .map_err(|e| map_err(&corr, e))?;
     Ok((StatusCode::OK, Json(summary)))
 }
 
@@ -1619,17 +1670,18 @@ async fn reveal_vault_secret(
             StoreError::Forbidden("Viewer role cannot reveal workspace vault secret values".into()),
         ));
     }
-    let guard = state
-        .team_vault
-        .lock()
-        .map_err(|_| map_err(&corr, StoreError::InternalSafe))?;
-    let entry = guard
-        .get(&(workspace_id, key.clone()))
+    let raw = state
+        .store
+        .kv_get(KV_TEAM_VAULT, &ws_kv_key(&workspace_id, &key))
+        .await
+        .map_err(|e| map_err(&corr, e))?
         .ok_or_else(|| map_err(&corr, StoreError::NotFound("Vault key not found".into())))?;
+    let entry: VaultEntry =
+        serde_json::from_str(&raw).map_err(|_| map_err(&corr, StoreError::InternalSafe))?;
     Ok(Json(VaultSecretValueResponse {
         key,
         version: entry.summary.version,
-        value: entry.stored_value.clone(),
+        value: entry.stored_value,
     }))
 }
 
@@ -1662,11 +1714,12 @@ async fn register_runner_lease(
         last_heartbeat_unix: now,
         lease_expires_unix: now + 300,
     };
+    let val = serde_json::to_string(&rec).map_err(|_| map_err(&corr, StoreError::InternalSafe))?;
     state
-        .runner_leases
-        .lock()
-        .map_err(|_| map_err(&corr, StoreError::InternalSafe))?
-        .insert((workspace_id, rec.runner_id.clone()), rec.clone());
+        .store
+        .kv_put(KV_RUNNERS, &ws_kv_key(&workspace_id, &rec.runner_id), &val, now)
+        .await
+        .map_err(|e| map_err(&corr, e))?;
     Ok((StatusCode::CREATED, Json(rec)))
 }
 
@@ -1685,17 +1738,25 @@ async fn heartbeat_runner_lease(
     if !matches!(role, Role::Owner | Role::Admin | Role::Editor) {
         return Err(map_err(&corr, StoreError::Forbidden("Forbidden".into())));
     }
-    let now = now_unix();
-    let mut guard = state
-        .runner_leases
-        .lock()
-        .map_err(|_| map_err(&corr, StoreError::InternalSafe))?;
-    let rec = guard
-        .get_mut(&(workspace_id, runner_id))
+    let key = ws_kv_key(&workspace_id, &runner_id);
+    let raw = state
+        .store
+        .kv_get(KV_RUNNERS, &key)
+        .await
+        .map_err(|e| map_err(&corr, e))?
         .ok_or_else(|| map_err(&corr, StoreError::NotFound("Runner lease not found".into())))?;
+    let mut rec: RunnerLeaseRecord =
+        serde_json::from_str(&raw).map_err(|_| map_err(&corr, StoreError::InternalSafe))?;
+    let now = now_unix();
     rec.last_heartbeat_unix = now;
     rec.lease_expires_unix = now + 300;
-    Ok(Json(rec.clone()))
+    let val = serde_json::to_string(&rec).map_err(|_| map_err(&corr, StoreError::InternalSafe))?;
+    state
+        .store
+        .kv_put(KV_RUNNERS, &key, &val, now)
+        .await
+        .map_err(|e| map_err(&corr, e))?;
+    Ok(Json(rec))
 }
 
 async fn create_schedule(
@@ -1722,7 +1783,8 @@ async fn create_schedule(
     {
         return Err(map_err(&corr, StoreError::InvalidInput(reason)));
     }
-    let next_fire_unix = now_unix() + 60;
+    let now = now_unix();
+    let next_fire_unix = now + 60;
     let rec = ScheduleRecord {
         schedule_id: uuid::Uuid::new_v4().to_string(),
         workspace_id: workspace_id.clone(),
@@ -1732,11 +1794,17 @@ async fn create_schedule(
         next_fire_unix,
         failure_webhook_url: req.failure_webhook_url,
     };
+    let val = serde_json::to_string(&rec).map_err(|_| map_err(&corr, StoreError::InternalSafe))?;
     state
-        .schedules
-        .lock()
-        .map_err(|_| map_err(&corr, StoreError::InternalSafe))?
-        .insert((workspace_id, rec.schedule_id.clone()), rec.clone());
+        .store
+        .kv_put(
+            KV_SCHEDULES,
+            &ws_kv_key(&workspace_id, &rec.schedule_id),
+            &val,
+            now,
+        )
+        .await
+        .map_err(|e| map_err(&corr, e))?;
     Ok((StatusCode::CREATED, Json(rec)))
 }
 
@@ -1765,14 +1833,7 @@ pub fn router(store: Arc<ServerStore>) -> Router {
         firebase,
         max_body_bytes: DEFAULT_MAX_BODY_BYTES,
         event_bus,
-        mock_routes: Arc::new(Mutex::new(BTreeMap::new())),
         presence: Arc::new(Mutex::new(BTreeMap::new())),
-        mfa_by_user: Arc::new(Mutex::new(BTreeMap::new())),
-        branches: Arc::new(Mutex::new(BTreeMap::new())),
-        merge_requests: Arc::new(Mutex::new(BTreeMap::new())),
-        team_vault: Arc::new(Mutex::new(BTreeMap::new())),
-        runner_leases: Arc::new(Mutex::new(BTreeMap::new())),
-        schedules: Arc::new(Mutex::new(BTreeMap::new())),
     };
     Router::new()
         .route("/health/live", get(live))

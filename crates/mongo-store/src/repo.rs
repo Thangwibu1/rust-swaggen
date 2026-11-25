@@ -258,4 +258,22 @@ pub trait WorkspaceRepository: Send + Sync {
         workspace_id: &str,
         now: i64,
     ) -> Result<(), StoreError>;
+
+    async fn kv_get(&self, namespace: &str, key: &str) -> Result<Option<String>, StoreError>;
+
+    async fn kv_put(
+        &self,
+        namespace: &str,
+        key: &str,
+        value_json: &str,
+        now: i64,
+    ) -> Result<(), StoreError>;
+
+    async fn kv_delete(&self, namespace: &str, key: &str) -> Result<bool, StoreError>;
+
+    async fn kv_list(
+        &self,
+        namespace: &str,
+        key_prefix: &str,
+    ) -> Result<Vec<(String, String)>, StoreError>;
 }

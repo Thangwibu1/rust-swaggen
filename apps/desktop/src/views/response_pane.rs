@@ -180,19 +180,31 @@ pub fn show(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
                         match app.response_format {
                             ResponseBodyFormat::PrettyJson => {
                                 if let Ok(val) = serde_json::from_str::<serde_json::Value>(&text) {
-                                    render_json_tree(
-                                        ui,
-                                        ctx,
-                                        "$",
-                                        &val,
-                                        &mut app.collapsed_json_paths,
-                                    );
+                                    let pretty = serde_json::to_string_pretty(&val)
+                                        .unwrap_or_else(|_| text.to_string());
+                                    swaggen_ui_kit::code_surface_numbered(ui, &pretty);
+                                    ui.add_space(6.0);
+                                    egui::CollapsingHeader::new(
+                                        egui::RichText::new("Interactive JSON tree (copy JSONPath)")
+                                            .size(12.0)
+                                            .color(swaggen_ui_kit::text_secondary(ui)),
+                                    )
+                                    .default_open(false)
+                                    .show(ui, |ui| {
+                                        render_json_tree(
+                                            ui,
+                                            ctx,
+                                            "$",
+                                            &val,
+                                            &mut app.collapsed_json_paths,
+                                        );
+                                    });
                                 } else {
-                                    swaggen_ui_kit::code_surface(ui, &text);
+                                    swaggen_ui_kit::code_surface_numbered(ui, &text);
                                 }
                             }
                             ResponseBodyFormat::Raw | ResponseBodyFormat::Xml => {
-                                swaggen_ui_kit::code_surface(ui, &text);
+                                swaggen_ui_kit::code_surface_numbered(ui, &text);
                             }
                             ResponseBodyFormat::Binary => {
                                 let preview_hex: String = resp

@@ -19,27 +19,44 @@ use swaggen_domain::{
 use swaggen_ui_kit::{NoticeKind, Tokens};
 
 pub fn show_production_confirm(app: &mut App, ui: &mut egui::Ui) {
-    swaggen_ui_kit::section(
-        ui,
-        "Confirm production request (R16 / EV07)",
-        "You are sending a data-mutating request to an environment marked Production.",
-    );
-    if let Some(req) = app.active_request() {
-        swaggen_ui_kit::notice_banner(
-            ui,
-            NoticeKind::Danger,
-            req.method.as_str(),
-            &format!("Target URL: {}", req.url),
-        );
-    }
-    ui.add_space(8.0);
-    ui.horizontal(|ui| {
-        if swaggen_ui_kit::danger_button(ui, true, "Send to Production").clicked() {
-            app.send_active_request(true);
-        }
-        if swaggen_ui_kit::secondary_button(ui, true, "Cancel").clicked() {
-            app.show_production_confirm = false;
-        }
+    ui.add_space(40.0);
+    ui.vertical_centered(|ui| {
+        ui.set_max_width(520.0);
+        swaggen_ui_kit::surface_card(ui, |ui| {
+            ui.with_layout(egui::Layout::top_down(egui::Align::Min), |ui| {
+                ui.label(swaggen_ui_kit::bold_text(
+                    "Confirm production request",
+                    20.0,
+                    swaggen_ui_kit::text_primary(ui),
+                ));
+                ui.add_space(6.0);
+                ui.label(
+                    egui::RichText::new(
+                        "You are sending a data-mutating request to an environment marked Production.",
+                    )
+                    .size(12.5)
+                    .color(swaggen_ui_kit::text_secondary(ui)),
+                );
+                ui.add_space(12.0);
+                if let Some(req) = app.active_request() {
+                    swaggen_ui_kit::notice_banner(
+                        ui,
+                        NoticeKind::Danger,
+                        req.method.as_str(),
+                        &format!("Target URL: {}", req.url),
+                    );
+                }
+                ui.add_space(14.0);
+                ui.horizontal(|ui| {
+                    if swaggen_ui_kit::danger_button(ui, true, "Send to Production").clicked() {
+                        app.send_active_request(true);
+                    }
+                    if swaggen_ui_kit::secondary_button(ui, true, "Cancel").clicked() {
+                        app.show_production_confirm = false;
+                    }
+                });
+            });
+        });
     });
 }
 
@@ -995,86 +1012,106 @@ pub fn show_privacy(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
 pub fn show_command_palette(app: &mut App, ui: &mut egui::Ui) {
     ui.add_space(28.0);
     ui.vertical_centered(|ui| {
-        ui.set_max_width(540.0);
+        ui.set_max_width(560.0);
         swaggen_ui_kit::surface_card(ui, |ui| {
-            ui.horizontal(|ui| {
-                ui.label(
-                    egui::RichText::new(swaggen_ui_kit::tr(
-                        app.locale,
-                        "Command palette",
-                        "Bảng lệnh nhanh",
-                    ))
-                    .size(20.0)
-                    .strong()
-                    .color(Tokens::TEXT_PRIMARY),
-                );
-                ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                    if swaggen_ui_kit::secondary_button(ui, true, "Esc").clicked() {
-                        app.show_command_palette = false;
-                    }
+            ui.with_layout(egui::Layout::top_down(egui::Align::Min), |ui| {
+                ui.horizontal(|ui| {
+                    ui.label(swaggen_ui_kit::bold_text(
+                        swaggen_ui_kit::tr(app.locale, "Command palette", "Bảng lệnh nhanh"),
+                        20.0,
+                        swaggen_ui_kit::text_primary(ui),
+                    ));
+                    ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                        if swaggen_ui_kit::secondary_button(ui, true, "Esc").clicked() {
+                            app.show_command_palette = false;
+                        }
+                    });
                 });
-            });
-            ui.add_space(10.0);
-            let q_resp = ui.add(
-                egui::TextEdit::singleline(&mut app.command_palette_query)
-                    .hint_text("Type a command or request…")
-                    .desired_width(ui.available_width()),
-            );
-            q_resp.request_focus();
-            ui.add_space(10.0);
-            let q = app.command_palette_query.trim().to_ascii_lowercase();
-            egui::ScrollArea::vertical()
-                .max_height(380.0)
-                .show(ui, |ui| {
-                    for (mode, label) in [
-                        (MainMode::Workbench, "Open API Workbench"),
-                        (MainMode::Specs, "Open API documentation & OpenAPI"),
-                        (MainMode::Runner, "Run collection, Mocks & Protocols"),
-                        (MainMode::TeamSync, "Open Sync queue & Collaboration"),
-                        (MainMode::Server, "Connect Team Server & Accounts"),
-                        (MainMode::Environments, "Switch Environment"),
-                        (MainMode::ImportExport, "Import APIs, Postman & cURL"),
-                        (MainMode::Storage, "Workspace Storage & Settings"),
-                    ] {
-                        if q.is_empty() || label.to_ascii_lowercase().contains(&q) {
+                ui.add_space(10.0);
+                let q_resp = swaggen_ui_kit::text_input(
+                    ui,
+                    &mut app.command_palette_query,
+                    "Type a command, screen, or request…",
+                    ui.available_width(),
+                    false,
+                );
+                q_resp.request_focus();
+                ui.add_space(10.0);
+                let q = app.command_palette_query.trim().to_ascii_lowercase();
+                egui::ScrollArea::vertical()
+                    .max_height(380.0)
+                    .show(ui, |ui| {
+                        if q.is_empty() || "sign in firebase google welcome".contains(&q) {
                             swaggen_ui_kit::table_row_frame(ui, |ui| {
                                 if ui
                                     .add(
                                         egui::Button::new(
-                                            egui::RichText::new(label)
+                                            egui::RichText::new("Sign in with Google / Firebase (A01)")
                                                 .size(13.0)
-                                                .color(Tokens::TEXT_PRIMARY),
+                                                .color(Tokens::STATUS_INFO),
                                         )
                                         .fill(egui::Color32::TRANSPARENT)
                                         .stroke(egui::Stroke::NONE),
                                     )
                                     .clicked()
                                 {
-                                    app.mode = mode;
                                     app.show_command_palette = false;
+                                    app.show_welcome = true;
                                 }
                             });
                         }
-                    }
-                    let reqs: Vec<(String, String, String)> = app
-                        .state
-                        .requests
-                        .iter()
-                        .filter(|r| {
-                            q.is_empty()
-                                || r.name.to_ascii_lowercase().contains(&q)
-                                || r.url.to_ascii_lowercase().contains(&q)
-                        })
-                        .map(|r| (r.id.clone(), r.method.as_str().to_owned(), r.name.clone()))
-                        .collect();
-                    for (rid, m, name) in reqs {
-                        if swaggen_ui_kit::endpoint_row(ui, &m, &name, false).clicked() {
-                            app.state.open_or_focus_tab(&rid);
-                            app.mode = MainMode::Workbench;
-                            app.show_command_palette = false;
+                        for (mode, label) in [
+                            (MainMode::Workbench, "Open API Workbench (R01)"),
+                            (MainMode::Specs, "Open API documentation & OpenAPI (D01)"),
+                            (MainMode::Runner, "Run collection, Mocks & Protocols (T02 / P01)"),
+                            (MainMode::TeamSync, "Open Sync queue, Conflicts & Discussion (C04–C06)"),
+                            (MainMode::Server, "Connect Team Server & Accounts (A05)"),
+                            (MainMode::Environments, "Manage Environments & Variables (E01)"),
+                            (MainMode::Secrets, "Personal Secrets Vault (DPAPI)"),
+                            (MainMode::ImportExport, "Import APIs, Postman & cURL (I01)"),
+                            (MainMode::Storage, "Workspace Storage & Settings (S01)"),
+                            (MainMode::Shortcuts, "Keyboard Shortcuts (S08)"),
+                        ] {
+                            if q.is_empty() || label.to_ascii_lowercase().contains(&q) {
+                                swaggen_ui_kit::table_row_frame(ui, |ui| {
+                                    if ui
+                                        .add(
+                                            egui::Button::new(
+                                                egui::RichText::new(label)
+                                                    .size(13.0)
+                                                    .color(swaggen_ui_kit::text_primary(ui)),
+                                            )
+                                            .fill(egui::Color32::TRANSPARENT)
+                                            .stroke(egui::Stroke::NONE),
+                                        )
+                                        .clicked()
+                                    {
+                                        app.mode = mode;
+                                        app.show_command_palette = false;
+                                    }
+                                });
+                            }
                         }
-                    }
-                });
+                        let reqs: Vec<(String, String, String)> = app
+                            .state
+                            .requests
+                            .iter()
+                            .filter(|r| {
+                                q.is_empty()
+                                    || r.name.to_ascii_lowercase().contains(&q)
+                                    || r.url.to_ascii_lowercase().contains(&q)
+                            })
+                            .map(|r| (r.id.clone(), r.method.as_str().to_owned(), r.name.clone()))
+                            .collect();
+                        for (rid, m, name) in reqs {
+                            if swaggen_ui_kit::endpoint_row(ui, &m, &name, false).clicked() {
+                                app.state.open_or_focus_tab(&rid);
+                                app.mode = MainMode::Workbench;
+                                app.show_command_palette = false;
+                            }
+                        }
+                    });
+            });
         });
     });
 }
@@ -1087,18 +1124,31 @@ pub fn show_shortcuts(ui: &mut egui::Ui) {
         None,
         false,
     );
-    for (keys, action) in [
-        ("Ctrl + K", "Toggle Command Palette"),
-        ("Ctrl + Enter", "Send active request"),
-        ("Ctrl + S", "Save local workspace"),
-        ("Ctrl + P", "Focus quick search in sidebar"),
-        ("Ctrl + W", "Close active unpinned tab"),
-        ("Esc", "Close active modal or palette"),
-        ("Tab / Shift+Tab", "Navigate focusable controls (AccessKit)"),
-    ] {
-        ui.horizontal(|ui| {
-            swaggen_ui_kit::status_badge(ui, NoticeKind::Info, keys);
-            ui.label(action);
-        });
-    }
+    swaggen_ui_kit::surface_card(ui, |ui| {
+        swaggen_ui_kit::table_header(ui, &[("SHORTCUT", 180.0), ("ACTION", 420.0)]);
+        for (keys, action) in [
+            ("Ctrl + K", "Toggle Command Palette"),
+            ("Ctrl + Enter", "Send active request"),
+            ("Ctrl + S", "Save local workspace"),
+            ("Ctrl + P", "Focus quick search in sidebar"),
+            ("Ctrl + W", "Close active unpinned tab"),
+            ("Esc", "Close active modal or palette"),
+            ("Tab / Shift+Tab", "Navigate focusable controls (AccessKit)"),
+        ] {
+            swaggen_ui_kit::table_row_frame(ui, |ui| {
+                ui.allocate_ui_with_layout(
+                    egui::vec2(170.0, 22.0),
+                    egui::Layout::left_to_right(egui::Align::Center),
+                    |ui| {
+                        swaggen_ui_kit::pill_badge(ui, Tokens::STATUS_INFO, keys);
+                    },
+                );
+                ui.label(
+                    egui::RichText::new(action)
+                        .size(13.0)
+                        .color(swaggen_ui_kit::text_primary(ui)),
+                );
+            });
+        }
+    });
 }
