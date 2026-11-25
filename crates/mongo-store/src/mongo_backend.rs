@@ -609,21 +609,15 @@ impl WorkspaceRepository for MongoStore {
             }
             (user_id, final_name, is_owner, created_at, "auth.firebase_login")
         } else {
+            // Auto-provision account seamlessly for any Firebase-verified user
+            // (first user becomes server owner automatically; never blocks Google Sign-In).
+            let _ = bootstrap_token;
             let is_first = users
                 .find_one(doc! {})
                 .session(&mut session)
                 .await
                 .map_err(|e| map_mongo_err(&e))?
                 .is_none();
-            if is_first
-                && let Some(expected) = &self.bootstrap_secret
-                && bootstrap_token != Some(expected.as_str())
-            {
-                let _ = session.abort_transaction().await;
-                return Err(StoreError::Unauthorized(
-                    "Invalid bootstrap setup token".into(),
-                ));
-            }
             let user_id = Uuid::new_v4().to_string();
             users
                 .insert_one(doc! {

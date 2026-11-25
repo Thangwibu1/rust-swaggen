@@ -60,12 +60,12 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
         .frame(
             egui::Frame::new()
                 .fill(swaggen_ui_kit::page_bg(ui))
-                .inner_margin(egui::Margin::symmetric(64, 48)),
+                .inner_margin(egui::Margin::symmetric(56, 28)),
         )
         .show(ui, |ui| {
             egui::ScrollArea::vertical().show(ui, |ui| {
                 let avail_h = ui.available_height().max(540.0);
-                ui.add_space(((avail_h - 520.0) * 0.35).max(16.0));
+                ui.add_space(((avail_h - 580.0) * 0.35).max(8.0));
                 ui.columns(2, |cols| {
                     // Left Hero column matching Figma A01 (6:144).
                     let left = &mut cols[0];
@@ -112,7 +112,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                             .fill(swaggen_ui_kit::surface_bg(ui))
                             .stroke(egui::Stroke::new(1.0, swaggen_ui_kit::border_color(ui)))
                             .corner_radius(16)
-                            .inner_margin(egui::Margin::symmetric(36, 32))
+                            .inner_margin(egui::Margin::symmetric(32, 24))
                             .show(ui, |ui| {
                                 ui.with_layout(egui::Layout::top_down(egui::Align::Min), |ui| {
                                     ui.label(swaggen_ui_kit::bold_text(
@@ -120,15 +120,15 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                                         22.0,
                                         swaggen_ui_kit::text_primary(ui),
                                     ));
-                                    ui.add_space(8.0);
+                                    ui.add_space(6.0);
                                     ui.label(
                                         egui::RichText::new(
-                                            "Continue with your Google or Firebase account to access your team workspace.",
+                                            "Continue with Google to sign in or automatically create your account.",
                                         )
                                         .size(12.5)
                                         .color(swaggen_ui_kit::text_secondary(ui)),
                                     );
-                                    ui.add_space(20.0);
+                                    ui.add_space(16.0);
 
                                     let prof_id = active_prof
                                         .as_ref()

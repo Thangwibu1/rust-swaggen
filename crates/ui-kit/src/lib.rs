@@ -428,7 +428,42 @@ pub fn text_input(
     inner_resp.expect("text_input frame executed")
 }
 
-/// Figma A01 Google Sign-In button (44px tall, full width, authentic 4-color G emblem).
+/// Paints a crisp 4-color official Google 'G' mark using smooth circular arcs + crossbar.
+fn paint_google_g(painter: &egui::Painter, center: egui::Pos2, radius: f32) {
+    let sw = (radius * 0.36).max(2.6);
+    let draw_arc = |start_deg: f32, end_deg: f32, color: egui::Color32| {
+        let steps = 16;
+        let mut pts = Vec::with_capacity(steps + 1);
+        for i in 0..=steps {
+            let deg = start_deg + (end_deg - start_deg) * (i as f32 / steps as f32);
+            let rad = deg.to_radians();
+            pts.push(egui::pos2(
+                center.x + radius * rad.cos(),
+                center.y + radius * rad.sin(),
+            ));
+        }
+        painter.add(egui::Shape::line(pts, egui::Stroke::new(sw, color)));
+    };
+
+    // Official Google 4-color brand palette (y grows downward in egui)
+    // Red: top-left to top-right (-142° -> -42°)
+    draw_arc(-142.0, -42.0, egui::Color32::from_rgb(0xEA, 0x43, 0x35));
+    // Yellow: left arc (142° -> 218°)
+    draw_arc(142.0, 218.0, egui::Color32::from_rgb(0xFB, 0xBC, 0x05));
+    // Green: bottom arc (40° -> 144°)
+    draw_arc(40.0, 144.0, egui::Color32::from_rgb(0x34, 0xA8, 0x53));
+    // Blue: right-lower arc (-4° -> 44°) + crisp horizontal crossbar
+    draw_arc(-4.0, 44.0, egui::Color32::from_rgb(0x42, 0x85, 0xF4));
+    painter.line_segment(
+        [
+            egui::pos2(center.x + 0.5, center.y),
+            egui::pos2(center.x + radius + sw * 0.35, center.y),
+        ],
+        egui::Stroke::new(sw, egui::Color32::from_rgb(0x42, 0x85, 0xF4)),
+    );
+}
+
+/// Figma A01 Google Sign-In button (44px tall, full width, crisp 4-color G mark + centered label).
 pub fn google_button(ui: &mut egui::Ui, enabled: bool, label: &str) -> egui::Response {
     let w = ui.available_width().max(220.0);
     let (rect, resp) = ui.allocate_exact_size(
@@ -448,38 +483,21 @@ pub fn google_button(ui: &mut egui::Ui, enabled: bool, label: &str) -> egui::Res
     ui.painter()
         .rect(rect, 8.0, fill, egui::Stroke::new(1.0, stroke_col), egui::StrokeKind::Middle);
 
-    // Draw crisp 4-color Google G badge + centered label.
-    let center = rect.center();
-    let g_center = egui::pos2(center.x - (label.len() as f32 * 4.0) - 14.0, center.y);
-    let r = 8.0;
-    let p = ui.painter();
-    p.circle_stroke(g_center, r, egui::Stroke::new(2.4, egui::Color32::from_rgb(0x42, 0x85, 0xF4)));
-    p.line_segment(
-        [g_center, egui::pos2(g_center.x + r, g_center.y)],
-        egui::Stroke::new(2.4, egui::Color32::from_rgb(0x42, 0x85, 0xF4)),
-    );
-    p.circle_filled(
-        egui::pos2(g_center.x - r * 0.7, g_center.y - r * 0.5),
-        2.0,
-        egui::Color32::from_rgb(0xEA, 0x43, 0x35),
-    );
-    p.circle_filled(
-        egui::pos2(g_center.x - r * 0.7, g_center.y + r * 0.5),
-        2.0,
-        egui::Color32::from_rgb(0xFB, 0xBC, 0x05),
-    );
-    p.circle_filled(
-        egui::pos2(g_center.x, g_center.y + r * 0.85),
-        2.0,
-        egui::Color32::from_rgb(0x34, 0xA8, 0x53),
-    );
+    let font_id = egui::FontId::new(13.5, egui::FontFamily::Name("bold".into()));
+    let text_color = if enabled { text_primary(ui) } else { text_secondary(ui) };
+    let galley = ui
+        .fonts_mut(|f| f.layout_no_wrap(label.to_owned(), font_id, text_color));
+    let icon_d = 17.0;
+    let gap = 10.0;
+    let total_w = icon_d + gap + galley.size().x;
+    let start_x = rect.center().x - total_w * 0.5;
+    let g_center = egui::pos2(start_x + icon_d * 0.5, rect.center().y);
 
-    p.text(
-        egui::pos2(g_center.x + 18.0, center.y),
-        egui::Align2::LEFT_CENTER,
-        label,
-        egui::FontId::new(13.5, egui::FontFamily::Name("bold".into())),
-        if enabled { text_primary(ui) } else { text_secondary(ui) },
+    paint_google_g(ui.painter(), g_center, icon_d * 0.44);
+    ui.painter().galley(
+        egui::pos2(start_x + icon_d + gap, rect.center().y - galley.size().y * 0.5),
+        galley,
+        text_color,
     );
     resp
 }

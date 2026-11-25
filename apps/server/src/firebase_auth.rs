@@ -411,7 +411,7 @@ pub fn render_browser_signin_html(
     let state_json = serde_json::to_string(state).map_err(|_| "State serialization failed")?;
 
     Ok(format!(
-        r#"<!DOCTYPE html>
+        r##"<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
@@ -419,14 +419,17 @@ pub fn render_browser_signin_html(
 <title>Sign in to Swaggen</title>
 <style>
   body {{ margin: 0; background: #ffffff; color: #202124; font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace; display: flex; min-height: 100vh; align-items: center; justify-content: center; }}
-  .card {{ width: 420px; border: 1px solid #e5e7eb; border-radius: 16px; padding: 36px; box-sizing: border-box; }}
-  h1 {{ font-size: 22px; margin: 0 0 8px 0; }}
+  .card {{ width: 440px; border: 1px solid #e5e7eb; border-radius: 16px; padding: 32px 36px; box-sizing: border-box; }}
+  .brand {{ display: flex; align-items: center; gap: 10px; margin-bottom: 18px; font-weight: 700; font-size: 18px; color: #202124; }}
+  h1 {{ font-size: 21px; margin: 0 0 8px 0; }}
   p {{ font-size: 12px; color: #65686f; line-height: 1.6; margin: 0 0 20px 0; }}
-  .btn {{ width: 100%; height: 42px; border: 1px solid #e5e7eb; border-radius: 6px; background: #ffffff; color: #1d4ed8; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; margin-bottom: 12px; }}
+  .btn {{ width: 100%; height: 44px; border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; color: #202124; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 10px; }}
+  .btn-primary {{ color: #1d4ed8; }}
   .btn:hover {{ border-color: #202124; background: #f8fafc; }}
   input {{ width: 100%; height: 40px; border: 1px solid #e5e7eb; border-radius: 6px; padding: 0 12px; box-sizing: border-box; font-family: inherit; font-size: 12px; margin-bottom: 10px; }}
   .sep {{ border-top: 1px solid #e5e7eb; margin: 18px 0; }}
-  .status {{ font-size: 12px; margin-top: 12px; color: #15803d; }}
+  .hint {{ font-size: 11px; color: #65686f; margin-bottom: 12px; }}
+  .status {{ font-size: 12px; margin-top: 12px; color: #15803d; line-height: 1.5; }}
   .err {{ color: #b91c1c; }}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
@@ -434,13 +437,30 @@ pub fn render_browser_signin_html(
 </head>
 <body>
   <div class="card">
+    <div class="brand">
+      <svg width="26" height="24" viewBox="0 0 24 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M14 0H6.75C2.5 0 0 2.5 0 6.25C0 10 2.5 12.25 6.75 12.25H9.25L12.75 8.25H6.75C5 8.25 4 7.5 4 6.25C4 4.75 5 4 6.75 4H14C14.825 4 15.5 3.325 15.5 2.5V1.5C15.5 0.675 14.825 0 14 0Z" fill="#245C59"/>
+        <path d="M15.25 8.25L11.75 12.25H14.75C16.5 12.25 17.5 13 17.5 14.25C17.5 15.75 16.5 16.5 14.75 16.5H4C3.175 16.5 2.5 17.175 2.5 18V19C2.5 19.825 3.175 20.5 4 20.5H14.75C19 20.5 21.5 18 21.5 14.25C21.5 10.5 19 8.25 15.25 8.25Z" fill="#245C59"/>
+        <rect x="18" y="0.5" width="3.2" height="3.2" fill="#F5A89A"/>
+      </svg>
+      <span>swaggen</span>
+    </div>
     <h1>Sign in to Swaggen</h1>
-    <p>Authenticate with Firebase to hand off a verified session back to your Windows desktop app.</p>
-    <button id="googleBtn" class="btn">Continue with Google</button>
+    <p>Continue with Google to sign in or automatically create your Swaggen account.</p>
+    <button id="googleBtn" class="btn">
+      <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#4285F4" d="M17.64 9.2045c0-.6381-.0573-1.2518-.1636-1.8409H9v3.4814h4.8436c-.2086 1.125-.8427 2.0782-1.7959 2.7164v2.2581h2.9087c1.7018-1.5668 2.6836-3.874 2.6836-6.615z"/>
+        <path fill="#34A853" d="M9 18c2.43 0 4.4673-.806 5.9564-2.1805l-2.9087-2.2581c-.8059.54-1.8368.859-3.0477.859-2.344 0-4.3282-1.5831-5.036-3.7104H.9574v2.3318C2.4382 15.9832 5.4818 18 9 18z"/>
+        <path fill="#FBBC05" d="M3.964 10.71c-.18-.54-.2822-1.1168-.2822-1.71s.1023-1.17.2823-1.71V4.9582H.9573A8.9965 8.9965 0 0 0 0 9c0 1.4523.3477 2.8268.9573 4.0418L3.964 10.71z"/>
+        <path fill="#EA4335" d="M9 3.5795c1.3214 0 2.5077.4541 3.4405 1.346l2.5813-2.5814C13.4632.8918 11.426 0 9 0 5.4818 0 2.4382 2.0168.9573 4.9582L3.964 7.29C4.6718 5.1627 6.6559 3.5795 9 3.5795z"/>
+      </svg>
+      <span>Continue with Google</span>
+    </button>
     <div class="sep"></div>
+    <div class="hint">Or sign in / create account with Email &amp; Password:</div>
     <input id="email" type="email" placeholder="Email address" />
     <input id="password" type="password" placeholder="Password" />
-    <button id="emailBtn" class="btn">Sign in with Email</button>
+    <button id="emailBtn" class="btn btn-primary">Sign in / Register with Email</button>
     <div id="msg" class="status"></div>
   </div>
 <script>
@@ -461,12 +481,14 @@ pub fn render_browser_signin_html(
       body: JSON.stringify({{ id_token: idToken, state: state, display_name: user.displayName || "" }})
     }});
     if (!res.ok) throw new Error("Desktop callback rejected: HTTP " + res.status);
-    msg.textContent = "Signed in! You can close this tab and return to Swaggen.";
+    msg.textContent = "Signed in as " + (user.email || "user") + "! You can close this tab and return to Swaggen.";
   }}
 
   document.getElementById("googleBtn").onclick = async () => {{
     try {{
-      const res = await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+      const provider = new firebase.auth.GoogleAuthProvider();
+      provider.setCustomParameters({{ prompt: "select_account" }});
+      const res = await auth.signInWithPopup(provider);
       await finish(res.user);
     }} catch (e) {{
       msg.className = "status err";
@@ -478,8 +500,17 @@ pub fn render_browser_signin_html(
     try {{
       const em = document.getElementById("email").value.trim();
       const pw = document.getElementById("password").value;
-      const res = await auth.signInWithEmailAndPassword(em, pw);
-      await finish(res.user);
+      try {{
+        const res = await auth.signInWithEmailAndPassword(em, pw);
+        await finish(res.user);
+      }} catch (err) {{
+        if (err && (err.code === "auth/user-not-found" || err.code === "auth/invalid-credential")) {{
+          const created = await auth.createUserWithEmailAndPassword(em, pw);
+          await finish(created.user);
+        }} else {{
+          throw err;
+        }}
+      }}
     }} catch (e) {{
       msg.className = "status err";
       msg.textContent = (e && e.message) ? e.message : String(e);
@@ -488,7 +519,7 @@ pub fn render_browser_signin_html(
 </script>
 </body>
 </html>
-"#
+"##
     ))
 }
 

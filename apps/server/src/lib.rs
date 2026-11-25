@@ -244,21 +244,38 @@ async fn firebase_browser_signin(
     Extension(RequestCorrelationId(corr)): Extension<RequestCorrelationId>,
     Query(q): Query<FirebaseBrowserQuery>,
 ) -> Result<Html<String>, (StatusCode, Json<ErrorEnvelope>)> {
+    render_firebase_browser_page(&state, &corr, q.port, &q.state)
+}
+
+async fn firebase_browser_signin_path(
+    State(state): State<AppState>,
+    Extension(RequestCorrelationId(corr)): Extension<RequestCorrelationId>,
+    Path((port, csrf_state)): Path<(u16, String)>,
+) -> Result<Html<String>, (StatusCode, Json<ErrorEnvelope>)> {
+    render_firebase_browser_page(&state, &corr, port, &csrf_state)
+}
+
+fn render_firebase_browser_page(
+    state: &AppState,
+    corr: &str,
+    port: u16,
+    csrf_state: &str,
+) -> Result<Html<String>, (StatusCode, Json<ErrorEnvelope>)> {
     let Some(ref fb) = state.firebase else {
         return Err((
             StatusCode::SERVICE_UNAVAILABLE,
             Json(ErrorEnvelope::new(
                 "firebase_not_configured",
                 "Firebase authentication is not configured on this server (set SWAGGEN_FIREBASE_PROJECT_ID and SWAGGEN_FIREBASE_WEB_API_KEY).",
-                &corr,
+                corr,
                 false,
             )),
         ));
     };
-    let html = render_browser_signin_html(fb.config(), q.port, &q.state).map_err(|msg| {
+    let html = render_browser_signin_html(fb.config(), port, csrf_state).map_err(|msg| {
         (
             StatusCode::BAD_REQUEST,
-            Json(ErrorEnvelope::new("invalid_request", &msg, &corr, false)),
+            Json(ErrorEnvelope::new("invalid_request", &msg, corr, false)),
         )
     })?;
     Ok(Html(html))
@@ -1846,6 +1863,10 @@ pub fn router(store: Arc<ServerStore>) -> Router {
         .route("/v1/auth/login", post(login))
         .route("/v1/auth/firebase", post(firebase_login))
         .route("/v1/auth/firebase/browser", get(firebase_browser_signin))
+        .route(
+            "/v1/auth/firebase/browser/{port}/{state}",
+            get(firebase_browser_signin_path),
+        )
         .route("/v1/auth/logout", post(logout))
         .route("/v1/auth/logout-all", post(logout_all))
         .route("/v1/auth/change-password", post(change_password))

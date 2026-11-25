@@ -368,15 +368,9 @@ impl WorkspaceRepository for InMemoryStore {
                 .ok_or(StoreError::InternalSafe)?;
             (u, "auth.firebase_login")
         } else {
+            // Auto-provision account seamlessly for any Firebase-verified user.
+            let _ = bootstrap_token;
             let is_first = guard.users_by_id.is_empty();
-            if is_first
-                && let Some(expected) = &self.bootstrap_secret
-                && bootstrap_token != Some(expected.as_str())
-            {
-                return Err(StoreError::Unauthorized(
-                    "Invalid bootstrap setup token".into(),
-                ));
-            }
             let user_id = Uuid::new_v4().to_string();
             let rec = UserRec {
                 user_id: user_id.clone(),

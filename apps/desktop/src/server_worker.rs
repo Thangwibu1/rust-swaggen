@@ -835,8 +835,10 @@ fn open_system_browser(url: &str) -> Result<(), String> {
     }
     #[cfg(target_os = "windows")]
     {
-        std::process::Command::new("cmd")
-            .args(["/C", "start", "", url])
+        // Use rundll32 url.dll directly (NOT cmd /C start) so '&' in query strings
+        // like ?port=53124&state=... is NEVER split by cmd.exe!
+        std::process::Command::new("rundll32.exe")
+            .args(["url.dll,FileProtocolHandler", url])
             .spawn()
             .map_err(|e| format!("Failed to open default browser: {e}"))?;
         Ok(())
