@@ -1112,130 +1112,136 @@ pub fn resolve_request_preview(
     }
 
     // 5. Body resolution + JSON/XML/file validation (Q10, Q17).
-    let (resolved_body, masked_body_preview) = match &request.body {
-        RequestBody::None => (RequestBody::None, String::new()),
-        RequestBody::Json(raw) => {
-            let real = vars.substitute(raw, false).unwrap_or_else(|e| {
-                blocking_errors.push(e.to_string());
-                raw.clone()
-            });
-            let masked = vars.substitute(raw, true).unwrap_or_else(|_| raw.clone());
-            if !real.trim().is_empty()
-                && let Err(err) = serde_json::from_str::<serde_json::Value>(&real)
-            {
-                blocking_errors.push(format!("Invalid JSON body: {err}"));
-            }
-            (RequestBody::Json(real), masked)
-        }
-        RequestBody::Text(raw) => {
-            let real = vars.substitute(raw, false).unwrap_or_else(|e| {
-                blocking_errors.push(e.to_string());
-                raw.clone()
-            });
-            let masked = vars.substitute(raw, true).unwrap_or_else(|_| raw.clone());
-            (RequestBody::Text(real), masked)
-        }
-        RequestBody::Xml(raw) => {
-            let real = vars.substitute(raw, false).unwrap_or_else(|e| {
-                blocking_errors.push(e.to_string());
-                raw.clone()
-            });
-            let masked = vars.substitute(raw, true).unwrap_or_else(|_| raw.clone());
-            if !real.trim().is_empty()
-                && let Err(err) = roxmltree::Document::parse(&real)
-            {
-                warnings.push(format!("XML parse note: {err}"));
-            }
-            (RequestBody::Xml(real), masked)
-        }
-        RequestBody::FormUrlEncoded(rows) => {
-            let mut real_rows = Vec::new();
-            let mut preview_parts = Vec::new();
-            for row in rows.iter().filter(|r| r.enabled && !r.key.is_empty()) {
-                let k = vars.substitute(&row.key, false).unwrap_or_else(|e| {
-                    blocking_errors.push(e.to_string());
-                    row.key.clone()
-                });
-                let v = vars.substitute(&row.value, false).unwrap_or_else(|e| {
-                    blocking_errors.push(e.to_string());
-                    row.value.clone()
-                });
-                let mv = vars
-                    .substitute(&row.value, true)
-                    .unwrap_or_else(|_| row.value.clone());
-                preview_parts.push(format!("{k}={mv}"));
-                real_rows.push(KeyValueRow::new(k, v));
-            }
-            (
-                RequestBody::FormUrlEncoded(real_rows),
-                preview_parts.join("&"),
-            )
-        }
-        RequestBody::Multipart(fields) => {
-            let mut resolved_fields = Vec::new();
-            let mut preview = Vec::new();
-            for f in fields.iter().filter(|f| f.enabled && !f.name.is_empty()) {
-                match &f.value {
-                    MultipartValueKind::Text(v) => {
-                        let real = vars.substitute(v, false).unwrap_or_else(|e| {
-                            blocking_errors.push(e.to_string());
-                            v.clone()
-                        });
-                        let mv = vars.substitute(v, true).unwrap_or_else(|_| v.clone());
-                        preview.push(format!("{}={mv}", f.name));
-                        resolved_fields.push(MultipartField {
-                            name: f.name.clone(),
-                            value: MultipartValueKind::Text(real),
-                            enabled: true,
-                        });
+    // GET and HEAD requests never transmit a request body.
+    let (resolved_body, masked_body_preview) =
+        if matches!(request.method, HttpMethod::Get | HttpMethod::Head) {
+            (RequestBody::None, String::new())
+        } else {
+            match &request.body {
+                RequestBody::None => (RequestBody::None, String::new()),
+                RequestBody::Json(raw) => {
+                    let real = vars.substitute(raw, false).unwrap_or_else(|e| {
+                        blocking_errors.push(e.to_string());
+                        raw.clone()
+                    });
+                    let masked = vars.substitute(raw, true).unwrap_or_else(|_| raw.clone());
+                    if !real.trim().is_empty()
+                        && let Err(err) = serde_json::from_str::<serde_json::Value>(&real)
+                    {
+                        blocking_errors.push(format!("Invalid JSON body: {err}"));
                     }
-                    MultipartValueKind::File {
-                        local_path,
-                        file_name,
-                        content_type,
-                    } => {
-                        if !std::path::Path::new(local_path).is_file() {
-                            blocking_errors.push(format!(
-                                "Local upload file missing for '{}': {file_name}",
-                                f.name
-                            ));
-                        }
-                        preview.push(format!("{}=<local file: {file_name}>", f.name));
-                        resolved_fields.push(MultipartField {
-                            name: f.name.clone(),
-                            value: MultipartValueKind::File {
-                                local_path: local_path.clone(),
-                                file_name: file_name.clone(),
-                                content_type: content_type.clone(),
-                            },
-                            enabled: true,
-                        });
-                    }
+                    (RequestBody::Json(real), masked)
                 }
-            }
-            (RequestBody::Multipart(resolved_fields), preview.join("\n"))
-        }
-        RequestBody::Binary {
-            local_path,
-            content_type,
-        } => match local_path {
-            Some(path) if std::path::Path::new(path).is_file() => (
+                RequestBody::Text(raw) => {
+                    let real = vars.substitute(raw, false).unwrap_or_else(|e| {
+                        blocking_errors.push(e.to_string());
+                        raw.clone()
+                    });
+                    let masked = vars.substitute(raw, true).unwrap_or_else(|_| raw.clone());
+                    (RequestBody::Text(real), masked)
+                }
+                RequestBody::Xml(raw) => {
+                    let real = vars.substitute(raw, false).unwrap_or_else(|e| {
+                        blocking_errors.push(e.to_string());
+                        raw.clone()
+                    });
+                    let masked = vars.substitute(raw, true).unwrap_or_else(|_| raw.clone());
+                    if !real.trim().is_empty()
+                        && let Err(err) = roxmltree::Document::parse(&real)
+                    {
+                        warnings.push(format!("XML parse note: {err}"));
+                    }
+                    (RequestBody::Xml(real), masked)
+                }
+                RequestBody::FormUrlEncoded(rows) => {
+                    let mut real_rows = Vec::new();
+                    let mut preview_parts = Vec::new();
+                    for row in rows.iter().filter(|r| r.enabled && !r.key.is_empty()) {
+                        let k = vars.substitute(&row.key, false).unwrap_or_else(|e| {
+                            blocking_errors.push(e.to_string());
+                            row.key.clone()
+                        });
+                        let v = vars.substitute(&row.value, false).unwrap_or_else(|e| {
+                            blocking_errors.push(e.to_string());
+                            row.value.clone()
+                        });
+                        let mv = vars
+                            .substitute(&row.value, true)
+                            .unwrap_or_else(|_| row.value.clone());
+                        preview_parts.push(format!("{k}={mv}"));
+                        real_rows.push(KeyValueRow::new(k, v));
+                    }
+                    (
+                        RequestBody::FormUrlEncoded(real_rows),
+                        preview_parts.join("&"),
+                    )
+                }
+                RequestBody::Multipart(fields) => {
+                    let mut resolved_fields = Vec::new();
+                    let mut preview = Vec::new();
+                    for f in fields.iter().filter(|f| f.enabled && !f.name.is_empty()) {
+                        match &f.value {
+                            MultipartValueKind::Text(v) => {
+                                let real = vars.substitute(v, false).unwrap_or_else(|e| {
+                                    blocking_errors.push(e.to_string());
+                                    v.clone()
+                                });
+                                let mv = vars.substitute(v, true).unwrap_or_else(|_| v.clone());
+                                preview.push(format!("{}={mv}", f.name));
+                                resolved_fields.push(MultipartField {
+                                    name: f.name.clone(),
+                                    value: MultipartValueKind::Text(real),
+                                    enabled: true,
+                                });
+                            }
+                            MultipartValueKind::File {
+                                local_path,
+                                file_name,
+                                content_type,
+                            } => {
+                                if !std::path::Path::new(local_path).is_file() {
+                                    blocking_errors.push(format!(
+                                        "Local upload file missing for '{}': {file_name}",
+                                        f.name
+                                    ));
+                                }
+                                preview.push(format!("{}=<local file: {file_name}>", f.name));
+                                resolved_fields.push(MultipartField {
+                                    name: f.name.clone(),
+                                    value: MultipartValueKind::File {
+                                        local_path: local_path.clone(),
+                                        file_name: file_name.clone(),
+                                        content_type: content_type.clone(),
+                                    },
+                                    enabled: true,
+                                });
+                            }
+                        }
+                    }
+                    (RequestBody::Multipart(resolved_fields), preview.join("\n"))
+                }
                 RequestBody::Binary {
-                    local_path: Some(path.clone()),
-                    content_type: content_type.clone(),
+                    local_path,
+                    content_type,
+                } => match local_path {
+                    Some(path) if std::path::Path::new(path).is_file() => (
+                        RequestBody::Binary {
+                            local_path: Some(path.clone()),
+                            content_type: content_type.clone(),
+                        },
+                        format!("<binary file: {path} ({content_type})>"),
+                    ),
+                    Some(_) => {
+                        blocking_errors.push("Local binary body file is missing".into());
+                        (request.body.clone(), "<missing binary file>".into())
+                    }
+                    None => {
+                        blocking_errors.push("Select a local binary file before sending".into());
+                        (request.body.clone(), "<no binary file selected>".into())
+                    }
                 },
-                format!("<binary file: {path} ({content_type})>"),
-            ),
-            Some(_) => {
-                blocking_errors.push("Local binary body file is missing".into());
-                (request.body.clone(), "<missing binary file>".into())
             }
-            None => {
-                blocking_errors.push("Select a local binary file before sending".into());
-                (request.body.clone(), "<no binary file selected>".into())
-            }
-        },
-    };
+        };
 
     let requires_production_confirm =
         vars.environment.is_some_and(|e| e.is_production) && request.method.is_mutating();
@@ -1268,6 +1274,67 @@ fn append_query_pairs(base: &str, pairs: &[(String, String)]) -> String {
     }
     let sep = if base.contains('?') { '&' } else { '?' };
     format!("{base}{sep}{}", encoded.join("&"))
+}
+
+/// Infers query string filter / pagination parameter suggestions from a JSON response payload
+/// (e.g. MockAPI / REST collection endpoints returning `[ { "id": "1", "name": "...", ... } ]`).
+pub fn infer_query_param_suggestions(json_bytes: &[u8]) -> Vec<(String, String)> {
+    let Ok(val) = serde_json::from_slice::<serde_json::Value>(json_bytes) else {
+        return Vec::new();
+    };
+    let mut suggestions = Vec::new();
+    let mut push_unique = |k: &str, v: &str| {
+        if !k.is_empty() && !suggestions.iter().any(|(ek, _)| ek == k) {
+            suggestions.push((k.to_owned(), v.to_owned()));
+        }
+    };
+
+    match &val {
+        serde_json::Value::Array(items) => {
+            push_unique("page", "1");
+            push_unique("limit", "10");
+            push_unique("search", "");
+            if let Some(serde_json::Value::Object(first_obj)) = items.first() {
+                if let Some(first_key) = first_obj.keys().next() {
+                    push_unique("sortBy", first_key);
+                    push_unique("order", "asc");
+                }
+                for (k, v) in first_obj.iter().take(6) {
+                    let sample = match v {
+                        serde_json::Value::String(s) if s.len() <= 24 && !s.starts_with("http") => {
+                            s.clone()
+                        }
+                        serde_json::Value::Bool(b) => b.to_string(),
+                        serde_json::Value::Number(n) => n.to_string(),
+                        _ => String::new(),
+                    };
+                    push_unique(k, &sample);
+                }
+            }
+        }
+        serde_json::Value::Object(map) => {
+            let list_candidate = map
+                .get("data")
+                .or_else(|| map.get("items"))
+                .or_else(|| map.get("results"));
+            if let Some(serde_json::Value::Array(items)) = list_candidate {
+                push_unique("page", "1");
+                push_unique("limit", "10");
+                push_unique("search", "");
+                if let Some(serde_json::Value::Object(first_obj)) = items.first() {
+                    for (k, _) in first_obj.iter().take(5) {
+                        push_unique(k, "");
+                    }
+                }
+            } else {
+                for (k, _) in map.iter().take(5) {
+                    push_unique(k, "");
+                }
+            }
+        }
+        _ => {}
+    }
+    suggestions
 }
 
 /// Splits a raw or templated URL into `(base_without_query_or_fragment, query, fragment)`,
@@ -1950,6 +2017,48 @@ impl WorkspaceState {
         } else {
             false
         }
+    }
+
+    pub fn delete_request(&mut self, request_id: &str) -> bool {
+        let before = self.requests.len();
+        self.requests.retain(|r| r.id != request_id);
+        if self.requests.len() == before {
+            return false;
+        }
+        self.open_tabs.retain(|t| t.request_id != request_id);
+        if let Some(ref active) = self.active_tab_id
+            && !self.open_tabs.iter().any(|t| &t.id == active)
+        {
+            self.active_tab_id = self.open_tabs.first().map(|t| t.id.clone());
+        }
+        true
+    }
+
+    pub fn delete_collection(&mut self, collection_id: &str) -> bool {
+        if self.collections.len() <= 1 {
+            return false;
+        }
+        let before = self.collections.len();
+        self.collections.retain(|c| c.id != collection_id);
+        if self.collections.len() == before {
+            return false;
+        }
+        self.folders.retain(|f| f.collection_id != collection_id);
+        let removed_reqs: BTreeSet<String> = self
+            .requests
+            .iter()
+            .filter(|r| r.collection_id == collection_id)
+            .map(|r| r.id.clone())
+            .collect();
+        self.requests.retain(|r| r.collection_id != collection_id);
+        self.open_tabs
+            .retain(|t| !removed_reqs.contains(&t.request_id));
+        if let Some(ref active) = self.active_tab_id
+            && !self.open_tabs.iter().any(|t| &t.id == active)
+        {
+            self.active_tab_id = self.open_tabs.first().map(|t| t.id.clone());
+        }
+        true
     }
 
     pub fn fork_collection(&mut self, collection_id: &str) -> Option<String> {

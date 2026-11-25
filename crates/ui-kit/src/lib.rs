@@ -289,30 +289,30 @@ pub fn install(context: &egui::Context) {
 
     let egui_theme = egui::Theme::Light;
     let mut style = (*context.style_of(egui_theme)).clone();
-    style.spacing.item_spacing = egui::vec2(8.0, 8.0);
-    style.spacing.button_padding = egui::vec2(12.0, 8.0);
-    style.spacing.interact_size = egui::vec2(36.0, 36.0);
-    style.spacing.window_margin = egui::Margin::same(20);
-    style.spacing.indent = 16.0;
+    style.spacing.item_spacing = egui::vec2(6.0, 4.0);
+    style.spacing.button_padding = egui::vec2(8.0, 4.0);
+    style.spacing.interact_size = egui::vec2(26.0, 26.0);
+    style.spacing.window_margin = egui::Margin::same(14);
+    style.spacing.indent = 14.0;
     style.text_styles.insert(
         egui::TextStyle::Heading,
-        egui::FontId::new(22.0, egui::FontFamily::Name("bold".into())),
+        egui::FontId::new(17.0, egui::FontFamily::Name("bold".into())),
     );
     style.text_styles.insert(
         egui::TextStyle::Body,
-        egui::FontId::new(13.0, egui::FontFamily::Proportional),
+        egui::FontId::new(12.0, egui::FontFamily::Proportional),
     );
     style.text_styles.insert(
         egui::TextStyle::Button,
-        egui::FontId::new(13.0, egui::FontFamily::Proportional),
+        egui::FontId::new(12.0, egui::FontFamily::Proportional),
     );
     style.text_styles.insert(
         egui::TextStyle::Monospace,
-        egui::FontId::new(13.0, egui::FontFamily::Monospace),
+        egui::FontId::new(12.0, egui::FontFamily::Monospace),
     );
     style.text_styles.insert(
         egui::TextStyle::Small,
-        egui::FontId::new(11.5, egui::FontFamily::Proportional),
+        egui::FontId::new(10.5, egui::FontFamily::Proportional),
     );
 
     let mut visuals = egui::Visuals::light();
@@ -350,7 +350,7 @@ pub fn install(context: &egui::Context) {
     context.enable_accesskit();
 }
 
-/// Figma Input component (5:200): 40px tall bordered white input with 12px horizontal padding.
+/// Compact Figma Input component: 29px tall bordered white input with crisp focus ring.
 pub fn text_input(
     ui: &mut egui::Ui,
     value: &mut String,
@@ -358,13 +358,13 @@ pub fn text_input(
     width: f32,
     password: bool,
 ) -> egui::Response {
-    let inner_w = (width - 24.0).max(80.0);
+    let inner_w = (width - 16.0).max(56.0);
     let mut inner_resp: Option<egui::Response> = None;
     egui::Frame::new()
         .fill(surface_bg(ui))
         .stroke(egui::Stroke::new(1.0, border_color(ui)))
-        .corner_radius(6)
-        .inner_margin(egui::Margin::symmetric(12, 9))
+        .corner_radius(5)
+        .inner_margin(egui::Margin::symmetric(8, 5))
         .show(ui, |ui| {
             let resp = ui.add(
                 egui::TextEdit::singleline(value)
@@ -541,15 +541,14 @@ pub fn paint_icon(painter: &egui::Painter, rect: egui::Rect, kind: IconKind, col
     }
 }
 
-/// Activity rail icon button matching Figma `Shell/Activity rail` (`6:1913`):
-/// subtle `#EFF6FF` active pill with crisp `#1D4ED8` left accent bar, and semantic icon colors.
+/// Activity rail icon button matching Figma `Shell/Activity rail` (`6:1913`), compact 34px scale.
 pub fn rail_icon_button(
     ui: &mut egui::Ui,
     selected: bool,
     kind: IconKind,
     tooltip: &str,
 ) -> egui::Response {
-    let (rect, resp) = ui.allocate_exact_size(egui::vec2(40.0, 40.0), egui::Sense::click());
+    let (rect, resp) = ui.allocate_exact_size(egui::vec2(34.0, 34.0), egui::Sense::click());
     let fill = if selected {
         Tokens::BG_SELECTED
     } else if resp.hovered() {
@@ -562,22 +561,22 @@ pub fn rail_icon_button(
     } else {
         icon_semantic_color(kind)
     };
-    ui.painter().rect_filled(rect, 8.0, fill);
+    ui.painter().rect_filled(rect, 7.0, fill);
     if selected {
         ui.painter().rect_filled(
             egui::Rect::from_min_size(
-                egui::pos2(rect.left() - 8.0, rect.top() + 8.0),
-                egui::vec2(3.0, rect.height() - 16.0),
+                egui::pos2(rect.left() - 5.0, rect.top() + 7.0),
+                egui::vec2(2.5, rect.height() - 14.0),
             ),
             1.5,
             Tokens::STATUS_INFO,
         );
     }
-    paint_icon(ui.painter(), rect.shrink(10.0), kind, icon_color);
+    paint_icon(ui.painter(), rect.shrink(8.5), kind, icon_color);
     resp.on_hover_text(tooltip)
 }
 
-/// Sidebar navigation row matching Figma `Shell/Project sidebar` Navigation item (`5:223`).
+/// Compact Sidebar navigation row (28px tall).
 pub fn nav_item(
     ui: &mut egui::Ui,
     kind: IconKind,
@@ -585,14 +584,16 @@ pub fn nav_item(
     count: Option<usize>,
     selected: bool,
 ) -> egui::Response {
-    let w = ui.available_width().max(120.0);
-    let (rect, resp) = ui.allocate_exact_size(egui::vec2(w, 36.0), egui::Sense::click());
-    let bg = if selected || resp.hovered() {
+    let w = ui.available_width().max(100.0);
+    let (rect, resp) = ui.allocate_exact_size(egui::vec2(w, 28.0), egui::Sense::click());
+    let bg = if selected {
+        Tokens::BG_SELECTED
+    } else if resp.hovered() {
         Tokens::BG_SUBTLE
     } else {
         Tokens::BG_SURFACE
     };
-    ui.painter().rect_filled(rect, 6.0, bg);
+    ui.painter().rect_filled(rect, 5.0, bg);
     let icon_color = if selected {
         Tokens::STATUS_INFO
     } else {
@@ -604,15 +605,15 @@ pub fn nav_item(
         Tokens::TEXT_PRIMARY
     };
     let icon_rect =
-        egui::Rect::from_min_size(rect.min + egui::vec2(10.0, 8.0), egui::vec2(20.0, 20.0));
+        egui::Rect::from_min_size(rect.min + egui::vec2(8.0, 6.0), egui::vec2(16.0, 16.0));
     paint_icon(ui.painter(), icon_rect, kind, icon_color);
     let font = if selected {
-        egui::FontId::new(13.0, egui::FontFamily::Name("bold".into()))
+        egui::FontId::new(12.0, egui::FontFamily::Name("bold".into()))
     } else {
-        egui::FontId::new(13.0, egui::FontFamily::Proportional)
+        egui::FontId::new(12.0, egui::FontFamily::Proportional)
     };
     ui.painter().text(
-        rect.min + egui::vec2(38.0, rect.height() * 0.5),
+        rect.min + egui::vec2(30.0, rect.height() * 0.5),
         egui::Align2::LEFT_CENTER,
         label,
         font,
@@ -620,10 +621,10 @@ pub fn nav_item(
     );
     if let Some(n) = count {
         ui.painter().text(
-            egui::pos2(rect.right() - 10.0, rect.center().y),
+            egui::pos2(rect.right() - 8.0, rect.center().y),
             egui::Align2::RIGHT_CENTER,
             n.to_string(),
-            egui::FontId::new(11.5, egui::FontFamily::Monospace),
+            egui::FontId::new(10.5, egui::FontFamily::Monospace),
             if selected {
                 Tokens::STATUS_INFO
             } else {
@@ -634,10 +635,10 @@ pub fn nav_item(
     resp
 }
 
-/// Sidebar Endpoint row matching Figma Endpoint component (5:296).
+/// Compact Sidebar Endpoint row (26px tall).
 pub fn endpoint_row(ui: &mut egui::Ui, method: &str, name: &str, selected: bool) -> egui::Response {
-    let w = ui.available_width().max(120.0);
-    let (rect, resp) = ui.allocate_exact_size(egui::vec2(w, 34.0), egui::Sense::click());
+    let w = ui.available_width().max(100.0);
+    let (rect, resp) = ui.allocate_exact_size(egui::vec2(w, 26.0), egui::Sense::click());
     let bg = if selected {
         selected_bg(ui)
     } else if resp.hovered() {
@@ -651,17 +652,17 @@ pub fn endpoint_row(ui: &mut egui::Ui, method: &str, name: &str, selected: bool)
         egui::Stroke::NONE
     };
     ui.painter()
-        .rect(rect, 6.0, bg, stroke, egui::StrokeKind::Middle);
+        .rect(rect, 5.0, bg, stroke, egui::StrokeKind::Middle);
 
     let m = method.to_ascii_uppercase();
     ui.painter().text(
-        rect.min + egui::vec2(10.0, rect.height() * 0.5),
+        rect.min + egui::vec2(8.0, rect.height() * 0.5),
         egui::Align2::LEFT_CENTER,
         &m,
-        egui::FontId::new(11.0, egui::FontFamily::Monospace),
+        egui::FontId::new(10.0, egui::FontFamily::Monospace),
         method_color(&m),
     );
-    let max_chars = ((w - 72.0) / 7.2).max(10.0) as usize;
+    let max_chars = ((w - 58.0) / 6.6).max(8.0) as usize;
     let clipped: String = if name.chars().count() > max_chars {
         let mut s: String = name.chars().take(max_chars.saturating_sub(1)).collect();
         s.push('…');
@@ -670,10 +671,10 @@ pub fn endpoint_row(ui: &mut egui::Ui, method: &str, name: &str, selected: bool)
         name.to_owned()
     };
     ui.painter().text(
-        rect.min + egui::vec2(60.0, rect.height() * 0.5),
+        rect.min + egui::vec2(48.0, rect.height() * 0.5),
         egui::Align2::LEFT_CENTER,
         clipped,
-        egui::FontId::new(12.5, egui::FontFamily::Proportional),
+        egui::FontId::new(11.5, egui::FontFamily::Proportional),
         text_primary(ui),
     );
     resp
@@ -847,21 +848,21 @@ pub fn table_header(ui: &mut egui::Ui, cols: &[(&str, f32)]) {
     ui.add_space(4.0);
 }
 
-/// Figma table row container (height >=46px, white fill, 1px #E5E7EB border, 6px radius).
+/// Compact table row container (28px tall, white fill, 1px #E5E7EB border, 5px radius).
 pub fn table_row_frame(ui: &mut egui::Ui, add_cells: impl FnOnce(&mut egui::Ui)) {
     egui::Frame::new()
         .fill(surface_bg(ui))
         .stroke(egui::Stroke::new(1.0, border_color(ui)))
-        .corner_radius(6)
-        .inner_margin(egui::Margin::symmetric(12, 9))
+        .corner_radius(5)
+        .inner_margin(egui::Margin::symmetric(8, 3))
         .show(ui, |ui| {
             ui.set_min_width(ui.available_width());
             ui.horizontal(|ui| add_cells(ui));
         });
-    ui.add_space(5.0);
+    ui.add_space(2.0);
 }
 
-/// Figma underline Tab component (5:234): 38px high, active underline indicator.
+/// Compact underline Tab component (27px high, active `#1D4ED8` underline indicator).
 pub fn underline_tab(ui: &mut egui::Ui, active: bool, label: &str) -> egui::Response {
     let text_color = if active {
         text_primary(ui)
@@ -870,21 +871,21 @@ pub fn underline_tab(ui: &mut egui::Ui, active: bool, label: &str) -> egui::Resp
     };
     let resp = ui.add(
         egui::Button::new(if active {
-            bold_text(label, 13.0, text_color)
+            bold_text(label, 12.0, text_color)
         } else {
-            egui::RichText::new(label).size(13.0).color(text_color)
+            egui::RichText::new(label).size(12.0).color(text_color)
         })
         .fill(egui::Color32::TRANSPARENT)
         .stroke(egui::Stroke::NONE)
-        .min_size(egui::vec2(76.0, 36.0))
-        .corner_radius(6),
+        .min_size(egui::vec2(48.0, 27.0))
+        .corner_radius(5),
     );
     if active {
         let r = resp.rect;
         ui.painter().line_segment(
             [
-                egui::pos2(r.left() + 8.0, r.bottom() - 2.0),
-                egui::pos2(r.right() - 8.0, r.bottom() - 2.0),
+                egui::pos2(r.left() + 6.0, r.bottom() - 1.5),
+                egui::pos2(r.right() - 6.0, r.bottom() - 1.5),
             ],
             egui::Stroke::new(2.0, Tokens::STATUS_INFO),
         );
@@ -892,7 +893,7 @@ pub fn underline_tab(ui: &mut egui::Ui, active: bool, label: &str) -> egui::Resp
     resp
 }
 
-/// Figma Primary button (5:155): surface fill, border, #1D4ED8 Medium/Bold label, 40px height.
+/// Compact Primary button (28px height, crisp `#1D4ED8` label).
 pub fn primary_button(ui: &mut egui::Ui, enabled: bool, label: &str) -> egui::Response {
     let color = if enabled {
         Tokens::STATUS_INFO
@@ -901,15 +902,22 @@ pub fn primary_button(ui: &mut egui::Ui, enabled: bool, label: &str) -> egui::Re
     };
     ui.add_enabled(
         enabled,
-        egui::Button::new(bold_text(label, 13.0, color))
+        egui::Button::new(bold_text(label, 12.0, color))
             .fill(if enabled {
                 surface_bg(ui)
             } else {
                 subtle_bg(ui)
             })
-            .stroke(egui::Stroke::new(1.0, border_color(ui)))
-            .min_size(egui::vec2(124.0, 38.0))
-            .corner_radius(6),
+            .stroke(egui::Stroke::new(
+                1.0,
+                if enabled {
+                    Tokens::STATUS_INFO
+                } else {
+                    border_color(ui)
+                },
+            ))
+            .min_size(egui::vec2(76.0, 28.0))
+            .corner_radius(5),
     )
 }
 
@@ -921,15 +929,15 @@ pub fn secondary_button(ui: &mut egui::Ui, enabled: bool, label: &str) -> egui::
     };
     ui.add_enabled(
         enabled,
-        egui::Button::new(bold_text(label, 13.0, color))
+        egui::Button::new(egui::RichText::new(label).size(12.0).color(color))
             .fill(if enabled {
                 Tokens::BG_SURFACE
             } else {
                 Tokens::BG_DISABLED
             })
             .stroke(egui::Stroke::new(1.0, Tokens::BORDER_DEFAULT))
-            .min_size(egui::vec2(84.0, 38.0))
-            .corner_radius(6),
+            .min_size(egui::vec2(58.0, 28.0))
+            .corner_radius(5),
     )
 }
 
@@ -941,27 +949,27 @@ pub fn danger_button(ui: &mut egui::Ui, enabled: bool, label: &str) -> egui::Res
     };
     ui.add_enabled(
         enabled,
-        egui::Button::new(bold_text(label, 13.0, color))
+        egui::Button::new(bold_text(label, 12.0, color))
             .fill(if enabled {
                 Tokens::BG_SURFACE
             } else {
                 Tokens::BG_DISABLED
             })
             .stroke(egui::Stroke::new(1.0, Tokens::BORDER_DEFAULT))
-            .min_size(egui::vec2(96.0, 38.0))
-            .corner_radius(6),
+            .min_size(egui::vec2(68.0, 28.0))
+            .corner_radius(5),
     )
 }
 
-/// Clean bordered badge matching Figma Badge (5:210).
+/// Clean compact bordered badge (20px tall).
 pub fn pill_badge(ui: &mut egui::Ui, color: egui::Color32, text: &str) {
     egui::Frame::new()
         .fill(surface_bg(ui))
         .stroke(egui::Stroke::new(1.0, border_color(ui)))
-        .corner_radius(6)
-        .inner_margin(egui::Margin::symmetric(10, 4))
+        .corner_radius(5)
+        .inner_margin(egui::Margin::symmetric(7, 2))
         .show(ui, |ui| {
-            ui.label(egui::RichText::new(text).color(color).size(11.5));
+            ui.label(egui::RichText::new(text).color(color).size(10.5));
         });
 }
 
@@ -970,7 +978,7 @@ pub fn status_badge(ui: &mut egui::Ui, kind: NoticeKind, text: &str) {
 }
 
 pub fn avatar_circle(ui: &mut egui::Ui, initials: &str, tone: AvatarTone) -> egui::Response {
-    let (rect, resp) = ui.allocate_exact_size(egui::vec2(32.0, 32.0), egui::Sense::click());
+    let (rect, resp) = ui.allocate_exact_size(egui::vec2(26.0, 26.0), egui::Sense::click());
     let fill = match tone {
         AvatarTone::Teal => egui::Color32::from_rgb(0xEC, 0xFD, 0xF5),
         AvatarTone::Salmon => egui::Color32::from_rgb(0xFF, 0xF1, 0xEE),
@@ -978,7 +986,7 @@ pub fn avatar_circle(ui: &mut egui::Ui, initials: &str, tone: AvatarTone) -> egu
     };
     ui.painter().circle(
         rect.center(),
-        15.0,
+        12.5,
         fill,
         egui::Stroke::new(1.0, Tokens::BORDER_DEFAULT),
     );
@@ -986,7 +994,7 @@ pub fn avatar_circle(ui: &mut egui::Ui, initials: &str, tone: AvatarTone) -> egu
         rect.center(),
         egui::Align2::CENTER_CENTER,
         initials,
-        egui::FontId::new(11.0, egui::FontFamily::Monospace),
+        egui::FontId::new(10.0, egui::FontFamily::Monospace),
         Tokens::TEXT_PRIMARY,
     );
     resp
@@ -1063,16 +1071,20 @@ pub fn code_surface(ui: &mut egui::Ui, text: &str) {
     code_surface_numbered(ui, text);
 }
 
-/// Interactive horizontal splitter bar (drags up/down with `ResizeVertical` cursor).
-/// Returns `(response, delta_y)`. Double-clicking can be checked via `response.double_clicked()`.
+/// Interactive horizontal splitter bar anchored by a stable `egui::Id` so drag focus NEVER drops
+/// even when sibling scrollbars or dynamic rows appear/disappear.
 pub fn horizontal_splitter(ui: &mut egui::Ui, id_salt: &str) -> (egui::Response, f32) {
-    let w = ui.available_width().max(80.0);
-    let (rect, resp) = ui.allocate_exact_size(egui::vec2(w, 10.0), egui::Sense::click_and_drag());
+    let w = ui.available_width().max(60.0);
+    let (_, rect) = ui.allocate_space(egui::vec2(w, 8.0));
+    let id = egui::Id::unique(("swaggen_hsplit", id_salt));
+    let resp = ui.interact(rect, id, egui::Sense::click_and_drag());
     let active = resp.hovered() || resp.dragged();
     if active {
         ui.ctx().set_cursor_icon(egui::CursorIcon::ResizeVertical);
     }
-    let _ = id_salt;
+    if resp.dragged() {
+        ui.ctx().request_repaint();
+    }
     let line_color = if active {
         Tokens::STATUS_INFO
     } else {
@@ -1088,7 +1100,7 @@ pub fn horizontal_splitter(ui: &mut egui::Ui, id_salt: &str) -> (egui::Response,
         [egui::pos2(rect.left(), cy), egui::pos2(rect.right(), cy)],
         egui::Stroke::new(if active { 1.5 } else { 1.0 }, line_color),
     );
-    let pill = egui::Rect::from_center_size(rect.center(), egui::vec2(38.0, 4.0));
+    let pill = egui::Rect::from_center_size(rect.center(), egui::vec2(34.0, 3.5));
     ui.painter().rect_filled(pill, 2.0, pill_color);
     let delta_y = if resp.dragged() {
         resp.drag_delta().y
@@ -1098,16 +1110,19 @@ pub fn horizontal_splitter(ui: &mut egui::Ui, id_salt: &str) -> (egui::Response,
     (resp, delta_y)
 }
 
-/// Interactive vertical splitter bar (drags left/right with `ResizeHorizontal` cursor).
-/// Returns `(response, delta_x)`. Double-clicking can be checked via `response.double_clicked()`.
+/// Interactive vertical splitter bar anchored by a stable `egui::Id` so drag focus NEVER drops.
 pub fn vertical_splitter(ui: &mut egui::Ui, id_salt: &str, height: f32) -> (egui::Response, f32) {
-    let h = height.max(80.0);
-    let (rect, resp) = ui.allocate_exact_size(egui::vec2(10.0, h), egui::Sense::click_and_drag());
+    let h = height.max(60.0);
+    let (_, rect) = ui.allocate_space(egui::vec2(8.0, h));
+    let id = egui::Id::unique(("swaggen_vsplit", id_salt));
+    let resp = ui.interact(rect, id, egui::Sense::click_and_drag());
     let active = resp.hovered() || resp.dragged();
     if active {
         ui.ctx().set_cursor_icon(egui::CursorIcon::ResizeHorizontal);
     }
-    let _ = id_salt;
+    if resp.dragged() {
+        ui.ctx().request_repaint();
+    }
     let line_color = if active {
         Tokens::STATUS_INFO
     } else {
@@ -1123,7 +1138,7 @@ pub fn vertical_splitter(ui: &mut egui::Ui, id_salt: &str, height: f32) -> (egui
         [egui::pos2(cx, rect.top()), egui::pos2(cx, rect.bottom())],
         egui::Stroke::new(if active { 1.5 } else { 1.0 }, line_color),
     );
-    let pill = egui::Rect::from_center_size(rect.center(), egui::vec2(4.0, 38.0));
+    let pill = egui::Rect::from_center_size(rect.center(), egui::vec2(3.5, 34.0));
     ui.painter().rect_filled(pill, 2.0, pill_color);
     let delta_x = if resp.dragged() {
         resp.drag_delta().x

@@ -41,6 +41,7 @@ pub enum MainMode {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum RequestSubTab {
     Params,
+    PathParams,
     Headers,
     Body,
     Auth,
@@ -98,6 +99,7 @@ pub struct App {
     pub firebase_auth_pending: bool,
     pub request_config_collapsed: bool,
     pub response_maximized: bool,
+    pub dragging_request_id: Option<String>,
 
     // Search & tree UI state
     pub search_query: String,
@@ -312,6 +314,7 @@ impl App {
             firebase_auth_pending: false,
             request_config_collapsed: false,
             response_maximized: false,
+            dragging_request_id: None,
             search_query: String::new(),
             filter_method: None,
             filter_tag: String::new(),
@@ -1304,60 +1307,59 @@ impl eframe::App for App {
             self.state.active_tab_id = self.state.open_tabs.first().map(|t| t.id.clone());
         }
 
-        // 1. Full-width Figma Statusbar (28px height, single top 1px divider).
+        // 1. Compact Statusbar (24px height, outer top 1px divider, explicit Local PC execution notice).
         let status_bar_frame = egui::Frame::new()
             .fill(swaggen_ui_kit::surface_bg(ui))
             .stroke(egui::Stroke::NONE)
-            .inner_margin(egui::Margin::symmetric(20, 6));
-        egui::Panel::bottom("status")
+            .inner_margin(egui::Margin::symmetric(14, 4));
+        let status_resp = egui::Panel::bottom("status")
             .frame(status_bar_frame)
             .show(ui, |ui| {
-                swaggen_ui_kit::paint_edge_divider(ui, ui.max_rect(), Edge::Top);
                 ui.horizontal(|ui| {
                     if self.pending || self.inflight_execution_id.is_some() {
                         ui.spinner();
                     }
-                    let left_status = if let Some(prof) = self.server_profiles.active() {
-                        if self.error {
-                            self.status.clone()
-                        } else {
-                            let host = prof
-                                .base_url
-                                .strip_prefix("https://")
-                                .or_else(|| prof.base_url.strip_prefix("http://"))
-                                .unwrap_or(&prof.base_url);
-                            format!("{} · {host}", self.status)
-                        }
-                    } else {
+                    let left_status = if self.error {
                         self.status.clone()
+                    } else if self.selected_team_workspace_id.is_some()
+                        && let Some(prof) = self.server_profiles.active()
+                    {
+                        let host = prof
+                            .base_url
+                            .strip_prefix("https://")
+                            .or_else(|| prof.base_url.strip_prefix("http://"))
+                            .unwrap_or(&prof.base_url);
+                        format!("{} · Direct from PC (Team sync: {host})", self.status)
+                    } else {
+                        format!("{} · Direct from this PC", self.status)
                     };
                     if self.error {
                         ui.label(
                             egui::RichText::new(left_status)
-                                .size(11.0)
+                                .size(10.5)
                                 .color(Tokens::TEXT_DANGER),
                         );
                     } else {
                         ui.label(
                             egui::RichText::new(left_status)
-                                .size(11.0)
+                                .size(10.5)
                                 .color(swaggen_ui_kit::text_primary(ui)),
                         );
                     }
                     if self.dirty() {
                         ui.label(
-                            egui::RichText::new(" · Unsaved draft")
-                                .size(11.0)
+                            egui::RichText::new(" · Unsaved*")
+                                .size(10.5)
                                 .color(Tokens::TEXT_WARNING),
                         );
                     }
                     ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                         ui.label(
                             egui::RichText::new(format!(
-                                "Rev {}  /  Rust engine  /  UTF-8  /  Windows",
+                                "Rev {}  ·  Local Rust HTTP Engine  ·  Windows",
                                 self.state.revision
                             ))
-                            .size(11.0)
+                            .size(10.5)
                             .color(swaggen_ui_kit::text_secondary(ui)),
                         );
                     });
@@ -1405,21 +1407,22 @@ impl eframe::App for App {
                     });
                 }
             });
+        swaggen_ui_kit::paint_edge_divider(ui, status_resp.response.rect, Edge::Top);
 
-        // 2. Left 64px Figma Activity Rail (single right 1px divider).
+        // 2. Left 48px Compact Activity Rail (outer right 1px divider — never clipped).
+        let rail_w = 48.0;
         let rail_frame = egui::Frame::new()
             .fill(swaggen_ui_kit::surface_bg(ui))
             .stroke(egui::Stroke::NONE)
-            .inner_margin(egui::Margin::symmetric(12, 16));
-        egui::Panel::left("activity_rail")
-            .exact_size(64.0)
+            .inner_margin(egui::Margin::symmetric(7, 10));
+        let rail_resp = egui::Panel::left("activity_rail")
+            .exact_size(rail_w)
             .resizable(false)
             .frame(rail_frame)
             .show(ui, |ui| {
-                swaggen_ui_kit::paint_edge_divider(ui, ui.max_rect(), Edge::Right);
                 ui.vertical_centered(|ui| {
-                    swaggen_ui_kit::brand_mark(ui, 32.0);
-                    ui.add_space(16.0);
+                    swaggen_ui_kit::brand_mark(ui, 26.0);
+                    ui.add_space(10.0);
                     for (mode, icon, tip) in [
                         (
                             MainMode::Workbench,
@@ -1516,42 +1519,86 @@ impl eframe::App for App {
                     });
                 });
             });
+        swaggen_ui_kit::paint_edge_divider(ui, rail_resp.response.rect, Edge::Right);
 
-        // 3. Left Resizable Figma Project Sidebar (175px..560px + Ctrl+B collapsible).
+        // 3. Left Project Sidebar + Dedicated Pointer-Locked Outer Resizer Strip (168px..520px).
         if !self.state.layout.sidebar_collapsed {
+            let cur_sidebar_w = self.state.layout.sidebar_width.clamp(168.0, 520.0);
             let sidebar_frame = egui::Frame::new()
                 .fill(swaggen_ui_kit::surface_bg(ui))
                 .stroke(egui::Stroke::NONE)
-                .inner_margin(egui::Margin::symmetric(16, 16));
-            let sidebar_resp = egui::Panel::left("sidebar")
-                .resizable(true)
-                .default_size(self.state.layout.sidebar_width.clamp(175.0, 560.0))
-                .min_size(175.0)
-                .max_size(560.0)
+                .inner_margin(egui::Margin::symmetric(10, 10));
+            egui::Panel::left("sidebar")
+                .resizable(false)
+                .exact_size(cur_sidebar_w)
                 .frame(sidebar_frame)
                 .show(ui, |ui| {
-                    swaggen_ui_kit::paint_edge_divider(ui, ui.max_rect(), Edge::Right);
                     views::sidebar::show(self, ui);
                 });
-            let new_w = sidebar_resp.response.rect.width();
-            if (new_w - self.state.layout.sidebar_width).abs() > 1.5 {
-                self.state.layout.sidebar_width = new_w;
-            }
+
+            let resizer_frame = egui::Frame::new()
+                .fill(swaggen_ui_kit::surface_bg(ui))
+                .stroke(egui::Stroke::NONE)
+                .inner_margin(egui::Margin::ZERO);
+            egui::Panel::left("sidebar_resizer")
+                .resizable(false)
+                .exact_size(6.0)
+                .frame(resizer_frame)
+                .show(ui, |ui| {
+                    let full_rect = ui.max_rect();
+                    let id = egui::Id::unique("swaggen_sidebar_edge_drag");
+                    let resp = ui.interact(full_rect, id, egui::Sense::click_and_drag());
+                    let active = resp.hovered() || resp.dragged();
+                    if active {
+                        ctx.set_cursor_icon(egui::CursorIcon::ResizeHorizontal);
+                    }
+                    if resp.dragged()
+                        && let Some(pos) = ctx.pointer_interact_pos()
+                    {
+                        self.state.layout.sidebar_width = (pos.x - rail_w).clamp(168.0, 520.0);
+                        ctx.request_repaint();
+                    }
+                    if resp
+                        .on_hover_text("Drag left/right to resize Sidebar · Double-click to reset")
+                        .double_clicked()
+                    {
+                        self.state.layout.sidebar_width = 228.0;
+                    }
+                    let lx = full_rect.center().x;
+                    ui.painter().line_segment(
+                        [
+                            egui::pos2(lx, full_rect.top()),
+                            egui::pos2(lx, full_rect.bottom()),
+                        ],
+                        egui::Stroke::new(
+                            if active { 1.5 } else { 1.0 },
+                            if active {
+                                Tokens::STATUS_INFO
+                            } else {
+                                Tokens::BORDER_DEFAULT
+                            },
+                        ),
+                    );
+                    if active {
+                        let pill =
+                            egui::Rect::from_center_size(full_rect.center(), egui::vec2(3.5, 34.0));
+                        ui.painter().rect_filled(pill, 2.0, Tokens::STATUS_INFO);
+                    }
+                });
         }
 
-        // 4. Right Workspace Header (64px height matching Figma Shell/Workspace header, single bottom 1px divider).
+        // 4. Compact Workspace Header (36px height, outer bottom 1px divider).
         let header_frame = egui::Frame::new()
             .fill(swaggen_ui_kit::surface_bg(ui))
             .stroke(egui::Stroke::NONE)
-            .inner_margin(egui::Margin::symmetric(24, 14));
+            .inner_margin(egui::Margin::symmetric(14, 5));
         let signed_in = self
             .server_profiles
             .active()
             .is_some_and(|p| !p.session_id.is_empty());
-        egui::Panel::top("workspace_header")
+        let header_resp = egui::Panel::top("workspace_header")
             .frame(header_frame)
             .show(ui, |ui| {
-                swaggen_ui_kit::paint_edge_divider(ui, ui.max_rect(), Edge::Bottom);
                 ui.horizontal(|ui| {
                     let toggle_lbl = if self.state.layout.sidebar_collapsed {
                         "»"
@@ -1562,14 +1609,14 @@ impl eframe::App for App {
                         .add(
                             egui::Button::new(
                                 egui::RichText::new(toggle_lbl)
-                                    .size(13.0)
+                                    .size(12.0)
                                     .color(Tokens::TEXT_SECONDARY)
                                     .strong(),
                             )
                             .fill(Tokens::BG_SURFACE)
                             .stroke(egui::Stroke::new(1.0, Tokens::BORDER_DEFAULT))
-                            .min_size(egui::vec2(26.0, 26.0))
-                            .corner_radius(6),
+                            .min_size(egui::vec2(22.0, 22.0))
+                            .corner_radius(5),
                         )
                         .on_hover_text(if self.state.layout.sidebar_collapsed {
                             "Expand project sidebar (Ctrl+B)"
@@ -1580,10 +1627,10 @@ impl eframe::App for App {
                     {
                         self.state.layout.sidebar_collapsed = !self.state.layout.sidebar_collapsed;
                     }
-                    ui.add_space(4.0);
+                    ui.add_space(2.0);
                     ui.label(swaggen_ui_kit::bold_text(
                         &self.screen_breadcrumb(),
-                        13.0,
+                        12.0,
                         swaggen_ui_kit::text_primary(ui),
                     ));
                     if self.state.meta.archived {
@@ -1696,10 +1743,11 @@ impl eframe::App for App {
                     });
                 });
             });
+        swaggen_ui_kit::paint_edge_divider(ui, header_resp.response.rect, Edge::Bottom);
 
         let main_frame = egui::Frame::new()
             .fill(swaggen_ui_kit::page_bg(ui))
-            .inner_margin(egui::Margin::symmetric(24, 20));
+            .inner_margin(egui::Margin::symmetric(14, 10));
 
         // Production request confirmation modal (R16 / EV07).
         if self.show_production_confirm {
@@ -1731,10 +1779,7 @@ impl eframe::App for App {
             return;
         }
 
-        // 5. Main Central Workspace Canvas with draggable Request <-> Response splitters.
-        let main_frame = egui::Frame::new()
-            .fill(swaggen_ui_kit::page_bg(ui))
-            .inner_margin(egui::Margin::symmetric(20, 14));
+        // 5. Main Central Workspace Canvas with 1:1 Pointer-Locked Request <-> Response Splitters.
         egui::CentralPanel::default()
             .frame(main_frame)
             .show(ui, |ui| match self.mode {
@@ -1745,31 +1790,35 @@ impl eframe::App for App {
                     if self.response_maximized {
                         views::response_pane::show(self, ui, &ctx);
                     } else if self.state.layout.workbench_side_by_side {
-                        let total_w = ui.available_width().max(480.0);
-                        let total_h = ui.available_height().max(180.0);
-                        let ratio = self.state.layout.response_split_ratio.clamp(0.22, 0.78);
-                        let req_w = (total_w * (1.0 - ratio) - 6.0)
-                            .clamp(230.0, (total_w - 250.0).max(230.0));
+                        let split_rect = ui.available_rect_before_wrap();
+                        let total_w = split_rect.width().max(420.0);
+                        let total_h = split_rect.height().max(150.0);
+                        let ratio = self.state.layout.response_split_ratio.clamp(0.20, 0.80);
+                        let req_w = ((total_w - 10.0) * (1.0 - ratio))
+                            .clamp(210.0, (total_w - 220.0).max(210.0));
                         ui.horizontal_top(|ui| {
-                            ui.spacing_mut().item_spacing.x = 4.0;
+                            ui.spacing_mut().item_spacing.x = 2.0;
                             ui.allocate_ui_with_layout(
                                 egui::vec2(req_w, total_h),
                                 egui::Layout::top_down(egui::Align::Min),
                                 |ui| {
+                                    ui.set_min_width(req_w);
+                                    ui.set_max_width(req_w);
+                                    ui.set_min_height(total_h);
+                                    ui.set_max_height(total_h);
                                     views::request_pane::show_config_panel(
                                         self, ui, req_idx, total_h,
                                     );
                                 },
                             );
-                            let (split_resp, dx) =
-                                swaggen_ui_kit::vertical_splitter(ui, "wb-vsplit", total_h);
-                            if dx.abs() > 0.0 {
-                                self.state.layout.response_split_ratio = (self
-                                    .state
-                                    .layout
-                                    .response_split_ratio
-                                    - dx / total_w)
-                                    .clamp(0.22, 0.78);
+                            let (split_resp, _) =
+                                swaggen_ui_kit::vertical_splitter(ui, "wb_main_vsplit", total_h);
+                            if split_resp.dragged()
+                                && let Some(pos) = ctx.pointer_interact_pos()
+                            {
+                                let left_frac =
+                                    ((pos.x - split_rect.left()) / total_w).clamp(0.20, 0.80);
+                                self.state.layout.response_split_ratio = 1.0 - left_frac;
                             }
                             if split_resp
                                 .on_hover_text("Drag left/right to resize · Double-click to reset")
@@ -1777,40 +1826,56 @@ impl eframe::App for App {
                             {
                                 self.state.layout.response_split_ratio = 0.50;
                             }
-                            let resp_w = ui.available_width().max(220.0);
+                            let resp_w = ui.available_width().max(180.0);
                             ui.allocate_ui_with_layout(
                                 egui::vec2(resp_w, total_h),
                                 egui::Layout::top_down(egui::Align::Min),
                                 |ui| {
+                                    ui.set_min_width(resp_w);
+                                    ui.set_max_width(resp_w);
                                     views::response_pane::show(self, ui, &ctx);
                                 },
                             );
                         });
                     } else if self.request_config_collapsed {
                         views::request_pane::show_config_panel(self, ui, req_idx, 0.0);
-                        ui.add_space(6.0);
+                        ui.add_space(4.0);
                         views::response_pane::show(self, ui, &ctx);
                     } else {
-                        let total_h = ui.available_height().max(240.0);
-                        let ratio = self.state.layout.response_split_ratio.clamp(0.18, 0.85);
-                        let req_h = (total_h * (1.0 - ratio))
-                            .clamp(108.0, (total_h - 125.0).max(108.0));
-                        views::request_pane::show_config_panel(self, ui, req_idx, req_h);
-                        let (split_resp, dy) =
-                            swaggen_ui_kit::horizontal_splitter(ui, "wb-hsplit");
-                        if dy.abs() > 0.0 {
-                            self.state.layout.response_split_ratio = (self
-                                .state
-                                .layout
-                                .response_split_ratio
-                                - dy / total_h)
-                                .clamp(0.18, 0.85);
+                        let split_rect = ui.available_rect_before_wrap();
+                        let total_h = split_rect.height().max(210.0);
+                        let total_w = split_rect.width().max(320.0);
+                        let ratio = self.state.layout.response_split_ratio.clamp(0.14, 0.86);
+                        let req_h = ((total_h - 10.0) * (1.0 - ratio))
+                            .clamp(84.0, (total_h - 104.0).max(84.0));
+
+                        ui.allocate_ui_with_layout(
+                            egui::vec2(total_w, req_h),
+                            egui::Layout::top_down(egui::Align::Min),
+                            |ui| {
+                                ui.set_min_height(req_h);
+                                ui.set_max_height(req_h);
+                                views::request_pane::show_config_panel(self, ui, req_idx, req_h);
+                            },
+                        );
+
+                        let (split_resp, _) =
+                            swaggen_ui_kit::horizontal_splitter(ui, "wb_main_hsplit");
+                        if split_resp.dragged()
+                            && let Some(pos) = ctx.pointer_interact_pos()
+                        {
+                            let top_frac =
+                                ((pos.y - split_rect.top()) / total_h).clamp(0.14, 0.86);
+                            self.state.layout.response_split_ratio =
+                                (1.0 - top_frac).clamp(0.14, 0.86);
                         }
                         if split_resp
-                            .on_hover_text("Drag up/down to resize Request vs Response · Double-click to reset")
+                            .on_hover_text(
+                                "Drag up/down to resize Request vs Response · Double-click to reset",
+                            )
                             .double_clicked()
                         {
-                            self.state.layout.response_split_ratio = 0.56;
+                            self.state.layout.response_split_ratio = 0.58;
                         }
                         views::response_pane::show(self, ui, &ctx);
                     }
@@ -1912,6 +1977,7 @@ mod tests {
             firebase_auth_pending: false,
             request_config_collapsed: false,
             response_maximized: false,
+            dragging_request_id: None,
             search_query: String::new(),
             filter_method: None,
             filter_tag: String::new(),
