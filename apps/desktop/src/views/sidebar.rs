@@ -12,6 +12,7 @@ use swaggen_ui_kit::{IconKind, Tokens};
 struct SidebarActions {
     open_request_id: Option<String>,
     add_req_target: Option<(String, Option<String>)>,
+    add_gql_target: Option<(String, Option<String>)>,
     add_folder_target: Option<(String, Option<String>)>,
     dup_req_id: Option<String>,
     del_req_id: Option<String>,
@@ -449,6 +450,10 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                                 acts.add_req_target = Some((col_id_clone.clone(), None));
                                 ui.close();
                             }
+                            if ui.button("+ New GraphQL request").clicked() {
+                                acts.add_gql_target = Some((col_id_clone.clone(), None));
+                                ui.close();
+                            }
                             if ui.button("+ New folder").clicked() {
                                 acts.add_folder_target = Some((col_id_clone.clone(), None));
                                 ui.close();
@@ -514,11 +519,16 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                         .inner_margin(egui::Margin::symmetric(8, 4))
                         .show(ui, |ui| {
                             ui.horizontal(|ui| {
+                                let badge = if r.is_graphql() {
+                                    "GQL"
+                                } else {
+                                    r.method.as_str()
+                                };
                                 ui.label(
-                                    egui::RichText::new(r.method.as_str())
+                                    egui::RichText::new(badge)
                                         .monospace()
                                         .size(10.5)
-                                        .color(swaggen_ui_kit::method_color(r.method.as_str())),
+                                        .color(swaggen_ui_kit::method_color(badge)),
                                 );
                                 ui.label(
                                     egui::RichText::new(format!(
@@ -546,6 +556,14 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
     }
     if let Some((cid, folder_id)) = acts.add_req_target {
         let mut req = RequestItem::new(cid, "New request", HttpMethod::Get, "{{base_url}}/");
+        req.folder_id = folder_id;
+        let rid = req.id.clone();
+        app.state.requests.push(req);
+        app.open_request_in_workbench(&rid);
+        app.mark_dirty();
+    }
+    if let Some((cid, folder_id)) = acts.add_gql_target {
+        let mut req = RequestItem::new_graphql(cid, "GraphQL query", "{{base_url}}/graphql");
         req.folder_id = folder_id;
         let rid = req.id.clone();
         app.state.requests.push(req);
@@ -743,6 +761,10 @@ fn show_folder_children(
                 acts.add_req_target = Some((collection_id.to_owned(), Some(folder.id.clone())));
                 ui.close();
             }
+            if ui.button("+ New GraphQL request").clicked() {
+                acts.add_gql_target = Some((collection_id.to_owned(), Some(folder.id.clone())));
+                ui.close();
+            }
             if ui.button("+ New subfolder").clicked() {
                 acts.add_folder_target = Some((collection_id.to_owned(), Some(folder.id.clone())));
                 ui.close();
@@ -808,7 +830,11 @@ fn render_request_row(
     ui.painter()
         .rect(rect, 5.0, bg, stroke, egui::StrokeKind::Middle);
 
-    let m = req.method.as_str();
+    let m = if req.is_graphql() {
+        "GQL"
+    } else {
+        req.method.as_str()
+    };
     ui.painter().text(
         rect.min + egui::vec2(7.0, rect.height() * 0.5),
         egui::Align2::LEFT_CENTER,

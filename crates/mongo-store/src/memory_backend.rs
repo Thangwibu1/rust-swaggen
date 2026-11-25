@@ -5,7 +5,7 @@ use crate::{
         normalize_slug, sha256_hex, validate_password, verify_password,
     },
     error::StoreError,
-    repo::{AuthContext, WorkspaceRepository},
+    repo::{AuthContext, BatchedWorkspaceChildren, IdempotencyClaimOutcome, WorkspaceRepository},
 };
 use std::{
     collections::{BTreeMap, HashMap},
@@ -80,6 +80,13 @@ struct AppliedOpRec {
     result: PublishOperationResult,
 }
 
+#[derive(Clone)]
+struct IdempotencyRec {
+    request_hash: String,
+    completed: Option<(u16, String)>,
+    created_at_unix: i64,
+}
+
 #[derive(Default)]
 struct State {
     users_by_id: HashMap<String, UserRec>,
@@ -102,6 +109,7 @@ struct State {
     notifications: Vec<NotificationRecord>,
     audit_events: Vec<AuditEventRecord>,
     kv_docs: BTreeMap<(String, String), String>,
+    idempotency_records: HashMap<(String, String), IdempotencyRec>,
 }
 
 impl InMemoryStore {
@@ -1890,5 +1898,161 @@ impl WorkspaceRepository for InMemoryStore {
             .filter(|((ns, k), _)| ns == namespace && k.starts_with(key_prefix))
             .map(|((_, k), v)| (k.clone(), v.clone()))
             .collect())
+    }
+
+    async fn claim_idempotency(
+        &self,
+        scope: &str,
+        key: &str,
+        request_hash: &str,
+        now: i64,
+    ) -> Result<IdempotencyClaimOutcome, StoreError> {
+        let mut guard = self.state.lock().map_err(|_| StoreError::InternalSafe)?;
+        let map_key = (scope.to_owned(), key.to_owned());
+        if let Some(existing) = guard.idempotency_records.get(&map_key) {
+            if existing.request_hash != request_hash {
+                return Err(StoreError::Conflict(
+                    "Idempotency-Key cannot be reused with a different request payload".into(),
+                ));
+            }
+            if let Some((code, ref body)) = existing.completed {
+                return Ok(IdempotencyClaimOutcome::Replayed {
+                    status_code: code,
+                    body_json: body.clone(),
+                });
+            }
+            if now - existing.created_at_unix < 30 {
+                return Err(StoreError::Conflict(
+                    "Concurrent request with the same Idempotency-Key is still in progress".into(),
+                ));
+            }
+        }
+        guard.idempotency_records.insert(
+            map_key,
+            IdempotencyRec {
+                request_hash: request_hash.to_owned(),
+                completed: None,
+                created_at_unix: now,
+            },
+        );
+        Ok(IdempotencyClaimOutcome::Acquired)
+    }
+
+    async fn complete_idempotency(
+        &self,
+        scope: &str,
+        key: &str,
+        status_code: u16,
+        body_json: &str,
+        _now: i64,
+    ) -> Result<(), StoreError> {
+        let mut guard = self.state.lock().map_err(|_| StoreError::InternalSafe)?;
+        if let Some(rec) = guard
+            .idempotency_records
+            .get_mut(&(scope.to_owned(), key.to_owned()))
+        {
+            rec.completed = Some((status_code, body_json.to_owned()));
+        }
+        Ok(())
+    }
+
+    async fn release_idempotency(&self, scope: &str, key: &str) -> Result<(), StoreError> {
+        let mut guard = self.state.lock().map_err(|_| StoreError::InternalSafe)?;
+        let map_key = (scope.to_owned(), key.to_owned());
+        if guard
+            .idempotency_records
+            .get(&map_key)
+            .is_some_and(|r| r.completed.is_none())
+        {
+            guard.idempotency_records.remove(&map_key);
+        }
+        Ok(())
+    }
+
+    async fn batch_load_workspaces_children(
+        &self,
+        auth: &AuthContext,
+        workspace_ids: &[String],
+        include_entities: bool,
+        include_members: bool,
+        include_comments: bool,
+        include_notifications: bool,
+    ) -> Result<BatchedWorkspaceChildren, StoreError> {
+        let guard = self.state.lock().map_err(|_| StoreError::InternalSafe)?;
+        let mut out = BatchedWorkspaceChildren::default();
+        if workspace_ids.is_empty() {
+            return Ok(out);
+        }
+        let allowed: std::collections::HashSet<&str> = workspace_ids
+            .iter()
+            .map(String::as_str)
+            .filter(|wid| {
+                guard
+                    .memberships
+                    .contains_key(&((*wid).to_owned(), auth.user_id.clone()))
+            })
+            .collect();
+        if allowed.is_empty() {
+            return Ok(out);
+        }
+        if include_entities {
+            out.db_queries_executed += 1;
+            for ((wid, _), rec) in &guard.entities {
+                if !rec.deleted && allowed.contains(wid.as_str()) {
+                    out.entities_by_ws
+                        .entry(wid.clone())
+                        .or_default()
+                        .push(rec.clone());
+                }
+            }
+        }
+        if include_members {
+            out.db_queries_executed += 2; // 1 memberships batch + 1 users batch
+            for ((wid, uid), mrec) in &guard.memberships {
+                if allowed.contains(wid.as_str())
+                    && let Some(u) = guard.users_by_id.get(uid)
+                {
+                    let mem_rev = guard
+                        .workspaces_by_id
+                        .get(wid)
+                        .map(|w| w.membership_revision)
+                        .unwrap_or(1);
+                    out.members_by_ws
+                        .entry(wid.clone())
+                        .or_default()
+                        .push(MemberSummary {
+                            user_id: uid.clone(),
+                            email: u.email_normalized.clone(),
+                            display_name: u.display_name.clone(),
+                            role: mrec.role,
+                            joined_at_unix: mrec.joined_at_unix,
+                            membership_revision: mem_rev,
+                        });
+                }
+            }
+        }
+        if include_comments {
+            out.db_queries_executed += 1;
+            for ((wid, _), c) in &guard.comments {
+                if allowed.contains(wid.as_str()) {
+                    out.comments_by_ws
+                        .entry(wid.clone())
+                        .or_default()
+                        .push(c.clone());
+                }
+            }
+        }
+        if include_notifications {
+            out.db_queries_executed += 1;
+            for n in &guard.notifications {
+                if n.user_id == auth.user_id && allowed.contains(n.workspace_id.as_str()) {
+                    out.notifications_by_ws
+                        .entry(n.workspace_id.clone())
+                        .or_default()
+                        .push(n.clone());
+                }
+            }
+        }
+        Ok(out)
     }
 }

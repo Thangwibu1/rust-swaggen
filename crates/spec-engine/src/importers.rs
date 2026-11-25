@@ -335,6 +335,24 @@ fn parse_postman_body(val: Option<&Value>) -> RequestBody {
                 _ => RequestBody::Json(raw),
             }
         }
+        Some("graphql") => {
+            let gql = b.get("graphql");
+            let query = gql
+                .and_then(|g| g.get("query"))
+                .and_then(Value::as_str)
+                .unwrap_or_default()
+                .to_owned();
+            let variables = gql
+                .and_then(|g| g.get("variables"))
+                .and_then(Value::as_str)
+                .unwrap_or("{}")
+                .to_owned();
+            RequestBody::GraphQl {
+                query,
+                variables,
+                operation_name: None,
+            }
+        }
         Some("urlencoded") => {
             let mut rows = Vec::new();
             if let Some(arr) = b.get("urlencoded").and_then(Value::as_array) {
@@ -582,6 +600,23 @@ pub fn to_curl_command(req: &RequestItem, mask_secrets: bool) -> String {
     }
     match &req.body {
         RequestBody::Json(s) | RequestBody::Text(s) | RequestBody::Xml(s) if !s.is_empty() => {
+            parts.push(format!("-d '{}'", s.replace('\'', "'\\''")));
+        }
+        RequestBody::GraphQl {
+            query,
+            variables,
+            operation_name,
+        } => {
+            let vars_val: Value =
+                serde_json::from_str(variables).unwrap_or_else(|_| serde_json::json!({}));
+            let mut payload = Map::new();
+            payload.insert("query".into(), Value::String(query.clone()));
+            payload.insert("variables".into(), vars_val);
+            if let Some(op) = operation_name.as_deref().filter(|s| !s.trim().is_empty()) {
+                payload.insert("operationName".into(), Value::String(op.trim().to_owned()));
+            }
+            let s = serde_json::to_string(&Value::Object(payload)).unwrap_or_default();
+            parts.push("-H \"Content-Type: application/json\"".into());
             parts.push(format!("-d '{}'", s.replace('\'', "'\\''")));
         }
         _ => {}

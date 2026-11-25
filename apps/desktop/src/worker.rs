@@ -255,6 +255,11 @@ pub enum Command {
         query: String,
         variables_json: String,
     },
+    IntrospectGraphQl {
+        request_id: String,
+        request: Box<RequestItem>,
+        state: Box<WorkspaceState>,
+    },
     StartSse {
         url: String,
         max_events: usize,
@@ -377,6 +382,10 @@ pub enum Event {
         logs: Vec<swaggen_runner::local_mock::MockTrafficLog>,
     },
     GraphQlFinished(swaggen_runner::protocols_and_tools::GraphQlOutcome),
+    GraphQlSchemaFetched {
+        request_id: String,
+        result: Result<swaggen_domain::graphql::GraphQlSchemaSummary, String>,
+    },
     SseEventReceived(swaggen_runner::protocols_and_tools::SseEventRecord),
     SseStopped(String),
     UpdateCheckResult(crate::updater::UpdateCheckOutcome),
@@ -917,6 +926,82 @@ impl Worker {
                             break;
                         }
                         wake();
+                    }
+                    Command::IntrospectGraphQl {
+                        request_id,
+                        mut request,
+                        state,
+                    } => {
+                        let mut secret_map = BTreeMap::new();
+                        for name in sess.secrets.list_names() {
+                            if let Ok(secret) = sess.secrets.get(&SecretRef {
+                                workspace: current_workspace.clone(),
+                                name: name.clone(),
+                            }) && let Ok(text) = std::str::from_utf8(secret.expose())
+                            {
+                                secret_map.insert(name, text.to_owned());
+                            }
+                        }
+                        request.method = swaggen_domain::workspace::HttpMethod::Post;
+                        request.idempotency_mode =
+                            swaggen_domain::workspace::IdempotencyMode::Disabled;
+                        request.body = swaggen_domain::workspace::RequestBody::GraphQl {
+                            query: swaggen_domain::graphql::INTROSPECTION_QUERY.into(),
+                            variables: "{}".into(),
+                            operation_name: Some("SwaggenIntrospection".into()),
+                        };
+                        let col = state
+                            .collections
+                            .iter()
+                            .find(|c| c.id == request.collection_id);
+                        let fchain = folder_chain(&state.folders, request.folder_id.as_deref());
+                        let col_vars = col.map(|c| c.variables.as_slice()).unwrap_or(&[]);
+                        let ctx = swaggen_domain::workspace::VariableContext {
+                            workspace_vars: &state.workspace_vars,
+                            collection_vars: col_vars,
+                            environment: state.active_environment(),
+                            request_vars: &request.local_vars,
+                            local_secrets: &secret_map,
+                        };
+                        let now_secs = time::OffsetDateTime::now_utc().unix_timestamp();
+                        let resolved = resolve_request_preview(
+                            &request,
+                            col,
+                            &fchain,
+                            &ctx,
+                            &state.cookies,
+                            now_secs,
+                        );
+                        let downloads = sess.ws_store.downloads_dir();
+                        let out = outgoing.clone();
+                        let wake_fn = wake.clone();
+                        runtime.spawn(async move {
+                            let result = match execute_request(
+                                &resolved,
+                                &downloads,
+                                CancellationToken::new(),
+                            )
+                            .await
+                            {
+                                Ok(resp) => {
+                                    let body_text =
+                                        String::from_utf8_lossy(&resp.preview_bytes).into_owned();
+                                    if !(200..300).contains(&resp.status_code) {
+                                        Err(format!(
+                                            "Introspection returned HTTP {} {}",
+                                            resp.status_code, resp.reason
+                                        ))
+                                    } else {
+                                        swaggen_domain::graphql::parse_introspection_schema(
+                                            &body_text,
+                                        )
+                                    }
+                                }
+                                Err(err) => Err(format!("{}: {}", err.kind.as_str(), err.message)),
+                            };
+                            let _ = out.send(Event::GraphQlSchemaFetched { request_id, result });
+                            wake_fn();
+                        });
                     }
                     Command::SendHttp {
                         execution_id,

@@ -5,11 +5,18 @@
 //! - Auto-detects query parameters both from `?key=val` in URL AND from JSON response fields
 use crate::app::{App, RequestSubTab};
 use eframe::egui;
-use swaggen_domain::workspace::{
-    ApiKeyPlacement, AssertionRule, AssertionTarget, AuthConfig, HttpMethod, KeyValueRow,
-    MultipartField, MultipartValueKind, RequestBody, RequestItem, VariableContext, folder_chain,
-    infer_query_param_suggestions, new_uid, remove_url_path_param_key, rename_url_path_param_key,
-    resolve_effective_auth, resolve_request_preview, split_url_parts,
+use swaggen_domain::{
+    graphql::{
+        GraphQlOperationKind, analyze_graphql_document, build_operation_template,
+        generate_variables_skeleton,
+    },
+    workspace::{
+        ApiKeyPlacement, AssertionRule, AssertionTarget, AuthConfig, HttpMethod, IdempotencyMode,
+        KeyValueRow, MultipartField, MultipartValueKind, RequestBody, RequestItem, VariableContext,
+        folder_chain, infer_query_param_suggestions, new_uid, remove_url_path_param_key,
+        rename_url_path_param_key, resolve_effective_auth, resolve_request_preview,
+        split_url_parts,
+    },
 };
 use swaggen_ui_kit::{IconKind, NoticeKind, Tokens};
 
@@ -26,7 +33,14 @@ pub fn show_top_bar(app: &mut App, ui: &mut egui::Ui) -> Option<usize> {
                 .requests
                 .iter()
                 .find(|r| r.id == tab.request_id)
-                .map(|r| (r.method.as_str(), r.name.clone()))
+                .map(|r| {
+                    let badge = if r.is_graphql() {
+                        "GQL"
+                    } else {
+                        r.method.as_str()
+                    };
+                    (badge, r.name.clone())
+                })
                 .unwrap_or(("GET", "Missing".into()));
             let active = app.state.active_tab_id.as_deref() == Some(tab.id.as_str());
             let fill = if active {
@@ -94,13 +108,37 @@ pub fn show_top_bar(app: &mut App, ui: &mut egui::Ui) -> Option<usize> {
             IconKind::Plus,
             Tokens::TEXT_PRIMARY,
         );
-        if add_resp.on_hover_text("Create new request").clicked()
+        if add_resp.on_hover_text("Create new REST request").clicked()
             && let Some(cid) = app.state.collections.first().map(|c| c.id.clone())
         {
             let req = RequestItem::new(cid, "New request", HttpMethod::Get, "{{base_url}}/");
             let rid = req.id.clone();
             app.state.requests.push(req);
-            app.state.open_or_focus_tab(&rid);
+            app.open_request_in_workbench(&rid);
+            app.mark_dirty();
+        }
+        if ui
+            .add(
+                egui::Button::new(
+                    egui::RichText::new("+ GQL")
+                        .monospace()
+                        .size(10.0)
+                        .color(swaggen_ui_kit::method_color("GQL"))
+                        .strong(),
+                )
+                .fill(Tokens::BG_SURFACE)
+                .stroke(egui::Stroke::new(1.0, Tokens::BORDER_DEFAULT))
+                .min_size(egui::vec2(42.0, 22.0))
+                .corner_radius(4),
+            )
+            .on_hover_text("Create new GraphQL request (Query / Mutation / Schema Introspection)")
+            .clicked()
+            && let Some(cid) = app.state.collections.first().map(|c| c.id.clone())
+        {
+            let req = RequestItem::new_graphql(cid, "GraphQL query", "{{base_url}}/graphql");
+            let rid = req.id.clone();
+            app.state.requests.push(req);
+            app.open_request_in_workbench(&rid);
             app.mark_dirty();
         }
 
@@ -137,6 +175,13 @@ pub fn show_top_bar(app: &mut App, ui: &mut egui::Ui) -> Option<usize> {
 
         if let Some(tid) = switch_tab {
             app.state.active_tab_id = Some(tid);
+            if let Some(req) = app.active_request() {
+                if req.is_graphql() {
+                    app.request_subtab = RequestSubTab::GraphQl;
+                } else if app.request_subtab == RequestSubTab::GraphQl {
+                    app.request_subtab = RequestSubTab::Params;
+                }
+            }
         }
         if let Some(tid) = toggle_pin
             && let Some(t) = app.state.open_tabs.iter_mut().find(|t| t.id == tid)
@@ -194,6 +239,61 @@ pub fn show_top_bar(app: &mut App, ui: &mut egui::Ui) -> Option<usize> {
 
     ui.horizontal(|ui| {
         ui.spacing_mut().item_spacing.x = 5.0;
+        let is_gql = app.state.requests[req_idx].is_graphql();
+
+        // Compact Protocol Switcher (`REST` | `GQL`) right beside Method
+        egui::Frame::new()
+            .fill(Tokens::BG_SUBTLE)
+            .stroke(egui::Stroke::new(1.0, Tokens::BORDER_DEFAULT))
+            .corner_radius(5)
+            .inner_margin(egui::Margin::symmetric(3, 2))
+            .show(ui, |ui| {
+                ui.spacing_mut().item_spacing.x = 2.0;
+                if ui
+                    .selectable_label(
+                        !is_gql,
+                        egui::RichText::new("REST").monospace().size(10.5).strong(),
+                    )
+                    .on_hover_text("Standard HTTP / REST request mode")
+                    .clicked()
+                    && is_gql
+                {
+                    let m = app.state.requests[req_idx].method;
+                    app.state.requests[req_idx].body =
+                        if matches!(m, HttpMethod::Get | HttpMethod::Head) {
+                            RequestBody::None
+                        } else {
+                            RequestBody::Json("{\n  \n}".into())
+                        };
+                    app.request_subtab = RequestSubTab::Params;
+                    changed = true;
+                }
+                if ui
+                    .selectable_label(
+                        is_gql,
+                        egui::RichText::new("GQL")
+                            .monospace()
+                            .size(10.5)
+                            .color(swaggen_ui_kit::method_color("GQL"))
+                            .strong(),
+                    )
+                    .on_hover_text(
+                        "GraphQL mode (Query, Mutation, Variables, Schema Introspection & N+1 Guard)",
+                    )
+                    .clicked()
+                    && !is_gql
+                {
+                    app.state.requests[req_idx].method = HttpMethod::Post;
+                    app.state.requests[req_idx].body = RequestBody::GraphQl {
+                        query: "query ExampleQuery {\n  __typename\n}".into(),
+                        variables: "{\n  \n}".into(),
+                        operation_name: None,
+                    };
+                    app.request_subtab = RequestSubTab::GraphQl;
+                    changed = true;
+                }
+            });
+
         let mut method = app.state.requests[req_idx].method;
         egui::ComboBox::from_id_salt("req-method")
             .selected_text(
@@ -203,9 +303,14 @@ pub fn show_top_bar(app: &mut App, ui: &mut egui::Ui) -> Option<usize> {
                     .size(11.5)
                     .strong(),
             )
-            .width(76.0)
+            .width(72.0)
             .show_ui(ui, |ui| {
-                for m in HttpMethod::ALL {
+                let choices: &[HttpMethod] = if app.state.requests[req_idx].is_graphql() {
+                    &[HttpMethod::Post, HttpMethod::Get]
+                } else {
+                    &HttpMethod::ALL
+                };
+                for &m in choices {
                     if ui
                         .selectable_value(
                             &mut method,
@@ -221,17 +326,23 @@ pub fn show_top_bar(app: &mut App, ui: &mut egui::Ui) -> Option<usize> {
                 }
             });
         app.state.requests[req_idx].method = method;
-        if matches!(method, HttpMethod::Get | HttpMethod::Head)
+        if !app.state.requests[req_idx].is_graphql()
+            && matches!(method, HttpMethod::Get | HttpMethod::Head)
             && app.request_subtab == RequestSubTab::Body
         {
             app.request_subtab = RequestSubTab::Params;
         }
 
-        let url_w = (ui.available_width() - 238.0).max(140.0);
+        let url_w = (ui.available_width() - 236.0).max(120.0);
+        let url_hint = if app.state.requests[req_idx].is_graphql() {
+            "https://api.example.test/graphql"
+        } else {
+            "https://api.example.test/v1/items?page=1&limit=10"
+        };
         if swaggen_ui_kit::text_input(
             ui,
             &mut app.state.requests[req_idx].url,
-            "https://api.example.test/v1/items?page=1&limit=10",
+            url_hint,
             url_w,
             false,
         )
@@ -450,24 +561,28 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
         .iter()
         .find(|c| c.id == req_clone.collection_id)
         .cloned();
-    let fchain = folder_chain(&app.state.folders, req_clone.folder_id.as_deref());
-    let col_vars = col.as_ref().map(|c| c.variables.as_slice()).unwrap_or(&[]);
-    let ctx = VariableContext {
-        workspace_vars: &app.state.workspace_vars,
-        collection_vars: col_vars,
-        environment: app.state.active_environment(),
-        request_vars: &req_clone.local_vars,
-        local_secrets: &masked_secrets,
+    let (resolved, eff_auth_source) = {
+        let fchain = folder_chain(&app.state.folders, req_clone.folder_id.as_deref());
+        let col_vars = col.as_ref().map(|c| c.variables.as_slice()).unwrap_or(&[]);
+        let ctx = VariableContext {
+            workspace_vars: &app.state.workspace_vars,
+            collection_vars: col_vars,
+            environment: app.state.active_environment(),
+            request_vars: &req_clone.local_vars,
+            local_secrets: &masked_secrets,
+        };
+        let now_secs = time::OffsetDateTime::now_utc().unix_timestamp();
+        let resolved = resolve_request_preview(
+            &req_clone,
+            col.as_ref(),
+            &fchain,
+            &ctx,
+            &app.state.cookies,
+            now_secs,
+        );
+        let eff_source = resolve_effective_auth(col.as_ref(), &fchain, &req_clone).source;
+        (resolved, eff_source)
     };
-    let now_secs = time::OffsetDateTime::now_utc().unix_timestamp();
-    let resolved = resolve_request_preview(
-        &req_clone,
-        col.as_ref(),
-        &fchain,
-        &ctx,
-        &app.state.cookies,
-        now_secs,
-    );
 
     // 3. Dedicated Sub-tabs: `Query String` | `Path Params` | `Headers` | (`Body` only on non-GET/HEAD!) | `Auth` | `Tests` | `Settings` | `Code`
     let q_count = req_clone
@@ -499,18 +614,27 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
         "Tests".into()
     };
 
-    let allows_body = !matches!(req_clone.method, HttpMethod::Get | HttpMethod::Head);
-    if !allows_body && app.request_subtab == RequestSubTab::Body {
+    let is_gql = req_clone.is_graphql();
+    let allows_body = !is_gql && !matches!(req_clone.method, HttpMethod::Get | HttpMethod::Head);
+    if is_gql && app.request_subtab == RequestSubTab::Body {
+        app.request_subtab = RequestSubTab::GraphQl;
+    } else if (!is_gql && app.request_subtab == RequestSubTab::GraphQl)
+        || (!allows_body && app.request_subtab == RequestSubTab::Body)
+    {
         app.request_subtab = RequestSubTab::Params;
     }
 
     ui.horizontal_wrapped(|ui| {
         ui.spacing_mut().item_spacing.x = 2.0;
-        let mut tabs: Vec<(RequestSubTab, &str)> = vec![
+        let mut tabs: Vec<(RequestSubTab, &str)> = Vec::with_capacity(9);
+        if is_gql {
+            tabs.push((RequestSubTab::GraphQl, "GraphQL"));
+        }
+        tabs.extend([
             (RequestSubTab::Params, query_lbl.as_str()),
             (RequestSubTab::PathParams, path_lbl.as_str()),
             (RequestSubTab::Headers, headers_lbl.as_str()),
-        ];
+        ]);
         if allows_body {
             tabs.push((RequestSubTab::Body, "Body"));
         }
@@ -578,6 +702,356 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
                 .max_height(inner_scroll_h)
                 .auto_shrink([false, false])
                 .show(ui, |ui| match app.request_subtab {
+                    RequestSubTab::GraphQl => {
+                        let schema_opt = app.graphql_schemas.get(&req_clone.id).cloned();
+                        let is_introspecting =
+                            app.graphql_introspecting_id.as_deref() == Some(req_clone.id.as_str());
+                        let active_idem_key = resolved
+                            .masked_headers
+                            .iter()
+                            .find(|h| h.name.eq_ignore_ascii_case("idempotency-key"))
+                            .map(|h| h.value.clone());
+                        let mut trigger_introspect = false;
+
+                        if let RequestBody::GraphQl {
+                            query,
+                            variables,
+                            operation_name,
+                        } = &mut app.state.requests[req_idx].body
+                        {
+                            let analysis = analyze_graphql_document(
+                                query,
+                                operation_name.as_deref(),
+                                8,
+                                120,
+                            );
+                            let selected_op_kind = analysis.active_kind;
+
+                            // Compact GraphQL Studio Toolbar
+                            ui.horizontal_wrapped(|ui| {
+                                ui.spacing_mut().item_spacing.x = 5.0;
+                                let op_label = operation_name
+                                    .as_deref()
+                                    .filter(|s| !s.trim().is_empty())
+                                    .unwrap_or("(Auto operation)");
+                                egui::ComboBox::from_id_salt("gql-op-select")
+                                    .selected_text(
+                                        egui::RichText::new(format!("Op: {op_label}"))
+                                            .size(11.0)
+                                            .monospace(),
+                                    )
+                                    .width(155.0)
+                                    .show_ui(ui, |ui| {
+                                        if ui
+                                            .selectable_label(
+                                                operation_name.is_none(),
+                                                "(Auto — single/first op)",
+                                            )
+                                            .clicked()
+                                        {
+                                            *operation_name = None;
+                                            changed = true;
+                                        }
+                                        for op in &analysis.operations {
+                                            if let Some(ref name) = op.name {
+                                                let selected = operation_name.as_deref()
+                                                    == Some(name.as_str());
+                                                if ui
+                                                    .selectable_label(
+                                                        selected,
+                                                        format!("{} · {}", op.kind.as_str(), name),
+                                                    )
+                                                    .clicked()
+                                                {
+                                                    *operation_name = Some(name.clone());
+                                                    changed = true;
+                                                }
+                                            }
+                                        }
+                                    });
+
+                                let fetch_lbl = if is_introspecting {
+                                    "Fetching Schema…"
+                                } else if schema_opt.is_some() {
+                                    "Refresh Schema"
+                                } else {
+                                    "Fetch Schema"
+                                };
+                                if swaggen_ui_kit::secondary_button(
+                                    ui,
+                                    !is_introspecting,
+                                    fetch_lbl,
+                                )
+                                .on_hover_text(
+                                    "Run GraphQL __schema introspection directly from this PC",
+                                )
+                                .clicked()
+                                {
+                                    trigger_introspect = true;
+                                }
+
+                                if swaggen_ui_kit::secondary_button(ui, true, "Sync $Vars")
+                                    .on_hover_text(
+                                        "Auto-populate missing $variables from the active GraphQL operation",
+                                    )
+                                    .clicked()
+                                {
+                                    let active_vars: Vec<(String, String)> = analysis
+                                        .operations
+                                        .iter()
+                                        .find(|op| match operation_name.as_deref() {
+                                            Some(want) if !want.trim().is_empty() => {
+                                                op.name.as_deref() == Some(want.trim())
+                                            }
+                                            _ => true,
+                                        })
+                                        .map(|op| op.variables.clone())
+                                        .unwrap_or_default();
+                                    *variables =
+                                        generate_variables_skeleton(&active_vars, variables);
+                                    changed = true;
+                                }
+
+                                if ui
+                                    .small_button("Format JSON")
+                                    .on_hover_text("Pretty-print GraphQL Variables JSON")
+                                    .clicked()
+                                    && let Ok(val) =
+                                        serde_json::from_str::<serde_json::Value>(variables)
+                                    && let Ok(pretty) = serde_json::to_string_pretty(&val)
+                                {
+                                    *variables = pretty;
+                                    changed = true;
+                                }
+
+                                swaggen_ui_kit::pill_badge(
+                                    ui,
+                                    swaggen_ui_kit::method_color("GQL"),
+                                    &format!(
+                                        "{} · Depth {} · {} fields",
+                                        selected_op_kind.as_str().to_ascii_uppercase(),
+                                        analysis.max_depth,
+                                        analysis.total_fields
+                                    ),
+                                );
+
+                                if !analysis.potential_n_plus_1_paths.is_empty() {
+                                    let tip = format!(
+                                        "Nested plural selections detected: {}.\nEnsure your GraphQL server uses batched DataLoaders (Swaggen /v1/graphql batches automatically in O(1) DB queries).",
+                                        analysis.potential_n_plus_1_paths.join(", ")
+                                    );
+                                    ui.scope(|ui| {
+                                        swaggen_ui_kit::status_badge(
+                                            ui,
+                                            NoticeKind::Warning,
+                                            &format!(
+                                                "N+1 Check ({})",
+                                                analysis.potential_n_plus_1_paths.len()
+                                            ),
+                                        );
+                                    })
+                                    .response
+                                    .on_hover_text(tip);
+                                }
+
+                                if let Some(ref idem) = active_idem_key {
+                                    ui.scope(|ui| {
+                                        swaggen_ui_kit::status_badge(
+                                            ui,
+                                            NoticeKind::Success,
+                                            "Idempotent",
+                                        );
+                                    })
+                                    .response
+                                    .on_hover_text(format!("Idempotency-Key: {idem}"));
+                                }
+                            });
+                            ui.add_space(3.0);
+
+                            for err in &resolved.blocking_errors {
+                                swaggen_ui_kit::notice_banner(
+                                    ui,
+                                    NoticeKind::Danger,
+                                    "Blocked",
+                                    err,
+                                );
+                                ui.add_space(2.0);
+                            }
+
+                            // Pointer-locked 2-column GraphQL Studio: Query / Mutation (left) | Variables JSON + Schema Explorer (right)
+                            let avail_rect = ui.available_rect_before_wrap();
+                            let total_w = avail_rect.width().max(320.0);
+                            let pane_h = (inner_scroll_h - 38.0).max(96.0);
+                            let mut split_ratio = app.gql_split_ratio.clamp(0.32, 0.76);
+                            let left_w =
+                                ((total_w - 14.0) * split_ratio).clamp(150.0, (total_w - 150.0).max(150.0));
+                            let right_w = (total_w - left_w - 14.0).max(130.0);
+                            let code_rows = ((pane_h - 26.0) / 17.5).clamp(4.0, 26.0) as usize;
+
+                            ui.horizontal_top(|ui| {
+                                ui.spacing_mut().item_spacing.x = 3.0;
+                                ui.allocate_ui_with_layout(
+                                    egui::vec2(left_w, pane_h),
+                                    egui::Layout::top_down(egui::Align::Min),
+                                    |ui| {
+                                        ui.label(
+                                            egui::RichText::new("QUERY / MUTATION")
+                                                .size(10.0)
+                                                .color(Tokens::TEXT_SECONDARY)
+                                                .strong(),
+                                        );
+                                        if ui
+                                            .add(
+                                                egui::TextEdit::multiline(query)
+                                                    .id_salt("gql_query_editor")
+                                                    .hint_text("query Example($id: ID!) {\n  ...\n}")
+                                                    .desired_width(left_w)
+                                                    .desired_rows(code_rows)
+                                                    .code_editor(),
+                                            )
+                                            .changed()
+                                        {
+                                            changed = true;
+                                        }
+                                    },
+                                );
+
+                                let (split_resp, _) = swaggen_ui_kit::vertical_splitter(
+                                    ui,
+                                    "gql_studio_vsplit",
+                                    pane_h,
+                                );
+                                if split_resp.dragged()
+                                    && let Some(pos) = ui.ctx().pointer_interact_pos()
+                                {
+                                    split_ratio =
+                                        ((pos.x - avail_rect.left()) / total_w).clamp(0.32, 0.76);
+                                    app.gql_split_ratio = split_ratio;
+                                }
+                                if split_resp
+                                    .on_hover_text(
+                                        "Drag left/right to resize Query vs Variables · Double-click to reset",
+                                    )
+                                    .double_clicked()
+                                {
+                                    app.gql_split_ratio = 0.60;
+                                }
+
+                                ui.allocate_ui_with_layout(
+                                    egui::vec2(right_w, pane_h),
+                                    egui::Layout::top_down(egui::Align::Min),
+                                    |ui| {
+                                        ui.horizontal(|ui| {
+                                            ui.label(
+                                                egui::RichText::new("VARIABLES (JSON)")
+                                                    .size(10.0)
+                                                    .color(Tokens::TEXT_SECONDARY)
+                                                    .strong(),
+                                            );
+                                            if !variables.trim().is_empty()
+                                                && let Err(e) =
+                                                    serde_json::from_str::<serde_json::Value>(
+                                                        variables,
+                                                    )
+                                            {
+                                                ui.label(
+                                                    egui::RichText::new(format!("Invalid JSON: {e}"))
+                                                        .size(10.0)
+                                                        .color(Tokens::TEXT_DANGER),
+                                                );
+                                            }
+                                        });
+                                        let var_rows = if schema_opt.is_some() {
+                                            (code_rows / 2).max(3)
+                                        } else {
+                                            code_rows
+                                        };
+                                        if ui
+                                            .add(
+                                                egui::TextEdit::multiline(variables)
+                                                    .id_salt("gql_vars_editor")
+                                                    .hint_text("{\n  \"id\": \"1\"\n}")
+                                                    .desired_width(right_w)
+                                                    .desired_rows(var_rows)
+                                                    .code_editor(),
+                                            )
+                                            .changed()
+                                        {
+                                            changed = true;
+                                        }
+
+                                        if let Some(ref schema) = schema_opt {
+                                            ui.add_space(4.0);
+                                            egui::CollapsingHeader::new(
+                                                egui::RichText::new(format!(
+                                                    "Schema Explorer ({} queries · {} mutations)",
+                                                    schema.query_fields.len(),
+                                                    schema.mutation_fields.len()
+                                                ))
+                                                .size(10.5)
+                                                .color(Tokens::STATUS_INFO)
+                                                .strong(),
+                                            )
+                                            .default_open(true)
+                                            .show(ui, |ui| {
+                                                for (kind, list) in [
+                                                    (
+                                                        GraphQlOperationKind::Query,
+                                                        &schema.query_fields,
+                                                    ),
+                                                    (
+                                                        GraphQlOperationKind::Mutation,
+                                                        &schema.mutation_fields,
+                                                    ),
+                                                ] {
+                                                    for f in list {
+                                                        ui.horizontal_wrapped(|ui| {
+                                                            ui.spacing_mut().item_spacing.x = 4.0;
+                                                            if ui
+                                                                .small_button("Use")
+                                                                .on_hover_text(
+                                                                    "Generate GraphQL operation & variables template",
+                                                                )
+                                                                .clicked()
+                                                            {
+                                                                let (tpl_q, tpl_v) =
+                                                                    build_operation_template(
+                                                                        kind, f, schema,
+                                                                    );
+                                                                *query = tpl_q;
+                                                                *variables = tpl_v;
+                                                                *operation_name = None;
+                                                                changed = true;
+                                                            }
+                                                            ui.monospace(
+                                                                egui::RichText::new(format!(
+                                                                    "{} {}: {}",
+                                                                    kind.as_str(),
+                                                                    f.name,
+                                                                    f.return_type
+                                                                ))
+                                                                .size(10.5)
+                                                                .color(Tokens::TEXT_PRIMARY),
+                                                            );
+                                                        });
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    },
+                                );
+                            });
+                        }
+
+                        if trigger_introspect {
+                            app.graphql_introspecting_id = Some(req_clone.id.clone());
+                            pending_oauth_cmd = Some(crate::worker::Command::IntrospectGraphQl {
+                                request_id: req_clone.id.clone(),
+                                request: Box::new(app.state.requests[req_idx].clone()),
+                                state: Box::new(app.state.clone()),
+                            });
+                        }
+                    }
                     RequestSubTab::Params => {
                         // Smart quick-filter pills inferred from response JSON (e.g. MockAPI fields + pagination)
                         if !suggestions.is_empty() {
@@ -780,21 +1254,23 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
                         let mut kind_idx = match &app.state.requests[req_idx].body {
                             RequestBody::None => 0,
                             RequestBody::Json(_) => 1,
-                            RequestBody::Text(_) => 2,
-                            RequestBody::Xml(_) => 3,
-                            RequestBody::FormUrlEncoded(_) => 4,
-                            RequestBody::Multipart(_) => 5,
-                            RequestBody::Binary { .. } => 6,
+                            RequestBody::GraphQl { .. } => 2,
+                            RequestBody::Text(_) => 3,
+                            RequestBody::Xml(_) => 4,
+                            RequestBody::FormUrlEncoded(_) => 5,
+                            RequestBody::Multipart(_) => 6,
+                            RequestBody::Binary { .. } => 7,
                         };
                         ui.horizontal_wrapped(|ui| {
                             for (idx, lbl) in [
                                 (0, "None"),
                                 (1, "JSON"),
-                                (2, "Text"),
-                                (3, "XML"),
-                                (4, "Form URL-encoded"),
-                                (5, "Multipart"),
-                                (6, "Binary"),
+                                (2, "GraphQL"),
+                                (3, "Text"),
+                                (4, "XML"),
+                                (5, "Form URL-encoded"),
+                                (6, "Multipart"),
+                                (7, "Binary"),
                             ] {
                                 if ui.selectable_label(kind_idx == idx, lbl).clicked()
                                     && kind_idx != idx
@@ -803,15 +1279,23 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
                                     app.state.requests[req_idx].body = match idx {
                                         0 => RequestBody::None,
                                         1 => RequestBody::Json("{\n  \n}".into()),
-                                        2 => RequestBody::Text(String::new()),
-                                        3 => RequestBody::Xml("<root/>".into()),
-                                        4 => RequestBody::FormUrlEncoded(Vec::new()),
-                                        5 => RequestBody::Multipart(Vec::new()),
+                                        2 => RequestBody::GraphQl {
+                                            query: "query ExampleQuery {\n  __typename\n}".into(),
+                                            variables: "{\n  \n}".into(),
+                                            operation_name: None,
+                                        },
+                                        3 => RequestBody::Text(String::new()),
+                                        4 => RequestBody::Xml("<root/>".into()),
+                                        5 => RequestBody::FormUrlEncoded(Vec::new()),
+                                        6 => RequestBody::Multipart(Vec::new()),
                                         _ => RequestBody::Binary {
                                             local_path: None,
                                             content_type: "application/octet-stream".into(),
                                         },
                                     };
+                                    if idx == 2 {
+                                        app.request_subtab = RequestSubTab::GraphQl;
+                                    }
                                     changed = true;
                                 }
                             }
@@ -822,6 +1306,15 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
                                     egui::RichText::new("No body attached to this request.")
                                         .size(11.5)
                                         .color(Tokens::TEXT_SECONDARY),
+                                );
+                            }
+                            RequestBody::GraphQl { .. } => {
+                                ui.label(
+                                    egui::RichText::new(
+                                        "Switched to GraphQL Studio tab for Query & Variables editing.",
+                                    )
+                                    .size(11.5)
+                                    .color(Tokens::STATUS_INFO),
                                 );
                             }
                             RequestBody::Json(text) => {
@@ -1010,10 +1503,9 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
                         }
                     }
                     RequestSubTab::Auth => {
-                        let eff = resolve_effective_auth(col.as_ref(), &fchain, &req_clone);
                         ui.horizontal_wrapped(|ui| {
                             ui.label(
-                                egui::RichText::new(format!("Effective: {}", eff.source))
+                                egui::RichText::new(format!("Effective: {eff_auth_source}"))
                                     .size(11.0)
                                     .color(Tokens::TEXT_SECONDARY),
                             );
@@ -1458,6 +1950,78 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
                                 changed = true;
                             }
                         });
+
+                        ui.add_space(4.0);
+                        ui.separator();
+                        let req_mut = &mut app.state.requests[req_idx];
+                        ui.horizontal_wrapped(|ui| {
+                            ui.spacing_mut().item_spacing.x = 5.0;
+                            ui.label(
+                                egui::RichText::new("Idempotency-Key:")
+                                    .size(11.5)
+                                    .color(Tokens::TEXT_PRIMARY)
+                                    .strong(),
+                            );
+                            for (mode, lbl) in [
+                                (
+                                    IdempotencyMode::AutoOnMutating,
+                                    "Auto (POST/PATCH & GQL Mutation)",
+                                ),
+                                (IdempotencyMode::Always, "Always"),
+                                (IdempotencyMode::Disabled, "Off"),
+                            ] {
+                                if ui
+                                    .selectable_label(req_mut.idempotency_mode == mode, lbl)
+                                    .clicked()
+                                    && req_mut.idempotency_mode != mode
+                                {
+                                    req_mut.idempotency_mode = mode;
+                                    changed = true;
+                                }
+                            }
+                            if swaggen_ui_kit::secondary_button(ui, true, "Rotate Key")
+                                .on_hover_text(
+                                    "Increment idempotency nonce so the next call executes as a fresh distinct operation",
+                                )
+                                .clicked()
+                            {
+                                req_mut.idempotency_nonce =
+                                    req_mut.idempotency_nonce.saturating_add(1);
+                                changed = true;
+                            }
+                        });
+                        if req_mut.idempotency_mode != IdempotencyMode::Disabled {
+                            ui.horizontal_wrapped(|ui| {
+                                ui.label(
+                                    egui::RichText::new("Custom key (optional):")
+                                        .size(11.0)
+                                        .color(Tokens::TEXT_SECONDARY),
+                                );
+                                if ui
+                                    .add(
+                                        egui::TextEdit::singleline(
+                                            &mut req_mut.custom_idempotency_key,
+                                        )
+                                        .hint_text("Auto content-addressed SHA-256 key")
+                                        .desired_width(210.0),
+                                    )
+                                    .changed()
+                                {
+                                    changed = true;
+                                }
+                                if let Some(h) = resolved
+                                    .masked_headers
+                                    .iter()
+                                    .find(|h| h.name.eq_ignore_ascii_case("idempotency-key"))
+                                {
+                                    ui.monospace(
+                                        egui::RichText::new(format!("Active: {}", h.value))
+                                            .size(10.5)
+                                            .color(Tokens::STATUS_SUCCESS),
+                                    );
+                                }
+                            });
+                        }
                     }
                     RequestSubTab::Resolved => {
                         for err in &resolved.blocking_errors {

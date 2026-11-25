@@ -2,6 +2,7 @@
 pub mod dynamic_vars;
 pub mod extensions;
 pub mod governance;
+pub mod graphql;
 pub mod security;
 pub mod server_profiles;
 pub mod ssrf;

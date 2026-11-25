@@ -158,6 +158,39 @@ pub fn show(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
                         if resp.tls_exception_used {
                             swaggen_ui_kit::status_badge(ui, NoticeKind::Warning, "TLS exception");
                         }
+                        if resp.headers.iter().any(|(k, v)| {
+                            k.eq_ignore_ascii_case("x-idempotent-replayed")
+                                && v.trim().eq_ignore_ascii_case("true")
+                        }) {
+                            swaggen_ui_kit::status_badge(
+                                ui,
+                                NoticeKind::Success,
+                                "Idempotent Replay",
+                            );
+                        }
+                        if let Ok(val) = serde_json::from_str::<serde_json::Value>(&raw_text) {
+                            if let Some(errs) = val.get("errors").and_then(|e| e.as_array())
+                                && !errs.is_empty()
+                            {
+                                swaggen_ui_kit::status_badge(
+                                    ui,
+                                    NoticeKind::Danger,
+                                    &format!("GQL Errors ({})", errs.len()),
+                                );
+                            }
+                            if let Some(db_q) = val
+                                .get("extensions")
+                                .and_then(|e| e.get("performance"))
+                                .and_then(|p| p.get("dbQueries"))
+                                .and_then(|q| q.as_u64())
+                            {
+                                swaggen_ui_kit::pill_badge(
+                                    ui,
+                                    Tokens::STATUS_SUCCESS,
+                                    &format!("DB Queries: {db_q} (Batched)"),
+                                );
+                            }
+                        }
                         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                             let max_lbl = if app.response_maximized {
                                 "Restore"
@@ -266,6 +299,23 @@ pub fn show(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
                                 resp.decoded_bytes
                             ),
                         );
+                    }
+                    if app.response_subtab == ResponseSubTab::Body
+                        && let Ok(val) = serde_json::from_str::<serde_json::Value>(&raw_text)
+                        && let Some(errs) = val.get("errors").and_then(|e| e.as_array())
+                        && !errs.is_empty()
+                    {
+                        let first_msg = errs[0]
+                            .get("message")
+                            .and_then(|m| m.as_str())
+                            .unwrap_or("GraphQL execution error");
+                        swaggen_ui_kit::notice_banner(
+                            ui,
+                            NoticeKind::Danger,
+                            &format!("GraphQL returned {} error(s)", errs.len()),
+                            first_msg,
+                        );
+                        ui.add_space(2.0);
                     }
 
                     // Full remaining height dedicated to non-nested 2D ScrollArea

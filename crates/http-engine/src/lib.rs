@@ -808,6 +808,25 @@ fn encode_body(body: &RequestBody) -> Result<(Vec<u8>, Option<String>), (HttpErr
     match body {
         RequestBody::None => Ok((Vec::new(), None)),
         RequestBody::Json(s) => Ok((s.as_bytes().to_vec(), Some("application/json".into()))),
+        RequestBody::GraphQl {
+            query,
+            variables,
+            operation_name,
+        } => {
+            let vars_val = serde_json::from_str::<serde_json::Value>(variables)
+                .unwrap_or_else(|_| serde_json::json!({}));
+            let mut obj = serde_json::Map::new();
+            obj.insert("query".into(), serde_json::Value::String(query.clone()));
+            obj.insert("variables".into(), vars_val);
+            if let Some(op) = operation_name.as_deref().filter(|s| !s.trim().is_empty()) {
+                obj.insert(
+                    "operationName".into(),
+                    serde_json::Value::String(op.trim().to_owned()),
+                );
+            }
+            let raw = serde_json::to_vec(&serde_json::Value::Object(obj)).unwrap_or_default();
+            Ok((raw, Some("application/json".into())))
+        }
         RequestBody::Text(s) => Ok((
             s.as_bytes().to_vec(),
             Some("text/plain; charset=utf-8".into()),

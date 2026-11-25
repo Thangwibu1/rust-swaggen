@@ -146,6 +146,12 @@ pub enum RequestBody {
     #[default]
     None,
     Json(String),
+    GraphQl {
+        query: String,
+        variables: String,
+        #[serde(default)]
+        operation_name: Option<String>,
+    },
     Text(String),
     Xml(String),
     FormUrlEncoded(Vec<KeyValueRow>),
@@ -154,6 +160,17 @@ pub enum RequestBody {
         local_path: Option<String>,
         content_type: String,
     },
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub enum IdempotencyMode {
+    /// Automatically attaches a deterministic `Idempotency-Key` on `POST`/`PATCH` and GraphQL mutations.
+    #[default]
+    AutoOnMutating,
+    /// Always attaches `Idempotency-Key` regardless of HTTP method.
+    Always,
+    /// Does not auto-generate `Idempotency-Key`.
+    Disabled,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -273,6 +290,12 @@ pub struct RequestItem {
     pub assertions: Vec<AssertionRule>,
     #[serde(default)]
     pub extractors: Vec<crate::dynamic_vars::ResponseExtractorRule>,
+    #[serde(default)]
+    pub idempotency_mode: IdempotencyMode,
+    #[serde(default)]
+    pub custom_idempotency_key: String,
+    #[serde(default)]
+    pub idempotency_nonce: u64,
     pub linked_operation_uid: Option<String>,
     pub shared_revision: u64,
     pub dirty_vs_shared: bool,
@@ -304,6 +327,9 @@ impl RequestItem {
             local_vars: Vec::new(),
             assertions: Vec::new(),
             extractors: Vec::new(),
+            idempotency_mode: IdempotencyMode::AutoOnMutating,
+            custom_idempotency_key: String::new(),
+            idempotency_nonce: 0,
             linked_operation_uid: None,
             shared_revision: 0,
             dirty_vs_shared: false,
@@ -311,6 +337,24 @@ impl RequestItem {
         };
         item.sync_params_from_url();
         item
+    }
+
+    pub fn new_graphql(
+        collection_id: impl Into<String>,
+        name: impl Into<String>,
+        url: impl Into<String>,
+    ) -> Self {
+        let mut item = Self::new(collection_id, name, HttpMethod::Post, url);
+        item.body = RequestBody::GraphQl {
+            query: "query ExampleQuery {\n  __typename\n}".into(),
+            variables: "{\n  \n}".into(),
+            operation_name: None,
+        };
+        item
+    }
+
+    pub fn is_graphql(&self) -> bool {
+        matches!(self.body, RequestBody::GraphQl { .. })
     }
 
     /// Parses the current `url` and synchronizes `query_params` and `path_params` live,
@@ -1111,140 +1155,307 @@ pub fn resolve_request_preview(
         });
     }
 
-    // 5. Body resolution + JSON/XML/file validation (Q10, Q17).
-    // GET and HEAD requests never transmit a request body.
-    let (resolved_body, masked_body_preview) =
-        if matches!(request.method, HttpMethod::Get | HttpMethod::Head) {
-            (RequestBody::None, String::new())
-        } else {
-            match &request.body {
-                RequestBody::None => (RequestBody::None, String::new()),
-                RequestBody::Json(raw) => {
-                    let real = vars.substitute(raw, false).unwrap_or_else(|e| {
-                        blocking_errors.push(e.to_string());
-                        raw.clone()
-                    });
-                    let masked = vars.substitute(raw, true).unwrap_or_else(|_| raw.clone());
-                    if !real.trim().is_empty()
-                        && let Err(err) = serde_json::from_str::<serde_json::Value>(&real)
-                    {
-                        blocking_errors.push(format!("Invalid JSON body: {err}"));
-                    }
-                    (RequestBody::Json(real), masked)
-                }
-                RequestBody::Text(raw) => {
-                    let real = vars.substitute(raw, false).unwrap_or_else(|e| {
-                        blocking_errors.push(e.to_string());
-                        raw.clone()
-                    });
-                    let masked = vars.substitute(raw, true).unwrap_or_else(|_| raw.clone());
-                    (RequestBody::Text(real), masked)
-                }
-                RequestBody::Xml(raw) => {
-                    let real = vars.substitute(raw, false).unwrap_or_else(|e| {
-                        blocking_errors.push(e.to_string());
-                        raw.clone()
-                    });
-                    let masked = vars.substitute(raw, true).unwrap_or_else(|_| raw.clone());
-                    if !real.trim().is_empty()
-                        && let Err(err) = roxmltree::Document::parse(&real)
-                    {
-                        warnings.push(format!("XML parse note: {err}"));
-                    }
-                    (RequestBody::Xml(real), masked)
-                }
-                RequestBody::FormUrlEncoded(rows) => {
-                    let mut real_rows = Vec::new();
-                    let mut preview_parts = Vec::new();
-                    for row in rows.iter().filter(|r| r.enabled && !r.key.is_empty()) {
-                        let k = vars.substitute(&row.key, false).unwrap_or_else(|e| {
-                            blocking_errors.push(e.to_string());
-                            row.key.clone()
-                        });
-                        let v = vars.substitute(&row.value, false).unwrap_or_else(|e| {
-                            blocking_errors.push(e.to_string());
-                            row.value.clone()
-                        });
-                        let mv = vars
-                            .substitute(&row.value, true)
-                            .unwrap_or_else(|_| row.value.clone());
-                        preview_parts.push(format!("{k}={mv}"));
-                        real_rows.push(KeyValueRow::new(k, v));
-                    }
-                    (
-                        RequestBody::FormUrlEncoded(real_rows),
-                        preview_parts.join("&"),
-                    )
-                }
-                RequestBody::Multipart(fields) => {
-                    let mut resolved_fields = Vec::new();
-                    let mut preview = Vec::new();
-                    for f in fields.iter().filter(|f| f.enabled && !f.name.is_empty()) {
-                        match &f.value {
-                            MultipartValueKind::Text(v) => {
-                                let real = vars.substitute(v, false).unwrap_or_else(|e| {
-                                    blocking_errors.push(e.to_string());
-                                    v.clone()
-                                });
-                                let mv = vars.substitute(v, true).unwrap_or_else(|_| v.clone());
-                                preview.push(format!("{}={mv}", f.name));
-                                resolved_fields.push(MultipartField {
-                                    name: f.name.clone(),
-                                    value: MultipartValueKind::Text(real),
-                                    enabled: true,
-                                });
-                            }
-                            MultipartValueKind::File {
-                                local_path,
-                                file_name,
-                                content_type,
-                            } => {
-                                if !std::path::Path::new(local_path).is_file() {
-                                    blocking_errors.push(format!(
-                                        "Local upload file missing for '{}': {file_name}",
-                                        f.name
-                                    ));
-                                }
-                                preview.push(format!("{}=<local file: {file_name}>", f.name));
-                                resolved_fields.push(MultipartField {
-                                    name: f.name.clone(),
-                                    value: MultipartValueKind::File {
-                                        local_path: local_path.clone(),
-                                        file_name: file_name.clone(),
-                                        content_type: content_type.clone(),
-                                    },
-                                    enabled: true,
-                                });
-                            }
-                        }
-                    }
-                    (RequestBody::Multipart(resolved_fields), preview.join("\n"))
-                }
-                RequestBody::Binary {
-                    local_path,
-                    content_type,
-                } => match local_path {
-                    Some(path) if std::path::Path::new(path).is_file() => (
-                        RequestBody::Binary {
-                            local_path: Some(path.clone()),
-                            content_type: content_type.clone(),
-                        },
-                        format!("<binary file: {path} ({content_type})>"),
-                    ),
-                    Some(_) => {
-                        blocking_errors.push("Local binary body file is missing".into());
-                        (request.body.clone(), "<missing binary file>".into())
-                    }
-                    None => {
-                        blocking_errors.push("Select a local binary file before sending".into());
-                        (request.body.clone(), "<no binary file selected>".into())
-                    }
-                },
-            }
-        };
+    // 5. Body & GraphQL resolution + JSON/XML/file validation + Idempotency-Key injection.
+    let mut is_graphql_mutation = false;
+    let (resolved_body, masked_body_preview) = match &request.body {
+        RequestBody::GraphQl {
+            query,
+            variables,
+            operation_name,
+        } => {
+            let real_q = vars.substitute(query, false).unwrap_or_else(|e| {
+                blocking_errors.push(e.to_string());
+                query.clone()
+            });
+            let masked_q = vars
+                .substitute(query, true)
+                .unwrap_or_else(|_| query.clone());
+            let real_vars = vars.substitute(variables, false).unwrap_or_else(|e| {
+                blocking_errors.push(e.to_string());
+                variables.clone()
+            });
+            let masked_vars = vars
+                .substitute(variables, true)
+                .unwrap_or_else(|_| variables.clone());
+            let real_op = operation_name
+                .as_deref()
+                .filter(|s| !s.trim().is_empty())
+                .map(|op| {
+                    vars.substitute(op.trim(), false)
+                        .unwrap_or_else(|_| op.trim().to_owned())
+                });
 
+            let parsed_vars = if real_vars.trim().is_empty() {
+                serde_json::json!({})
+            } else {
+                match serde_json::from_str::<serde_json::Value>(&real_vars) {
+                    Ok(v) if v.is_object() || v.is_null() => v,
+                    Ok(_) => {
+                        blocking_errors
+                            .push("GraphQL variables must be a JSON object ({ ... })".into());
+                        serde_json::json!({})
+                    }
+                    Err(err) => {
+                        blocking_errors.push(format!("Invalid GraphQL variables JSON: {err}"));
+                        serde_json::json!({})
+                    }
+                }
+            };
+            let masked_parsed_vars = serde_json::from_str::<serde_json::Value>(&masked_vars)
+                .unwrap_or_else(|_| serde_json::json!({}));
+
+            let analysis =
+                crate::graphql::analyze_graphql_document(&real_q, real_op.as_deref(), 10, 150);
+            is_graphql_mutation =
+                analysis.active_kind == crate::graphql::GraphQlOperationKind::Mutation;
+            for w in analysis.complexity_warnings {
+                warnings.push(format!("GraphQL complexity: {w}"));
+            }
+            if !analysis.potential_n_plus_1_paths.is_empty() {
+                warnings.push(format!(
+                    "GraphQL nested list path(s) [{}] — ensure backend uses batched DataLoader/$in queries to avoid N+1",
+                    analysis.potential_n_plus_1_paths.join(", ")
+                ));
+            }
+
+            if !headers
+                .iter()
+                .any(|h| h.name.eq_ignore_ascii_case("accept"))
+            {
+                let accept_val = "application/graphql-response+json, application/json";
+                headers.push(ResolvedHeader {
+                    name: "Accept".into(),
+                    value: accept_val.into(),
+                    generated: true,
+                });
+                masked_headers.push(ResolvedHeader {
+                    name: "Accept".into(),
+                    value: accept_val.into(),
+                    generated: true,
+                });
+            }
+
+            if request.method == HttpMethod::Get {
+                if is_graphql_mutation {
+                    blocking_errors.push(
+                        "GraphQL mutations are not allowed over HTTP GET (switch method to POST)"
+                            .into(),
+                    );
+                }
+                let mut gql_qp = vec![("query".to_owned(), real_q)];
+                let mut gql_masked_qp = vec![("query".to_owned(), masked_q)];
+                if parsed_vars.as_object().is_some_and(|m| !m.is_empty()) {
+                    gql_qp.push(("variables".to_owned(), parsed_vars.to_string()));
+                    gql_masked_qp.push(("variables".to_owned(), masked_parsed_vars.to_string()));
+                }
+                if let Some(ref op) = real_op {
+                    gql_qp.push(("operationName".to_owned(), op.clone()));
+                    gql_masked_qp.push(("operationName".to_owned(), op.clone()));
+                }
+                final_url = append_query_pairs(&final_url, &gql_qp);
+                final_masked_url = append_query_pairs(&final_masked_url, &gql_masked_qp);
+                (RequestBody::None, String::new())
+            } else if request.method == HttpMethod::Head {
+                (RequestBody::None, String::new())
+            } else {
+                let mut env_obj = serde_json::Map::new();
+                env_obj.insert("query".into(), serde_json::Value::String(real_q));
+                env_obj.insert("variables".into(), parsed_vars);
+                if let Some(ref op) = real_op {
+                    env_obj.insert(
+                        "operationName".into(),
+                        serde_json::Value::String(op.clone()),
+                    );
+                }
+                let mut masked_obj = serde_json::Map::new();
+                masked_obj.insert("query".into(), serde_json::Value::String(masked_q));
+                masked_obj.insert("variables".into(), masked_parsed_vars);
+                if let Some(op) = real_op {
+                    masked_obj.insert("operationName".into(), serde_json::Value::String(op));
+                }
+                let real_json =
+                    serde_json::to_string(&serde_json::Value::Object(env_obj)).unwrap_or_default();
+                let masked_json =
+                    serde_json::to_string_pretty(&serde_json::Value::Object(masked_obj))
+                        .unwrap_or_default();
+                (RequestBody::Json(real_json), masked_json)
+            }
+        }
+        _ if matches!(request.method, HttpMethod::Get | HttpMethod::Head) => {
+            (RequestBody::None, String::new())
+        }
+        RequestBody::None => (RequestBody::None, String::new()),
+        RequestBody::Json(raw) => {
+            let real = vars.substitute(raw, false).unwrap_or_else(|e| {
+                blocking_errors.push(e.to_string());
+                raw.clone()
+            });
+            let masked = vars.substitute(raw, true).unwrap_or_else(|_| raw.clone());
+            if !real.trim().is_empty()
+                && let Err(err) = serde_json::from_str::<serde_json::Value>(&real)
+            {
+                blocking_errors.push(format!("Invalid JSON body: {err}"));
+            }
+            (RequestBody::Json(real), masked)
+        }
+        RequestBody::Text(raw) => {
+            let real = vars.substitute(raw, false).unwrap_or_else(|e| {
+                blocking_errors.push(e.to_string());
+                raw.clone()
+            });
+            let masked = vars.substitute(raw, true).unwrap_or_else(|_| raw.clone());
+            (RequestBody::Text(real), masked)
+        }
+        RequestBody::Xml(raw) => {
+            let real = vars.substitute(raw, false).unwrap_or_else(|e| {
+                blocking_errors.push(e.to_string());
+                raw.clone()
+            });
+            let masked = vars.substitute(raw, true).unwrap_or_else(|_| raw.clone());
+            if !real.trim().is_empty()
+                && let Err(err) = roxmltree::Document::parse(&real)
+            {
+                warnings.push(format!("XML parse note: {err}"));
+            }
+            (RequestBody::Xml(real), masked)
+        }
+        RequestBody::FormUrlEncoded(rows) => {
+            let mut real_rows = Vec::new();
+            let mut preview_parts = Vec::new();
+            for row in rows.iter().filter(|r| r.enabled && !r.key.is_empty()) {
+                let k = vars.substitute(&row.key, false).unwrap_or_else(|e| {
+                    blocking_errors.push(e.to_string());
+                    row.key.clone()
+                });
+                let v = vars.substitute(&row.value, false).unwrap_or_else(|e| {
+                    blocking_errors.push(e.to_string());
+                    row.value.clone()
+                });
+                let mv = vars
+                    .substitute(&row.value, true)
+                    .unwrap_or_else(|_| row.value.clone());
+                preview_parts.push(format!("{k}={mv}"));
+                real_rows.push(KeyValueRow::new(k, v));
+            }
+            (
+                RequestBody::FormUrlEncoded(real_rows),
+                preview_parts.join("&"),
+            )
+        }
+        RequestBody::Multipart(fields) => {
+            let mut resolved_fields = Vec::new();
+            let mut preview = Vec::new();
+            for f in fields.iter().filter(|f| f.enabled && !f.name.is_empty()) {
+                match &f.value {
+                    MultipartValueKind::Text(v) => {
+                        let real = vars.substitute(v, false).unwrap_or_else(|e| {
+                            blocking_errors.push(e.to_string());
+                            v.clone()
+                        });
+                        let mv = vars.substitute(v, true).unwrap_or_else(|_| v.clone());
+                        preview.push(format!("{}={mv}", f.name));
+                        resolved_fields.push(MultipartField {
+                            name: f.name.clone(),
+                            value: MultipartValueKind::Text(real),
+                            enabled: true,
+                        });
+                    }
+                    MultipartValueKind::File {
+                        local_path,
+                        file_name,
+                        content_type,
+                    } => {
+                        if !std::path::Path::new(local_path).is_file() {
+                            blocking_errors.push(format!(
+                                "Local upload file missing for '{}': {file_name}",
+                                f.name
+                            ));
+                        }
+                        preview.push(format!("{}=<local file: {file_name}>", f.name));
+                        resolved_fields.push(MultipartField {
+                            name: f.name.clone(),
+                            value: MultipartValueKind::File {
+                                local_path: local_path.clone(),
+                                file_name: file_name.clone(),
+                                content_type: content_type.clone(),
+                            },
+                            enabled: true,
+                        });
+                    }
+                }
+            }
+            (RequestBody::Multipart(resolved_fields), preview.join("\n"))
+        }
+        RequestBody::Binary {
+            local_path,
+            content_type,
+        } => match local_path {
+            Some(path) if std::path::Path::new(path).is_file() => (
+                RequestBody::Binary {
+                    local_path: Some(path.clone()),
+                    content_type: content_type.clone(),
+                },
+                format!("<binary file: {path} ({content_type})>"),
+            ),
+            Some(_) => {
+                blocking_errors.push("Local binary body file is missing".into());
+                (request.body.clone(), "<missing binary file>".into())
+            }
+            None => {
+                blocking_errors.push("Select a local binary file before sending".into());
+                (request.body.clone(), "<no binary file selected>".into())
+            }
+        },
+    };
+
+    // 6. Idempotency-Key generation for mutating HTTP (`POST` / `PATCH`) & GraphQL `mutation` requests.
+    let should_inject_idempotency = match request.idempotency_mode {
+        IdempotencyMode::Disabled => false,
+        IdempotencyMode::Always => true,
+        IdempotencyMode::AutoOnMutating => {
+            if request.is_graphql() {
+                is_graphql_mutation
+            } else {
+                matches!(request.method, HttpMethod::Post | HttpMethod::Patch)
+            }
+        }
+    };
+    if should_inject_idempotency
+        && !headers
+            .iter()
+            .any(|h| h.name.eq_ignore_ascii_case("idempotency-key"))
+    {
+        let idem_val = if !request.custom_idempotency_key.trim().is_empty() {
+            vars.substitute(request.custom_idempotency_key.trim(), false)
+                .unwrap_or_else(|_| request.custom_idempotency_key.trim().to_owned())
+        } else {
+            compute_deterministic_idempotency_key(
+                &request.id,
+                request.method,
+                &final_url,
+                &resolved_body,
+                request.idempotency_nonce,
+            )
+        };
+        headers.push(ResolvedHeader {
+            name: "Idempotency-Key".into(),
+            value: idem_val.clone(),
+            generated: true,
+        });
+        masked_headers.push(ResolvedHeader {
+            name: "Idempotency-Key".into(),
+            value: idem_val,
+            generated: true,
+        });
+    }
+
+    let is_mutating_call = if request.is_graphql() {
+        is_graphql_mutation
+    } else {
+        request.method.is_mutating()
+    };
     let requires_production_confirm =
-        vars.environment.is_some_and(|e| e.is_production) && request.method.is_mutating();
+        vars.environment.is_some_and(|e| e.is_production) && is_mutating_call;
 
     ResolvedRequest {
         method: request.method,
@@ -1260,6 +1471,62 @@ pub fn resolve_request_preview(
         requires_production_confirm,
         connection: request.connection.clone(),
     }
+}
+
+fn compute_deterministic_idempotency_key(
+    request_id: &str,
+    method: HttpMethod,
+    resolved_url: &str,
+    resolved_body: &RequestBody,
+    nonce: u64,
+) -> String {
+    use sha2::{Digest, Sha256};
+    let mut hasher = Sha256::new();
+    hasher.update(request_id.as_bytes());
+    hasher.update(b"|");
+    hasher.update(method.as_str().as_bytes());
+    hasher.update(b"|");
+    hasher.update(resolved_url.as_bytes());
+    hasher.update(b"|");
+    hasher.update(nonce.to_le_bytes());
+    hasher.update(b"|");
+    match resolved_body {
+        RequestBody::None => {}
+        RequestBody::Json(s) | RequestBody::Text(s) | RequestBody::Xml(s) => {
+            hasher.update(s.as_bytes());
+        }
+        RequestBody::GraphQl {
+            query,
+            variables,
+            operation_name,
+        } => {
+            hasher.update(query.as_bytes());
+            hasher.update(variables.as_bytes());
+            if let Some(op) = operation_name {
+                hasher.update(op.as_bytes());
+            }
+        }
+        RequestBody::FormUrlEncoded(rows) => {
+            for r in rows {
+                hasher.update(r.key.as_bytes());
+                hasher.update(b"=");
+                hasher.update(r.value.as_bytes());
+                hasher.update(b"&");
+            }
+        }
+        RequestBody::Multipart(fields) => {
+            for f in fields {
+                hasher.update(f.name.as_bytes());
+            }
+        }
+        RequestBody::Binary { local_path, .. } => {
+            if let Some(p) = local_path {
+                hasher.update(p.as_bytes());
+            }
+        }
+    }
+    let digest = hex::encode(hasher.finalize());
+    format!("swg-idem-{}", &digest[..24])
 }
 
 fn append_query_pairs(base: &str, pairs: &[(String, String)]) -> String {
@@ -2415,6 +2682,94 @@ mod tests {
         assert_eq!(
             resolved.url,
             "https://api.example.test:8080/v1/users/u-99/orders/ord-7?page=2&q=shoes"
+        );
+    }
+
+    #[test]
+    fn graphql_resolution_and_deterministic_idempotency_key_work() {
+        let mut req =
+            RequestItem::new_graphql("c1", "Create Ws", "https://api.example.test/v1/graphql");
+        req.body = RequestBody::GraphQl {
+            query: "mutation CreateWs($slug: String!, $name: String!) {\n  createWorkspace(slug: $slug, name: $name) { workspaceId }\n}".into(),
+            variables: "{\"slug\":\"team-a\",\"name\":\"Team A\"}".into(),
+            operation_name: Some("CreateWs".into()),
+        };
+        let ctx = VariableContext {
+            workspace_vars: &[],
+            collection_vars: &[],
+            environment: None,
+            request_vars: &[],
+            local_secrets: &BTreeMap::new(),
+        };
+
+        // 1. POST GraphQL mutation builds valid JSON envelope + deterministic Idempotency-Key
+        let r1 = resolve_request_preview(&req, None, &[], &ctx, &[], 1000);
+        let r2 = resolve_request_preview(&req, None, &[], &ctx, &[], 1005);
+        assert!(r1.blocking_errors.is_empty());
+        let k1 = r1
+            .headers
+            .iter()
+            .find(|h| h.name == "Idempotency-Key")
+            .expect("mutation should inject Idempotency-Key")
+            .value
+            .clone();
+        let k2 = r2
+            .headers
+            .iter()
+            .find(|h| h.name == "Idempotency-Key")
+            .unwrap()
+            .value
+            .clone();
+        assert_eq!(
+            k1, k2,
+            "retries of identical payload keep stable Idempotency-Key"
+        );
+        assert!(k1.starts_with("swg-idem-"));
+        if let RequestBody::Json(ref payload) = r1.body {
+            let parsed: serde_json::Value = serde_json::from_str(payload).unwrap();
+            assert_eq!(parsed["operationName"], "CreateWs");
+            assert_eq!(parsed["variables"]["slug"], "team-a");
+        } else {
+            panic!("expected resolved JSON envelope for POST GraphQL");
+        }
+
+        // 2. Rotating nonce produces a fresh distinct Idempotency-Key
+        req.idempotency_nonce += 1;
+        let r3 = resolve_request_preview(&req, None, &[], &ctx, &[], 1010);
+        let k3 = r3
+            .headers
+            .iter()
+            .find(|h| h.name == "Idempotency-Key")
+            .unwrap()
+            .value
+            .clone();
+        assert_ne!(k1, k3);
+
+        // 3. GraphQL mutation over HTTP GET is rejected per GraphQL-over-HTTP spec
+        req.method = HttpMethod::Get;
+        let r_get_mut = resolve_request_preview(&req, None, &[], &ctx, &[], 1010);
+        assert!(
+            r_get_mut
+                .blocking_errors
+                .iter()
+                .any(|e| e.contains("mutations are not allowed over HTTP GET"))
+        );
+
+        // 4. Read-only GraphQL query over POST does NOT inject Idempotency-Key in AutoOnMutating mode
+        req.method = HttpMethod::Post;
+        req.body = RequestBody::GraphQl {
+            query: "query Health { health { status } }".into(),
+            variables: "{}".into(),
+            operation_name: Some("Health".into()),
+        };
+        let r_query = resolve_request_preview(&req, None, &[], &ctx, &[], 1010);
+        assert!(r_query.blocking_errors.is_empty());
+        assert!(
+            !r_query
+                .headers
+                .iter()
+                .any(|h| h.name.eq_ignore_ascii_case("Idempotency-Key")),
+            "read-only GraphQL query must not inject Idempotency-Key under AutoOnMutating"
         );
     }
 }

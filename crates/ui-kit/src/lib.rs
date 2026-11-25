@@ -1009,6 +1009,7 @@ pub fn method_color(method: &str) -> egui::Color32 {
         "DELETE" => Tokens::METHOD_DELETE,
         "HEAD" => Tokens::METHOD_HEAD,
         "OPTIONS" => Tokens::METHOD_OPTIONS,
+        "GQL" | "GRAPHQL" => egui::Color32::from_rgb(0x7C, 0x3A, 0xED),
         _ => Tokens::TEXT_PRIMARY,
     }
 }

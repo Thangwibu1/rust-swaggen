@@ -9,7 +9,7 @@ pub mod repo;
 use error::StoreError;
 use memory_backend::InMemoryStore;
 use mongo_backend::MongoStore;
-use repo::{AuthContext, WorkspaceRepository};
+use repo::{AuthContext, BatchedWorkspaceChildren, IdempotencyClaimOutcome, WorkspaceRepository};
 use swaggen_api_contract::{
     AcceptInvitationRequest, AcceptInvitationResponse, AuditEventRecord, AuthResponse,
     BootstrapOwnerRequest, ChangePasswordRequest, ChangesFeedResponse, CommentThreadRecord,
@@ -508,6 +508,77 @@ impl WorkspaceRepository for ServerStore {
         match self {
             Self::Mongo(m) => m.kv_list(namespace, key_prefix).await,
             Self::Memory(m) => m.kv_list(namespace, key_prefix).await,
+        }
+    }
+    async fn claim_idempotency(
+        &self,
+        scope: &str,
+        key: &str,
+        request_hash: &str,
+        now: i64,
+    ) -> Result<IdempotencyClaimOutcome, StoreError> {
+        match self {
+            Self::Mongo(m) => m.claim_idempotency(scope, key, request_hash, now).await,
+            Self::Memory(m) => m.claim_idempotency(scope, key, request_hash, now).await,
+        }
+    }
+    async fn complete_idempotency(
+        &self,
+        scope: &str,
+        key: &str,
+        status_code: u16,
+        body_json: &str,
+        now: i64,
+    ) -> Result<(), StoreError> {
+        match self {
+            Self::Mongo(m) => {
+                m.complete_idempotency(scope, key, status_code, body_json, now)
+                    .await
+            }
+            Self::Memory(m) => {
+                m.complete_idempotency(scope, key, status_code, body_json, now)
+                    .await
+            }
+        }
+    }
+    async fn release_idempotency(&self, scope: &str, key: &str) -> Result<(), StoreError> {
+        match self {
+            Self::Mongo(m) => m.release_idempotency(scope, key).await,
+            Self::Memory(m) => m.release_idempotency(scope, key).await,
+        }
+    }
+    async fn batch_load_workspaces_children(
+        &self,
+        auth: &AuthContext,
+        workspace_ids: &[String],
+        include_entities: bool,
+        include_members: bool,
+        include_comments: bool,
+        include_notifications: bool,
+    ) -> Result<BatchedWorkspaceChildren, StoreError> {
+        match self {
+            Self::Mongo(m) => {
+                m.batch_load_workspaces_children(
+                    auth,
+                    workspace_ids,
+                    include_entities,
+                    include_members,
+                    include_comments,
+                    include_notifications,
+                )
+                .await
+            }
+            Self::Memory(m) => {
+                m.batch_load_workspaces_children(
+                    auth,
+                    workspace_ids,
+                    include_entities,
+                    include_members,
+                    include_comments,
+                    include_notifications,
+                )
+                .await
+            }
         }
     }
 }

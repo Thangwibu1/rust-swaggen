@@ -5,9 +5,10 @@ use swaggen_api_contract::{
     BootstrapOwnerRequest, ChangePasswordRequest, ChangesFeedResponse, CommentThreadRecord,
     CreateCommentRequest, CreateInvitationRequest, CreateInvitationResponse,
     CreateWorkspaceRequest, EntityRevisionRecord, LoginRequest, MemberListResponse, MemberSummary,
-    NotificationListResponse, PublishBatchRequest, PublishBatchResponse, ReplyCommentRequest,
-    ResolveCommentRequest, RestoreRevisionRequest, SessionSummary, SnapshotResponse,
-    TeamWorkspaceSummary, UpdateMemberRoleRequest, UpsertEntityRequest, WorkspaceEntityRecord,
+    NotificationListResponse, NotificationRecord, PublishBatchRequest, PublishBatchResponse,
+    ReplyCommentRequest, ResolveCommentRequest, RestoreRevisionRequest, SessionSummary,
+    SnapshotResponse, TeamWorkspaceSummary, UpdateMemberRoleRequest, UpsertEntityRequest,
+    WorkspaceEntityRecord,
 };
 
 #[derive(Debug, Clone)]
@@ -276,4 +277,50 @@ pub trait WorkspaceRepository: Send + Sync {
         namespace: &str,
         key_prefix: &str,
     ) -> Result<Vec<(String, String)>, StoreError>;
+
+    async fn claim_idempotency(
+        &self,
+        scope: &str,
+        key: &str,
+        request_hash: &str,
+        now: i64,
+    ) -> Result<IdempotencyClaimOutcome, StoreError>;
+
+    async fn complete_idempotency(
+        &self,
+        scope: &str,
+        key: &str,
+        status_code: u16,
+        body_json: &str,
+        now: i64,
+    ) -> Result<(), StoreError>;
+
+    async fn release_idempotency(&self, scope: &str, key: &str) -> Result<(), StoreError>;
+
+    /// DataLoader-style batched loader fetching nested `entities`, `members`, `comments`,
+    /// and `notifications` across arbitrarily many `workspace_ids` in constant `O(1)` DB queries.
+    async fn batch_load_workspaces_children(
+        &self,
+        auth: &AuthContext,
+        workspace_ids: &[String],
+        include_entities: bool,
+        include_members: bool,
+        include_comments: bool,
+        include_notifications: bool,
+    ) -> Result<BatchedWorkspaceChildren, StoreError>;
+}
+
+#[derive(Debug, Clone, Default)]
+pub struct BatchedWorkspaceChildren {
+    pub entities_by_ws: std::collections::HashMap<String, Vec<WorkspaceEntityRecord>>,
+    pub members_by_ws: std::collections::HashMap<String, Vec<MemberSummary>>,
+    pub comments_by_ws: std::collections::HashMap<String, Vec<CommentThreadRecord>>,
+    pub notifications_by_ws: std::collections::HashMap<String, Vec<NotificationRecord>>,
+    pub db_queries_executed: usize,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum IdempotencyClaimOutcome {
+    Acquired,
+    Replayed { status_code: u16, body_json: String },
 }

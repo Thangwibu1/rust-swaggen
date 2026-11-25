@@ -1,7 +1,9 @@
 #![recursion_limit = "256"]
 //! P04 Swaggen collaboration server: Axum transport, Firebase & internal auth, workspace RBAC, and MongoDB transactions.
 pub mod firebase_auth;
+pub mod graphql_api;
 use crate::firebase_auth::{FirebaseAuthConfig, FirebaseVerifier, render_browser_signin_html};
+use crate::graphql_api::{graphql_get_handler, graphql_post_handler};
 use axum::{
     Extension, Json, Router,
     body::Body,
@@ -44,9 +46,10 @@ use swaggen_domain::{
 };
 use swaggen_mongo_store::{
     ServerStore,
+    crypto::sha256_hex,
     error::StoreError,
     mongo_backend::SCHEMA_MIGRATION_VERSION,
-    repo::{AuthContext, WorkspaceRepository, now_unix},
+    repo::{AuthContext, IdempotencyClaimOutcome, WorkspaceRepository, now_unix},
 };
 use tokio::sync::broadcast;
 
@@ -55,6 +58,8 @@ pub const MAX_MOCK_ROUTES_PER_WORKSPACE: usize = 50;
 pub const MAX_ACTIVE_JOBS_PER_WORKSPACE: usize = 10;
 static REQUEST_COUNTER: AtomicU64 = AtomicU64::new(1);
 static HEADER_REQUEST_ID: HeaderName = HeaderName::from_static("x-request-id");
+static HEADER_IDEMPOTENCY_KEY: HeaderName = HeaderName::from_static("idempotency-key");
+static HEADER_IDEMPOTENT_REPLAYED: HeaderName = HeaderName::from_static("x-idempotent-replayed");
 
 #[derive(Clone, serde::Serialize, serde::Deserialize)]
 pub struct UserMfaState {
@@ -153,6 +158,147 @@ async fn attach_request_id(mut request: Request, next: Next) -> Response {
             .insert(HEADER_REQUEST_ID.clone(), header_val);
     }
     response
+}
+
+fn sanitize_idempotency_key(headers: &axum::http::HeaderMap) -> Option<String> {
+    headers
+        .get(&HEADER_IDEMPOTENCY_KEY)
+        .and_then(|v| v.to_str().ok())
+        .map(str::trim)
+        .filter(|s| {
+            !s.is_empty()
+                && s.len() <= 128
+                && s.bytes()
+                    .all(|b| b.is_ascii_alphanumeric() || matches!(b, b'-' | b'_' | b'.' | b':'))
+        })
+        .map(ToOwned::to_owned)
+}
+
+/// Atomic server-wide `Idempotency-Key` middleware protecting all mutating HTTP & GraphQL endpoints.
+async fn enforce_idempotency_key(
+    State(state): State<AppState>,
+    request: Request,
+    next: Next,
+) -> Response {
+    let is_mutating_method = matches!(
+        *request.method(),
+        Method::POST | Method::PUT | Method::PATCH | Method::DELETE
+    );
+    let Some(idem_key) = sanitize_idempotency_key(request.headers()) else {
+        return next.run(request).await;
+    };
+    if !is_mutating_method {
+        return next.run(request).await;
+    }
+
+    let corr = request
+        .extensions()
+        .get::<RequestCorrelationId>()
+        .map(|c| c.0.clone())
+        .unwrap_or_else(|| "req-idem".into());
+
+    let (parts, body) = request.into_parts();
+    let Ok(body_bytes) = axum::body::to_bytes(body, state.max_body_bytes).await else {
+        return map_err(
+            &corr,
+            StoreError::InvalidInput("Request body exceeds maximum size".into()),
+        )
+        .into_response();
+    };
+
+    // For `/v1/graphql`, pure `query` / introspection operations are read-only and bypass mutation locking
+    if parts.uri.path() == "/v1/graphql"
+        && let Ok(parsed) = serde_json::from_slice::<serde_json::Value>(&body_bytes)
+        && let Some(q) = parsed.get("query").and_then(serde_json::Value::as_str)
+    {
+        let op = parsed
+            .get("operationName")
+            .and_then(serde_json::Value::as_str);
+        let analysis = swaggen_domain::graphql::analyze_graphql_document(q, op, 16, 500);
+        if analysis.active_kind != swaggen_domain::graphql::GraphQlOperationKind::Mutation {
+            let rebuilt = Request::from_parts(parts, Body::from(body_bytes));
+            return next.run(rebuilt).await;
+        }
+    }
+
+    let actor_token_hash = extract_bearer(&parts.headers)
+        .map(sha256_hex)
+        .unwrap_or_else(|| "anonymous".into());
+    let scope = format!(
+        "{actor_token_hash}:{}:{}",
+        parts.method.as_str(),
+        parts.uri.path()
+    );
+    let path_and_q = parts
+        .uri
+        .path_and_query()
+        .map(|pq| pq.as_str())
+        .unwrap_or_else(|| parts.uri.path());
+    let mut seed = Vec::with_capacity(path_and_q.len() + body_bytes.len() + 16);
+    seed.extend_from_slice(parts.method.as_str().as_bytes());
+    seed.push(b'|');
+    seed.extend_from_slice(path_and_q.as_bytes());
+    seed.push(b'|');
+    seed.extend_from_slice(&body_bytes);
+    let req_hash = sha256_hex(&String::from_utf8_lossy(&seed));
+    let now = now_unix();
+
+    match state
+        .store
+        .claim_idempotency(&scope, &idem_key, &req_hash, now)
+        .await
+    {
+        Ok(IdempotencyClaimOutcome::Replayed {
+            status_code,
+            body_json,
+        }) => {
+            let status = StatusCode::from_u16(status_code).unwrap_or(StatusCode::OK);
+            let mut resp = (
+                status,
+                [(axum::http::header::CONTENT_TYPE, "application/json")],
+                body_json,
+            )
+                .into_response();
+            resp.headers_mut().insert(
+                HEADER_IDEMPOTENT_REPLAYED.clone(),
+                HeaderValue::from_static("true"),
+            );
+            if let Ok(kv) = HeaderValue::from_str(&idem_key) {
+                resp.headers_mut()
+                    .insert(HEADER_IDEMPOTENCY_KEY.clone(), kv);
+            }
+            resp
+        }
+        Err(err) => map_err(&corr, err).into_response(),
+        Ok(IdempotencyClaimOutcome::Acquired) => {
+            let rebuilt = Request::from_parts(parts, Body::from(body_bytes));
+            let resp = next.run(rebuilt).await;
+            let status = resp.status();
+            if status.is_success() {
+                let (mut rparts, rbody) = resp.into_parts();
+                if let Ok(rbytes) = axum::body::to_bytes(rbody, state.max_body_bytes).await {
+                    let body_str = String::from_utf8_lossy(&rbytes).into_owned();
+                    let _ = state
+                        .store
+                        .complete_idempotency(&scope, &idem_key, status.as_u16(), &body_str, now)
+                        .await;
+                    rparts.headers.insert(
+                        HEADER_IDEMPOTENT_REPLAYED.clone(),
+                        HeaderValue::from_static("false"),
+                    );
+                    if let Ok(kv) = HeaderValue::from_str(&idem_key) {
+                        rparts.headers.insert(HEADER_IDEMPOTENCY_KEY.clone(), kv);
+                    }
+                    return Response::from_parts(rparts, Body::from(rbytes));
+                }
+                let _ = state.store.release_idempotency(&scope, &idem_key).await;
+                StatusCode::INTERNAL_SERVER_ERROR.into_response()
+            } else {
+                let _ = state.store.release_idempotency(&scope, &idem_key).await;
+                resp
+            }
+        }
+    }
 }
 
 fn map_err(corr: &str, err: StoreError) -> (StatusCode, Json<ErrorEnvelope>) {
@@ -1961,6 +2107,10 @@ pub fn router(store: Arc<ServerStore>) -> Router {
         .route("/v1/health/ready", get(ready))
         .route("/v1/health/metrics", get(health_metrics))
         .route("/v1/capabilities", get(capabilities))
+        .route(
+            "/v1/graphql",
+            get(graphql_get_handler).post(graphql_post_handler),
+        )
         .route("/v1/auth/bootstrap-owner", post(bootstrap_owner))
         .route("/v1/auth/login", post(login))
         .route("/v1/auth/firebase", post(firebase_login))
@@ -2114,6 +2264,10 @@ pub fn router(store: Arc<ServerStore>) -> Router {
             post(create_schedule),
         )
         .fallback(not_found)
+        .layer(middleware::from_fn_with_state(
+            state.clone(),
+            enforce_idempotency_key,
+        ))
         .layer(DefaultBodyLimit::max(DEFAULT_MAX_BODY_BYTES))
         .layer(middleware::from_fn(attach_request_id))
         .with_state(state)
@@ -2136,6 +2290,10 @@ pub fn build_server_openapi_json() -> serde_json::Value {
             "/v1/health/live": { "get": { "summary": "Liveness probe" } },
             "/v1/health/ready": { "get": { "summary": "Readiness probe including DB topology" } },
             "/v1/capabilities": { "get": { "summary": "Server capabilities and protocol version" } },
+            "/v1/graphql": {
+                "get": { "summary": "Batched read-only GraphQL query endpoint (Zero N+1)" },
+                "post": { "summary": "Batched GraphQL query, introspection, and idempotent mutation endpoint" }
+            },
             "/v1/auth/bootstrap-owner": { "post": { "summary": "One-time first owner setup" } },
             "/v1/auth/firebase": { "post": { "summary": "Verify Firebase ID token (Google or Email/Password) and issue Swaggen session" } },
             "/v1/auth/firebase/browser": { "get": { "summary": "Browser-based Firebase Sign-In page for desktop loopback handoff" } },
@@ -3091,6 +3249,191 @@ mod tests {
         )
         .await;
         assert_eq!(st, 201);
+
+        stop.send(()).unwrap();
+        let _ = srv.await;
+    }
+
+    #[tokio::test]
+    async fn graphql_introspection_zero_n_plus_1_batching_and_idempotency_key_e2e() {
+        let store = Arc::new(ServerStore::Memory(InMemoryStore::new(None)));
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let addr = listener.local_addr().unwrap();
+        let base = format!("http://{addr}");
+        let (stop, stopped) = tokio::sync::oneshot::channel();
+        let srv = tokio::spawn(async move {
+            axum::serve(listener, router(store))
+                .with_graceful_shutdown(async {
+                    let _ = stopped.await;
+                })
+                .await
+                .unwrap();
+        });
+
+        let client: Client<_, Full<axum::body::Bytes>> =
+            Client::builder(TokioExecutor::new()).build_http();
+
+        // 1. Bootstrap owner
+        let (_, owner_raw) = http_call(
+            &base,
+            Method::POST,
+            "/v1/auth/bootstrap-owner",
+            None,
+            Some(json!({
+                "email": "gql-owner@swaggen.local",
+                "display_name": "GQL Owner",
+                "password": "StrongPassword!123",
+                "device_name": "WinPC",
+                "bootstrap_token": null
+            })),
+        )
+        .await;
+        let owner: AuthResponse = serde_json::from_str(&owner_raw).unwrap();
+
+        // 2. Test Idempotency-Key middleware on REST POST /v1/workspaces (replay + 409 payload mismatch)
+        let send_idem = |idem_key: &str, payload: serde_json::Value| {
+            let client = client.clone();
+            let uri = format!("{base}/v1/workspaces");
+            let tok = owner.session_token.clone();
+            let idem = idem_key.to_owned();
+            async move {
+                let req = HyperReq::builder()
+                    .method(Method::POST)
+                    .uri(uri)
+                    .header("content-type", "application/json")
+                    .header("authorization", format!("Bearer {tok}"))
+                    .header("idempotency-key", idem)
+                    .body(Full::from(serde_json::to_vec(&payload).unwrap()))
+                    .unwrap();
+                let resp = client.request(req).await.unwrap();
+                let status = resp.status().as_u16();
+                let replayed = resp
+                    .headers()
+                    .get("x-idempotent-replayed")
+                    .and_then(|v| v.to_str().ok())
+                    .unwrap_or("")
+                    .to_owned();
+                let raw = resp.into_body().collect().await.unwrap().to_bytes();
+                (status, replayed, String::from_utf8_lossy(&raw).into_owned())
+            }
+        };
+
+        let (st1, rep1, b1) = send_idem(
+            "idem-ws-alpha-001",
+            json!({"slug": "alpha-team", "name": "Alpha Team"}),
+        )
+        .await;
+        assert_eq!(st1, 201);
+        assert_eq!(rep1, "false");
+
+        // Exact retry with same Idempotency-Key returns cached 201 response without failing on duplicate slug!
+        let (st2, rep2, b2) = send_idem(
+            "idem-ws-alpha-001",
+            json!({"slug": "alpha-team", "name": "Alpha Team"}),
+        )
+        .await;
+        assert_eq!(st2, 201);
+        assert_eq!(rep2, "true");
+        assert_eq!(b1, b2);
+
+        // Reusing same Idempotency-Key with a DIFFERENT payload is rejected with 409 Conflict!
+        let (st_conflict, _, _) = send_idem(
+            "idem-ws-alpha-001",
+            json!({"slug": "different-slug", "name": "Different"}),
+        )
+        .await;
+        assert_eq!(st_conflict, 409);
+
+        // 3. Create 3 additional workspaces + entities + comments via GraphQL mutations (with Idempotency-Key)
+        for slug in ["beta-team", "gamma-team", "delta-team"] {
+            let (st, body) = http_call(
+                &base,
+                Method::POST,
+                "/v1/graphql",
+                Some(&owner.session_token),
+                Some(json!({
+                    "query": "mutation Create($slug: String!, $name: String!) { createWorkspace(slug: $slug, name: $name) { workspaceId slug } }",
+                    "variables": { "slug": slug, "name": format!("WS {slug}") }
+                })),
+            )
+            .await;
+            assert_eq!(st, 200, "createWorkspace GraphQL failed: {body}");
+            let parsed: serde_json::Value = serde_json::from_str(&body).unwrap();
+            let ws_id = parsed["data"]["createWorkspace"]["workspaceId"]
+                .as_str()
+                .unwrap()
+                .to_owned();
+
+            let (st_e, _) = http_call(
+                &base,
+                Method::POST,
+                "/v1/graphql",
+                Some(&owner.session_token),
+                Some(json!({
+                    "query": "mutation Upsert($ws: ID!, $eid: ID!, $name: String!) { upsertEntity(workspaceId: $ws, entityId: $eid, kind: \"request\", name: $name, payloadJson: \"{}\", baseRevision: 0) { entityId revision } }",
+                    "variables": { "ws": ws_id, "eid": format!("req-{slug}"), "name": format!("Get {slug}") }
+                })),
+            )
+            .await;
+            assert_eq!(st_e, 200);
+        }
+
+        // 4. GraphQL __schema introspection works and parses cleanly with domain helper
+        let (st_intro, intro_body) = http_call(
+            &base,
+            Method::POST,
+            "/v1/graphql",
+            Some(&owner.session_token),
+            Some(json!({
+                "query": swaggen_domain::graphql::INTROSPECTION_QUERY,
+                "operationName": "SwaggenIntrospection"
+            })),
+        )
+        .await;
+        assert_eq!(st_intro, 200);
+        let summary = swaggen_domain::graphql::parse_introspection_schema(&intro_body)
+            .expect("introspection schema should parse cleanly");
+        assert!(summary.query_fields.iter().any(|q| q.name == "workspaces"));
+        assert!(
+            summary
+                .mutation_fields
+                .iter()
+                .any(|m| m.name == "createWorkspace")
+        );
+
+        // 5. Mutation over HTTP GET is rejected with 405 per GraphQL-over-HTTP spec
+        let (st_get_mut, _) = http_call(
+            &base,
+            Method::GET,
+            "/v1/graphql?query=mutation%20%7B%20createWorkspace(slug%3A%22x%22%2Cname%3A%22x%22)%20%7B%20workspaceId%20%7D%20%7D",
+            Some(&owner.session_token),
+            None,
+        )
+        .await;
+        assert_eq!(st_get_mut, 405);
+
+        // 6. Batched nested query across ALL 4 workspaces executes in constant O(1) DB queries (Zero N+1!)
+        let (st_batch, batch_body) = http_call(
+            &base,
+            Method::POST,
+            "/v1/graphql",
+            Some(&owner.session_token),
+            Some(json!({
+                "query": "query AllWorkspaces { workspaces { workspaceId slug headRevision entities { entityId name } members { email role } invitations { email } comments { body } } }"
+            })),
+        )
+        .await;
+        assert_eq!(st_batch, 200);
+        let batch_val: serde_json::Value = serde_json::from_str(&batch_body).unwrap();
+        let ws_arr = batch_val["data"]["workspaces"].as_array().unwrap();
+        assert_eq!(ws_arr.len(), 4);
+        let db_queries = batch_val["extensions"]["performance"]["dbQueries"]
+            .as_u64()
+            .expect("performance telemetry expected");
+        assert!(
+            db_queries <= 7,
+            "Expected constant O(1) batched queries (<= 7) across 4 workspaces with 4 nested lists, got {db_queries}"
+        );
 
         stop.send(()).unwrap();
         let _ = srv.await;

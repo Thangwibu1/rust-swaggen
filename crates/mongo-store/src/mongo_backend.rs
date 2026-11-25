@@ -5,7 +5,7 @@ use crate::{
         normalize_slug, sha256_hex, validate_password, verify_password,
     },
     error::StoreError,
-    repo::{AuthContext, WorkspaceRepository},
+    repo::{AuthContext, BatchedWorkspaceChildren, IdempotencyClaimOutcome, WorkspaceRepository},
 };
 use mongodb::{
     Client, ClientSession, Collection, Database, IndexModel,
@@ -157,6 +157,8 @@ impl MongoStore {
         self.create_unique("workspaces", doc! { "slug": 1 }).await?;
         self.create_unique("memberships", doc! { "workspace_id": 1, "user_id": 1 })
             .await?;
+        self.create_index("memberships", doc! { "user_id": 1 })
+            .await?;
         self.create_unique("workspace_permission_fences", doc! { "workspace_id": 1 })
             .await?;
         self.create_unique("workspace_counters", doc! { "workspace_id": 1 })
@@ -180,6 +182,8 @@ impl MongoStore {
         .await?;
         self.create_unique("change_events", doc! { "workspace_id": 1, "cursor": 1 })
             .await?;
+        self.create_unique("comments", doc! { "workspace_id": 1, "comment_id": 1 })
+            .await?;
         self.create_index(
             "comments",
             doc! { "workspace_id": 1, "entity_id": 1, "created_at_unix": -1 },
@@ -198,6 +202,8 @@ impl MongoStore {
         )
         .await?;
         self.create_unique("server_kv_docs", doc! { "namespace": 1, "key": 1 })
+            .await?;
+        self.create_unique("idempotency_records", doc! { "scope": 1, "key": 1 })
             .await?;
 
         let mig = self.db.collection::<Document>("schema_migrations");
@@ -968,38 +974,94 @@ impl WorkspaceRepository for MongoStore {
         let mem_col: Collection<Document> = self.db.collection("memberships");
         let ws_col: Collection<Document> = self.db.collection("workspaces");
         let fences: Collection<Document> = self.db.collection("workspace_permission_fences");
+
         let mut cursor = mem_col
             .find(doc! { "user_id": &auth.user_id })
             .await
             .map_err(|e| map_mongo_err(&e))?;
-        let mut out = Vec::new();
+        let mut caller_mems: Vec<(String, Role)> = Vec::new();
         while cursor.advance().await.map_err(|e| map_mongo_err(&e))? {
             let mem = cursor
                 .deserialize_current()
                 .map_err(|e| map_mongo_err(&e))?;
             let wid = mem.get_str("workspace_id").unwrap_or("");
-            if let Some(ws) = ws_col
-                .find_one(doc! { "workspace_id": wid })
-                .await
-                .map_err(|e| map_mongo_err(&e))?
-            {
-                let count = mem_col
-                    .count_documents(doc! { "workspace_id": wid })
-                    .await
-                    .unwrap_or(1) as usize;
-                let mem_rev = fences
-                    .find_one(doc! { "workspace_id": wid })
-                    .await
-                    .ok()
-                    .flatten()
-                    .and_then(|d| d.get_i64("membership_revision").ok())
+            if !wid.is_empty() {
+                caller_mems.push((
+                    wid.to_owned(),
+                    parse_role(mem.get_str("role").unwrap_or("viewer")),
+                ));
+            }
+        }
+        if caller_mems.is_empty() {
+            return Ok(Vec::new());
+        }
+
+        // Batch-fetch workspaces, permission fences, and member counts in O(1) queries (ZERO N+1!).
+        let wids: Vec<&str> = caller_mems.iter().map(|(w, _)| w.as_str()).collect();
+        let mut ws_map = std::collections::HashMap::with_capacity(wids.len());
+        let mut ws_cur = ws_col
+            .find(doc! { "workspace_id": { "$in": &wids } })
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        while ws_cur.advance().await.map_err(|e| map_mongo_err(&e))? {
+            let ws = ws_cur
+                .deserialize_current()
+                .map_err(|e| map_mongo_err(&e))?;
+            if let Ok(wid) = ws.get_str("workspace_id") {
+                ws_map.insert(wid.to_owned(), ws);
+            }
+        }
+
+        let mut fence_map = std::collections::HashMap::with_capacity(wids.len());
+        let mut fence_cur = fences
+            .find(doc! { "workspace_id": { "$in": &wids } })
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        while fence_cur.advance().await.map_err(|e| map_mongo_err(&e))? {
+            let fd = fence_cur
+                .deserialize_current()
+                .map_err(|e| map_mongo_err(&e))?;
+            if let (Ok(wid), Ok(rev)) = (
+                fd.get_str("workspace_id"),
+                fd.get_i64("membership_revision"),
+            ) {
+                fence_map.insert(wid.to_owned(), rev);
+            }
+        }
+
+        let mut count_map = std::collections::HashMap::with_capacity(wids.len());
+        let mut agg_cur = mem_col
+            .aggregate([
+                doc! { "$match": { "workspace_id": { "$in": &wids } } },
+                doc! { "$group": { "_id": "$workspace_id", "count": { "$sum": 1_i32 } } },
+            ])
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        while agg_cur.advance().await.map_err(|e| map_mongo_err(&e))? {
+            let gd = agg_cur
+                .deserialize_current()
+                .map_err(|e| map_mongo_err(&e))?;
+            if let Ok(wid) = gd.get_str("_id") {
+                let cnt = gd
+                    .get_i32("count")
+                    .map(|v| v as usize)
+                    .or_else(|_| gd.get_i64("count").map(|v| v as usize))
                     .unwrap_or(1);
+                count_map.insert(wid.to_owned(), cnt);
+            }
+        }
+
+        let mut out = Vec::with_capacity(caller_mems.len());
+        for (wid, role) in caller_mems {
+            if let Some(ws) = ws_map.get(&wid) {
+                let count = count_map.get(&wid).copied().unwrap_or(1);
+                let mem_rev = fence_map.get(&wid).copied().unwrap_or(1);
                 out.push(TeamWorkspaceSummary {
-                    workspace_id: wid.to_owned(),
+                    workspace_id: wid,
                     slug: ws.get_str("slug").unwrap_or("").to_owned(),
                     name: ws.get_str("name").unwrap_or("").to_owned(),
                     description: ws.get_str("description").unwrap_or("").to_owned(),
-                    role: parse_role(mem.get_str("role").unwrap_or("viewer")),
+                    role,
                     member_count: count,
                     current_revision: ws.get_i64("current_revision").unwrap_or(1),
                     membership_revision: mem_rev,
@@ -1037,7 +1099,7 @@ impl WorkspaceRepository for MongoStore {
             .session(&mut session)
             .await
             .map_err(|e| map_mongo_err(&e))?;
-        let mut members = Vec::new();
+        let mut raw_members: Vec<(String, Role, i64)> = Vec::new();
         while cursor
             .advance(&mut session)
             .await
@@ -1047,23 +1109,57 @@ impl WorkspaceRepository for MongoStore {
                 .deserialize_current()
                 .map_err(|e| map_mongo_err(&e))?;
             let uid = m.get_str("user_id").unwrap_or("");
-            if let Some(u) = users_col
-                .find_one(doc! { "user_id": uid })
+            if !uid.is_empty() {
+                raw_members.push((
+                    uid.to_owned(),
+                    parse_role(m.get_str("role").unwrap_or("viewer")),
+                    m.get_i64("joined_at_unix").unwrap_or(0),
+                ));
+            }
+        }
+        drop(cursor);
+
+        // Batch-fetch all member user profiles in ONE `$in` query (ZERO N+1!).
+        let mut user_map = std::collections::HashMap::with_capacity(raw_members.len());
+        if !raw_members.is_empty() {
+            let uids: Vec<&str> = raw_members.iter().map(|(u, _, _)| u.as_str()).collect();
+            let mut ucur = users_col
+                .find(doc! { "user_id": { "$in": &uids } })
                 .session(&mut session)
+                .await
+                .map_err(|e| map_mongo_err(&e))?;
+            while ucur
+                .advance(&mut session)
                 .await
                 .map_err(|e| map_mongo_err(&e))?
             {
+                let u = ucur.deserialize_current().map_err(|e| map_mongo_err(&e))?;
+                if let Ok(uid) = u.get_str("user_id") {
+                    user_map.insert(
+                        uid.to_owned(),
+                        (
+                            u.get_str("email_normalized").unwrap_or("").to_owned(),
+                            u.get_str("display_name").unwrap_or("").to_owned(),
+                        ),
+                    );
+                }
+            }
+            drop(ucur);
+        }
+
+        let mut members = Vec::with_capacity(raw_members.len());
+        for (uid, role, joined_at_unix) in raw_members {
+            if let Some((email, display_name)) = user_map.remove(&uid) {
                 members.push(MemberSummary {
-                    user_id: uid.to_owned(),
-                    email: u.get_str("email_normalized").unwrap_or("").to_owned(),
-                    display_name: u.get_str("display_name").unwrap_or("").to_owned(),
-                    role: parse_role(m.get_str("role").unwrap_or("viewer")),
-                    joined_at_unix: m.get_i64("joined_at_unix").unwrap_or(0),
+                    user_id: uid,
+                    email,
+                    display_name,
+                    role,
+                    joined_at_unix,
                     membership_revision: mem_rev,
                 });
             }
         }
-        drop(cursor);
         let mut invitations = Vec::new();
         if caller_role.can_manage_members() {
             let inv_col: Collection<Document> = self.db.collection("invitations");
@@ -1844,18 +1940,111 @@ impl WorkspaceRepository for MongoStore {
         let mem_col: Collection<Document> = self.db.collection("memberships");
         let notif_col: Collection<Document> = self.db.collection("notifications");
 
-        let mut results = Vec::new();
+        if req.operations.is_empty() {
+            commit_with_retry(&mut session).await?;
+            return Ok(PublishBatchResponse {
+                api_version: API_VERSION,
+                results: Vec::new(),
+            });
+        }
+
+        // Batch-prefetch applied_operations, entities, and workspace members in O(1) `$in` queries (ZERO N+1!).
+        let op_ids: Vec<&str> = req
+            .operations
+            .iter()
+            .map(|o| o.operation_id.as_str())
+            .collect();
+        let mut applied_map = std::collections::HashMap::new();
+        let mut app_cur = applied_col
+            .find(doc! {
+                "workspace_id": workspace_id,
+                "actor_id": &auth.user_id,
+                "operation_id": { "$in": &op_ids }
+            })
+            .session(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        while app_cur
+            .advance(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?
+        {
+            let d = app_cur
+                .deserialize_current()
+                .map_err(|e| map_mongo_err(&e))?;
+            if let Ok(oid) = d.get_str("operation_id") {
+                applied_map.insert(oid.to_owned(), d);
+            }
+        }
+        drop(app_cur);
+
+        let entity_ids: Vec<&str> = req
+            .operations
+            .iter()
+            .map(|o| o.entity_id.as_str())
+            .collect();
+        let mut entity_map = std::collections::HashMap::new();
+        let mut ent_cur = entities_col
+            .find(doc! {
+                "workspace_id": workspace_id,
+                "entity_id": { "$in": &entity_ids }
+            })
+            .session(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        while ent_cur
+            .advance(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?
+        {
+            let d = ent_cur
+                .deserialize_current()
+                .map_err(|e| map_mongo_err(&e))?;
+            if let Ok(eid) = d.get_str("entity_id") {
+                entity_map.insert(eid.to_owned(), d);
+            }
+        }
+        drop(ent_cur);
+
+        let mut mcursor = mem_col
+            .find(doc! { "workspace_id": workspace_id })
+            .session(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        let mut others = Vec::new();
+        while mcursor
+            .advance(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?
+        {
+            let md = mcursor
+                .deserialize_current()
+                .map_err(|e| map_mongo_err(&e))?;
+            let uid = md.get_str("user_id").unwrap_or("").to_owned();
+            if !uid.is_empty() && uid != auth.user_id {
+                others.push(uid);
+            }
+        }
+        drop(mcursor);
+
+        let cnt_before = counters_col
+            .find_one(doc! { "workspace_id": workspace_id })
+            .session(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        let mut running_cursor = cnt_before
+            .and_then(|d| d.get_i64("cursor").ok())
+            .unwrap_or(0);
+        let mut applied_write_count = 0i64;
+
+        let mut rev_docs = Vec::new();
+        let mut event_docs = Vec::new();
+        let mut notif_docs = Vec::new();
+        let mut applied_docs = Vec::new();
+        let mut results = Vec::with_capacity(req.operations.len());
+
         for op in req.operations {
-            if let Some(prev) = applied_col
-                .find_one(doc! {
-                    "workspace_id": workspace_id,
-                    "actor_id": &auth.user_id,
-                    "operation_id": &op.operation_id
-                })
-                .session(&mut session)
-                .await
-                .map_err(|e| map_mongo_err(&e))?
-            {
+            if let Some(prev) = applied_map.get(&op.operation_id) {
                 let prev_hash = prev.get_str("request_hash").unwrap_or("");
                 if prev_hash == op.request_hash {
                     let stored: PublishOperationResult = prev
@@ -1888,11 +2077,7 @@ impl WorkspaceRepository for MongoStore {
                 continue;
             }
 
-            let existing = entities_col
-                .find_one(doc! { "workspace_id": workspace_id, "entity_id": &op.entity_id })
-                .session(&mut session)
-                .await
-                .map_err(|e| map_mongo_err(&e))?;
+            let existing = entity_map.get(&op.entity_id).cloned();
 
             let to_entity = |d: &Document| WorkspaceEntityRecord {
                 entity_id: d.get_str("entity_id").unwrap_or("").to_owned(),
@@ -1952,21 +2137,23 @@ impl WorkspaceRepository for MongoStore {
                 }
             };
 
+            let new_ent_doc = doc! {
+                "workspace_id": workspace_id,
+                "entity_id": &op.entity_id,
+                "parent_id": op.parent_id.as_deref(),
+                "kind": &op.kind,
+                "name": &op.name,
+                "order_key": op.order_key,
+                "payload_json": &op.payload_json,
+                "revision": next_rev,
+                "deleted": op.delete,
+                "updated_at_unix": now,
+                "updated_by": &auth.user_id,
+            };
+
             if op.base_revision == 0 {
                 entities_col
-                    .insert_one(doc! {
-                        "workspace_id": workspace_id,
-                        "entity_id": &op.entity_id,
-                        "parent_id": op.parent_id.as_deref(),
-                        "kind": &op.kind,
-                        "name": &op.name,
-                        "order_key": op.order_key,
-                        "payload_json": &op.payload_json,
-                        "revision": next_rev,
-                        "deleted": op.delete,
-                        "updated_at_unix": now,
-                        "updated_by": &auth.user_id,
-                    })
+                    .insert_one(new_ent_doc.clone())
                     .session(&mut session)
                     .await
                     .map_err(|e| map_mongo_err(&e))?;
@@ -2001,106 +2188,55 @@ impl WorkspaceRepository for MongoStore {
                     ));
                 }
             }
+            entity_map.insert(op.entity_id.clone(), new_ent_doc);
 
-            rev_col
-                .insert_one(doc! {
+            running_cursor += 1;
+            applied_write_count += 1;
+            let cursor = running_cursor;
+
+            rev_docs.push(doc! {
+                "workspace_id": workspace_id,
+                "entity_id": &op.entity_id,
+                "revision": next_rev,
+                "deleted": op.delete,
+                "name": &op.name,
+                "payload_json": &op.payload_json,
+                "actor_user_id": &auth.user_id,
+                "actor_email": &auth.email,
+                "note": &op.note,
+                "created_at_unix": now,
+            });
+
+            event_docs.push(doc! {
+                "cursor": cursor,
+                "workspace_id": workspace_id,
+                "entity_id": &op.entity_id,
+                "entity_kind": &op.kind,
+                "entity_name": &op.name,
+                "parent_id": op.parent_id.as_deref(),
+                "order_key": op.order_key,
+                "revision": next_rev,
+                "deleted": op.delete,
+                "payload_json": if op.delete { bson::Bson::Null } else { bson::Bson::String(op.payload_json.clone()) },
+                "operation_id": &op.operation_id,
+                "actor_user_id": &auth.user_id,
+                "actor_email": &auth.email,
+                "note": &op.note,
+                "created_at_unix": now,
+            });
+
+            for uid in &others {
+                notif_docs.push(doc! {
+                    "notification_id": Uuid::new_v4().to_string(),
                     "workspace_id": workspace_id,
+                    "user_id": uid,
+                    "kind": if op.delete { "entity_deleted" } else { "entity_published" },
+                    "title": format!("{} {} ({})", auth.email, if op.delete { "deleted" } else { "published" }, op.name),
                     "entity_id": &op.entity_id,
-                    "revision": next_rev,
-                    "deleted": op.delete,
-                    "name": &op.name,
-                    "payload_json": &op.payload_json,
-                    "actor_user_id": &auth.user_id,
                     "actor_email": &auth.email,
-                    "note": &op.note,
                     "created_at_unix": now,
-                })
-                .session(&mut session)
-                .await
-                .map_err(|e| map_mongo_err(&e))?;
-
-            counters_col
-                .update_one(
-                    doc! { "workspace_id": workspace_id },
-                    doc! { "$inc": { "cursor": 1i64 } },
-                )
-                .session(&mut session)
-                .await
-                .map_err(|e| map_mongo_err(&e))?;
-            let cnt_doc = counters_col
-                .find_one(doc! { "workspace_id": workspace_id })
-                .session(&mut session)
-                .await
-                .map_err(|e| map_mongo_err(&e))?;
-            let cursor = cnt_doc.and_then(|d| d.get_i64("cursor").ok()).unwrap_or(1);
-
-            ws_col
-                .update_one(
-                    doc! { "workspace_id": workspace_id },
-                    doc! { "$inc": { "current_revision": 1i64 } },
-                )
-                .session(&mut session)
-                .await
-                .map_err(|e| map_mongo_err(&e))?;
-
-            events_col
-                .insert_one(doc! {
-                    "cursor": cursor,
-                    "workspace_id": workspace_id,
-                    "entity_id": &op.entity_id,
-                    "entity_kind": &op.kind,
-                    "entity_name": &op.name,
-                    "parent_id": op.parent_id.as_deref(),
-                    "order_key": op.order_key,
-                    "revision": next_rev,
-                    "deleted": op.delete,
-                    "payload_json": if op.delete { bson::Bson::Null } else { bson::Bson::String(op.payload_json.clone()) },
-                    "operation_id": &op.operation_id,
-                    "actor_user_id": &auth.user_id,
-                    "actor_email": &auth.email,
-                    "note": &op.note,
-                    "created_at_unix": now,
-                })
-                .session(&mut session)
-                .await
-                .map_err(|e| map_mongo_err(&e))?;
-
-            let mut mcursor = mem_col
-                .find(doc! { "workspace_id": workspace_id })
-                .session(&mut session)
-                .await
-                .map_err(|e| map_mongo_err(&e))?;
-            let mut others = Vec::new();
-            while mcursor
-                .advance(&mut session)
-                .await
-                .map_err(|e| map_mongo_err(&e))?
-            {
-                let md = mcursor
-                    .deserialize_current()
-                    .map_err(|e| map_mongo_err(&e))?;
-                let uid = md.get_str("user_id").unwrap_or("").to_owned();
-                if uid != auth.user_id {
-                    others.push(uid);
-                }
-            }
-            drop(mcursor);
-            for uid in others {
-                notif_col
-                    .insert_one(doc! {
-                        "notification_id": Uuid::new_v4().to_string(),
-                        "workspace_id": workspace_id,
-                        "user_id": uid,
-                        "kind": if op.delete { "entity_deleted" } else { "entity_published" },
-                        "title": format!("{} {} ({})", auth.email, if op.delete { "deleted" } else { "published" }, op.name),
-                        "entity_id": &op.entity_id,
-                        "actor_email": &auth.email,
-                        "created_at_unix": now,
-                        "read": false,
-                    })
-                    .session(&mut session)
-                    .await
-                    .map_err(|e| map_mongo_err(&e))?;
+                    "read": false,
+                });
             }
 
             self.record_audit_tx(
@@ -2142,21 +2278,67 @@ impl WorkspaceRepository for MongoStore {
                 reason: "Published".into(),
             };
             let ack_json = serde_json::to_string(&res).unwrap_or_default();
-            applied_col
-                .insert_one(doc! {
-                    "workspace_id": workspace_id,
-                    "actor_id": &auth.user_id,
-                    "operation_id": &op.operation_id,
-                    "request_hash": &op.request_hash,
-                    "server_revision": next_rev,
-                    "server_cursor": cursor,
-                    "ack_json": ack_json,
-                    "committed_at_unix": now,
-                })
+            let app_doc = doc! {
+                "workspace_id": workspace_id,
+                "actor_id": &auth.user_id,
+                "operation_id": &op.operation_id,
+                "request_hash": &op.request_hash,
+                "server_revision": next_rev,
+                "server_cursor": cursor,
+                "ack_json": ack_json,
+                "committed_at_unix": now,
+            };
+            applied_map.insert(op.operation_id, app_doc.clone());
+            applied_docs.push(app_doc);
+            results.push(res);
+        }
+
+        if applied_write_count > 0 {
+            counters_col
+                .update_one(
+                    doc! { "workspace_id": workspace_id },
+                    doc! { "$inc": { "cursor": applied_write_count } },
+                )
+                .upsert(true)
                 .session(&mut session)
                 .await
                 .map_err(|e| map_mongo_err(&e))?;
-            results.push(res);
+            ws_col
+                .update_one(
+                    doc! { "workspace_id": workspace_id },
+                    doc! { "$inc": { "current_revision": applied_write_count } },
+                )
+                .session(&mut session)
+                .await
+                .map_err(|e| map_mongo_err(&e))?;
+        }
+        if !rev_docs.is_empty() {
+            rev_col
+                .insert_many(rev_docs)
+                .session(&mut session)
+                .await
+                .map_err(|e| map_mongo_err(&e))?;
+        }
+        if !event_docs.is_empty() {
+            events_col
+                .insert_many(event_docs)
+                .session(&mut session)
+                .await
+                .map_err(|e| map_mongo_err(&e))?;
+        }
+        if !notif_docs.is_empty() {
+            notif_col
+                .insert_many(notif_docs)
+                .session(&mut session)
+                .await
+                .map_err(|e| map_mongo_err(&e))?;
+        }
+        if !applied_docs.is_empty() {
+            applied_col
+                .insert_many(applied_docs)
+                .session(&mut session)
+                .await
+                .map_err(|e| map_mongo_err(&e))?;
         }
 
         commit_with_retry(&mut session).await?;
@@ -2383,27 +2565,59 @@ impl WorkspaceRepository for MongoStore {
         req: RestoreRevisionRequest,
         now: i64,
     ) -> Result<PublishBatchResponse, StoreError> {
-        let revs = self
-            .list_entity_revisions(auth, workspace_id, entity_id)
+        let mut session = self
+            .client
+            .start_session()
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        session
+            .start_transaction()
+            .read_concern(ReadConcern::snapshot())
+            .write_concern(WriteConcern::majority())
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        let (_, _, _) = self
+            .require_membership_tx(&mut session, workspace_id, &auth.user_id)
             .await?;
-        let target = revs
-            .into_iter()
-            .find(|r| r.revision == req.target_revision)
+        let rev_col: Collection<Document> = self.db.collection("revisions");
+        let target_doc = rev_col
+            .find_one(doc! {
+                "workspace_id": workspace_id,
+                "entity_id": entity_id,
+                "revision": req.target_revision
+            })
+            .session(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?
             .ok_or_else(|| StoreError::NotFound("Target revision not found".into()))?;
-        let entities = self.list_entities(auth, workspace_id).await?;
-        let cur = entities.into_iter().find(|e| e.entity_id == entity_id);
+        let ent_col: Collection<Document> = self.db.collection("entities");
+        let cur_doc = ent_col
+            .find_one(doc! { "workspace_id": workspace_id, "entity_id": entity_id })
+            .session(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        commit_with_retry(&mut session).await?;
+
         let op = swaggen_api_contract::PublishOperation {
             operation_id: req.operation_id,
             request_hash: format!("restore-{entity_id}-r{}", req.target_revision),
             entity_id: entity_id.to_owned(),
-            parent_id: cur.as_ref().and_then(|c| c.parent_id.clone()),
-            kind: cur
+            parent_id: cur_doc
                 .as_ref()
-                .map(|c| c.kind.clone())
+                .and_then(|c| c.get_str("parent_id").ok().map(ToOwned::to_owned)),
+            kind: cur_doc
+                .as_ref()
+                .and_then(|c| c.get_str("kind").ok().map(ToOwned::to_owned))
                 .unwrap_or_else(|| "request".into()),
-            name: target.name,
-            order_key: cur.map(|c| c.order_key).unwrap_or(0),
-            payload_json: target.payload_json,
+            name: target_doc.get_str("name").unwrap_or("").to_owned(),
+            order_key: cur_doc
+                .as_ref()
+                .and_then(|c| c.get_i64("order_key").ok())
+                .unwrap_or(0),
+            payload_json: target_doc
+                .get_str("payload_json")
+                .unwrap_or("{}")
+                .to_owned(),
             base_revision: req.expected_current_revision,
             delete: false,
             note: if req.note.trim().is_empty() {
@@ -2452,6 +2666,15 @@ impl WorkspaceRepository for MongoStore {
             ));
         }
         let col: Collection<Document> = self.db.collection("comments");
+        if let Some(existing) = col
+            .find_one(doc! { "workspace_id": workspace_id, "comment_id": &req.comment_id })
+            .session(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?
+        {
+            commit_with_retry(&mut session).await?;
+            return Ok(doc_to_comment_thread(&existing, workspace_id));
+        }
         col.insert_one(doc! {
             "comment_id": &req.comment_id,
             "workspace_id": workspace_id,
@@ -2525,7 +2748,11 @@ impl WorkspaceRepository for MongoStore {
         }
         let col: Collection<Document> = self.db.collection("comments");
         col.update_one(
-            doc! { "workspace_id": workspace_id, "comment_id": comment_id },
+            doc! {
+                "workspace_id": workspace_id,
+                "comment_id": comment_id,
+                "replies.reply_id": { "$ne": &req.reply_id }
+            },
             doc! { "$push": { "replies": {
                 "reply_id": &req.reply_id,
                 "author_user_id": &auth.user_id,
@@ -2537,11 +2764,14 @@ impl WorkspaceRepository for MongoStore {
         .session(&mut session)
         .await
         .map_err(|e| map_mongo_err(&e))?;
+        let updated = col
+            .find_one(doc! { "workspace_id": workspace_id, "comment_id": comment_id })
+            .session(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?
+            .ok_or_else(|| StoreError::NotFound("Comment thread not found".into()))?;
         commit_with_retry(&mut session).await?;
-        let list = self.list_comments(auth, workspace_id, None).await?;
-        list.into_iter()
-            .find(|c| c.comment_id == comment_id)
-            .ok_or_else(|| StoreError::NotFound("Comment thread not found".into()))
+        Ok(doc_to_comment_thread(&updated, workspace_id))
     }
 
     async fn resolve_comment(
@@ -2583,11 +2813,14 @@ impl WorkspaceRepository for MongoStore {
         .session(&mut session)
         .await
         .map_err(|e| map_mongo_err(&e))?;
+        let updated = col
+            .find_one(doc! { "workspace_id": workspace_id, "comment_id": comment_id })
+            .session(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?
+            .ok_or_else(|| StoreError::NotFound("Comment thread not found".into()))?;
         commit_with_retry(&mut session).await?;
-        let list = self.list_comments(auth, workspace_id, None).await?;
-        list.into_iter()
-            .find(|c| c.comment_id == comment_id)
-            .ok_or_else(|| StoreError::NotFound("Comment thread not found".into()))
+        Ok(doc_to_comment_thread(&updated, workspace_id))
     }
 
     async fn list_comments(
@@ -3042,8 +3275,17 @@ impl WorkspaceRepository for MongoStore {
         key_prefix: &str,
     ) -> Result<Vec<(String, String)>, StoreError> {
         let col: Collection<Document> = self.db.collection("server_kv_docs");
+        let filter = if let Some(upper) = prefix_upper_bound(key_prefix) {
+            doc! {
+                "namespace": namespace,
+                "key": { "$gte": key_prefix, "$lt": upper }
+            }
+        } else {
+            doc! { "namespace": namespace }
+        };
         let mut cursor = col
-            .find(doc! { "namespace": namespace })
+            .find(filter)
+            .with_options(FindOptions::builder().sort(doc! { "key": 1 }).build())
             .await
             .map_err(|e| map_mongo_err(&e))?;
         let mut out = Vec::new();
@@ -3057,7 +3299,325 @@ impl WorkspaceRepository for MongoStore {
                 out.push((k.to_owned(), v.to_owned()));
             }
         }
-        out.sort_by(|a, b| a.0.cmp(&b.0));
         Ok(out)
     }
+
+    async fn claim_idempotency(
+        &self,
+        scope: &str,
+        key: &str,
+        request_hash: &str,
+        now: i64,
+    ) -> Result<IdempotencyClaimOutcome, StoreError> {
+        let col: Collection<Document> = self.db.collection("idempotency_records");
+        let insert_res = col
+            .insert_one(doc! {
+                "scope": scope,
+                "key": key,
+                "request_hash": request_hash,
+                "state": "in_progress",
+                "created_at_unix": now,
+            })
+            .await;
+
+        match insert_res {
+            Ok(_) => Ok(IdempotencyClaimOutcome::Acquired),
+            Err(err) if is_duplicate_key(&err) => {
+                let Some(existing) = col
+                    .find_one(doc! { "scope": scope, "key": key })
+                    .await
+                    .map_err(|e| map_mongo_err(&e))?
+                else {
+                    return Ok(IdempotencyClaimOutcome::Acquired);
+                };
+                let prev_hash = existing.get_str("request_hash").unwrap_or("");
+                if prev_hash != request_hash {
+                    return Err(StoreError::Conflict(
+                        "Idempotency-Key cannot be reused with a different request payload".into(),
+                    ));
+                }
+                if existing.get_str("state").unwrap_or("") == "completed" {
+                    let code = existing.get_i32("status_code").unwrap_or(200) as u16;
+                    let body = existing.get_str("body_json").unwrap_or("{}").to_owned();
+                    return Ok(IdempotencyClaimOutcome::Replayed {
+                        status_code: code,
+                        body_json: body,
+                    });
+                }
+                let created = existing.get_i64("created_at_unix").unwrap_or(now);
+                if now - created < 30 {
+                    return Err(StoreError::Conflict(
+                        "Concurrent request with the same Idempotency-Key is still in progress"
+                            .into(),
+                    ));
+                }
+                col.update_one(
+                    doc! { "scope": scope, "key": key },
+                    doc! { "$set": { "created_at_unix": now, "state": "in_progress" } },
+                )
+                .await
+                .map_err(|e| map_mongo_err(&e))?;
+                Ok(IdempotencyClaimOutcome::Acquired)
+            }
+            Err(err) => Err(map_mongo_err(&err)),
+        }
+    }
+
+    async fn complete_idempotency(
+        &self,
+        scope: &str,
+        key: &str,
+        status_code: u16,
+        body_json: &str,
+        now: i64,
+    ) -> Result<(), StoreError> {
+        let col: Collection<Document> = self.db.collection("idempotency_records");
+        col.update_one(
+            doc! { "scope": scope, "key": key },
+            doc! { "$set": {
+                "state": "completed",
+                "status_code": status_code as i32,
+                "body_json": body_json,
+                "completed_at_unix": now,
+            }},
+        )
+        .await
+        .map_err(|e| map_mongo_err(&e))?;
+        Ok(())
+    }
+
+    async fn release_idempotency(&self, scope: &str, key: &str) -> Result<(), StoreError> {
+        let col: Collection<Document> = self.db.collection("idempotency_records");
+        col.delete_one(doc! { "scope": scope, "key": key, "state": "in_progress" })
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        Ok(())
+    }
+
+    async fn batch_load_workspaces_children(
+        &self,
+        auth: &AuthContext,
+        workspace_ids: &[String],
+        include_entities: bool,
+        include_members: bool,
+        include_comments: bool,
+        include_notifications: bool,
+    ) -> Result<BatchedWorkspaceChildren, StoreError> {
+        let mut out = BatchedWorkspaceChildren::default();
+        if workspace_ids.is_empty() {
+            return Ok(out);
+        }
+        // 1. Verify membership across requested workspaces in ONE `$in` query.
+        let mem_col: Collection<Document> = self.db.collection("memberships");
+        out.db_queries_executed += 1;
+        let mut allowed_cur = mem_col
+            .find(doc! {
+                "user_id": &auth.user_id,
+                "workspace_id": { "$in": workspace_ids }
+            })
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        let mut allowed_wids: Vec<String> = Vec::new();
+        while allowed_cur.advance().await.map_err(|e| map_mongo_err(&e))? {
+            let d = allowed_cur
+                .deserialize_current()
+                .map_err(|e| map_mongo_err(&e))?;
+            if let Ok(wid) = d.get_str("workspace_id") {
+                allowed_wids.push(wid.to_owned());
+            }
+        }
+        if allowed_wids.is_empty() {
+            return Ok(out);
+        }
+
+        // 2. Entities across ALL workspaces in ONE `$in` query!
+        if include_entities {
+            out.db_queries_executed += 1;
+            let ent_col: Collection<Document> = self.db.collection("entities");
+            let mut cur = ent_col
+                .find(doc! {
+                    "workspace_id": { "$in": &allowed_wids },
+                    "deleted": false
+                })
+                .await
+                .map_err(|e| map_mongo_err(&e))?;
+            while cur.advance().await.map_err(|e| map_mongo_err(&e))? {
+                let d = cur.deserialize_current().map_err(|e| map_mongo_err(&e))?;
+                let wid = d.get_str("workspace_id").unwrap_or("").to_owned();
+                out.entities_by_ws
+                    .entry(wid.clone())
+                    .or_default()
+                    .push(WorkspaceEntityRecord {
+                        entity_id: d.get_str("entity_id").unwrap_or("").to_owned(),
+                        workspace_id: wid,
+                        parent_id: d.get_str("parent_id").ok().map(ToOwned::to_owned),
+                        kind: d.get_str("kind").unwrap_or("").to_owned(),
+                        name: d.get_str("name").unwrap_or("").to_owned(),
+                        order_key: d.get_i64("order_key").unwrap_or(0),
+                        payload_json: d.get_str("payload_json").unwrap_or("{}").to_owned(),
+                        revision: d.get_i64("revision").unwrap_or(1),
+                        deleted: false,
+                        updated_at_unix: d.get_i64("updated_at_unix").unwrap_or(0),
+                        updated_by: d.get_str("updated_by").unwrap_or("").to_owned(),
+                    });
+            }
+        }
+
+        // 3. Members + Users across ALL workspaces in TWO `$in` queries!
+        if include_members {
+            out.db_queries_executed += 1;
+            let mut mcur = mem_col
+                .find(doc! { "workspace_id": { "$in": &allowed_wids } })
+                .await
+                .map_err(|e| map_mongo_err(&e))?;
+            let mut raw_mems: Vec<(String, String, Role, i64)> = Vec::new();
+            let mut uid_set = std::collections::HashSet::new();
+            while mcur.advance().await.map_err(|e| map_mongo_err(&e))? {
+                let d = mcur.deserialize_current().map_err(|e| map_mongo_err(&e))?;
+                let wid = d.get_str("workspace_id").unwrap_or("").to_owned();
+                let uid = d.get_str("user_id").unwrap_or("").to_owned();
+                if !wid.is_empty() && !uid.is_empty() {
+                    uid_set.insert(uid.clone());
+                    raw_mems.push((
+                        wid,
+                        uid,
+                        parse_role(d.get_str("role").unwrap_or("viewer")),
+                        d.get_i64("joined_at_unix").unwrap_or(0),
+                    ));
+                }
+            }
+            let unique_uids: Vec<String> = uid_set.into_iter().collect();
+            let mut user_map = std::collections::HashMap::with_capacity(unique_uids.len());
+            if !unique_uids.is_empty() {
+                out.db_queries_executed += 1;
+                let users_col: Collection<Document> = self.db.collection("users");
+                let mut ucur = users_col
+                    .find(doc! { "user_id": { "$in": &unique_uids } })
+                    .await
+                    .map_err(|e| map_mongo_err(&e))?;
+                while ucur.advance().await.map_err(|e| map_mongo_err(&e))? {
+                    let u = ucur.deserialize_current().map_err(|e| map_mongo_err(&e))?;
+                    if let Ok(uid) = u.get_str("user_id") {
+                        user_map.insert(
+                            uid.to_owned(),
+                            (
+                                u.get_str("email_normalized").unwrap_or("").to_owned(),
+                                u.get_str("display_name").unwrap_or("").to_owned(),
+                            ),
+                        );
+                    }
+                }
+            }
+            for (wid, uid, role, joined_at_unix) in raw_mems {
+                if let Some((email, display_name)) = user_map.get(&uid) {
+                    out.members_by_ws
+                        .entry(wid)
+                        .or_default()
+                        .push(MemberSummary {
+                            user_id: uid,
+                            email: email.clone(),
+                            display_name: display_name.clone(),
+                            role,
+                            joined_at_unix,
+                            membership_revision: 1,
+                        });
+                }
+            }
+        }
+
+        // 4. Comments across ALL workspaces in ONE `$in` query!
+        if include_comments {
+            out.db_queries_executed += 1;
+            let com_col: Collection<Document> = self.db.collection("comments");
+            let mut ccur = com_col
+                .find(doc! { "workspace_id": { "$in": &allowed_wids } })
+                .await
+                .map_err(|e| map_mongo_err(&e))?;
+            while ccur.advance().await.map_err(|e| map_mongo_err(&e))? {
+                let d = ccur.deserialize_current().map_err(|e| map_mongo_err(&e))?;
+                let wid = d.get_str("workspace_id").unwrap_or("").to_owned();
+                let rec = doc_to_comment_thread(&d, &wid);
+                out.comments_by_ws.entry(wid).or_default().push(rec);
+            }
+        }
+
+        // 5. Notifications across ALL workspaces in ONE `$in` query!
+        if include_notifications {
+            out.db_queries_executed += 1;
+            let not_col: Collection<Document> = self.db.collection("notifications");
+            let mut ncur = not_col
+                .find(doc! {
+                    "workspace_id": { "$in": &allowed_wids },
+                    "user_id": &auth.user_id
+                })
+                .await
+                .map_err(|e| map_mongo_err(&e))?;
+            while ncur.advance().await.map_err(|e| map_mongo_err(&e))? {
+                let d = ncur.deserialize_current().map_err(|e| map_mongo_err(&e))?;
+                let wid = d.get_str("workspace_id").unwrap_or("").to_owned();
+                out.notifications_by_ws
+                    .entry(wid.clone())
+                    .or_default()
+                    .push(NotificationRecord {
+                        notification_id: d.get_str("notification_id").unwrap_or("").to_owned(),
+                        workspace_id: wid,
+                        user_id: auth.user_id.clone(),
+                        kind: d.get_str("kind").unwrap_or("").to_owned(),
+                        title: d.get_str("title").unwrap_or("").to_owned(),
+                        entity_id: d.get_str("entity_id").ok().map(ToOwned::to_owned),
+                        actor_email: d.get_str("actor_email").unwrap_or("").to_owned(),
+                        created_at_unix: d.get_i64("created_at_unix").unwrap_or(0),
+                        read: d.get_bool("read").unwrap_or(false),
+                    });
+            }
+        }
+        Ok(out)
+    }
+}
+
+fn doc_to_comment_thread(d: &Document, workspace_id: &str) -> CommentThreadRecord {
+    let replies = d
+        .get_array("replies")
+        .map(|arr| {
+            arr.iter()
+                .filter_map(|item| item.as_document())
+                .map(|rd| CommentReplyRecord {
+                    reply_id: rd.get_str("reply_id").unwrap_or("").to_owned(),
+                    author_user_id: rd.get_str("author_user_id").unwrap_or("").to_owned(),
+                    author_email: rd.get_str("author_email").unwrap_or("").to_owned(),
+                    body: rd.get_str("body").unwrap_or("").to_owned(),
+                    created_at_unix: rd.get_i64("created_at_unix").unwrap_or(0),
+                })
+                .collect()
+        })
+        .unwrap_or_default();
+    CommentThreadRecord {
+        comment_id: d.get_str("comment_id").unwrap_or("").to_owned(),
+        workspace_id: workspace_id.to_owned(),
+        entity_id: d.get_str("entity_id").unwrap_or("").to_owned(),
+        anchor_revision: d.get_i64("anchor_revision").unwrap_or(1),
+        author_user_id: d.get_str("author_user_id").unwrap_or("").to_owned(),
+        author_email: d.get_str("author_email").unwrap_or("").to_owned(),
+        body: d.get_str("body").unwrap_or("").to_owned(),
+        resolved: d.get_bool("resolved").unwrap_or(false),
+        resolved_by_email: d.get_str("resolved_by_email").ok().map(ToOwned::to_owned),
+        created_at_unix: d.get_i64("created_at_unix").unwrap_or(0),
+        replies,
+    }
+}
+
+fn prefix_upper_bound(prefix: &str) -> Option<String> {
+    if prefix.is_empty() {
+        return None;
+    }
+    let mut chars: Vec<char> = prefix.chars().collect();
+    while let Some(last) = chars.pop() {
+        if let Some(next_char) = char::from_u32((last as u32).saturating_add(1))
+            && next_char > last
+        {
+            chars.push(next_char);
+            return Some(chars.into_iter().collect());
+        }
+    }
+    None
 }

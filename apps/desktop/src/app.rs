@@ -40,6 +40,7 @@ pub enum MainMode {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum RequestSubTab {
+    GraphQl,
     Params,
     PathParams,
     Headers,
@@ -239,6 +240,9 @@ pub struct App {
     pub gql_query: String,
     pub gql_vars: String,
     pub gql_result: Option<swaggen_runner::protocols_and_tools::GraphQlOutcome>,
+    pub graphql_schemas: HashMap<String, swaggen_domain::graphql::GraphQlSchemaSummary>,
+    pub graphql_introspecting_id: Option<String>,
+    pub gql_split_ratio: f32,
     pub sse_url: String,
     pub sse_max_events: usize,
     pub sse_running: bool,
@@ -436,6 +440,9 @@ impl App {
             gql_query: "query Health {\n  health\n}".into(),
             gql_vars: "{}".into(),
             gql_result: None,
+            graphql_schemas: HashMap::new(),
+            graphql_introspecting_id: None,
+            gql_split_ratio: 0.60,
             sse_url: "http://127.0.0.1:8080/events".into(),
             sse_max_events: 200,
             sse_running: false,
@@ -501,6 +508,13 @@ impl App {
         self.show_command_palette = false;
         self.show_production_confirm = false;
         self.state.open_or_focus_tab(req_id);
+        if let Some(req) = self.state.requests.iter().find(|r| r.id == req_id) {
+            if req.is_graphql() {
+                self.request_subtab = RequestSubTab::GraphQl;
+            } else if self.request_subtab == RequestSubTab::GraphQl {
+                self.request_subtab = RequestSubTab::Params;
+            }
+        }
         self.mode = MainMode::Workbench;
     }
 
@@ -605,12 +619,37 @@ impl App {
         let Some(req) = self.active_request().cloned() else {
             return;
         };
+        // Idempotent UI guard: prevent accidental double-click concurrent dispatches of the same request.
+        if self.inflight_request_id.as_deref() == Some(req.id.as_str()) {
+            return;
+        }
+        let is_gql_mutation = match &req.body {
+            swaggen_domain::workspace::RequestBody::GraphQl {
+                query,
+                operation_name,
+                ..
+            } => {
+                let analysis = swaggen_domain::graphql::analyze_graphql_document(
+                    query,
+                    operation_name.as_deref(),
+                    8,
+                    120,
+                );
+                analysis.active_kind == swaggen_domain::graphql::GraphQlOperationKind::Mutation
+            }
+            _ => false,
+        };
+        let is_mutating_call = if req.is_graphql() {
+            is_gql_mutation
+        } else {
+            req.method.is_mutating()
+        };
         if !confirmed_production
             && self
                 .state
                 .active_environment()
                 .is_some_and(|e| e.is_production)
-            && req.method.is_mutating()
+            && is_mutating_call
         {
             self.show_production_confirm = true;
             return;
@@ -925,6 +964,26 @@ impl App {
                         res.errors.len()
                     );
                     self.gql_result = Some(res);
+                }
+                Event::GraphQlSchemaFetched { request_id, result } => {
+                    if self.graphql_introspecting_id.as_deref() == Some(request_id.as_str()) {
+                        self.graphql_introspecting_id = None;
+                    }
+                    match result {
+                        Ok(schema) => {
+                            self.status = format!(
+                                "GraphQL schema loaded ({} queries · {} mutations · {} types)",
+                                schema.query_fields.len(),
+                                schema.mutation_fields.len(),
+                                schema.type_fields.len()
+                            );
+                            self.graphql_schemas.insert(request_id, schema);
+                        }
+                        Err(err) => {
+                            self.error = true;
+                            self.status = format!("GraphQL introspection failed: {err}");
+                        }
+                    }
                 }
                 Event::SseEventReceived(ev) => {
                     if self.sse_events.len() >= self.sse_max_events.max(10) {
@@ -2099,6 +2158,9 @@ mod tests {
             gql_query: String::new(),
             gql_vars: String::new(),
             gql_result: None,
+            graphql_schemas: HashMap::new(),
+            graphql_introspecting_id: None,
+            gql_split_ratio: 0.60,
             sse_url: String::new(),
             sse_max_events: 200,
             sse_running: false,
