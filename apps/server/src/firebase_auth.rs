@@ -417,6 +417,8 @@ pub fn render_browser_signin_html(
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Sign in to Swaggen</title>
+<link rel="icon" type="image/png" href="/v1/assets/favicon.png" />
+<link rel="shortcut icon" href="/favicon.ico" />
 <style>
   body {{ margin: 0; background: #ffffff; color: #202124; font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace; display: flex; min-height: 100vh; align-items: center; justify-content: center; }}
   .card {{ width: 440px; border: 1px solid #e5e7eb; border-radius: 16px; padding: 32px 36px; box-sizing: border-box; }}
@@ -438,22 +440,13 @@ pub fn render_browser_signin_html(
 <body>
   <div class="card">
     <div class="brand">
-      <svg width="26" height="24" viewBox="0 0 24 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M14 0H6.75C2.5 0 0 2.5 0 6.25C0 10 2.5 12.25 6.75 12.25H9.25L12.75 8.25H6.75C5 8.25 4 7.5 4 6.25C4 4.75 5 4 6.75 4H14C14.825 4 15.5 3.325 15.5 2.5V1.5C15.5 0.675 14.825 0 14 0Z" fill="#245C59"/>
-        <path d="M15.25 8.25L11.75 12.25H14.75C16.5 12.25 17.5 13 17.5 14.25C17.5 15.75 16.5 16.5 14.75 16.5H4C3.175 16.5 2.5 17.175 2.5 18V19C2.5 19.825 3.175 20.5 4 20.5H14.75C19 20.5 21.5 18 21.5 14.25C21.5 10.5 19 8.25 15.25 8.25Z" fill="#245C59"/>
-        <rect x="18" y="0.5" width="3.2" height="3.2" fill="#F5A89A"/>
-      </svg>
+      <img src="/v1/assets/brand-mark.png" alt="Swaggen" width="28" height="28" />
       <span>swaggen</span>
     </div>
     <h1>Sign in to Swaggen</h1>
     <p>Continue with Google to sign in or automatically create your Swaggen account.</p>
     <button id="googleBtn" class="btn">
-      <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
-        <path fill="#4285F4" d="M17.64 9.2045c0-.6381-.0573-1.2518-.1636-1.8409H9v3.4814h4.8436c-.2086 1.125-.8427 2.0782-1.7959 2.7164v2.2581h2.9087c1.7018-1.5668 2.6836-3.874 2.6836-6.615z"/>
-        <path fill="#34A853" d="M9 18c2.43 0 4.4673-.806 5.9564-2.1805l-2.9087-2.2581c-.8059.54-1.8368.859-3.0477.859-2.344 0-4.3282-1.5831-5.036-3.7104H.9574v2.3318C2.4382 15.9832 5.4818 18 9 18z"/>
-        <path fill="#FBBC05" d="M3.964 10.71c-.18-.54-.2822-1.1168-.2822-1.71s.1023-1.17.2823-1.71V4.9582H.9573A8.9965 8.9965 0 0 0 0 9c0 1.4523.3477 2.8268.9573 4.0418L3.964 10.71z"/>
-        <path fill="#EA4335" d="M9 3.5795c1.3214 0 2.5077.4541 3.4405 1.346l2.5813-2.5814C13.4632.8918 11.426 0 9 0 5.4818 0 2.4382 2.0168.9573 4.9582L3.964 7.29C4.6718 5.1627 6.6559 3.5795 9 3.5795z"/>
-      </svg>
+      <img src="/v1/assets/google-g.png" alt="Google" width="18" height="18" />
       <span>Continue with Google</span>
     </button>
     <div class="sep"></div>

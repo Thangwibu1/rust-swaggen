@@ -1,0 +1,17 @@
+{
+  "figma_file_key": "MmPG1xzCaYtPb9HgZxsTno",
+  "figma_url": "https://www.figma.com/design/MmPG1xzCaYtPb9HgZxsTno/Swaggen",
+  "section_node_id": "88:36",
+  "assets": {
+    "assets/brand-mark.png": { "node_id": "4:81", "name": "Brand/Mark", "scale": 4 },
+    "assets/google-g.png": { "node_id": "11:12128", "name": "Brand/Google", "scale": 4 },
+    "assets/swaggen-icon-256.png": { "node_id": "88:39", "name": "Brand/AppIcon", "scale": 1 },
+    "assets/swaggen.ico": { "node_id": "88:39", "name": "Brand/AppIcon (multi-res ICO)", "scale": 1 },
+    "assets/favicon.png": { "node_id": "88:48", "name": "Brand/Favicon", "scale": 1 },
+    "assets/favicon.ico": { "node_id": "88:48", "name": "Brand/Favicon (multi-res ICO)", "scale": 1 },
+    "installer/assets/wizard-small.bmp": { "node_id": "88:57", "name": "Installer/WizardSmall", "scale": 1 },
+    "installer/assets/wizard-banner.bmp": { "node_id": "88:66", "name": "Installer/WizardBanner", "scale": 1 },
+    "installer/assets/msi-banner.bmp": { "node_id": "88:81", "name": "Installer/MsiBanner", "scale": 1 },
+    "installer/assets/msi-dialog.bmp": { "node_id": "88:91", "name": "Installer/MsiDialog", "scale": 1 }
+  }
+}

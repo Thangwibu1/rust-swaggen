@@ -1842,6 +1842,38 @@ async fn not_found(request: Request<Body>) -> (StatusCode, Json<ErrorEnvelope>) 
     )
 }
 
+async fn serve_favicon_ico() -> Response {
+    (
+        [(axum::http::header::CONTENT_TYPE, "image/x-icon")],
+        include_bytes!("../../../assets/favicon.ico").as_slice(),
+    )
+        .into_response()
+}
+
+async fn serve_favicon_png() -> Response {
+    (
+        [(axum::http::header::CONTENT_TYPE, "image/png")],
+        include_bytes!("../../../assets/favicon.png").as_slice(),
+    )
+        .into_response()
+}
+
+async fn serve_brand_mark_png() -> Response {
+    (
+        [(axum::http::header::CONTENT_TYPE, "image/png")],
+        include_bytes!("../../../assets/brand-mark.png").as_slice(),
+    )
+        .into_response()
+}
+
+async fn serve_google_g_png() -> Response {
+    (
+        [(axum::http::header::CONTENT_TYPE, "image/png")],
+        include_bytes!("../../../assets/google-g.png").as_slice(),
+    )
+        .into_response()
+}
+
 pub fn router(store: Arc<ServerStore>) -> Router {
     let (event_bus, _) = broadcast::channel(256);
     let firebase = FirebaseAuthConfig::from_env().map(|cfg| Arc::new(FirebaseVerifier::new(cfg)));
@@ -1853,6 +1885,10 @@ pub fn router(store: Arc<ServerStore>) -> Router {
         presence: Arc::new(Mutex::new(BTreeMap::new())),
     };
     Router::new()
+        .route("/favicon.ico", get(serve_favicon_ico))
+        .route("/v1/assets/favicon.png", get(serve_favicon_png))
+        .route("/v1/assets/brand-mark.png", get(serve_brand_mark_png))
+        .route("/v1/assets/google-g.png", get(serve_google_g_png))
         .route("/health/live", get(live))
         .route("/health/ready", get(ready))
         .route("/v1/health/live", get(live))

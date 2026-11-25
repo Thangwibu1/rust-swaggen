@@ -5,6 +5,7 @@ FROM rust:1.100.0-bookworm AS builder
 WORKDIR /app
 
 COPY Cargo.toml Cargo.lock ./
+COPY assets ./assets
 COPY apps ./apps
 COPY crates ./crates
 

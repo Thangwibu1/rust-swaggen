@@ -428,42 +428,29 @@ pub fn text_input(
     inner_resp.expect("text_input frame executed")
 }
 
-/// Paints a crisp 4-color official Google 'G' mark using smooth circular arcs + crossbar.
-fn paint_google_g(painter: &egui::Painter, center: egui::Pos2, radius: f32) {
-    let sw = (radius * 0.36).max(2.6);
-    let draw_arc = |start_deg: f32, end_deg: f32, color: egui::Color32| {
-        let steps = 16;
-        let mut pts = Vec::with_capacity(steps + 1);
-        for i in 0..=steps {
-            let deg = start_deg + (end_deg - start_deg) * (i as f32 / steps as f32);
-            let rad = deg.to_radians();
-            pts.push(egui::pos2(
-                center.x + radius * rad.cos(),
-                center.y + radius * rad.sin(),
-            ));
-        }
-        painter.add(egui::Shape::line(pts, egui::Stroke::new(sw, color)));
-    };
+const FIGMA_BRAND_MARK_PNG: &[u8] = include_bytes!("../../../assets/brand-mark.png");
+const FIGMA_GOOGLE_G_PNG: &[u8] = include_bytes!("../../../assets/google-g.png");
 
-    // Official Google 4-color brand palette (y grows downward in egui)
-    // Red: top-left to top-right (-142° -> -42°)
-    draw_arc(-142.0, -42.0, egui::Color32::from_rgb(0xEA, 0x43, 0x35));
-    // Yellow: left arc (142° -> 218°)
-    draw_arc(142.0, 218.0, egui::Color32::from_rgb(0xFB, 0xBC, 0x05));
-    // Green: bottom arc (40° -> 144°)
-    draw_arc(40.0, 144.0, egui::Color32::from_rgb(0x34, 0xA8, 0x53));
-    // Blue: right-lower arc (-4° -> 44°) + crisp horizontal crossbar
-    draw_arc(-4.0, 44.0, egui::Color32::from_rgb(0x42, 0x85, 0xF4));
-    painter.line_segment(
-        [
-            egui::pos2(center.x + 0.5, center.y),
-            egui::pos2(center.x + radius + sw * 0.35, center.y),
-        ],
-        egui::Stroke::new(sw, egui::Color32::from_rgb(0x42, 0x85, 0xF4)),
+fn load_figma_texture(
+    ctx: &egui::Context,
+    key: &'static str,
+    png_bytes: &'static [u8],
+) -> Option<egui::TextureHandle> {
+    let id = egui::Id::unique(key);
+    if let Some(existing) = ctx.data(|d| d.get_temp::<egui::TextureHandle>(id)) {
+        return Some(existing);
+    }
+    let decoded = eframe::icon_data::from_png_bytes(png_bytes).ok()?;
+    let image = egui::ColorImage::from_rgba_unmultiplied(
+        [decoded.width as usize, decoded.height as usize],
+        &decoded.rgba,
     );
+    let handle = ctx.load_texture(key, image, egui::TextureOptions::LINEAR);
+    ctx.data_mut(|d| d.insert_temp(id, handle.clone()));
+    Some(handle)
 }
 
-/// Figma A01 Google Sign-In button (44px tall, full width, crisp 4-color G mark + centered label).
+/// Figma A01 Google Sign-In button (44px tall, full width, real Figma Brand/Google 11:12128 asset + centered label).
 pub fn google_button(ui: &mut egui::Ui, enabled: bool, label: &str) -> egui::Response {
     let w = ui.available_width().max(220.0);
     let (rect, resp) = ui.allocate_exact_size(
@@ -487,13 +474,22 @@ pub fn google_button(ui: &mut egui::Ui, enabled: bool, label: &str) -> egui::Res
     let text_color = if enabled { text_primary(ui) } else { text_secondary(ui) };
     let galley = ui
         .fonts_mut(|f| f.layout_no_wrap(label.to_owned(), font_id, text_color));
-    let icon_d = 17.0;
+    let icon_d = 18.0;
     let gap = 10.0;
     let total_w = icon_d + gap + galley.size().x;
     let start_x = rect.center().x - total_w * 0.5;
-    let g_center = egui::pos2(start_x + icon_d * 0.5, rect.center().y);
-
-    paint_google_g(ui.painter(), g_center, icon_d * 0.44);
+    let icon_rect = egui::Rect::from_center_size(
+        egui::pos2(start_x + icon_d * 0.5, rect.center().y),
+        egui::vec2(icon_d, icon_d),
+    );
+    if let Some(tex) = load_figma_texture(ui.ctx(), "figma_brand_google_11_12128", FIGMA_GOOGLE_G_PNG) {
+        ui.painter().image(
+            tex.id(),
+            icon_rect,
+            egui::Rect::from_min_max(egui::pos2(0.0, 0.0), egui::pos2(1.0, 1.0)),
+            egui::Color32::WHITE,
+        );
+    }
     ui.painter().galley(
         egui::pos2(start_x + icon_d + gap, rect.center().y - galley.size().y * 0.5),
         galley,
@@ -502,45 +498,17 @@ pub fn google_button(ui: &mut egui::Ui, enabled: bool, label: &str) -> egui::Res
     resp
 }
 
-/// Renders the Swaggen Brand/Mark (Figma node 4:81): paired code brackets + salmon accent dot.
+/// Renders the exact Figma Swaggen Brand/Mark (node 4:81) exported directly from Figma.
 pub fn brand_mark(ui: &mut egui::Ui, size: f32) {
     let (rect, _) = ui.allocate_exact_size(egui::vec2(size, size), egui::Sense::hover());
-    let p = ui.painter();
-    let s = size / 32.0;
-    let stroke = egui::Stroke::new((3.0 * s).max(2.0), Tokens::BRAND_TEAL);
-    p.line_segment(
-        [rect.min + egui::vec2(20.0 * s, 7.5 * s), rect.min + egui::vec2(10.0 * s, 7.5 * s)],
-        stroke,
-    );
-    p.line_segment(
-        [rect.min + egui::vec2(10.0 * s, 7.5 * s), rect.min + egui::vec2(7.0 * s, 11.5 * s)],
-        stroke,
-    );
-    p.line_segment(
-        [rect.min + egui::vec2(7.0 * s, 11.5 * s), rect.min + egui::vec2(11.0 * s, 15.0 * s)],
-        stroke,
-    );
-    p.line_segment(
-        [rect.min + egui::vec2(11.0 * s, 15.0 * s), rect.min + egui::vec2(21.0 * s, 17.0 * s)],
-        stroke,
-    );
-    p.line_segment(
-        [rect.min + egui::vec2(21.0 * s, 17.0 * s), rect.min + egui::vec2(25.0 * s, 21.0 * s)],
-        stroke,
-    );
-    p.line_segment(
-        [rect.min + egui::vec2(25.0 * s, 21.0 * s), rect.min + egui::vec2(22.0 * s, 24.5 * s)],
-        stroke,
-    );
-    p.line_segment(
-        [rect.min + egui::vec2(22.0 * s, 24.5 * s), rect.min + egui::vec2(9.0 * s, 24.5 * s)],
-        stroke,
-    );
-    p.circle_filled(
-        rect.min + egui::vec2(24.5 * s, 7.5 * s),
-        (2.6 * s).max(2.0),
-        Tokens::BRAND_SALMON,
-    );
+    if let Some(tex) = load_figma_texture(ui.ctx(), "figma_brand_mark_4_81", FIGMA_BRAND_MARK_PNG) {
+        ui.painter().image(
+            tex.id(),
+            rect,
+            egui::Rect::from_min_max(egui::pos2(0.0, 0.0), egui::pos2(1.0, 1.0)),
+            egui::Color32::WHITE,
+        );
+    }
 }
 
 /// Paints minimal crisp 1.5px stroke Lucide-style vector icons matching 01-component-library.
