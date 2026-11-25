@@ -23,16 +23,16 @@ use std::{
 use swaggen_api_contract::{
     API_VERSION, AcceptInvitationRequest, BootstrapOwnerRequest, BranchSummary, Capabilities,
     ChangePasswordRequest, CommentListResponse, CreateBranchRequest, CreateCommentRequest,
-    CreateInvitationRequest, CreateTeamMockRequest, CreateWorkspaceRequest, ErrorEnvelope,
-    FirebaseLoginRequest, LoginRequest, MarkNotificationsReadRequest, MergeRequestRecord, OpenMergeRequest,
-    PresenceEntry, PresenceHeartbeatRequest, PresenceListResponse, PublishBatchRequest,
+    CreateInvitationRequest, CreateScheduleRequest, CreateTeamMockRequest, CreateWorkspaceRequest,
+    ErrorEnvelope, FirebaseLoginRequest, LoginRequest, MarkNotificationsReadRequest,
+    MergeRequestRecord, OpenMergeRequest, PresenceEntry, PresenceHeartbeatRequest,
+    PresenceListResponse, PublishBatchRequest, PutVaultSecretRequest, RegisterRunnerRequest,
     ReplyCommentRequest, ResolveCommentRequest, RestoreRevisionRequest, RevisionListResponse, Role,
-    ServiceStatus, SsrfCheckRequest, SsrfCheckResponse, TeamMockListResponse, TeamMockRoute,
-    TotpEnrollResponse, TotpStatusResponse, TotpVerifyRequest, PutVaultSecretRequest, VaultSecretListResponse,
-    VaultSecretSummary, VaultSecretValueResponse, TransferOwnershipRequest,
-    CreateScheduleRequest, RegisterRunnerRequest, RunnerLeaseRecord, ScheduleRecord,
-    UpdateMemberRoleRequest, UpsertEntityRequest, WorkspaceArchiveRequest, WorkspaceListResponse,
-    WorkspaceQuotaStatus,
+    RunnerLeaseRecord, ScheduleRecord, ServiceStatus, SsrfCheckRequest, SsrfCheckResponse,
+    TeamMockListResponse, TeamMockRoute, TotpEnrollResponse, TotpStatusResponse, TotpVerifyRequest,
+    TransferOwnershipRequest, UpdateMemberRoleRequest, UpsertEntityRequest,
+    VaultSecretListResponse, VaultSecretSummary, VaultSecretValueResponse, WorkspaceArchiveRequest,
+    WorkspaceListResponse, WorkspaceQuotaStatus,
 };
 use swaggen_domain::{
     governance::{
@@ -165,7 +165,10 @@ fn extract_bearer(headers: &axum::http::HeaderMap) -> Option<&str> {
     headers
         .get(AUTHORIZATION)
         .and_then(|v| v.to_str().ok())
-        .and_then(|v| v.strip_prefix("Bearer ").or_else(|| v.strip_prefix("bearer ")))
+        .and_then(|v| {
+            v.strip_prefix("Bearer ")
+                .or_else(|| v.strip_prefix("bearer "))
+        })
         .map(str::trim)
         .filter(|s| !s.is_empty())
 }
@@ -304,7 +307,12 @@ async fn firebase_login(
         .map_err(|msg| {
             (
                 StatusCode::UNAUTHORIZED,
-                Json(ErrorEnvelope::new("firebase_token_invalid", &msg, &corr, false)),
+                Json(ErrorEnvelope::new(
+                    "firebase_token_invalid",
+                    &msg,
+                    &corr,
+                    false,
+                )),
             )
         })?;
     let display_name = req
@@ -408,7 +416,9 @@ async fn logout_all(
         .logout_all(&ctx, now_unix())
         .await
         .map_err(|e| map_err(&corr, e))?;
-    Ok(Json(json!({ "api_version": API_VERSION, "revoked_count": revoked })))
+    Ok(Json(
+        json!({ "api_version": API_VERSION, "revoked_count": revoked }),
+    ))
 }
 
 async fn change_password(
@@ -469,7 +479,8 @@ async fn accept_invitation(
     Extension(RequestCorrelationId(corr)): Extension<RequestCorrelationId>,
     headers: axum::http::HeaderMap,
     Json(req): Json<AcceptInvitationRequest>,
-) -> Result<Json<swaggen_api_contract::AcceptInvitationResponse>, (StatusCode, Json<ErrorEnvelope>)> {
+) -> Result<Json<swaggen_api_contract::AcceptInvitationResponse>, (StatusCode, Json<ErrorEnvelope>)>
+{
     let caller = if extract_bearer(&headers).is_some() {
         Some(
             require_auth(&state, &headers)
@@ -891,7 +902,8 @@ async fn list_notifications(
     Extension(RequestCorrelationId(corr)): Extension<RequestCorrelationId>,
     headers: axum::http::HeaderMap,
     Path(workspace_id): Path<String>,
-) -> Result<Json<swaggen_api_contract::NotificationListResponse>, (StatusCode, Json<ErrorEnvelope>)> {
+) -> Result<Json<swaggen_api_contract::NotificationListResponse>, (StatusCode, Json<ErrorEnvelope>)>
+{
     let ctx = require_auth(&state, &headers)
         .await
         .map_err(|e| map_err(&corr, e))?;
@@ -918,7 +930,9 @@ async fn mark_notifications_read(
         .mark_notifications_read(&ctx, &workspace_id, &req.notification_ids)
         .await
         .map_err(|e| map_err(&corr, e))?;
-    Ok(Json(json!({ "api_version": API_VERSION, "marked": marked })))
+    Ok(Json(
+        json!({ "api_version": API_VERSION, "marked": marked }),
+    ))
 }
 
 async fn caller_workspace_role(
@@ -1018,7 +1032,8 @@ async fn create_team_mock(
         created_by: ctx.user_id,
         created_at_unix: now,
     };
-    let val = serde_json::to_string(&route).map_err(|_| map_err(&corr, StoreError::InternalSafe))?;
+    let val =
+        serde_json::to_string(&route).map_err(|_| map_err(&corr, StoreError::InternalSafe))?;
     state
         .store
         .kv_put(KV_MOCKS, &key, &val, now)
@@ -1156,7 +1171,11 @@ async fn check_outbound_ssrf(
         .map_err(|e| map_err(&corr, e))?;
     let pol = SsrfPolicy {
         allow_private_networks: false,
-        allowed_hosts: req.allowed_hosts.into_iter().map(|s| s.to_ascii_lowercase()).collect(),
+        allowed_hosts: req
+            .allowed_hosts
+            .into_iter()
+            .map(|s| s.to_ascii_lowercase())
+            .collect(),
         allow_http: true,
     };
     match validate_outbound_url(&req.url, &pol) {
@@ -1313,8 +1332,14 @@ async fn enroll_mfa(
     let raw_secret = format!("{:020}", now).into_bytes();
     let secret_b32 = encode_base32(&raw_secret);
     let rec_plain = vec![
-        format!("SWG-{}-A1", &ctx.user_id.chars().take(4).collect::<String>()),
-        format!("SWG-{}-B2", &ctx.user_id.chars().take(4).collect::<String>()),
+        format!(
+            "SWG-{}-A1",
+            &ctx.user_id.chars().take(4).collect::<String>()
+        ),
+        format!(
+            "SWG-{}-B2",
+            &ctx.user_id.chars().take(4).collect::<String>()
+        ),
     ];
     let recovery_hashes = rec_plain.iter().map(|c| hash_recovery_code(c)).collect();
     let uri = build_otpauth_uri("Swaggen", &ctx.email, &secret_b32);
@@ -1419,7 +1444,8 @@ async fn export_audit(
     headers: axum::http::HeaderMap,
     Path(workspace_id): Path<String>,
     Query(q): Query<AuditExportQuery>,
-) -> Result<Json<swaggen_domain::governance::AuditExportBundle>, (StatusCode, Json<ErrorEnvelope>)> {
+) -> Result<Json<swaggen_domain::governance::AuditExportBundle>, (StatusCode, Json<ErrorEnvelope>)>
+{
     let ctx = require_auth(&state, &headers)
         .await
         .map_err(|e| map_err(&corr, e))?;
@@ -1432,7 +1458,16 @@ async fn export_audit(
     let cutoff = now_unix() - i64::from(days) * 86_400;
     let tuples: Vec<_> = events
         .into_iter()
-        .map(|e| (e.event_id, e.actor_email, e.action, e.target_id, e.detail_redacted, e.created_at_unix))
+        .map(|e| {
+            (
+                e.event_id,
+                e.actor_email,
+                e.action,
+                e.target_id,
+                e.detail_redacted,
+                e.created_at_unix,
+            )
+        })
         .collect();
     Ok(Json(build_hash_chained_audit_export(&tuples, days, cutoff)))
 }
@@ -1451,7 +1486,10 @@ async fn create_branch(
         .await
         .map_err(|e| map_err(&corr, e))?;
     if !role.can_write_entities() {
-        return Err(map_err(&corr, StoreError::Forbidden("Viewer cannot create branches".into())));
+        return Err(map_err(
+            &corr,
+            StoreError::Forbidden("Viewer cannot create branches".into()),
+        ));
     }
     let entities = state
         .store
@@ -1487,7 +1525,12 @@ async fn create_branch(
     let val = serde_json::to_string(&data).map_err(|_| map_err(&corr, StoreError::InternalSafe))?;
     state
         .store
-        .kv_put(KV_BRANCHES, &ws_kv_key(&workspace_id, &branch_id), &val, now)
+        .kv_put(
+            KV_BRANCHES,
+            &ws_kv_key(&workspace_id, &branch_id),
+            &val,
+            now,
+        )
         .await
         .map_err(|e| map_err(&corr, e))?;
     Ok((StatusCode::CREATED, Json(summary)))
@@ -1507,7 +1550,10 @@ async fn open_merge_request(
         .await
         .map_err(|e| map_err(&corr, e))?;
     if !role.can_write_entities() {
-        return Err(map_err(&corr, StoreError::Forbidden("Viewer cannot open merge requests".into())));
+        return Err(map_err(
+            &corr,
+            StoreError::Forbidden("Viewer cannot open merge requests".into()),
+        ));
     }
     let raw_branch = state
         .store
@@ -1558,7 +1604,10 @@ async fn execute_merge_request(
         .await
         .map_err(|e| map_err(&corr, e))?;
     if !role.can_write_entities() {
-        return Err(map_err(&corr, StoreError::Forbidden("Viewer cannot merge".into())));
+        return Err(map_err(
+            &corr,
+            StoreError::Forbidden("Viewer cannot merge".into()),
+        ));
     }
     let key = ws_kv_key(&workspace_id, &merge_id);
     let raw = state
@@ -1566,7 +1615,12 @@ async fn execute_merge_request(
         .kv_get(KV_MERGE_REQUESTS, &key)
         .await
         .map_err(|e| map_err(&corr, e))?
-        .ok_or_else(|| map_err(&corr, StoreError::NotFound("Merge request not found".into())))?;
+        .ok_or_else(|| {
+            map_err(
+                &corr,
+                StoreError::NotFound("Merge request not found".into()),
+            )
+        })?;
     let mut mr: MergeRequestRecord =
         serde_json::from_str(&raw).map_err(|_| map_err(&corr, StoreError::InternalSafe))?;
     if mr.conflicts_count > 0 {
@@ -1609,7 +1663,11 @@ async fn list_vault_secrets(
         .map_err(|e| map_err(&corr, e))?;
     let secrets = rows
         .into_iter()
-        .filter_map(|(_, v)| serde_json::from_str::<VaultEntry>(&v).ok().map(|e| e.summary))
+        .filter_map(|(_, v)| {
+            serde_json::from_str::<VaultEntry>(&v)
+                .ok()
+                .map(|e| e.summary)
+        })
         .collect();
     Ok(Json(VaultSecretListResponse {
         api_version: API_VERSION,
@@ -1660,7 +1718,8 @@ async fn put_vault_secret(
         summary: summary.clone(),
         stored_value: req.value,
     };
-    let val = serde_json::to_string(&entry).map_err(|_| map_err(&corr, StoreError::InternalSafe))?;
+    let val =
+        serde_json::to_string(&entry).map_err(|_| map_err(&corr, StoreError::InternalSafe))?;
     state
         .store
         .kv_put(KV_TEAM_VAULT, &kv_key, &val, now)
@@ -1718,7 +1777,9 @@ async fn register_runner_lease(
     if !matches!(role, Role::Owner | Role::Admin) {
         return Err(map_err(
             &corr,
-            StoreError::Forbidden("Only Owner/Admin can register workspace self-hosted runners".into()),
+            StoreError::Forbidden(
+                "Only Owner/Admin can register workspace self-hosted runners".into(),
+            ),
         ));
     }
     let now = now_unix();
@@ -1734,7 +1795,12 @@ async fn register_runner_lease(
     let val = serde_json::to_string(&rec).map_err(|_| map_err(&corr, StoreError::InternalSafe))?;
     state
         .store
-        .kv_put(KV_RUNNERS, &ws_kv_key(&workspace_id, &rec.runner_id), &val, now)
+        .kv_put(
+            KV_RUNNERS,
+            &ws_kv_key(&workspace_id, &rec.runner_id),
+            &val,
+            now,
+        )
         .await
         .map_err(|e| map_err(&corr, e))?;
     Ok((StatusCode::CREATED, Json(rec)))
@@ -1907,9 +1973,15 @@ pub fn router(store: Arc<ServerStore>) -> Router {
         .route("/v1/auth/logout-all", post(logout_all))
         .route("/v1/auth/change-password", post(change_password))
         .route("/v1/auth/sessions", get(list_sessions))
-        .route("/v1/auth/sessions/{session_id}/revoke", post(revoke_session))
+        .route(
+            "/v1/auth/sessions/{session_id}/revoke",
+            post(revoke_session),
+        )
         .route("/v1/auth/invitations/accept", post(accept_invitation))
-        .route("/v1/workspaces", get(list_workspaces).post(create_workspace))
+        .route(
+            "/v1/workspaces",
+            get(list_workspaces).post(create_workspace),
+        )
         .route("/v1/workspaces/{workspace_id}/members", get(list_members))
         .route(
             "/v1/workspaces/{workspace_id}/invitations",
@@ -1931,7 +2003,10 @@ pub fn router(store: Arc<ServerStore>) -> Router {
         .route("/v1/workspaces/{workspace_id}/publish", post(publish_batch))
         .route("/v1/workspaces/{workspace_id}/changes", get(get_changes))
         .route("/v1/workspaces/{workspace_id}/snapshot", get(get_snapshot))
-        .route("/v1/workspaces/{workspace_id}/events", get(get_events_stream))
+        .route(
+            "/v1/workspaces/{workspace_id}/events",
+            get(get_events_stream),
+        )
         .route(
             "/v1/workspaces/{workspace_id}/entities/{entity_id}/revisions",
             get(list_revisions),
@@ -1968,25 +2043,76 @@ pub fn router(store: Arc<ServerStore>) -> Router {
             "/v1/workspaces/{workspace_id}/mocks/{mock_id}",
             delete(delete_team_mock),
         )
-        .route("/mock/{workspace_id}/{*tail}", get(serve_team_mock).post(serve_team_mock).put(serve_team_mock).delete(serve_team_mock))
-        .route("/v1/workspaces/{workspace_id}/quotas", get(get_workspace_quotas))
+        .route(
+            "/mock/{workspace_id}/{*tail}",
+            get(serve_team_mock)
+                .post(serve_team_mock)
+                .put(serve_team_mock)
+                .delete(serve_team_mock),
+        )
+        .route(
+            "/v1/workspaces/{workspace_id}/quotas",
+            get(get_workspace_quotas),
+        )
         .route("/v1/security/check-ssrf", post(check_outbound_ssrf))
-        .route("/v1/workspaces/{workspace_id}/archive", post(archive_workspace))
-        .route("/v1/workspaces/{workspace_id}/transfer-ownership", post(transfer_ownership))
-        .route("/v1/workspaces/{workspace_id}/leave", post(leave_workspace_handler))
-        .route("/v1/workspaces/{workspace_id}/presence", get(get_presence).post(post_presence))
+        .route(
+            "/v1/workspaces/{workspace_id}/archive",
+            post(archive_workspace),
+        )
+        .route(
+            "/v1/workspaces/{workspace_id}/transfer-ownership",
+            post(transfer_ownership),
+        )
+        .route(
+            "/v1/workspaces/{workspace_id}/leave",
+            post(leave_workspace_handler),
+        )
+        .route(
+            "/v1/workspaces/{workspace_id}/presence",
+            get(get_presence).post(post_presence),
+        )
         .route("/v1/auth/mfa/enroll", post(enroll_mfa))
         .route("/v1/auth/mfa/verify", post(verify_mfa))
-        .route("/v1/workspaces/{workspace_id}/members/{user_id}/reset-mfa", post(owner_reset_member_mfa))
-        .route("/v1/workspaces/{workspace_id}/audit/export", get(export_audit))
-        .route("/v1/workspaces/{workspace_id}/branches", post(create_branch))
-        .route("/v1/workspaces/{workspace_id}/merge-requests", post(open_merge_request))
-        .route("/v1/workspaces/{workspace_id}/merge-requests/{merge_id}/merge", post(execute_merge_request))
-        .route("/v1/workspaces/{workspace_id}/vault", get(list_vault_secrets))
-        .route("/v1/workspaces/{workspace_id}/vault/{key}", get(reveal_vault_secret).put(put_vault_secret))
-        .route("/v1/workspaces/{workspace_id}/runners/register", post(register_runner_lease))
-        .route("/v1/workspaces/{workspace_id}/runners/{runner_id}/heartbeat", post(heartbeat_runner_lease))
-        .route("/v1/workspaces/{workspace_id}/schedules", post(create_schedule))
+        .route(
+            "/v1/workspaces/{workspace_id}/members/{user_id}/reset-mfa",
+            post(owner_reset_member_mfa),
+        )
+        .route(
+            "/v1/workspaces/{workspace_id}/audit/export",
+            get(export_audit),
+        )
+        .route(
+            "/v1/workspaces/{workspace_id}/branches",
+            post(create_branch),
+        )
+        .route(
+            "/v1/workspaces/{workspace_id}/merge-requests",
+            post(open_merge_request),
+        )
+        .route(
+            "/v1/workspaces/{workspace_id}/merge-requests/{merge_id}/merge",
+            post(execute_merge_request),
+        )
+        .route(
+            "/v1/workspaces/{workspace_id}/vault",
+            get(list_vault_secrets),
+        )
+        .route(
+            "/v1/workspaces/{workspace_id}/vault/{key}",
+            get(reveal_vault_secret).put(put_vault_secret),
+        )
+        .route(
+            "/v1/workspaces/{workspace_id}/runners/register",
+            post(register_runner_lease),
+        )
+        .route(
+            "/v1/workspaces/{workspace_id}/runners/{runner_id}/heartbeat",
+            post(heartbeat_runner_lease),
+        )
+        .route(
+            "/v1/workspaces/{workspace_id}/schedules",
+            post(create_schedule),
+        )
         .fallback(not_found)
         .layer(DefaultBodyLimit::max(DEFAULT_MAX_BODY_BYTES))
         .layer(middleware::from_fn(attach_request_id))
@@ -2077,9 +2203,7 @@ mod tests {
     use http_body_util::{BodyExt, Full};
     use hyper::{Method, Request as HyperReq};
     use hyper_util::{client::legacy::Client, rt::TokioExecutor};
-    use swaggen_api_contract::{
-        AcceptInvitationResponse, AuthResponse, TeamWorkspaceSummary,
-    };
+    use swaggen_api_contract::{AcceptInvitationResponse, AuthResponse, TeamWorkspaceSummary};
     use swaggen_mongo_store::memory_backend::InMemoryStore;
 
     async fn http_call(
@@ -2334,7 +2458,8 @@ mod tests {
             Some(json!({"email":"bob@swaggen.local","role":"editor","expires_in_hours":24})),
         )
         .await;
-        let inv: swaggen_api_contract::CreateInvitationResponse = serde_json::from_str(&ib).unwrap();
+        let inv: swaggen_api_contract::CreateInvitationResponse =
+            serde_json::from_str(&ib).unwrap();
         let (_, bb) = http_call(
             &base,
             Method::POST,
@@ -2398,7 +2523,10 @@ mod tests {
         .await;
         assert_eq!(st, 200);
         let pub1: swaggen_api_contract::PublishBatchResponse = serde_json::from_str(&p1).unwrap();
-        assert_eq!(pub1.results[0].kind, swaggen_api_contract::PublishResultKind::Applied);
+        assert_eq!(
+            pub1.results[0].kind,
+            swaggen_api_contract::PublishResultKind::Applied
+        );
 
         // Lost ACK retry with exact same operation_id + hash
         let (st, p1_retry) = http_call(
@@ -2425,8 +2553,12 @@ mod tests {
         )
         .await;
         assert_eq!(st, 200);
-        let pub_retry: swaggen_api_contract::PublishBatchResponse = serde_json::from_str(&p1_retry).unwrap();
-        assert_eq!(pub_retry.results[0].kind, swaggen_api_contract::PublishResultKind::AlreadyAcked);
+        let pub_retry: swaggen_api_contract::PublishBatchResponse =
+            serde_json::from_str(&p1_retry).unwrap();
+        assert_eq!(
+            pub_retry.results[0].kind,
+            swaggen_api_contract::PublishResultKind::AlreadyAcked
+        );
 
         // Bob catches up & sees cursor 1 + unread notification
         let (st, ch_b) = http_call(
@@ -2489,8 +2621,12 @@ mod tests {
             })),
         )
         .await;
-        let pub_c: swaggen_api_contract::PublishBatchResponse = serde_json::from_str(&conflict_b).unwrap();
-        assert_eq!(pub_c.results[0].kind, swaggen_api_contract::PublishResultKind::ConflictRevision);
+        let pub_c: swaggen_api_contract::PublishBatchResponse =
+            serde_json::from_str(&conflict_b).unwrap();
+        assert_eq!(
+            pub_c.results[0].kind,
+            swaggen_api_contract::PublishResultKind::ConflictRevision
+        );
 
         // Revision history + restore rev 1 as forward rev 3 + comment anchored to rev 2 + resolve
         let (st, _) = http_call(
@@ -2505,7 +2641,10 @@ mod tests {
         let (st, revs_body) = http_call(
             &base,
             Method::GET,
-            &format!("/v1/workspaces/{}/entities/req-1/revisions", ws.workspace_id),
+            &format!(
+                "/v1/workspaces/{}/entities/req-1/revisions",
+                ws.workspace_id
+            ),
             Some(&bob.session_token),
             None,
         )
@@ -2580,8 +2719,12 @@ mod tests {
             })),
         )
         .await;
-        let del_res: swaggen_api_contract::PublishBatchResponse = serde_json::from_str(&del_conf).unwrap();
-        assert_eq!(del_res.results[0].kind, swaggen_api_contract::PublishResultKind::ConflictDeletedRemote);
+        let del_res: swaggen_api_contract::PublishBatchResponse =
+            serde_json::from_str(&del_conf).unwrap();
+        assert_eq!(
+            del_res.results[0].kind,
+            swaggen_api_contract::PublishResultKind::ConflictDeletedRemote
+        );
 
         // Cursor expired => 410 cursor_expired, snapshot still recovers consistently
         if let ServerStore::Memory(m) = store.as_ref() {
@@ -2599,7 +2742,10 @@ mod tests {
         let (st, snap_b) = http_call(
             &base,
             Method::GET,
-            &format!("/v1/workspaces/{}/snapshot?offset=0&limit=50", ws.workspace_id),
+            &format!(
+                "/v1/workspaces/{}/snapshot?offset=0&limit=50",
+                ws.workspace_id
+            ),
             Some(&bob.session_token),
             None,
         )
@@ -2617,11 +2763,15 @@ mod tests {
             None,
         )
         .await;
-        let mems: swaggen_api_contract::MemberListResponse = serde_json::from_str(&mem_body).unwrap();
+        let mems: swaggen_api_contract::MemberListResponse =
+            serde_json::from_str(&mem_body).unwrap();
         let (st, _) = http_call(
             &base,
             Method::POST,
-            &format!("/v1/workspaces/{}/members/{}/role", ws.workspace_id, bob.user.user_id),
+            &format!(
+                "/v1/workspaces/{}/members/{}/role",
+                ws.workspace_id, bob.user.user_id
+            ),
             Some(&alice.session_token),
             Some(json!({"role":"viewer","expected_membership_revision":mems.membership_revision})),
         )
@@ -2756,7 +2906,8 @@ mod tests {
         )
         .await;
         assert_eq!(st, 200);
-        let enroll: swaggen_api_contract::TotpEnrollResponse = serde_json::from_str(&enroll_b).unwrap();
+        let enroll: swaggen_api_contract::TotpEnrollResponse =
+            serde_json::from_str(&enroll_b).unwrap();
         let (st, _) = http_call(
             &base,
             Method::POST,
@@ -2769,7 +2920,10 @@ mod tests {
         let (st, _) = http_call(
             &base,
             Method::POST,
-            &format!("/v1/workspaces/{}/members/{}/reset-mfa", ws.workspace_id, bob.user.user_id),
+            &format!(
+                "/v1/workspaces/{}/members/{}/reset-mfa",
+                ws.workspace_id, bob.user.user_id
+            ),
             Some(&alice.session_token),
             None,
         )
@@ -2779,7 +2933,10 @@ mod tests {
         let (st, aud_b) = http_call(
             &base,
             Method::GET,
-            &format!("/v1/workspaces/{}/audit/export?retention_days=30", ws.workspace_id),
+            &format!(
+                "/v1/workspaces/{}/audit/export?retention_days=30",
+                ws.workspace_id
+            ),
             Some(&alice.session_token),
             None,
         )
@@ -2810,7 +2967,10 @@ mod tests {
         let (st, _) = http_call(
             &base,
             Method::POST,
-            &format!("/v1/workspaces/{}/merge-requests/{}/merge", ws.workspace_id, mr.merge_id),
+            &format!(
+                "/v1/workspaces/{}/merge-requests/{}/merge",
+                ws.workspace_id, mr.merge_id
+            ),
             Some(&alice.session_token),
             None,
         )
@@ -2818,8 +2978,16 @@ mod tests {
         assert_eq!(st, 409);
 
         // Ownership transfer Alice -> Bob succeeds atomically, then Alice can leave
-        let (_, m_body) = http_call(&base, Method::GET, &format!("/v1/workspaces/{}/members", ws.workspace_id), Some(&alice.session_token), None).await;
-        let mems2: swaggen_api_contract::MemberListResponse = serde_json::from_str(&m_body).unwrap();
+        let (_, m_body) = http_call(
+            &base,
+            Method::GET,
+            &format!("/v1/workspaces/{}/members", ws.workspace_id),
+            Some(&alice.session_token),
+            None,
+        )
+        .await;
+        let mems2: swaggen_api_contract::MemberListResponse =
+            serde_json::from_str(&m_body).unwrap();
         let (st, _) = http_call(
             &base,
             Method::POST,
@@ -2891,11 +3059,15 @@ mod tests {
         )
         .await;
         assert_eq!(st, 201);
-        let lease: swaggen_api_contract::RunnerLeaseRecord = serde_json::from_str(&lease_b).unwrap();
+        let lease: swaggen_api_contract::RunnerLeaseRecord =
+            serde_json::from_str(&lease_b).unwrap();
         let (st, _) = http_call(
             &base,
             Method::POST,
-            &format!("/v1/workspaces/{}/runners/{}/heartbeat", ws.workspace_id, lease.runner_id),
+            &format!(
+                "/v1/workspaces/{}/runners/{}/heartbeat",
+                ws.workspace_id, lease.runner_id
+            ),
             Some(&bob.session_token),
             None,
         )

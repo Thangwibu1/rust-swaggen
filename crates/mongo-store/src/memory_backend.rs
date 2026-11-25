@@ -129,12 +129,19 @@ impl InMemoryStore {
         }
     }
 
-    fn issue_session(state: &mut State, user_id: &str, device_name: &str, now: i64) -> (String, String, i64) {
+    fn issue_session(
+        state: &mut State,
+        user_id: &str,
+        device_name: &str,
+        now: i64,
+    ) -> (String, String, i64) {
         let session_id = Uuid::new_v4().to_string();
         let token = generate_opaque_token("swg");
         let token_hash = sha256_hex(&token);
         let expires = now + SESSION_TTL_SECS;
-        state.session_id_by_hash.insert(token_hash.clone(), session_id.clone());
+        state
+            .session_id_by_hash
+            .insert(token_hash.clone(), session_id.clone());
         state.sessions_by_id.insert(
             session_id.clone(),
             SessionRec {
@@ -241,12 +248,16 @@ impl WorkspaceRepository for InMemoryStore {
         if let Some(expected) = &self.bootstrap_secret
             && req.bootstrap_token.as_deref() != Some(expected.as_str())
         {
-            return Err(StoreError::Unauthorized("Invalid bootstrap setup token".into()));
+            return Err(StoreError::Unauthorized(
+                "Invalid bootstrap setup token".into(),
+            ));
         }
         let email = normalize_email(&req.email)?;
         let display_name = req.display_name.trim();
         if display_name.is_empty() || display_name.len() > 80 {
-            return Err(StoreError::InvalidInput("Display name must be 1-80 characters".into()));
+            return Err(StoreError::InvalidInput(
+                "Display name must be 1-80 characters".into(),
+            ));
         }
         let pw_hash = hash_password(&req.password)?;
         let mut guard = self.state.lock().map_err(|_| StoreError::InternalSafe)?;
@@ -264,7 +275,8 @@ impl WorkspaceRepository for InMemoryStore {
         };
         guard.user_id_by_email.insert(email, user_id.clone());
         guard.users_by_id.insert(user_id.clone(), user.clone());
-        let (session_id, token, expires) = Self::issue_session(&mut guard, &user_id, &req.device_name, now);
+        let (session_id, token, expires) =
+            Self::issue_session(&mut guard, &user_id, &req.device_name, now);
         Self::record_audit(
             &mut guard,
             None,
@@ -380,7 +392,9 @@ impl WorkspaceRepository for InMemoryStore {
                 is_server_owner: is_first,
                 created_at_unix: now,
             };
-            guard.user_id_by_email.insert(email.clone(), user_id.clone());
+            guard
+                .user_id_by_email
+                .insert(email.clone(), user_id.clone());
             guard
                 .user_id_by_firebase_uid
                 .insert(uid.to_owned(), user_id.clone());
@@ -416,7 +430,9 @@ impl WorkspaceRepository for InMemoryStore {
     ) -> Result<AuthContext, StoreError> {
         let token = bearer_token.trim();
         if token.is_empty() {
-            return Err(StoreError::Unauthorized("Missing bearer session token".into()));
+            return Err(StoreError::Unauthorized(
+                "Missing bearer session token".into(),
+            ));
         }
         let hash = sha256_hex(token);
         let mut guard = self.state.lock().map_err(|_| StoreError::InternalSafe)?;
@@ -486,7 +502,9 @@ impl WorkspaceRepository for InMemoryStore {
             .get_mut(session_id)
             .ok_or_else(|| StoreError::NotFound("Session not found".into()))?;
         if sess.user_id != auth.user_id && !auth.is_server_owner {
-            return Err(StoreError::Forbidden("Cannot revoke another user's session".into()));
+            return Err(StoreError::Forbidden(
+                "Cannot revoke another user's session".into(),
+            ));
         }
         sess.revoked_at_unix = Some(now);
         Self::record_audit(
@@ -538,12 +556,17 @@ impl WorkspaceRepository for InMemoryStore {
             .get_mut(&auth.user_id)
             .ok_or_else(|| StoreError::NotFound("Account not found".into()))?;
         if !verify_password(&req.current_password, &user.password_hash) {
-            return Err(StoreError::Unauthorized("Current password is incorrect".into()));
+            return Err(StoreError::Unauthorized(
+                "Current password is incorrect".into(),
+            ));
         }
         user.password_hash = new_hash;
         if req.revoke_other_sessions {
             for s in guard.sessions_by_id.values_mut() {
-                if s.user_id == auth.user_id && s.session_id != auth.session_id && s.revoked_at_unix.is_none() {
+                if s.user_id == auth.user_id
+                    && s.session_id != auth.session_id
+                    && s.revoked_at_unix.is_none()
+                {
                     s.revoked_at_unix = Some(now);
                 }
             }
@@ -570,7 +593,9 @@ impl WorkspaceRepository for InMemoryStore {
         let slug = normalize_slug(&req.slug)?;
         let name = req.name.trim();
         if name.is_empty() || name.len() > 80 {
-            return Err(StoreError::InvalidInput("Workspace name must be 1-80 characters".into()));
+            return Err(StoreError::InvalidInput(
+                "Workspace name must be 1-80 characters".into(),
+            ));
         }
         let mut guard = self.state.lock().map_err(|_| StoreError::InternalSafe)?;
         if guard.workspace_id_by_slug.contains_key(&slug) {
@@ -586,8 +611,12 @@ impl WorkspaceRepository for InMemoryStore {
             membership_revision: 1,
             archived: false,
         };
-        guard.workspace_id_by_slug.insert(slug, workspace_id.clone());
-        guard.workspaces_by_id.insert(workspace_id.clone(), ws.clone());
+        guard
+            .workspace_id_by_slug
+            .insert(slug, workspace_id.clone());
+        guard
+            .workspaces_by_id
+            .insert(workspace_id.clone(), ws.clone());
         guard.memberships.insert(
             (workspace_id.clone(), auth.user_id.clone()),
             MembershipRec {
@@ -712,8 +741,12 @@ impl WorkspaceRepository for InMemoryStore {
             used_at_unix: None,
             revoked_at_unix: None,
         };
-        guard.invitation_id_by_hash.insert(token_hash, invitation_id.clone());
-        guard.invitations_by_id.insert(invitation_id.clone(), rec.clone());
+        guard
+            .invitation_id_by_hash
+            .insert(token_hash, invitation_id.clone());
+        guard
+            .invitations_by_id
+            .insert(invitation_id.clone(), rec.clone());
         Self::record_audit(
             &mut guard,
             Some(workspace_id),
@@ -760,7 +793,9 @@ impl WorkspaceRepository for InMemoryStore {
             .get_mut(invitation_id)
             .ok_or_else(|| StoreError::NotFound("Invitation not found".into()))?;
         if inv.workspace_id != workspace_id {
-            return Err(StoreError::Forbidden("Invitation belongs to another workspace".into()));
+            return Err(StoreError::Forbidden(
+                "Invitation belongs to another workspace".into(),
+            ));
         }
         if inv.used_at_unix.is_some() {
             return Err(StoreError::InvitationAlreadyUsed);
@@ -787,7 +822,9 @@ impl WorkspaceRepository for InMemoryStore {
     ) -> Result<AcceptInvitationResponse, StoreError> {
         let token = req.invite_token.trim();
         if token.is_empty() {
-            return Err(StoreError::InvalidInput("Invitation token is required".into()));
+            return Err(StoreError::InvalidInput(
+                "Invitation token is required".into(),
+            ));
         }
         let token_hash = sha256_hex(token);
         let supplied_email = normalize_email(&req.email)?;
@@ -820,7 +857,8 @@ impl WorkspaceRepository for InMemoryStore {
             return Err(StoreError::InvitationAccountMismatch);
         }
 
-        let user = if let Some(existing_uid) = guard.user_id_by_email.get(&supplied_email).cloned() {
+        let user = if let Some(existing_uid) = guard.user_id_by_email.get(&supplied_email).cloned()
+        {
             let u = guard
                 .users_by_id
                 .get(&existing_uid)
@@ -840,10 +878,9 @@ impl WorkspaceRepository for InMemoryStore {
             if display_name.is_empty() || display_name.len() > 80 {
                 return Err(StoreError::InvalidInput("Display name is required".into()));
             }
-            let pw = req
-                .password
-                .as_deref()
-                .ok_or_else(|| StoreError::InvalidInput("Password is required for new account".into()))?;
+            let pw = req.password.as_deref().ok_or_else(|| {
+                StoreError::InvalidInput("Password is required for new account".into())
+            })?;
             let pw_hash = hash_password(pw)?;
             let uid = Uuid::new_v4().to_string();
             let u = UserRec {
@@ -854,7 +891,9 @@ impl WorkspaceRepository for InMemoryStore {
                 is_server_owner: false,
                 created_at_unix: now,
             };
-            guard.user_id_by_email.insert(supplied_email.clone(), uid.clone());
+            guard
+                .user_id_by_email
+                .insert(supplied_email.clone(), uid.clone());
             guard.users_by_id.insert(uid, u.clone());
             u
         };
@@ -1112,7 +1151,8 @@ impl WorkspaceRepository for InMemoryStore {
                         server_revision: 0,
                         server_cursor: None,
                         server_entity: None,
-                        reason: "Operation ID already committed with a different payload hash".into(),
+                        reason: "Operation ID already committed with a different payload hash"
+                            .into(),
                     });
                     continue;
                 }
@@ -1129,7 +1169,9 @@ impl WorkspaceRepository for InMemoryStore {
                         server_revision: cur.revision,
                         server_cursor: None,
                         server_entity: Some(cur.clone()),
-                        reason: "Target entity was deleted on server; tombstone prevents resurrection".into(),
+                        reason:
+                            "Target entity was deleted on server; tombstone prevents resurrection"
+                                .into(),
                     });
                     continue;
                 }
@@ -1215,7 +1257,11 @@ impl WorkspaceRepository for InMemoryStore {
                     order_key: op.order_key,
                     revision: next_rev,
                     deleted: op.delete,
-                    payload_json: if op.delete { None } else { Some(op.payload_json.clone()) },
+                    payload_json: if op.delete {
+                        None
+                    } else {
+                        Some(op.payload_json.clone())
+                    },
                     operation_id: op.operation_id.clone(),
                     actor_user_id: auth.user_id.clone(),
                     actor_email: auth.email.clone(),
@@ -1234,8 +1280,18 @@ impl WorkspaceRepository for InMemoryStore {
                     notification_id: Uuid::new_v4().to_string(),
                     workspace_id: workspace_id.to_owned(),
                     user_id: uid,
-                    kind: if op.delete { "entity_deleted" } else { "entity_published" }.into(),
-                    title: format!("{} {} ({})", auth.email, if op.delete { "deleted" } else { "published" }, op.name),
+                    kind: if op.delete {
+                        "entity_deleted"
+                    } else {
+                        "entity_published"
+                    }
+                    .into(),
+                    title: format!(
+                        "{} {} ({})",
+                        auth.email,
+                        if op.delete { "deleted" } else { "published" },
+                        op.name
+                    ),
                     entity_id: Some(op.entity_id.clone()),
                     actor_email: auth.email.clone(),
                     created_at_unix: now,
@@ -1247,7 +1303,11 @@ impl WorkspaceRepository for InMemoryStore {
                 Some(workspace_id),
                 &auth.user_id,
                 &auth.email,
-                if op.delete { "workspace.entity_deleted" } else { "workspace.published" },
+                if op.delete {
+                    "workspace.entity_deleted"
+                } else {
+                    "workspace.published"
+                },
                 &op.entity_id,
                 &format!("{} rev {} ({})", op.name, next_rev, op.note),
                 now,
@@ -1287,7 +1347,11 @@ impl WorkspaceRepository for InMemoryStore {
     ) -> Result<ChangesFeedResponse, StoreError> {
         let guard = self.state.lock().map_err(|_| StoreError::InternalSafe)?;
         let (ws, _) = Self::require_membership(&guard, workspace_id, &auth.user_id)?;
-        let min_retained = guard.min_retained_cursor.get(workspace_id).copied().unwrap_or(0);
+        let min_retained = guard
+            .min_retained_cursor
+            .get(workspace_id)
+            .copied()
+            .unwrap_or(0);
         if after_cursor < min_retained {
             return Err(StoreError::CursorExpired(min_retained));
         }
@@ -1485,7 +1549,11 @@ impl WorkspaceRepository for InMemoryStore {
                 notification_id: Uuid::new_v4().to_string(),
                 workspace_id: workspace_id.to_owned(),
                 user_id: uid,
-                kind: if is_mention { "mention".into() } else { "comment".into() },
+                kind: if is_mention {
+                    "mention".into()
+                } else {
+                    "comment".into()
+                },
                 title: if is_mention {
                     format!("{} mentioned you on {}", auth.email, req.entity_id)
                 } else {
@@ -1635,7 +1703,9 @@ impl WorkspaceRepository for InMemoryStore {
         now: i64,
     ) -> Result<TeamWorkspaceSummary, StoreError> {
         let mut guard = self.state.lock().map_err(|_| StoreError::InternalSafe)?;
-        let caller_role = Self::require_membership(&guard, workspace_id, &auth.user_id)?.1.role;
+        let caller_role = Self::require_membership(&guard, workspace_id, &auth.user_id)?
+            .1
+            .role;
         if caller_role != Role::Owner {
             return Err(StoreError::Forbidden(
                 "Only workspace Owner can archive or restore this workspace".into(),
@@ -1669,7 +1739,11 @@ impl WorkspaceRepository for InMemoryStore {
             Some(workspace_id),
             &auth.user_id,
             &auth.email,
-            if archived { "workspace.archived" } else { "workspace.restored" },
+            if archived {
+                "workspace.archived"
+            } else {
+                "workspace.restored"
+            },
             workspace_id,
             "Workspace archive state updated",
             now,
@@ -1686,7 +1760,8 @@ impl WorkspaceRepository for InMemoryStore {
     ) -> Result<MemberListResponse, StoreError> {
         {
             let mut guard = self.state.lock().map_err(|_| StoreError::InternalSafe)?;
-            let (ws_snap, caller_mem) = Self::require_membership(&guard, workspace_id, &auth.user_id)?;
+            let (ws_snap, caller_mem) =
+                Self::require_membership(&guard, workspace_id, &auth.user_id)?;
             if caller_mem.role != Role::Owner {
                 return Err(StoreError::Forbidden(
                     "Only current workspace Owner can transfer ownership".into(),
@@ -1694,17 +1769,22 @@ impl WorkspaceRepository for InMemoryStore {
             }
             if ws_snap.membership_revision != req.expected_membership_revision {
                 return Err(StoreError::Conflict(
-                    "Membership revision conflict; refresh members before transferring ownership".into(),
+                    "Membership revision conflict; refresh members before transferring ownership"
+                        .into(),
                 ));
             }
             if req.target_user_id == auth.user_id {
-                return Err(StoreError::InvalidInput("Target user is already Owner".into()));
+                return Err(StoreError::InvalidInput(
+                    "Target user is already Owner".into(),
+                ));
             }
             if !guard
                 .memberships
                 .contains_key(&(workspace_id.to_owned(), req.target_user_id.clone()))
             {
-                return Err(StoreError::NotFound("Target member not found in workspace".into()));
+                return Err(StoreError::NotFound(
+                    "Target member not found in workspace".into(),
+                ));
             }
             if let Some(m) = guard
                 .memberships
@@ -1783,9 +1863,10 @@ impl WorkspaceRepository for InMemoryStore {
         _now: i64,
     ) -> Result<(), StoreError> {
         let mut guard = self.state.lock().map_err(|_| StoreError::InternalSafe)?;
-        guard
-            .kv_docs
-            .insert((namespace.to_owned(), key.to_owned()), value_json.to_owned());
+        guard.kv_docs.insert(
+            (namespace.to_owned(), key.to_owned()),
+            value_json.to_owned(),
+        );
         Ok(())
     }
 

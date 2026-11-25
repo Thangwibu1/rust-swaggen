@@ -83,7 +83,10 @@ pub fn run_transform_extension(
     header_value: &str,
 ) -> Result<(String, String), String> {
     ext.require_capability(ExtensionCapability::TransformBody)?;
-    Ok((header_name.trim().to_owned(), format!("ext:{}:{}", ext.id, header_value)))
+    Ok((
+        header_name.trim().to_owned(),
+        format!("ext:{}:{}", ext.id, header_value),
+    ))
 }
 
 #[cfg(test)]
@@ -94,7 +97,8 @@ mod tests {
     fn extension_capabilities_default_denied_and_can_be_granted_then_revoked() {
         let mut declared = BTreeSet::new();
         declared.insert(ExtensionCapability::TransformBody);
-        let mut ext = ExtensionManifest::install_disabled("hdr-tagger", "Header Tagger", "1.0.0", declared);
+        let mut ext =
+            ExtensionManifest::install_disabled("hdr-tagger", "Header Tagger", "1.0.0", declared);
         assert!(ext.granted_capabilities.is_empty());
         assert!(!ext.enabled);
         assert!(run_transform_extension(&ext, "X-Trace", "1").is_err());
@@ -103,9 +107,13 @@ mod tests {
         // Enabled without capability grant still fails closed!
         assert!(run_transform_extension(&ext, "X-Trace", "1").is_err());
         // Undeclared capability cannot be granted!
-        assert!(ext.grant_capability(ExtensionCapability::ReadNonSecretVars).is_err());
+        assert!(
+            ext.grant_capability(ExtensionCapability::ReadNonSecretVars)
+                .is_err()
+        );
 
-        ext.grant_capability(ExtensionCapability::TransformBody).unwrap();
+        ext.grant_capability(ExtensionCapability::TransformBody)
+            .unwrap();
         let (k, v) = run_transform_extension(&ext, "X-Trace", "1").unwrap();
         assert_eq!(k, "X-Trace");
         assert_eq!(v, "ext:hdr-tagger:1");

@@ -136,10 +136,7 @@ fn show_outbox_and_publish(app: &mut App, ui: &mut egui::Ui, profile_id: &str, w
     swaggen_ui_kit::surface_card(ui, |ui| {
         ui.strong("Durable Outbox Queue");
         if app.sync_state.outbox.is_empty() {
-            ui.label(
-                egui::RichText::new("Outbox is empty.")
-                    .color(Tokens::TEXT_SECONDARY),
-            );
+            ui.label(egui::RichText::new("Outbox is empty.").color(Tokens::TEXT_SECONDARY));
         } else {
             for entry in app.sync_state.outbox.iter().rev() {
                 let kind = match &entry.status {
@@ -176,13 +173,13 @@ fn show_outbox_and_publish(app: &mut App, ui: &mut egui::Ui, profile_id: &str, w
                             ui,
                             NoticeKind::Danger,
                             "Permission revoked",
-                            &format!("{reason}. Your local draft stays preserved for personal export."),
+                            &format!(
+                                "{reason}. Your local draft stays preserved for personal export."
+                            ),
                         );
                     }
                     OutboxStatus::FailedActionRequired { reason } => {
-                        ui.label(
-                            egui::RichText::new(reason).color(Tokens::TEXT_DANGER),
-                        );
+                        ui.label(egui::RichText::new(reason).color(Tokens::TEXT_DANGER));
                     }
                     _ => {}
                 }
@@ -216,115 +213,89 @@ fn show_conflicts(app: &mut App, ui: &mut egui::Ui, profile_id: &str, wid: &str)
     }
 
     for entry in conflicts {
-        swaggen_ui_kit::surface_card(ui, |ui| {
-            match &entry.status {
-                OutboxStatus::Conflicted {
-                    server_revision,
-                    server_payload_json,
-                    reason,
-                } => {
-                    ui.horizontal_wrapped(|ui| {
-                        ui.label(swaggen_ui_kit::bold_text(
-                            &entry.name,
-                            15.0,
-                            swaggen_ui_kit::text_primary(ui),
-                        ));
-                        swaggen_ui_kit::pill_badge(
-                            ui,
-                            Tokens::TEXT_WARNING,
-                            &format!("Base r{} vs Server r{}", entry.base_revision, server_revision),
-                        );
-                    });
-                    ui.label(
-                        egui::RichText::new(reason)
-                            .size(12.0)
-                            .color(swaggen_ui_kit::text_secondary(ui)),
-                    );
-                    ui.add_space(8.0);
-                    let diffs = compute_three_way_diff(
-                        &entry.base_payload_json,
-                        &entry.local_payload_json,
-                        server_payload_json,
-                    );
-                    ui.columns(3, |cols| {
-                        swaggen_ui_kit::surface_card(&mut cols[0], |ui| {
-                            swaggen_ui_kit::card_header(ui, "Base (Common Ancestor)");
-                            for d in &diffs {
-                                ui.monospace(format!("{}: {}", d.path, d.base_val));
-                            }
-                        });
-                        swaggen_ui_kit::surface_card(&mut cols[1], |ui| {
-                            swaggen_ui_kit::card_header(ui, "Your Local Version");
-                            for d in &diffs {
-                                ui.label(
-                                    egui::RichText::new(format!("{}: {}", d.path, d.local_val))
-                                        .monospace()
-                                        .color(Tokens::STATUS_INFO),
-                                );
-                            }
-                        });
-                        swaggen_ui_kit::surface_card(&mut cols[2], |ui| {
-                            swaggen_ui_kit::card_header(ui, "Server Version");
-                            for d in &diffs {
-                                ui.label(
-                                    egui::RichText::new(format!("{}: {}", d.path, d.server_val))
-                                        .monospace()
-                                        .color(Tokens::TEXT_WARNING),
-                                );
-                            }
-                        });
-                    });
-                    ui.add_space(10.0);
-                    ui.horizontal_wrapped(|ui| {
-                        if swaggen_ui_kit::primary_button(
-                            ui,
-                            !app.pending,
-                            "Rebase & publish my version",
-                        )
-                        .clicked()
-                        {
-                            app.submit(Command::ResolveSyncConflict {
-                                profile_id: profile_id.to_owned(),
-                                workspace_id: wid.to_owned(),
-                                operation_id: entry.operation_id.clone(),
-                                choice: ConflictChoice::RebaseWithPayload {
-                                    merged_payload_json: entry.local_payload_json.clone(),
-                                    note: format!(
-                                        "Resolved conflict cleanly over r{server_revision}"
-                                    ),
-                                },
-                            });
-                        }
-                        if swaggen_ui_kit::secondary_button(
-                            ui,
-                            !app.pending,
-                            "Take server & keep my draft",
-                        )
-                        .clicked()
-                        {
-                            app.submit(Command::ResolveSyncConflict {
-                                profile_id: profile_id.to_owned(),
-                                workspace_id: wid.to_owned(),
-                                operation_id: entry.operation_id.clone(),
-                                choice: ConflictChoice::TakeServerKeepMyDraft,
-                            });
-                        }
-                    });
-                }
-                OutboxStatus::DeletedRemoteConflict {
-                    server_revision,
-                    reason,
-                } => {
-                    swaggen_ui_kit::notice_banner(
+        swaggen_ui_kit::surface_card(ui, |ui| match &entry.status {
+            OutboxStatus::Conflicted {
+                server_revision,
+                server_payload_json,
+                reason,
+            } => {
+                ui.horizontal_wrapped(|ui| {
+                    ui.label(swaggen_ui_kit::bold_text(
+                        &entry.name,
+                        15.0,
+                        swaggen_ui_kit::text_primary(ui),
+                    ));
+                    swaggen_ui_kit::pill_badge(
                         ui,
-                        NoticeKind::Danger,
-                        "Deleted while offline",
-                        &format!("{reason} (rev {server_revision}). Tombstone prevents silent resurrection."),
+                        Tokens::TEXT_WARNING,
+                        &format!(
+                            "Base r{} vs Server r{}",
+                            entry.base_revision, server_revision
+                        ),
                     );
+                });
+                ui.label(
+                    egui::RichText::new(reason)
+                        .size(12.0)
+                        .color(swaggen_ui_kit::text_secondary(ui)),
+                );
+                ui.add_space(8.0);
+                let diffs = compute_three_way_diff(
+                    &entry.base_payload_json,
+                    &entry.local_payload_json,
+                    server_payload_json,
+                );
+                ui.columns(3, |cols| {
+                    swaggen_ui_kit::surface_card(&mut cols[0], |ui| {
+                        swaggen_ui_kit::card_header(ui, "Base (Common Ancestor)");
+                        for d in &diffs {
+                            ui.monospace(format!("{}: {}", d.path, d.base_val));
+                        }
+                    });
+                    swaggen_ui_kit::surface_card(&mut cols[1], |ui| {
+                        swaggen_ui_kit::card_header(ui, "Your Local Version");
+                        for d in &diffs {
+                            ui.label(
+                                egui::RichText::new(format!("{}: {}", d.path, d.local_val))
+                                    .monospace()
+                                    .color(Tokens::STATUS_INFO),
+                            );
+                        }
+                    });
+                    swaggen_ui_kit::surface_card(&mut cols[2], |ui| {
+                        swaggen_ui_kit::card_header(ui, "Server Version");
+                        for d in &diffs {
+                            ui.label(
+                                egui::RichText::new(format!("{}: {}", d.path, d.server_val))
+                                    .monospace()
+                                    .color(Tokens::TEXT_WARNING),
+                            );
+                        }
+                    });
+                });
+                ui.add_space(10.0);
+                ui.horizontal_wrapped(|ui| {
+                    if swaggen_ui_kit::primary_button(
+                        ui,
+                        !app.pending,
+                        "Rebase & publish my version",
+                    )
+                    .clicked()
+                    {
+                        app.submit(Command::ResolveSyncConflict {
+                            profile_id: profile_id.to_owned(),
+                            workspace_id: wid.to_owned(),
+                            operation_id: entry.operation_id.clone(),
+                            choice: ConflictChoice::RebaseWithPayload {
+                                merged_payload_json: entry.local_payload_json.clone(),
+                                note: format!("Resolved conflict cleanly over r{server_revision}"),
+                            },
+                        });
+                    }
                     if swaggen_ui_kit::secondary_button(
                         ui,
                         !app.pending,
-                        "Accept deletion & preserve my draft locally",
+                        "Take server & keep my draft",
                     )
                     .clicked()
                     {
@@ -335,9 +306,36 @@ fn show_conflicts(app: &mut App, ui: &mut egui::Ui, profile_id: &str, wid: &str)
                             choice: ConflictChoice::TakeServerKeepMyDraft,
                         });
                     }
-                }
-                _ => {}
+                });
             }
+            OutboxStatus::DeletedRemoteConflict {
+                server_revision,
+                reason,
+            } => {
+                swaggen_ui_kit::notice_banner(
+                    ui,
+                    NoticeKind::Danger,
+                    "Deleted while offline",
+                    &format!(
+                        "{reason} (rev {server_revision}). Tombstone prevents silent resurrection."
+                    ),
+                );
+                if swaggen_ui_kit::secondary_button(
+                    ui,
+                    !app.pending,
+                    "Accept deletion & preserve my draft locally",
+                )
+                .clicked()
+                {
+                    app.submit(Command::ResolveSyncConflict {
+                        profile_id: profile_id.to_owned(),
+                        workspace_id: wid.to_owned(),
+                        operation_id: entry.operation_id.clone(),
+                        choice: ConflictChoice::TakeServerKeepMyDraft,
+                    });
+                }
+            }
+            _ => {}
         });
     }
 }
@@ -355,11 +353,7 @@ fn show_history(app: &mut App, ui: &mut egui::Ui, profile_id: &str, wid: &str) {
         }
     });
     ui.separator();
-    let cur_rev = app
-        .team_revisions
-        .first()
-        .map(|r| r.revision)
-        .unwrap_or(1);
+    let cur_rev = app.team_revisions.first().map(|r| r.revision).unwrap_or(1);
     let mut restore_target: Option<(String, i64)> = None;
     for r in &app.team_revisions {
         ui.horizontal_wrapped(|ui| {
@@ -512,9 +506,12 @@ fn show_comments(app: &mut App, ui: &mut egui::Ui, profile_id: &str, wid: &str) 
                         for rep in &c.replies {
                             ui.add_space(4.0);
                             ui.label(
-                                egui::RichText::new(format!("  ↳ {}: {}", rep.author_email, rep.body))
-                                    .size(12.0)
-                                    .color(swaggen_ui_kit::text_secondary(ui)),
+                                egui::RichText::new(format!(
+                                    "  ↳ {}: {}",
+                                    rep.author_email, rep.body
+                                ))
+                                .size(12.0)
+                                .color(swaggen_ui_kit::text_secondary(ui)),
                             );
                         }
                     });
@@ -584,7 +581,11 @@ fn show_notifications(app: &mut App, ui: &mut egui::Ui, profile_id: &str, wid: &
         ui.horizontal_wrapped(|ui| {
             swaggen_ui_kit::status_badge(
                 ui,
-                if n.read { NoticeKind::Info } else { NoticeKind::Warning },
+                if n.read {
+                    NoticeKind::Info
+                } else {
+                    NoticeKind::Warning
+                },
                 if n.read { "read" } else { "new" },
             );
             ui.label(&n.title);

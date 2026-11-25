@@ -34,11 +34,18 @@ fn main() {
     }
 
     let manifest_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
-    let ico_path = manifest_dir.join("..").join("..").join("assets").join("swaggen.ico");
+    let ico_path = manifest_dir
+        .join("..")
+        .join("..")
+        .join("assets")
+        .join("swaggen.ico");
     let ico = fs::read(&ico_path).expect("assets/swaggen.ico must exist");
     assert!(ico.len() >= 6, "invalid ICO header");
     let count = u16::from_le_bytes([ico[4], ico[5]]) as usize;
-    assert!(count > 0 && ico.len() >= 6 + count * 16, "truncated ICO directory");
+    assert!(
+        count > 0 && ico.len() >= 6 + count * 16,
+        "truncated ICO directory"
+    );
 
     let mut res = Vec::with_capacity(ico.len() + 512);
     // Standard 32-byte Win32 .res empty header record

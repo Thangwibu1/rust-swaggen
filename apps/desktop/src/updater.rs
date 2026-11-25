@@ -211,7 +211,11 @@ pub async fn download_update_package(
     };
     let filename = format!(
         "Swaggen-Update-{}.{ext}",
-        if safe_ver.is_empty() { "latest" } else { &safe_ver }
+        if safe_ver.is_empty() {
+            "latest"
+        } else {
+            &safe_ver
+        }
     );
     let dest = updates_dir.join(filename);
     fs::copy(&resp.raw_body_path, &dest)
@@ -226,10 +230,7 @@ pub fn launch_local_update_package(
     silent: bool,
 ) -> Result<String, String> {
     if !package_path.is_file() {
-        return Err(format!(
-            "Update file not found: {}",
-            package_path.display()
-        ));
+        return Err(format!("Update file not found: {}", package_path.display()));
     }
     if let Some(expected) = expected_sha256.map(str::trim).filter(|s| !s.is_empty()) {
         let actual = compute_file_sha256(package_path)?;
@@ -252,11 +253,7 @@ pub fn launch_local_update_package(
             "exe" => {
                 let mut cmd = std::process::Command::new(package_path);
                 if silent {
-                    cmd.args([
-                        "/SILENT",
-                        "/CLOSEAPPLICATIONS",
-                        "/RESTARTAPPLICATIONS",
-                    ]);
+                    cmd.args(["/SILENT", "/CLOSEAPPLICATIONS", "/RESTARTAPPLICATIONS"]);
                 } else {
                     cmd.args(["/CLOSEAPPLICATIONS", "/RESTARTAPPLICATIONS"]);
                 }

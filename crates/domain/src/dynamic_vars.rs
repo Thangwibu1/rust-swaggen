@@ -61,7 +61,11 @@ pub fn eval_dynamic_token(expr: &str, seed: u64, now_unix: i64) -> Option<String
     }
 }
 
-pub fn expand_dynamic_placeholders(input: &str, seed: u64, now_unix: i64) -> (String, Vec<(String, String)>) {
+pub fn expand_dynamic_placeholders(
+    input: &str,
+    seed: u64,
+    now_unix: i64,
+) -> (String, Vec<(String, String)>) {
     let mut out = String::with_capacity(input.len());
     let mut previews = Vec::new();
     let mut rest = input;
@@ -156,7 +160,13 @@ pub struct ResponseDiffReport {
     pub ignored_paths_applied: usize,
 }
 
-fn flatten(val: &Value, prefix: &str, ignore: &BTreeSet<String>, out: &mut BTreeMap<String, String>, skipped: &mut usize) {
+fn flatten(
+    val: &Value,
+    prefix: &str,
+    ignore: &BTreeSet<String>,
+    out: &mut BTreeMap<String, String>,
+    skipped: &mut usize,
+) {
     let key_now = if prefix.is_empty() { "$" } else { prefix };
     if ignore.contains(key_now) {
         *skipped += 1;
@@ -165,7 +175,11 @@ fn flatten(val: &Value, prefix: &str, ignore: &BTreeSet<String>, out: &mut BTree
     match val {
         Value::Object(m) => {
             for (k, v) in m {
-                let p = if prefix.is_empty() { k.clone() } else { format!("{prefix}.{k}") };
+                let p = if prefix.is_empty() {
+                    k.clone()
+                } else {
+                    format!("{prefix}.{k}")
+                };
                 flatten(v, &p, ignore, out, skipped);
             }
         }
@@ -192,7 +206,10 @@ pub fn compare_responses(
     ignore_json_paths: &[String],
     ignore_headers: &[String],
 ) -> ResponseDiffReport {
-    let ign_h: BTreeSet<String> = ignore_headers.iter().map(|s| s.to_ascii_lowercase()).collect();
+    let ign_h: BTreeSet<String> = ignore_headers
+        .iter()
+        .map(|s| s.to_ascii_lowercase())
+        .collect();
     let ign_p: BTreeSet<String> = ignore_json_paths.iter().cloned().collect();
     let lh: BTreeMap<String, String> = left_headers
         .iter()
@@ -210,14 +227,21 @@ pub fn compare_responses(
         let lv = lh.get(&k).cloned().unwrap_or_else(|| "<unset>".into());
         let rv = rh.get(&k).cloned().unwrap_or_else(|| "<unset>".into());
         if lv != rv {
-            header_diffs.push(DiffItem { path: k, left: lv, right: rv });
+            header_diffs.push(DiffItem {
+                path: k,
+                left: lv,
+                right: rv,
+            });
         }
     }
 
     let mut skipped = 0usize;
     let mut lb = BTreeMap::new();
     let mut rb = BTreeMap::new();
-    match (serde_json::from_str::<Value>(left_body), serde_json::from_str::<Value>(right_body)) {
+    match (
+        serde_json::from_str::<Value>(left_body),
+        serde_json::from_str::<Value>(right_body),
+    ) {
         (Ok(lv), Ok(rv)) => {
             flatten(&lv, "", &ign_p, &mut lb, &mut skipped);
             flatten(&rv, "", &ign_p, &mut rb, &mut skipped);
@@ -235,7 +259,11 @@ pub fn compare_responses(
         let lv = lb.get(&k).cloned().unwrap_or_else(|| "<unset>".into());
         let rv = rb.get(&k).cloned().unwrap_or_else(|| "<unset>".into());
         if lv != rv {
-            body_diffs.push(DiffItem { path: k, left: lv, right: rv });
+            body_diffs.push(DiffItem {
+                path: k,
+                left: lv,
+                right: rv,
+            });
         }
     }
 
@@ -253,7 +281,11 @@ mod tests {
 
     #[test]
     fn dynamic_vars_extractors_and_response_diff_with_ignore_work() {
-        let (out, prev) = expand_dynamic_placeholders("id={{$uuid}}&t={{$timestamp}}&r={{$randomInt}}", 42, 1_700_000_000);
+        let (out, prev) = expand_dynamic_placeholders(
+            "id={{$uuid}}&t={{$timestamp}}&r={{$randomInt}}",
+            42,
+            1_700_000_000,
+        );
         assert!(out.contains("t=1700000000"));
         assert_eq!(prev.len(), 3);
 

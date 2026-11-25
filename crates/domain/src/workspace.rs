@@ -614,17 +614,40 @@ pub struct RequestTab {
     pub pinned: bool,
 }
 
+fn default_sidebar_footer_height() -> f32 {
+    166.0
+}
+
+fn default_kv_key_ratio() -> f32 {
+    0.32
+}
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct LayoutPreferences {
     pub sidebar_width: f32,
     pub response_split_ratio: f32,
+    #[serde(default)]
+    pub sidebar_collapsed: bool,
+    #[serde(default)]
+    pub sidebar_personal_collapsed: bool,
+    #[serde(default)]
+    pub workbench_side_by_side: bool,
+    #[serde(default = "default_sidebar_footer_height")]
+    pub sidebar_footer_height: f32,
+    #[serde(default = "default_kv_key_ratio")]
+    pub kv_key_ratio: f32,
 }
 
 impl Default for LayoutPreferences {
     fn default() -> Self {
         Self {
             sidebar_width: 260.0,
-            response_split_ratio: 0.48,
+            response_split_ratio: 0.56,
+            sidebar_collapsed: false,
+            sidebar_personal_collapsed: false,
+            workbench_side_by_side: false,
+            sidebar_footer_height: default_sidebar_footer_height(),
+            kv_key_ratio: default_kv_key_ratio(),
         }
     }
 }

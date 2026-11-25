@@ -164,17 +164,17 @@ fn show_collection_runner(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context)
         ui.add_space(6.0);
         swaggen_ui_kit::table_header(
             ui,
-            &[
-                ("STATUS", 110.0),
-                ("ENDPOINT", 260.0),
-                ("RESULT", 260.0),
-            ],
+            &[("STATUS", 110.0), ("ENDPOINT", 260.0), ("RESULT", 260.0)],
         );
         for s in &rep.steps {
             let (tag, col) = match s.outcome {
                 StepOutcome::Passed => ("PASS", swaggen_ui_kit::Tokens::STATUS_SUCCESS),
-                StepOutcome::FailedAssertions => ("FAIL_ASSERT", swaggen_ui_kit::Tokens::TEXT_DANGER),
-                StepOutcome::FailedContract => ("FAIL_CONTRACT", swaggen_ui_kit::Tokens::TEXT_DANGER),
+                StepOutcome::FailedAssertions => {
+                    ("FAIL_ASSERT", swaggen_ui_kit::Tokens::TEXT_DANGER)
+                }
+                StepOutcome::FailedContract => {
+                    ("FAIL_CONTRACT", swaggen_ui_kit::Tokens::TEXT_DANGER)
+                }
                 StepOutcome::Skipped => ("SKIPPED", swaggen_ui_kit::text_secondary(ui)),
                 StepOutcome::InfraError => ("INFRA_ERR", swaggen_ui_kit::Tokens::TEXT_DANGER),
             };
@@ -371,8 +371,8 @@ fn show_dev_utils(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
                 .unwrap_or_else(|e| format!("ERR: {e}"));
         }
         if swaggen_ui_kit::secondary_button(ui, true, "YAML -> JSON").clicked() {
-            app.dev_util_output =
-                dev_utils::yaml_to_json(&app.dev_util_input).unwrap_or_else(|e| format!("ERR: {e}"));
+            app.dev_util_output = dev_utils::yaml_to_json(&app.dev_util_input)
+                .unwrap_or_else(|e| format!("ERR: {e}"));
         }
         if swaggen_ui_kit::secondary_button(ui, !app.dev_util_output.is_empty(), "Copy output")
             .clicked()
@@ -460,7 +460,11 @@ fn show_sandbox_and_extensions(app: &mut App, ui: &mut egui::Ui) {
     for row in swaggen_runner::advanced_protocols::auth_scheme_matrix() {
         ui.monospace(format!(
             "[{}] {} — {}",
-            if row.supported { "SUPPORTED" } else { "UNSUPPORTED" },
+            if row.supported {
+                "SUPPORTED"
+            } else {
+                "UNSUPPORTED"
+            },
             row.scheme,
             row.note
         ));

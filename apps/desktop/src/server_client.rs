@@ -99,8 +99,8 @@ pub async fn server_call<Req: Serialize, Resp: DeserializeOwned>(
     scratch_dir: &Path,
 ) -> Result<(Resp, u64), String> {
     let (text, latency) = send_raw(profile, method, path, bearer, body, scratch_dir).await?;
-    let parsed: Resp = serde_json::from_str(&text)
-        .map_err(|e| format!("Invalid server response payload: {e}"))?;
+    let parsed: Resp =
+        serde_json::from_str(&text).map_err(|e| format!("Invalid server response payload: {e}"))?;
     Ok((parsed, latency))
 }
 

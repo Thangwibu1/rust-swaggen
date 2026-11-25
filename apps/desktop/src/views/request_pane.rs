@@ -12,7 +12,7 @@ use swaggen_domain::workspace::{
 };
 use swaggen_ui_kit::{IconKind, NoticeKind, Tokens};
 
-pub fn show(app: &mut App, ui: &mut egui::Ui) {
+pub fn show_top_bar(app: &mut App, ui: &mut egui::Ui) -> Option<usize> {
     // 1. Compact open request tab strip + direct "+ New request" button.
     ui.horizontal_wrapped(|ui| {
         let mut switch_tab: Option<String> = None;
@@ -130,15 +130,15 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
             None,
             false,
         );
-        return;
+        return None;
     };
 
     let Some(req_idx) = app.state.requests.iter().position(|r| r.id == req_id) else {
         ui.label("Selected request not found.");
-        return;
+        return None;
     };
 
-    // Figma R01 Page Title Header (Title + subtitle left, Duplicate + Save draft secondary right).
+    // Figma R01 Page Title Header (Title + subtitle left, Split mode + Duplicate + Save draft right).
     let req_title = app.state.requests[req_idx].name.clone();
     let col_title = app
         .state
@@ -160,7 +160,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
             ui.horizontal(|ui| {
                 ui.label(swaggen_ui_kit::bold_text(
                     &req_title,
-                    22.0,
+                    20.0,
                     Tokens::TEXT_PRIMARY,
                 ));
                 if app.state.requests[req_idx].dirty_vs_shared
@@ -172,7 +172,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
             });
             ui.label(
                 egui::RichText::new(format!("{col_title} / {mode_suffix}"))
-                    .size(12.0)
+                    .size(11.5)
                     .color(Tokens::TEXT_SECONDARY),
             );
         });
@@ -196,9 +196,24 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                 app.state.open_or_focus_tab(&new_id);
                 changed = true;
             }
+            let split_lbl = if app.state.layout.workbench_side_by_side {
+                "Split: Left / Right"
+            } else {
+                "Split: Top / Bottom"
+            };
+            if swaggen_ui_kit::secondary_button(ui, true, split_lbl)
+                .on_hover_text(
+                    "Switch Request / Response layout between Top-Bottom and Side-by-Side",
+                )
+                .clicked()
+            {
+                app.state.layout.workbench_side_by_side = !app.state.layout.workbench_side_by_side;
+                app.response_maximized = false;
+                app.request_config_collapsed = false;
+            }
         });
     });
-    ui.add_space(8.0);
+    ui.add_space(6.0);
 
     // 2. Clean Method + URL + Environment + Send/Cancel bar matching Figma R01.
     let is_inflight = app.inflight_request_id.as_deref() == Some(req_id.as_str());
@@ -303,9 +318,23 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
             app.send_active_request(false);
         }
     });
+    ui.add_space(4.0);
 
     // Auto-hydrate query & path parameters if an older saved request has inline URL params.
     app.state.requests[req_idx].reconcile_missing_params_from_url();
+
+    if changed {
+        app.state.requests[req_idx].dirty_vs_shared = true;
+        app.mark_dirty();
+    }
+    Some(req_idx)
+}
+
+pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, allocated_height: f32) {
+    if req_idx >= app.state.requests.len() {
+        return;
+    }
+    let mut changed = false;
 
     // Compute live resolved preview using masked secret placeholders.
     let masked_secrets = app.masked_secret_placeholders();
@@ -369,27 +398,41 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
             if swaggen_ui_kit::underline_tab(ui, app.request_subtab == tab, label).clicked() {
                 app.request_subtab = tab;
                 app.request_config_collapsed = false;
+                app.response_maximized = false;
             }
         }
     });
-    ui.add_space(6.0);
+    ui.add_space(4.0);
 
     let mut pending_oauth_cmd: Option<crate::worker::Command> = None;
-    let config_max_h = (ui.available_height() * 0.42).clamp(145.0, 270.0);
+    let config_scroll_h = (allocated_height - 86.0).max(58.0);
+    let mut kv_ratio = app.state.layout.kv_key_ratio.clamp(0.18, 0.65);
 
-    swaggen_ui_kit::surface_card(ui, |ui| {
-        swaggen_ui_kit::collapsible_card_header(
-            ui,
-            "Request configuration",
-            &mut app.request_config_collapsed,
-        );
-        if app.request_config_collapsed {
-            return;
-        }
-        egui::ScrollArea::vertical()
-            .id_salt("req-editor-scroll")
-            .max_height(config_max_h)
-            .show(ui, |ui| match app.request_subtab {
+    egui::Frame::new()
+        .fill(Tokens::BG_SURFACE)
+        .stroke(egui::Stroke::new(1.0, Tokens::BORDER_DEFAULT))
+        .corner_radius(10)
+        .inner_margin(egui::Margin::symmetric(18, 12))
+        .show(ui, |ui| {
+            ui.set_min_width(ui.available_width());
+            if !app.state.layout.workbench_side_by_side {
+                swaggen_ui_kit::collapsible_card_header(
+                    ui,
+                    "Request configuration",
+                    &mut app.request_config_collapsed,
+                );
+                if app.request_config_collapsed {
+                    return;
+                }
+            } else {
+                swaggen_ui_kit::card_header(ui, "Request configuration");
+            }
+            egui::ScrollArea::vertical()
+                .id_salt("req-editor-scroll")
+                .min_scrolled_height(config_scroll_h)
+                .max_height(config_scroll_h)
+                .auto_shrink([false, false])
+                .show(ui, |ui| match app.request_subtab {
                 RequestSubTab::Params => {
                     ui.horizontal(|ui| {
                         ui.label(swaggen_ui_kit::bold_text(
@@ -408,6 +451,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                         "query-params",
                         "query param",
                         &mut app.state.requests[req_idx].query_params,
+                        &mut kv_ratio,
                     ) {
                         app.state.requests[req_idx].sync_url_from_query_params();
                         changed = true;
@@ -473,6 +517,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                             "path-params",
                             "path variable",
                             &mut app.state.requests[req_idx].path_params,
+                            &mut kv_ratio,
                         ) {
                             let req = &mut app.state.requests[req_idx];
                             if req.path_params.len() == prev_len {
@@ -549,6 +594,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                         "req-headers",
                         "header",
                         &mut app.state.requests[req_idx].headers,
+                        &mut kv_ratio,
                     ) {
                         changed = true;
                     }
@@ -664,7 +710,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                             }
                         }
                         RequestBody::FormUrlEncoded(rows) => {
-                            if edit_kv_table(ui, "form-body", "field", rows) {
+                            if edit_kv_table(ui, "form-body", "field", rows, &mut kv_ratio) {
                                 changed = true;
                             }
                         }
@@ -1320,6 +1366,9 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
             });
     });
 
+    if (kv_ratio - app.state.layout.kv_key_ratio).abs() > 0.002 {
+        app.state.layout.kv_key_ratio = kv_ratio;
+    }
     if let Some(cmd) = pending_oauth_cmd {
         app.submit(cmd);
     }
@@ -1334,22 +1383,72 @@ fn edit_kv_table(
     id_salt: &str,
     placeholder_kind: &str,
     rows: &mut Vec<KeyValueRow>,
+    key_ratio: &mut f32,
 ) -> bool {
     let mut changed = false;
     let mut remove_idx = None;
     let mut swap: Option<(usize, usize)> = None;
     ui.push_id(id_salt, |ui| {
-        let total_w = ui.available_width().max(380.0);
-        let key_w = (total_w * 0.28).clamp(110.0, 220.0);
-        let val_w = (total_w - key_w - 190.0).clamp(130.0, 440.0);
-        swaggen_ui_kit::table_header(
-            ui,
-            &[
-                ("NAME / PARAMETER", key_w + 32.0),
-                ("VALUE", val_w),
-                ("STATUS", 120.0),
-            ],
-        );
+        let total_w = ui.available_width().max(340.0);
+        let key_w = (total_w * *key_ratio).clamp(95.0, (total_w - 220.0).max(95.0));
+        let val_w = (total_w - key_w - 175.0).clamp(100.0, 560.0);
+
+        ui.horizontal(|ui| {
+            ui.add_space(10.0);
+            ui.allocate_ui_with_layout(
+                egui::vec2(key_w + 24.0, 22.0),
+                egui::Layout::left_to_right(egui::Align::Center),
+                |ui| {
+                    ui.label(
+                        egui::RichText::new("NAME / PARAMETER")
+                            .size(11.0)
+                            .color(Tokens::TEXT_SECONDARY),
+                    );
+                },
+            );
+            let (col_rect, col_resp) =
+                ui.allocate_exact_size(egui::vec2(8.0, 20.0), egui::Sense::click_and_drag());
+            let col_active = col_resp.hovered() || col_resp.dragged();
+            if col_active {
+                ui.ctx().set_cursor_icon(egui::CursorIcon::ResizeHorizontal);
+            }
+            ui.painter().line_segment(
+                [
+                    egui::pos2(col_rect.center().x, col_rect.top() + 3.0),
+                    egui::pos2(col_rect.center().x, col_rect.bottom() - 3.0),
+                ],
+                egui::Stroke::new(
+                    if col_active { 1.5 } else { 1.0 },
+                    if col_active {
+                        Tokens::STATUS_INFO
+                    } else {
+                        Tokens::BORDER_DEFAULT
+                    },
+                ),
+            );
+            let col_resp =
+                col_resp.on_hover_text("Drag left/right to resize Name vs Value columns");
+            if col_resp.dragged() {
+                *key_ratio = (*key_ratio + col_resp.drag_delta().x / total_w).clamp(0.18, 0.65);
+            }
+            ui.allocate_ui_with_layout(
+                egui::vec2(val_w, 22.0),
+                egui::Layout::left_to_right(egui::Align::Center),
+                |ui| {
+                    ui.label(
+                        egui::RichText::new("VALUE")
+                            .size(11.0)
+                            .color(Tokens::TEXT_SECONDARY),
+                    );
+                },
+            );
+            ui.label(
+                egui::RichText::new("STATUS")
+                    .size(11.0)
+                    .color(Tokens::TEXT_SECONDARY),
+            );
+        });
+        ui.add_space(3.0);
         for (i, row) in rows.iter_mut().enumerate() {
             swaggen_ui_kit::table_row_frame(ui, |ui| {
                 if ui.checkbox(&mut row.enabled, "").changed() {

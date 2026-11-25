@@ -91,17 +91,38 @@ fn inspect_inner(
     let mut children = Vec::new();
     let kind = if let Some(all_of) = target.get("allOf").and_then(Value::as_array) {
         for (i, item) in all_of.iter().enumerate() {
-            children.push(inspect_inner(root, item, &format!("allOf[{i}]"), depth + 1, max_depth, visited));
+            children.push(inspect_inner(
+                root,
+                item,
+                &format!("allOf[{i}]"),
+                depth + 1,
+                max_depth,
+                visited,
+            ));
         }
         "allOf".to_owned()
     } else if let Some(one_of) = target.get("oneOf").and_then(Value::as_array) {
         for (i, item) in one_of.iter().enumerate() {
-            children.push(inspect_inner(root, item, &format!("oneOf[{i}]"), depth + 1, max_depth, visited));
+            children.push(inspect_inner(
+                root,
+                item,
+                &format!("oneOf[{i}]"),
+                depth + 1,
+                max_depth,
+                visited,
+            ));
         }
         "oneOf".to_owned()
     } else if let Some(any_of) = target.get("anyOf").and_then(Value::as_array) {
         for (i, item) in any_of.iter().enumerate() {
-            children.push(inspect_inner(root, item, &format!("anyOf[{i}]"), depth + 1, max_depth, visited));
+            children.push(inspect_inner(
+                root,
+                item,
+                &format!("anyOf[{i}]"),
+                depth + 1,
+                max_depth,
+                visited,
+            ));
         }
         "anyOf".to_owned()
     } else {
@@ -111,7 +132,14 @@ fn inspect_inner(
             }
         }
         if let Some(items) = target.get("items") {
-            children.push(inspect_inner(root, items, "items[]", depth + 1, max_depth, visited));
+            children.push(inspect_inner(
+                root,
+                items,
+                "items[]",
+                depth + 1,
+                max_depth,
+                visited,
+            ));
         }
         target
             .get("type")
@@ -139,16 +167,26 @@ pub fn resolve_and_bundle_multifile(
     project_root: &Path,
     allow_external_urls: bool,
 ) -> Result<(Value, Vec<ValidationIssue>), String> {
-    let canon_root = fs::canonicalize(project_root).map_err(|e| format!("Invalid project root: {e}"))?;
-    let canon_entry = fs::canonicalize(entry_file).map_err(|e| format!("Invalid entry file: {e}"))?;
+    let canon_root =
+        fs::canonicalize(project_root).map_err(|e| format!("Invalid project root: {e}"))?;
+    let canon_entry =
+        fs::canonicalize(entry_file).map_err(|e| format!("Invalid entry file: {e}"))?;
     if !canon_entry.starts_with(&canon_root) {
         return Err("Entry specification must reside inside the project directory".into());
     }
     let raw = fs::read_to_string(&canon_entry).map_err(|e| format!("Read failed: {e}"))?;
-    let mut root: Value = serde_json::from_str(&raw).map_err(|e| format!("JSON parse failed: {e}"))?;
+    let mut root: Value =
+        serde_json::from_str(&raw).map_err(|e| format!("JSON parse failed: {e}"))?;
     let mut issues = Vec::new();
     let base_dir = canon_entry.parent().unwrap_or(&canon_root);
-    inline_file_refs(&mut root, base_dir, &canon_root, allow_external_urls, 0, &mut issues)?;
+    inline_file_refs(
+        &mut root,
+        base_dir,
+        &canon_root,
+        allow_external_urls,
+        0,
+        &mut issues,
+    )?;
     Ok((root, issues))
 }
 
@@ -170,7 +208,11 @@ fn inline_file_refs(
     }
     match node {
         Value::Object(map) => {
-            if let Some(ref_val) = map.get("$ref").and_then(Value::as_str).map(ToOwned::to_owned) {
+            if let Some(ref_val) = map
+                .get("$ref")
+                .and_then(Value::as_str)
+                .map(ToOwned::to_owned)
+            {
                 if ref_val.starts_with('#') {
                     return Ok(());
                 }
@@ -189,13 +231,22 @@ fn inline_file_refs(
                 let canon_target = fs::canonicalize(&joined)
                     .map_err(|_| format!("Referenced file not found: {file_part}"))?;
                 if !canon_target.starts_with(canon_root) {
-                    return Err(format!("Path traversal blocked for external reference: {ref_val}"));
+                    return Err(format!(
+                        "Path traversal blocked for external reference: {ref_val}"
+                    ));
                 }
                 let text = fs::read_to_string(&canon_target).map_err(|e| e.to_string())?;
-                let mut ext_val: Value =
-                    serde_json::from_str(&text).map_err(|e| format!("Invalid JSON in {file_part}: {e}"))?;
+                let mut ext_val: Value = serde_json::from_str(&text)
+                    .map_err(|e| format!("Invalid JSON in {file_part}: {e}"))?;
                 let next_dir = canon_target.parent().unwrap_or(canon_root);
-                inline_file_refs(&mut ext_val, next_dir, canon_root, allow_external_urls, depth + 1, issues)?;
+                inline_file_refs(
+                    &mut ext_val,
+                    next_dir,
+                    canon_root,
+                    allow_external_urls,
+                    depth + 1,
+                    issues,
+                )?;
                 let picked = if ptr_part.is_empty() {
                     ext_val
                 } else {
@@ -208,12 +259,26 @@ fn inline_file_refs(
                 return Ok(());
             }
             for (_, v) in map.iter_mut() {
-                inline_file_refs(v, cur_dir, canon_root, allow_external_urls, depth + 1, issues)?;
+                inline_file_refs(
+                    v,
+                    cur_dir,
+                    canon_root,
+                    allow_external_urls,
+                    depth + 1,
+                    issues,
+                )?;
             }
         }
         Value::Array(arr) => {
             for item in arr.iter_mut() {
-                inline_file_refs(item, cur_dir, canon_root, allow_external_urls, depth + 1, issues)?;
+                inline_file_refs(
+                    item,
+                    cur_dir,
+                    canon_root,
+                    allow_external_urls,
+                    depth + 1,
+                    issues,
+                )?;
             }
         }
         _ => {}
@@ -222,14 +287,25 @@ fn inline_file_refs(
 }
 
 /// OA09: Swagger 2.0 -> OpenAPI 3.0 conversion with explicit compatibility loss report + 3.2 version probe.
-pub fn convert_swagger2_to_openapi3(raw_json: &str) -> Result<(SpecDocument, CompatibilityReport), String> {
+pub fn convert_swagger2_to_openapi3(
+    raw_json: &str,
+) -> Result<(SpecDocument, CompatibilityReport), String> {
     let v: Value = serde_json::from_str(raw_json).map_err(|e| format!("Invalid JSON: {e}"))?;
     if v.get("swagger").and_then(Value::as_str) != Some("2.0") {
         return Err("Document does not specify \"swagger\": \"2.0\"".into());
     }
-    let title = v.pointer("/info/title").and_then(Value::as_str).unwrap_or("Swagger 2.0 API");
-    let version = v.pointer("/info/version").and_then(Value::as_str).unwrap_or("1.0.0");
-    let host = v.get("host").and_then(Value::as_str).unwrap_or("api.example.test");
+    let title = v
+        .pointer("/info/title")
+        .and_then(Value::as_str)
+        .unwrap_or("Swagger 2.0 API");
+    let version = v
+        .pointer("/info/version")
+        .and_then(Value::as_str)
+        .unwrap_or("1.0.0");
+    let host = v
+        .get("host")
+        .and_then(Value::as_str)
+        .unwrap_or("api.example.test");
     let base_path = v.get("basePath").and_then(Value::as_str).unwrap_or("");
     let scheme = v
         .get("schemes")
@@ -255,13 +331,20 @@ pub fn convert_swagger2_to_openapi3(raw_json: &str) -> Result<(SpecDocument, Com
                     let mut new_op = op.clone();
                     if let Some(op_obj) = new_op.as_object_mut() {
                         if op_obj.contains_key("consumes") || op_obj.contains_key("produces") {
-                            report.warnings.push(format!("{m} {p}: consumes/produces moved or simplified; review media types"));
+                            report.warnings.push(format!(
+                                "{m} {p}: consumes/produces moved or simplified; review media types"
+                            ));
                         }
-                        if let Some(params) = op_obj.get("parameters").and_then(Value::as_array).cloned() {
+                        if let Some(params) =
+                            op_obj.get("parameters").and_then(Value::as_array).cloned()
+                        {
                             let mut kept = Vec::new();
                             for pr in params {
                                 if pr.get("in").and_then(Value::as_str) == Some("body") {
-                                    let schema = pr.get("schema").cloned().unwrap_or(json!({"type":"object"}));
+                                    let schema = pr
+                                        .get("schema")
+                                        .cloned()
+                                        .unwrap_or(json!({"type":"object"}));
                                     op_obj.insert(
                                         "requestBody".into(),
                                         json!({"required": pr.get("required").and_then(Value::as_bool).unwrap_or(false), "content":{"application/json":{"schema":schema}}}),
@@ -274,12 +357,17 @@ pub fn convert_swagger2_to_openapi3(raw_json: &str) -> Result<(SpecDocument, Com
                             }
                             op_obj.insert("parameters".into(), Value::Array(kept));
                         }
-                        if let Some(resps) = op_obj.get_mut("responses").and_then(Value::as_object_mut) {
+                        if let Some(resps) =
+                            op_obj.get_mut("responses").and_then(Value::as_object_mut)
+                        {
                             for (_, rv) in resps.iter_mut() {
                                 if let Some(robj) = rv.as_object_mut()
                                     && let Some(schema) = robj.remove("schema")
                                 {
-                                    robj.insert("content".into(), json!({"application/json":{"schema":schema}}));
+                                    robj.insert(
+                                        "content".into(),
+                                        json!({"application/json":{"schema":schema}}),
+                                    );
                                 }
                             }
                         }
@@ -305,18 +393,29 @@ pub fn convert_swagger2_to_openapi3(raw_json: &str) -> Result<(SpecDocument, Com
     });
     let mut text = serde_json::to_string_pretty(&converted).unwrap_or_default();
     text = text.replace("#/definitions/", "#/components/schemas/");
-    let doc = parse_and_validate(format!("swg2-{}", title.to_ascii_lowercase()), title.to_owned(), &text, &[]);
+    let doc = parse_and_validate(
+        format!("swg2-{}", title.to_ascii_lowercase()),
+        title.to_owned(),
+        &text,
+        &[],
+    );
     Ok((doc, report))
 }
 
 pub fn assess_openapi_version(doc: &SpecDocument) -> String {
     match doc.version.as_ref() {
         Some(OpenApiVersion::V3_0(v)) => format!("OpenAPI {v}: natively supported"),
-        Some(OpenApiVersion::V3_1(v)) => format!("OpenAPI {v}: natively supported (JSON Schema 2020-12 subset)"),
-        Some(OpenApiVersion::Unsupported(v)) if v.starts_with("3.2") => {
-            format!("OpenAPI {v}: explicitly marked unsupported pending schema dialect rules; do not assume 3.1 compatibility")
+        Some(OpenApiVersion::V3_1(v)) => {
+            format!("OpenAPI {v}: natively supported (JSON Schema 2020-12 subset)")
         }
-        Some(OpenApiVersion::Unsupported(v)) => format!("Version '{v}': unsupported; import rejected or flagged"),
+        Some(OpenApiVersion::Unsupported(v)) if v.starts_with("3.2") => {
+            format!(
+                "OpenAPI {v}: explicitly marked unsupported pending schema dialect rules; do not assume 3.1 compatibility"
+            )
+        }
+        Some(OpenApiVersion::Unsupported(v)) => {
+            format!("Version '{v}': unsupported; import rejected or flagged")
+        }
         None => "OpenAPI version missing or unparsed".into(),
     }
 }
@@ -344,15 +443,23 @@ impl Default for TeamLintRules {
 pub fn lint_spec_conventions(doc: &SpecDocument, rules: &TeamLintRules) -> Vec<ValidationIssue> {
     let mut out = Vec::new();
     for ep in &doc.operations {
-        let ptr = format!("/paths/{}/{}", ep.path, ep.method.as_str().to_ascii_lowercase());
-        if rules.require_operation_id && ep.operation_id.as_deref().unwrap_or("").trim().is_empty() {
+        let ptr = format!(
+            "/paths/{}/{}",
+            ep.path,
+            ep.method.as_str().to_ascii_lowercase()
+        );
+        if rules.require_operation_id && ep.operation_id.as_deref().unwrap_or("").trim().is_empty()
+        {
             out.push(ValidationIssue {
                 severity: IssueSeverity::Warning,
                 pointer: ptr.clone(),
                 message: "Lint [convention]: missing operationId".into(),
             });
         }
-        if rules.require_description && ep.summary.trim().is_empty() && ep.description.trim().is_empty() {
+        if rules.require_description
+            && ep.summary.trim().is_empty()
+            && ep.description.trim().is_empty()
+        {
             out.push(ValidationIssue {
                 severity: IssueSeverity::Warning,
                 pointer: ptr.clone(),
@@ -360,10 +467,9 @@ pub fn lint_spec_conventions(doc: &SpecDocument, rules: &TeamLintRules) -> Vec<V
             });
         }
         if rules.require_error_response
-            && !ep
-                .responses
-                .iter()
-                .any(|r| r.status.starts_with('4') || r.status.starts_with('5') || r.status == "default")
+            && !ep.responses.iter().any(|r| {
+                r.status.starts_with('4') || r.status.starts_with('5') || r.status == "default"
+            })
         {
             out.push(ValidationIssue {
                 severity: IssueSeverity::Warning,
@@ -372,7 +478,8 @@ pub fn lint_spec_conventions(doc: &SpecDocument, rules: &TeamLintRules) -> Vec<V
             });
         }
     }
-    if rules.require_security_scheme && doc.format == SpecFormat::Json
+    if rules.require_security_scheme
+        && doc.format == SpecFormat::Json
         && let Ok(v) = serde_json::from_str::<Value>(&doc.raw_text)
         && v.pointer("/components/securitySchemes").is_none()
     {
@@ -454,7 +561,11 @@ pub fn validate_response_against_endpoint(
     if let Some(rs) = resp_spec {
         if !rs.content_types.is_empty() {
             let ct_base = content_type.split(';').next().unwrap_or("").trim();
-            if !rs.content_types.iter().any(|ct| ct.eq_ignore_ascii_case(ct_base)) {
+            if !rs
+                .content_types
+                .iter()
+                .any(|ct| ct.eq_ignore_ascii_case(ct_base))
+            {
                 mismatches.push(format!(
                     "Content-Type mismatch at $: expected one of {:?}, got '{ct_base}'",
                     rs.content_types
@@ -499,7 +610,9 @@ pub fn validate_response_against_endpoint(
 
 fn check_json_schema(root: &Value, schema: &Value, val: &Value, ptr: &str, out: &mut Vec<String>) {
     let target = if let Some(r) = schema.get("$ref").and_then(Value::as_str) {
-        r.strip_prefix('#').and_then(|p| root.pointer(p)).unwrap_or(schema)
+        r.strip_prefix('#')
+            .and_then(|p| root.pointer(p))
+            .unwrap_or(schema)
     } else {
         schema
     };
@@ -565,7 +678,11 @@ pub fn detect_contract_drift(doc: &SpecDocument, requests: &[RequestItem]) -> Ve
             Some(ep) if ep.deprecated => items.push(DriftItem {
                 request_id: r.id.clone(),
                 request_name: r.name.clone(),
-                issue: format!("Linked operation {} {} is deprecated in spec", ep.method.as_str(), ep.path),
+                issue: format!(
+                    "Linked operation {} {} is deprecated in spec",
+                    ep.method.as_str(),
+                    ep.path
+                ),
             }),
             Some(_) => {}
         }
@@ -585,13 +702,20 @@ pub fn export_docs_markdown(doc: &SpecDocument, version_label: &str) -> String {
             if ep.deprecated { " [DEPRECATED]" } else { "" }
         ));
         if !ep.summary.is_empty() {
-            let clean = swaggen_domain::security::sanitize_text(&ep.summary, &policy).sanitized_text;
+            let clean =
+                swaggen_domain::security::sanitize_text(&ep.summary, &policy).sanitized_text;
             out.push_str(&format!("{clean}\n\n"));
         }
         if !ep.parameters.is_empty() {
             out.push_str("**Parameters**:\n");
             for p in &ep.parameters {
-                out.push_str(&format!("- `{}` ({}, {}): {}\n", p.name, p.location, p.schema_type, if p.required { "required" } else { "optional" }));
+                out.push_str(&format!(
+                    "- `{}` ({}, {}): {}\n",
+                    p.name,
+                    p.location,
+                    p.schema_type,
+                    if p.required { "required" } else { "optional" }
+                ));
             }
             out.push('\n');
         }
@@ -641,7 +765,8 @@ pub fn bundle_shared_attachments(
     let canon_dir = fs::canonicalize(shared_dir).map_err(|e| format!("Invalid shared dir: {e}"))?;
     let mut out = Vec::new();
     for path in files {
-        let canon = fs::canonicalize(path).map_err(|_| format!("Missing attachment: {}", path.display()))?;
+        let canon = fs::canonicalize(path)
+            .map_err(|_| format!("Missing attachment: {}", path.display()))?;
         if !canon.starts_with(&canon_dir) {
             return Err(format!(
                 "Refusing personal unshared path outside shared directory: {}",
@@ -656,7 +781,11 @@ pub fn bundle_shared_attachments(
                 bytes.len()
             ));
         }
-        let rel = canon.strip_prefix(&canon_dir).unwrap_or(&canon).to_string_lossy().replace('\\', "/");
+        let rel = canon
+            .strip_prefix(&canon_dir)
+            .unwrap_or(&canon)
+            .to_string_lossy()
+            .replace('\\', "/");
         out.push(SharedAttachmentManifestEntry {
             relative_path: rel,
             size_bytes: bytes.len() as u64,
@@ -686,25 +815,36 @@ pub fn export_git_project_tree(
 
     let mut reqs_by_col: BTreeMap<String, Vec<&RequestItem>> = BTreeMap::new();
     for r in &state_clean.requests {
-        reqs_by_col.entry(r.collection_id.clone()).or_default().push(r);
+        reqs_by_col
+            .entry(r.collection_id.clone())
+            .or_default()
+            .push(r);
     }
     for col in &state_clean.collections {
         let mut reqs = reqs_by_col.remove(&col.id).unwrap_or_default();
         reqs.sort_by(|a, b| a.name.cmp(&b.name));
-        let p = repo_dir.join("collections").join(format!("{}.json", col.id));
+        let p = repo_dir
+            .join("collections")
+            .join(format!("{}.json", col.id));
         let content = serde_json::to_string_pretty(&json!({"collection": col, "requests": reqs}))
             .map_err(|e| e.to_string())?;
         fs::write(&p, format!("{content}\n")).map_err(|e| e.to_string())?;
         written.push(p);
     }
     for env in &state_clean.environments {
-        let p = repo_dir.join("environments").join(format!("{}.json", env.id));
+        let p = repo_dir
+            .join("environments")
+            .join(format!("{}.json", env.id));
         let content = serde_json::to_string_pretty(env).map_err(|e| e.to_string())?;
         fs::write(&p, format!("{content}\n")).map_err(|e| e.to_string())?;
         written.push(p);
     }
     for spec in specs {
-        let ext = if spec.format == SpecFormat::Yaml { "yaml" } else { "json" };
+        let ext = if spec.format == SpecFormat::Yaml {
+            "yaml"
+        } else {
+            "json"
+        };
         let p = repo_dir.join("specs").join(format!("{}.{ext}", spec.id));
         fs::write(&p, &spec.raw_text).map_err(|e| e.to_string())?;
         written.push(p);
@@ -752,7 +892,12 @@ mod tests {
                 }
             }
         });
-        let tree = inspect_complex_schema(&schema_doc, &json!({"$ref": "#/components/schemas/Node"}), "Node", 8);
+        let tree = inspect_complex_schema(
+            &schema_doc,
+            &json!({"$ref": "#/components/schemas/Node"}),
+            "Node",
+            8,
+        );
         assert!(tree.children.iter().any(|c| c.recursive_boundary));
 
         let spec_txt = serde_json::to_string_pretty(&schema_doc).unwrap();
@@ -761,11 +906,28 @@ mod tests {
         assert!(lint.iter().any(|l| l.message.contains("operationId")));
 
         let ep = &doc.operations[0];
-        let ok_rep = validate_response_against_endpoint(&doc, ep, 200, "application/json", br#"{"id":1,"status":"open"}"#);
+        let ok_rep = validate_response_against_endpoint(
+            &doc,
+            ep,
+            200,
+            "application/json",
+            br#"{"id":1,"status":"open"}"#,
+        );
         assert!(ok_rep.matched);
-        let bad_rep = validate_response_against_endpoint(&doc, ep, 200, "application/json", br#"{"id":"oops"}"#);
+        let bad_rep = validate_response_against_endpoint(
+            &doc,
+            ep,
+            200,
+            "application/json",
+            br#"{"id":"oops"}"#,
+        );
         assert!(!bad_rep.matched);
-        assert!(bad_rep.mismatches.iter().any(|m| m.contains("$.status: missing required property")));
+        assert!(
+            bad_rep
+                .mismatches
+                .iter()
+                .any(|m| m.contains("$.status: missing required property"))
+        );
 
         let html = export_docs_html(&doc, "v1");
         assert!(html.contains("Shop (v1)"));

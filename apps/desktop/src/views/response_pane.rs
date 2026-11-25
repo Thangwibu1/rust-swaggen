@@ -15,20 +15,36 @@ pub fn show(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
         return;
     };
     let is_inflight = app.inflight_request_id.as_deref() == Some(req_id.as_str());
-    let min_card_h = ui.available_height().max(200.0);
+    let min_card_h = ui.available_height().max(130.0);
 
     egui::Frame::new()
         .fill(Tokens::BG_SURFACE)
         .stroke(egui::Stroke::new(1.0, Tokens::BORDER_DEFAULT))
         .corner_radius(10)
-        .inner_margin(egui::Margin::symmetric(24, 18))
+        .inner_margin(egui::Margin::symmetric(18, 12))
         .show(ui, |ui| {
             ui.set_min_width(ui.available_width());
-            ui.set_min_height((min_card_h - 36.0).max(160.0));
+            ui.set_min_height((min_card_h - 24.0).max(105.0));
 
             if is_inflight {
-                swaggen_ui_kit::card_header(ui, "Response");
-                ui.add_space(12.0);
+                ui.horizontal(|ui| {
+                    ui.label(swaggen_ui_kit::bold_text(
+                        "Response",
+                        13.5,
+                        Tokens::TEXT_PRIMARY,
+                    ));
+                    ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                        let max_lbl = if app.response_maximized {
+                            "Restore split"
+                        } else {
+                            "Expand"
+                        };
+                        if swaggen_ui_kit::secondary_button(ui, true, max_lbl).clicked() {
+                            app.response_maximized = !app.response_maximized;
+                        }
+                    });
+                });
+                ui.add_space(10.0);
                 ui.horizontal(|ui| {
                     ui.spinner();
                     ui.label(swaggen_ui_kit::bold_text(
@@ -57,8 +73,23 @@ pub fn show(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
             }
 
             let Some(result) = app.responses.get(&req_id).cloned() else {
-                swaggen_ui_kit::card_header(ui, "Response");
-                ui.add_space(8.0);
+                ui.horizontal(|ui| {
+                    ui.label(swaggen_ui_kit::bold_text(
+                        "Response",
+                        13.5,
+                        Tokens::TEXT_PRIMARY,
+                    ));
+                    if app.response_maximized {
+                        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                            if swaggen_ui_kit::secondary_button(ui, true, "Restore split")
+                                .clicked()
+                            {
+                                app.response_maximized = false;
+                            }
+                        });
+                    }
+                });
+                ui.add_space(6.0);
                 ui.label(
                     egui::RichText::new(
                         "Click 'Send request' (or press Ctrl+Enter) to view response body, headers, cookies, and test results here.",
@@ -71,7 +102,24 @@ pub fn show(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
 
             match result {
                 Err(err) => {
-                    swaggen_ui_kit::card_header(ui, "Response");
+                    ui.horizontal(|ui| {
+                        ui.label(swaggen_ui_kit::bold_text(
+                            "Response",
+                            13.5,
+                            Tokens::TEXT_PRIMARY,
+                        ));
+                        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                            let max_lbl = if app.response_maximized {
+                                "Restore split"
+                            } else {
+                                "Expand"
+                            };
+                            if swaggen_ui_kit::secondary_button(ui, true, max_lbl).clicked() {
+                                app.response_maximized = !app.response_maximized;
+                            }
+                        });
+                    });
+                    ui.add_space(6.0);
                     swaggen_ui_kit::notice_banner(
                         ui,
                         NoticeKind::Danger,
@@ -137,6 +185,21 @@ pub fn show(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
                             );
                         }
                         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                            let max_lbl = if app.response_maximized {
+                                "Restore split"
+                            } else {
+                                "Expand"
+                            };
+                            if swaggen_ui_kit::secondary_button(ui, true, max_lbl)
+                                .on_hover_text(if app.response_maximized {
+                                    "Restore Request configuration split view"
+                                } else {
+                                    "Expand Response to fill the full Workbench height"
+                                })
+                                .clicked()
+                            {
+                                app.response_maximized = !app.response_maximized;
+                            }
                             if swaggen_ui_kit::secondary_button(ui, true, "Save raw").clicked() {
                                 app.submit(Command::SaveResponseFile {
                                     source: resp.raw_body_path.clone(),
@@ -233,9 +296,9 @@ pub fn show(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
                         ui.add_space(4.0);
                     }
 
-                    // Dedicated non-nested ScrollArea filling remaining card height cleanly!
-                    let scroll_h = ui.available_height().max(110.0);
-                    egui::ScrollArea::vertical()
+                    // Dedicated non-nested 2D ScrollArea filling remaining card height cleanly!
+                    let scroll_h = ui.available_height().max(90.0);
+                    egui::ScrollArea::both()
                         .id_salt("resp-scroll")
                         .min_scrolled_height(scroll_h)
                         .max_height(scroll_h)

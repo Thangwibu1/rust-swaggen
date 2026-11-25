@@ -56,15 +56,13 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
         }
         if ui
             .add(
-                egui::Button::new(
-                    egui::RichText::new("F")
-                        .size(11.5)
-                        .color(if app.show_sidebar_filters {
-                            Tokens::STATUS_INFO
-                        } else {
-                            Tokens::TEXT_SECONDARY
-                        }),
-                )
+                egui::Button::new(egui::RichText::new("F").size(11.5).color(
+                    if app.show_sidebar_filters {
+                        Tokens::STATUS_INFO
+                    } else {
+                        Tokens::TEXT_SECONDARY
+                    },
+                ))
                 .fill(if app.show_sidebar_filters {
                     Tokens::BG_SELECTED
                 } else {
@@ -149,8 +147,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
             let (btn_rect, btn_resp) =
                 ui.allocate_exact_size(egui::vec2(22.0, 22.0), egui::Sense::click());
             if btn_resp.hovered() {
-                ui.painter()
-                    .rect_filled(btn_rect, 4.0, Tokens::BG_SUBTLE);
+                ui.painter().rect_filled(btn_rect, 4.0, Tokens::BG_SUBTLE);
             }
             swaggen_ui_kit::paint_icon(
                 ui.painter(),
@@ -205,9 +202,13 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
     let mut dup_req_id: Option<String> = None;
     let mut fork_col_id: Option<String> = None;
 
-    // Reserve exact height for PERSONAL nav section + footer so ScrollArea NEVER overlaps clicks.
-    let footer_reserved = 166.0;
-    let tree_height = (ui.available_height() - footer_reserved).max(90.0);
+    // Draggable split between COLLECTIONS tree and PERSONAL tools footer.
+    let footer_reserved = if app.state.layout.sidebar_personal_collapsed {
+        52.0
+    } else {
+        app.state.layout.sidebar_footer_height.clamp(115.0, 270.0)
+    };
+    let tree_height = (ui.available_height() - footer_reserved - 12.0).max(80.0);
     let show_endpoint_selection = app.mode == MainMode::Workbench && !app.show_workspace_modal;
 
     egui::ScrollArea::vertical()
@@ -270,7 +271,8 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                     );
                     if toggle_resp.clicked() {
                         is_open = !is_open;
-                        ui.ctx().data_mut(|d| d.insert_persisted(col_state_id, is_open));
+                        ui.ctx()
+                            .data_mut(|d| d.insert_persisted(col_state_id, is_open));
                     }
 
                     // + New request button inside collection row
@@ -328,7 +330,10 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                             Tokens::TEXT_SECONDARY
                         },
                     );
-                    if add_resp.on_hover_text("Add request to collection").clicked() {
+                    if add_resp
+                        .on_hover_text("Add request to collection")
+                        .clicked()
+                    {
                         add_req_target = Some((col.id.clone(), None));
                     }
 
@@ -403,45 +408,79 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
         app.mark_dirty();
     }
 
-    // 5. PERSONAL & TOOLS navigation footer (sequential layout — no overlap!).
-    ui.add_space(6.0);
-    ui.label(
-        egui::RichText::new("PERSONAL")
-            .size(11.0)
-            .color(Tokens::TEXT_SECONDARY),
-    );
-    if swaggen_ui_kit::nav_item(
-        ui,
-        IconKind::History,
-        "History",
-        Some(app.history.len()),
-        app.mode == MainMode::History && !app.show_workspace_modal,
-    )
-    .clicked()
-    {
-        app.navigate_to(MainMode::History);
+    // 5. Draggable divider + collapsible PERSONAL & TOOLS navigation footer.
+    if !app.state.layout.sidebar_personal_collapsed {
+        let (split_resp, dy) = swaggen_ui_kit::horizontal_splitter(ui, "sidebar-personal-split");
+        if dy.abs() > 0.0 {
+            app.state.layout.sidebar_footer_height =
+                (app.state.layout.sidebar_footer_height - dy).clamp(115.0, 270.0);
+        }
+        if split_resp
+            .on_hover_text("Drag up/down to resize Collections vs Personal · Double-click to reset")
+            .double_clicked()
+        {
+            app.state.layout.sidebar_footer_height = 166.0;
+        }
+    } else {
+        ui.add_space(4.0);
     }
-    if swaggen_ui_kit::nav_item(
-        ui,
-        IconKind::Globe,
-        "Environments",
-        Some(app.state.environments.len()),
-        app.mode == MainMode::Environments && !app.show_workspace_modal,
-    )
-    .clicked()
+
+    let personal_hdr = if app.state.layout.sidebar_personal_collapsed {
+        "PERSONAL ▸"
+    } else {
+        "PERSONAL ▾"
+    };
+    if ui
+        .add(
+            egui::Button::new(
+                egui::RichText::new(personal_hdr)
+                    .size(11.0)
+                    .color(Tokens::TEXT_SECONDARY),
+            )
+            .fill(egui::Color32::TRANSPARENT)
+            .stroke(egui::Stroke::NONE)
+            .frame(false),
+        )
+        .on_hover_text("Click to collapse or expand Personal section")
+        .clicked()
     {
-        app.navigate_to(MainMode::Environments);
+        app.state.layout.sidebar_personal_collapsed = !app.state.layout.sidebar_personal_collapsed;
     }
-    if swaggen_ui_kit::nav_item(
-        ui,
-        IconKind::KeyRound,
-        "Secrets & Cookies",
-        Some(app.secret_names.len() + app.state.cookies.len()),
-        matches!(app.mode, MainMode::Secrets | MainMode::Cookies) && !app.show_workspace_modal,
-    )
-    .clicked()
-    {
-        app.navigate_to(MainMode::Secrets);
+
+    if !app.state.layout.sidebar_personal_collapsed {
+        if swaggen_ui_kit::nav_item(
+            ui,
+            IconKind::History,
+            "History",
+            Some(app.history.len()),
+            app.mode == MainMode::History && !app.show_workspace_modal,
+        )
+        .clicked()
+        {
+            app.navigate_to(MainMode::History);
+        }
+        if swaggen_ui_kit::nav_item(
+            ui,
+            IconKind::Globe,
+            "Environments",
+            Some(app.state.environments.len()),
+            app.mode == MainMode::Environments && !app.show_workspace_modal,
+        )
+        .clicked()
+        {
+            app.navigate_to(MainMode::Environments);
+        }
+        if swaggen_ui_kit::nav_item(
+            ui,
+            IconKind::KeyRound,
+            "Secrets & Cookies",
+            Some(app.secret_names.len() + app.state.cookies.len()),
+            matches!(app.mode, MainMode::Secrets | MainMode::Cookies) && !app.show_workspace_modal,
+        )
+        .clicked()
+        {
+            app.navigate_to(MainMode::Secrets);
+        }
     }
     ui.add_space(4.0);
     ui.label(
@@ -523,8 +562,10 @@ fn show_folder_children(
                 ui.close();
             }
             if ui.button("New request in folder").clicked() {
-                *add_req_target =
-                    Some((collection_id.to_owned(), parent_folder_id.map(str::to_owned)));
+                *add_req_target = Some((
+                    collection_id.to_owned(),
+                    parent_folder_id.map(str::to_owned),
+                ));
                 ui.close();
             }
         });

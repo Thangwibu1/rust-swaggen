@@ -50,7 +50,8 @@ impl BackupBundle {
         for (name, docs) in &collections {
             counts.insert(name.clone(), docs.len());
         }
-        let payload_bytes = serde_json::to_vec(&collections).map_err(|_| StoreError::InternalSafe)?;
+        let payload_bytes =
+            serde_json::to_vec(&collections).map_err(|_| StoreError::InternalSafe)?;
         let payload_sha256 = hex::encode(Sha256::digest(&payload_bytes));
         Ok(Self {
             manifest: BackupManifest {
@@ -59,7 +60,9 @@ impl BackupBundle {
                 created_at_unix,
                 collection_counts: counts,
                 payload_sha256,
-                key_policy_note: "Encryption keys/DPAPI secrets are stored strictly outside this backup bundle.".into(),
+                key_policy_note:
+                    "Encryption keys/DPAPI secrets are stored strictly outside this backup bundle."
+                        .into(),
             },
             collections,
         })
@@ -179,7 +182,10 @@ mod tests {
             "entities".into(),
             vec![json!({"entity_id":"req-1","revision":3,"name":"List"})],
         );
-        cols.insert("memberships".into(), vec![json!({"user_id":"u1","role":"owner"})]);
+        cols.insert(
+            "memberships".into(),
+            vec![json!({"user_id":"u1","role":"owner"})],
+        );
         let mut bundle = BackupBundle::build(1, 12345, cols).unwrap();
         assert!(bundle.verify_integrity().is_ok());
 

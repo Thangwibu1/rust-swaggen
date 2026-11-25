@@ -336,7 +336,10 @@ async fn fetch_google_firebase_jwks() -> Result<(HashMap<String, Vec<u8>>, Durat
         .await
         .map_err(|_| "Failed to fetch Google Firebase JWKS".to_owned())?;
     if !resp.status().is_success() {
-        return Err(format!("Google Firebase JWKS returned HTTP {}", resp.status()));
+        return Err(format!(
+            "Google Firebase JWKS returned HTTP {}",
+            resp.status()
+        ));
     }
     let ttl = resp
         .headers()

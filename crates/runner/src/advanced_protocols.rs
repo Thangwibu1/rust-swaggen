@@ -88,7 +88,9 @@ pub fn build_http_digest_sha256(
     nc: &str,
     cnonce: &str,
 ) -> String {
-    let ha1 = hex::encode(Sha256::digest(format!("{username}:{realm}:{password}").as_bytes()));
+    let ha1 = hex::encode(Sha256::digest(
+        format!("{username}:{realm}:{password}").as_bytes(),
+    ));
     let ha2 = hex::encode(Sha256::digest(format!("{method}:{uri}").as_bytes()));
     let resp = hex::encode(Sha256::digest(
         format!("{ha1}:{nonce}:{nc}:{cnonce}:auth:{ha2}").as_bytes(),
@@ -107,14 +109,46 @@ pub struct AuthSchemeSupport {
 
 pub fn auth_scheme_matrix() -> Vec<AuthSchemeSupport> {
     vec![
-        AuthSchemeSupport { scheme: "Bearer / JWT", supported: true, note: "Supported natively" },
-        AuthSchemeSupport { scheme: "Basic", supported: true, note: "Supported natively" },
-        AuthSchemeSupport { scheme: "API Key (Header/Query)", supported: true, note: "Supported natively" },
-        AuthSchemeSupport { scheme: "OAuth2 PKCE", supported: true, note: "Loopback + CSRF state supported" },
-        AuthSchemeSupport { scheme: "mTLS Client Cert", supported: true, note: "Host-scoped PEM cert/key" },
-        AuthSchemeSupport { scheme: "AWS SigV4", supported: true, note: "Canonical HMAC-SHA256 signer" },
-        AuthSchemeSupport { scheme: "HTTP Digest (SHA-256)", supported: true, note: "RFC 7616 qop=auth" },
-        AuthSchemeSupport { scheme: "NTLM / Kerberos", supported: false, note: "Explicitly unsupported without native SSPI bridge" },
+        AuthSchemeSupport {
+            scheme: "Bearer / JWT",
+            supported: true,
+            note: "Supported natively",
+        },
+        AuthSchemeSupport {
+            scheme: "Basic",
+            supported: true,
+            note: "Supported natively",
+        },
+        AuthSchemeSupport {
+            scheme: "API Key (Header/Query)",
+            supported: true,
+            note: "Supported natively",
+        },
+        AuthSchemeSupport {
+            scheme: "OAuth2 PKCE",
+            supported: true,
+            note: "Loopback + CSRF state supported",
+        },
+        AuthSchemeSupport {
+            scheme: "mTLS Client Cert",
+            supported: true,
+            note: "Host-scoped PEM cert/key",
+        },
+        AuthSchemeSupport {
+            scheme: "AWS SigV4",
+            supported: true,
+            note: "Canonical HMAC-SHA256 signer",
+        },
+        AuthSchemeSupport {
+            scheme: "HTTP Digest (SHA-256)",
+            supported: true,
+            note: "RFC 7616 qop=auth",
+        },
+        AuthSchemeSupport {
+            scheme: "NTLM / Kerberos",
+            supported: false,
+            note: "Explicitly unsupported without native SSPI bridge",
+        },
     ]
 }
 
@@ -245,7 +279,11 @@ impl CronSchedule {
 pub fn validate_graphql_against_sdl(sdl: &str, query: &str) -> Vec<String> {
     let mut issues = Vec::new();
     let is_mutation = query.trim_start().starts_with("mutation");
-    let root_type = if is_mutation { "type Mutation" } else { "type Query" };
+    let root_type = if is_mutation {
+        "type Mutation"
+    } else {
+        "type Query"
+    };
     let mut allowed_fields: BTreeMap<String, Vec<String>> = BTreeMap::new();
     let mut in_root = false;
     for raw in sdl.lines() {
@@ -295,7 +333,8 @@ pub fn validate_graphql_against_sdl(sdl: &str, query: &str) -> Vec<String> {
                 Some(req_args) => {
                     for ra in req_args {
                         if !call_args.contains(&format!("{ra}:")) {
-                            issues.push(format!("Field '{fname}' missing required argument '{ra}'"));
+                            issues
+                                .push(format!("Field '{fname}' missing required argument '{ra}'"));
                         }
                     }
                 }
@@ -318,7 +357,12 @@ pub fn sha1_digest(data: &[u8]) -> [u8; 20] {
     for chunk in msg.as_chunks::<64>().0 {
         let mut w = [0u32; 80];
         for i in 0..16 {
-            w[i] = u32::from_be_bytes([chunk[4 * i], chunk[4 * i + 1], chunk[4 * i + 2], chunk[4 * i + 3]]);
+            w[i] = u32::from_be_bytes([
+                chunk[4 * i],
+                chunk[4 * i + 1],
+                chunk[4 * i + 2],
+                chunk[4 * i + 3],
+            ]);
         }
         for i in 16..80 {
             w[i] = (w[i - 3] ^ w[i - 8] ^ w[i - 14] ^ w[i - 16]).rotate_left(1);
@@ -384,12 +428,18 @@ pub async fn ws_exchange_text(
     let upgrade = format!(
         "GET {path} HTTP/1.1\r\nHost: {host}:{port}\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: {sec_key}\r\nSec-WebSocket-Version: 13\r\n\r\n"
     );
-    stream.write_all(upgrade.as_bytes()).await.map_err(|e| e.to_string())?;
+    stream
+        .write_all(upgrade.as_bytes())
+        .await
+        .map_err(|e| e.to_string())?;
     let mut reader = BufReader::new(stream);
     let mut resp_head = String::new();
     loop {
         let mut line = String::new();
-        let n = reader.read_line(&mut line).await.map_err(|e| e.to_string())?;
+        let n = reader
+            .read_line(&mut line)
+            .await
+            .map_err(|e| e.to_string())?;
         if n == 0 || line == "\r\n" {
             break;
         }
@@ -411,7 +461,11 @@ pub async fn ws_exchange_text(
     for (i, &b) in payload.iter().enumerate() {
         frame.push(b ^ mask[i % 4]);
     }
-    reader.get_mut().write_all(&frame).await.map_err(|e| e.to_string())?;
+    reader
+        .get_mut()
+        .write_all(&frame)
+        .await
+        .map_err(|e| e.to_string())?;
 
     // Read single text reply with cancel
     let mut hdr = [0u8; 2];
@@ -421,7 +475,10 @@ pub async fn ws_exchange_text(
     };
     let len = (hdr[1] & 0x7f) as usize;
     let mut reply_buf = vec![0u8; len];
-    reader.read_exact(&mut reply_buf).await.map_err(|e| e.to_string())?;
+    reader
+        .read_exact(&mut reply_buf)
+        .await
+        .map_err(|e| e.to_string())?;
     // Send masked close frame 0x88
     let _ = reader.get_mut().write_all(&[0x88, 0x80, 0, 0, 0, 0]).await;
     String::from_utf8(reply_buf).map_err(|e| e.to_string())
@@ -565,7 +622,13 @@ pub fn generate_sdk_stub(spec: &SpecDocument, lang: SdkLanguage) -> String {
 fn sanitize_ident(raw: &str) -> String {
     let mut s: String = raw
         .chars()
-        .map(|c| if c.is_ascii_alphanumeric() || c == '_' { c } else { '_' })
+        .map(|c| {
+            if c.is_ascii_alphanumeric() || c == '_' {
+                c
+            } else {
+                '_'
+            }
+        })
         .collect();
     if s.is_empty() || s.as_bytes()[0].is_ascii_digit() {
         s.insert_str(0, "op_");
@@ -603,22 +666,42 @@ mod tests {
             payload: b"",
         })
         .unwrap();
-        assert!(hdr.starts_with("AWS4-HMAC-SHA256 Credential=AKIAIOSFODNN7EXAMPLE/20261124/us-east-1/s3/aws4_request"));
+        assert!(hdr.starts_with(
+            "AWS4-HMAC-SHA256 Credential=AKIAIOSFODNN7EXAMPLE/20261124/us-east-1/s3/aws4_request"
+        ));
         assert_eq!(hash.len(), 64);
-        assert!(build_http_digest_sha256("u", "p", "r", "n", "GET", "/", "00000001", "cn").contains("algorithm=SHA-256"));
-        assert!(!auth_scheme_matrix().iter().find(|s| s.scheme.contains("NTLM")).unwrap().supported);
+        assert!(
+            build_http_digest_sha256("u", "p", "r", "n", "GET", "/", "00000001", "cn")
+                .contains("algorithm=SHA-256")
+        );
+        assert!(
+            !auth_scheme_matrix()
+                .iter()
+                .find(|s| s.scheme.contains("NTLM"))
+                .unwrap()
+                .supported
+        );
 
         // 2. DST-aware Cron schedule skipping 02:00 spring gap & avoiding fall-back double fire
         let cron = CronSchedule::parse("0 2 * * *").unwrap();
-        let next = cron.next_fire_unix(1_700_000_000, 0, Some(2), None).unwrap_err();
+        let next = cron
+            .next_fire_unix(1_700_000_000, 0, Some(2), None)
+            .unwrap_err();
         assert!(next.contains("No cron trigger"));
         let cron3 = CronSchedule::parse("15 3 * * *").unwrap();
-        assert!(cron3.next_fire_unix(1_700_000_000, 0, Some(2), None).is_ok());
+        assert!(
+            cron3
+                .next_fire_unix(1_700_000_000, 0, Some(2), None)
+                .is_ok()
+        );
 
         // 3. GraphQL SDL validator
         let sdl = "type Query {\n  user(id: ID!): User\n}";
         assert!(validate_graphql_against_sdl(sdl, "query { user(id: \"1\") { name } }").is_empty());
-        assert_eq!(validate_graphql_against_sdl(sdl, "query { unknownField }").len(), 1);
+        assert_eq!(
+            validate_graphql_against_sdl(sdl, "query { unknownField }").len(),
+            1
+        );
 
         // 4. WebSocket RFC 6455 handshake + frame echo
         let l = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
@@ -634,7 +717,9 @@ mod tests {
                     .unwrap_or("")
                     .trim();
                 let acc = websocket_accept_key(key);
-                let resp = format!("HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: {acc}\r\n\r\n");
+                let resp = format!(
+                    "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: {acc}\r\n\r\n"
+                );
                 let _ = s.write_all(resp.as_bytes()).await;
                 let mut fhdr = [0u8; 2];
                 let _ = s.read_exact(&mut fhdr).await;
@@ -651,9 +736,13 @@ mod tests {
                 let _ = s.write_all(&reply).await;
             }
         });
-        let echo = ws_exchange_text(&format!("ws://{addr}/chat"), "hello-ws", CancellationToken::new())
-            .await
-            .unwrap();
+        let echo = ws_exchange_text(
+            &format!("ws://{addr}/chat"),
+            "hello-ws",
+            CancellationToken::new(),
+        )
+        .await
+        .unwrap();
         assert_eq!(echo, "hello-ws");
 
         // 5. gRPC wire framing & protobuf string field roundtrip
@@ -661,6 +750,9 @@ mod tests {
         let frame = encode_grpc_frame(false, &proto);
         let (comp, dec_proto) = decode_grpc_frame(&frame).unwrap();
         assert!(!comp);
-        assert_eq!(decode_proto_string_field(&dec_proto, 1).unwrap(), "ping-grpc");
+        assert_eq!(
+            decode_proto_string_field(&dec_proto, 1).unwrap(),
+            "ping-grpc"
+        );
     }
 }

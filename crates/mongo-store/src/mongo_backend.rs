@@ -147,8 +147,11 @@ impl MongoStore {
             .await?;
         self.create_unique("invitations", doc! { "token_hash": 1 })
             .await?;
-        self.create_index("invitations", doc! { "workspace_id": 1, "email_normalized": 1 })
-            .await?;
+        self.create_index(
+            "invitations",
+            doc! { "workspace_id": 1, "email_normalized": 1 },
+        )
+        .await?;
         self.create_unique("workspaces", doc! { "workspace_id": 1 })
             .await?;
         self.create_unique("workspaces", doc! { "slug": 1 }).await?;
@@ -399,12 +402,16 @@ impl WorkspaceRepository for MongoStore {
         if let Some(expected) = &self.bootstrap_secret
             && req.bootstrap_token.as_deref() != Some(expected.as_str())
         {
-            return Err(StoreError::Unauthorized("Invalid bootstrap setup token".into()));
+            return Err(StoreError::Unauthorized(
+                "Invalid bootstrap setup token".into(),
+            ));
         }
         let email = normalize_email(&req.email)?;
         let display_name = req.display_name.trim();
         if display_name.is_empty() || display_name.len() > 80 {
-            return Err(StoreError::InvalidInput("Display name must be 1-80 characters".into()));
+            return Err(StoreError::InvalidInput(
+                "Display name must be 1-80 characters".into(),
+            ));
         }
         let pw_hash = hash_password(&req.password)?;
 
@@ -594,7 +601,10 @@ impl WorkspaceRepository for MongoStore {
 
         let (user_id, final_name, is_owner, created_at, action) = if let Some(doc) = existing {
             let user_id = doc.get_str("user_id").unwrap_or("").to_owned();
-            let final_name = doc.get_str("display_name").unwrap_or(&clean_name).to_owned();
+            let final_name = doc
+                .get_str("display_name")
+                .unwrap_or(&clean_name)
+                .to_owned();
             let is_owner = doc.get_bool("is_server_owner").unwrap_or(false);
             let created_at = doc.get_i64("created_at_unix").unwrap_or(now);
             if doc.get_str("firebase_uid").ok() != Some(uid) {
@@ -607,7 +617,13 @@ impl WorkspaceRepository for MongoStore {
                     .await
                     .map_err(|e| map_mongo_err(&e))?;
             }
-            (user_id, final_name, is_owner, created_at, "auth.firebase_login")
+            (
+                user_id,
+                final_name,
+                is_owner,
+                created_at,
+                "auth.firebase_login",
+            )
         } else {
             // Auto-provision account seamlessly for any Firebase-verified user
             // (first user becomes server owner automatically; never blocks Google Sign-In).
@@ -672,7 +688,9 @@ impl WorkspaceRepository for MongoStore {
     ) -> Result<AuthContext, StoreError> {
         let token = bearer_token.trim();
         if token.is_empty() {
-            return Err(StoreError::Unauthorized("Missing bearer session token".into()));
+            return Err(StoreError::Unauthorized(
+                "Missing bearer session token".into(),
+            ));
         }
         let hash = sha256_hex(token);
         let sessions: Collection<Document> = self.db.collection("sessions");
@@ -721,12 +739,18 @@ impl WorkspaceRepository for MongoStore {
         let sessions: Collection<Document> = self.db.collection("sessions");
         let mut cursor = sessions
             .find(doc! { "user_id": &auth.user_id, "expires_at_unix": { "$gt": now } })
-            .with_options(FindOptions::builder().sort(doc! { "created_at_unix": -1 }).build())
+            .with_options(
+                FindOptions::builder()
+                    .sort(doc! { "created_at_unix": -1 })
+                    .build(),
+            )
             .await
             .map_err(|e| map_mongo_err(&e))?;
         let mut out = Vec::new();
         while cursor.advance().await.map_err(|e| map_mongo_err(&e))? {
-            let d = cursor.deserialize_current().map_err(|e| map_mongo_err(&e))?;
+            let d = cursor
+                .deserialize_current()
+                .map_err(|e| map_mongo_err(&e))?;
             let sid = d.get_str("session_id").unwrap_or("").to_owned();
             out.push(SessionSummary {
                 is_current: sid == auth.session_id,
@@ -754,7 +778,9 @@ impl WorkspaceRepository for MongoStore {
             .map_err(|e| map_mongo_err(&e))?
             .ok_or_else(|| StoreError::NotFound("Session not found".into()))?;
         if target.get_str("user_id").unwrap_or("") != auth.user_id && !auth.is_server_owner {
-            return Err(StoreError::Forbidden("Cannot revoke another user's session".into()));
+            return Err(StoreError::Forbidden(
+                "Cannot revoke another user's session".into(),
+            ));
         }
         sessions
             .update_one(
@@ -804,9 +830,14 @@ impl WorkspaceRepository for MongoStore {
             .await
             .map_err(|e| map_mongo_err(&e))?
             .ok_or_else(|| StoreError::NotFound("Account not found".into()))?;
-        if !verify_password(&req.current_password, user.get_str("password_hash").unwrap_or("")) {
+        if !verify_password(
+            &req.current_password,
+            user.get_str("password_hash").unwrap_or(""),
+        ) {
             let _ = session.abort_transaction().await;
-            return Err(StoreError::Unauthorized("Current password is incorrect".into()));
+            return Err(StoreError::Unauthorized(
+                "Current password is incorrect".into(),
+            ));
         }
         users
             .update_one(
@@ -851,7 +882,9 @@ impl WorkspaceRepository for MongoStore {
         let slug = normalize_slug(&req.slug)?;
         let name = req.name.trim();
         if name.is_empty() || name.len() > 80 {
-            return Err(StoreError::InvalidInput("Workspace name must be 1-80 characters".into()));
+            return Err(StoreError::InvalidInput(
+                "Workspace name must be 1-80 characters".into(),
+            ));
         }
         let workspace_id = Uuid::new_v4().to_string();
         let desc: String = req.description.trim().chars().take(500).collect();
@@ -941,7 +974,9 @@ impl WorkspaceRepository for MongoStore {
             .map_err(|e| map_mongo_err(&e))?;
         let mut out = Vec::new();
         while cursor.advance().await.map_err(|e| map_mongo_err(&e))? {
-            let mem = cursor.deserialize_current().map_err(|e| map_mongo_err(&e))?;
+            let mem = cursor
+                .deserialize_current()
+                .map_err(|e| map_mongo_err(&e))?;
             let wid = mem.get_str("workspace_id").unwrap_or("");
             if let Some(ws) = ws_col
                 .find_one(doc! { "workspace_id": wid })
@@ -1003,8 +1038,14 @@ impl WorkspaceRepository for MongoStore {
             .await
             .map_err(|e| map_mongo_err(&e))?;
         let mut members = Vec::new();
-        while cursor.advance(&mut session).await.map_err(|e| map_mongo_err(&e))? {
-            let m = cursor.deserialize_current().map_err(|e| map_mongo_err(&e))?;
+        while cursor
+            .advance(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?
+        {
+            let m = cursor
+                .deserialize_current()
+                .map_err(|e| map_mongo_err(&e))?;
             let uid = m.get_str("user_id").unwrap_or("");
             if let Some(u) = users_col
                 .find_one(doc! { "user_id": uid })
@@ -1032,7 +1073,11 @@ impl WorkspaceRepository for MongoStore {
                 .session(&mut session)
                 .await
                 .map_err(|e| map_mongo_err(&e))?;
-            while ic.advance(&mut session).await.map_err(|e| map_mongo_err(&e))? {
+            while ic
+                .advance(&mut session)
+                .await
+                .map_err(|e| map_mongo_err(&e))?
+            {
                 let d = ic.deserialize_current().map_err(|e| map_mongo_err(&e))?;
                 invitations.push(InvitationSummary {
                     invitation_id: d.get_str("invitation_id").unwrap_or("").to_owned(),
@@ -1213,7 +1258,9 @@ impl WorkspaceRepository for MongoStore {
     ) -> Result<AcceptInvitationResponse, StoreError> {
         let token = req.invite_token.trim();
         if token.is_empty() {
-            return Err(StoreError::InvalidInput("Invitation token is required".into()));
+            return Err(StoreError::InvalidInput(
+                "Invitation token is required".into(),
+            ));
         }
         let token_hash = sha256_hex(token);
         let email = normalize_email(&req.email)?;
@@ -1313,10 +1360,9 @@ impl WorkspaceRepository for MongoStore {
                 let _ = session.abort_transaction().await;
                 return Err(StoreError::InvalidInput("Display name is required".into()));
             }
-            let pw = req
-                .password
-                .as_deref()
-                .ok_or_else(|| StoreError::InvalidInput("Password required for new account".into()))?;
+            let pw = req.password.as_deref().ok_or_else(|| {
+                StoreError::InvalidInput("Password required for new account".into())
+            })?;
             let pw_hash = hash_password(pw)?;
             let uid = Uuid::new_v4().to_string();
             users
@@ -1541,8 +1587,14 @@ impl WorkspaceRepository for MongoStore {
             .await
             .map_err(|e| map_mongo_err(&e))?;
         let mut out = Vec::new();
-        while cursor.advance(&mut session).await.map_err(|e| map_mongo_err(&e))? {
-            let d = cursor.deserialize_current().map_err(|e| map_mongo_err(&e))?;
+        while cursor
+            .advance(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?
+        {
+            let d = cursor
+                .deserialize_current()
+                .map_err(|e| map_mongo_err(&e))?;
             out.push(WorkspaceEntityRecord {
                 entity_id: d.get_str("entity_id").unwrap_or("").to_owned(),
                 workspace_id: workspace_id.to_owned(),
@@ -1722,8 +1774,14 @@ impl WorkspaceRepository for MongoStore {
             .await
             .map_err(|e| map_mongo_err(&e))?;
         let mut out = Vec::new();
-        while cursor.advance(&mut session).await.map_err(|e| map_mongo_err(&e))? {
-            let d = cursor.deserialize_current().map_err(|e| map_mongo_err(&e))?;
+        while cursor
+            .advance(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?
+        {
+            let d = cursor
+                .deserialize_current()
+                .map_err(|e| map_mongo_err(&e))?;
             out.push(AuditEventRecord {
                 event_id: d.get_str("event_id").unwrap_or("").to_owned(),
                 workspace_id: d.get_str("workspace_id").ok().map(ToOwned::to_owned),
@@ -1859,7 +1917,8 @@ impl WorkspaceRepository for MongoStore {
                         server_revision: cur.get_i64("revision").unwrap_or(0),
                         server_cursor: None,
                         server_entity: Some(to_entity(cur)),
-                        reason: "Entity was deleted on server; tombstone prevents resurrection".into(),
+                        reason: "Entity was deleted on server; tombstone prevents resurrection"
+                            .into(),
                     });
                     continue;
                 }
@@ -1937,7 +1996,9 @@ impl WorkspaceRepository for MongoStore {
                     .map_err(|e| map_mongo_err(&e))?;
                 if res.matched_count != 1 {
                     let _ = session.abort_transaction().await;
-                    return Err(StoreError::Conflict("Concurrent modification detected".into()));
+                    return Err(StoreError::Conflict(
+                        "Concurrent modification detected".into(),
+                    ));
                 }
             }
 
@@ -2010,8 +2071,14 @@ impl WorkspaceRepository for MongoStore {
                 .await
                 .map_err(|e| map_mongo_err(&e))?;
             let mut others = Vec::new();
-            while mcursor.advance(&mut session).await.map_err(|e| map_mongo_err(&e))? {
-                let md = mcursor.deserialize_current().map_err(|e| map_mongo_err(&e))?;
+            while mcursor
+                .advance(&mut session)
+                .await
+                .map_err(|e| map_mongo_err(&e))?
+            {
+                let md = mcursor
+                    .deserialize_current()
+                    .map_err(|e| map_mongo_err(&e))?;
                 let uid = md.get_str("user_id").unwrap_or("").to_owned();
                 if uid != auth.user_id {
                     others.push(uid);
@@ -2041,7 +2108,11 @@ impl WorkspaceRepository for MongoStore {
                 Some(workspace_id),
                 &auth.user_id,
                 &auth.email,
-                if op.delete { "workspace.entity_deleted" } else { "workspace.published" },
+                if op.delete {
+                    "workspace.entity_deleted"
+                } else {
+                    "workspace.published"
+                },
                 &op.entity_id,
                 &format!("{} rev {} ({})", op.name, next_rev, op.note),
                 now,
@@ -2130,8 +2201,14 @@ impl WorkspaceRepository for MongoStore {
             .await
             .map_err(|e| map_mongo_err(&e))?;
         let mut events = Vec::new();
-        while cursor.advance(&mut session).await.map_err(|e| map_mongo_err(&e))? {
-            let d = cursor.deserialize_current().map_err(|e| map_mongo_err(&e))?;
+        while cursor
+            .advance(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?
+        {
+            let d = cursor
+                .deserialize_current()
+                .map_err(|e| map_mongo_err(&e))?;
             events.push(ChangeEventRecord {
                 cursor: d.get_i64("cursor").unwrap_or(0),
                 workspace_id: workspace_id.to_owned(),
@@ -2210,7 +2287,11 @@ impl WorkspaceRepository for MongoStore {
             .await
             .map_err(|e| map_mongo_err(&e))?;
         let mut entities = Vec::new();
-        while cur.advance(&mut session).await.map_err(|e| map_mongo_err(&e))? {
+        while cur
+            .advance(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?
+        {
             let d = cur.deserialize_current().map_err(|e| map_mongo_err(&e))?;
             entities.push(WorkspaceEntityRecord {
                 entity_id: d.get_str("entity_id").unwrap_or("").to_owned(),
@@ -2270,7 +2351,11 @@ impl WorkspaceRepository for MongoStore {
             .await
             .map_err(|e| map_mongo_err(&e))?;
         let mut out = Vec::new();
-        while cur.advance(&mut session).await.map_err(|e| map_mongo_err(&e))? {
+        while cur
+            .advance(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?
+        {
             let d = cur.deserialize_current().map_err(|e| map_mongo_err(&e))?;
             out.push(EntityRevisionRecord {
                 workspace_id: workspace_id.to_owned(),
@@ -2312,7 +2397,10 @@ impl WorkspaceRepository for MongoStore {
             request_hash: format!("restore-{entity_id}-r{}", req.target_revision),
             entity_id: entity_id.to_owned(),
             parent_id: cur.as_ref().and_then(|c| c.parent_id.clone()),
-            kind: cur.as_ref().map(|c| c.kind.clone()).unwrap_or_else(|| "request".into()),
+            kind: cur
+                .as_ref()
+                .map(|c| c.kind.clone())
+                .unwrap_or_else(|| "request".into()),
             name: target.name,
             order_key: cur.map(|c| c.order_key).unwrap_or(0),
             payload_json: target.payload_json,
@@ -2533,7 +2621,11 @@ impl WorkspaceRepository for MongoStore {
             .await
             .map_err(|e| map_mongo_err(&e))?;
         let mut out = Vec::new();
-        while cur.advance(&mut session).await.map_err(|e| map_mongo_err(&e))? {
+        while cur
+            .advance(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?
+        {
             let d = cur.deserialize_current().map_err(|e| map_mongo_err(&e))?;
             let replies = d
                 .get_array("replies")
@@ -2591,12 +2683,20 @@ impl WorkspaceRepository for MongoStore {
         let col: Collection<Document> = self.db.collection("notifications");
         let mut cur = col
             .find(doc! { "workspace_id": workspace_id, "user_id": &auth.user_id })
-            .with_options(FindOptions::builder().sort(doc! { "created_at_unix": -1 }).build())
+            .with_options(
+                FindOptions::builder()
+                    .sort(doc! { "created_at_unix": -1 })
+                    .build(),
+            )
             .session(&mut session)
             .await
             .map_err(|e| map_mongo_err(&e))?;
         let mut list = Vec::new();
-        while cur.advance(&mut session).await.map_err(|e| map_mongo_err(&e))? {
+        while cur
+            .advance(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?
+        {
             let d = cur.deserialize_current().map_err(|e| map_mongo_err(&e))?;
             list.push(NotificationRecord {
                 notification_id: d.get_str("notification_id").unwrap_or("").to_owned(),
@@ -2696,7 +2796,11 @@ impl WorkspaceRepository for MongoStore {
             Some(workspace_id),
             &auth.user_id,
             &auth.email,
-            if archived { "workspace.archived" } else { "workspace.restored" },
+            if archived {
+                "workspace.archived"
+            } else {
+                "workspace.restored"
+            },
             workspace_id,
             "Workspace archive state updated",
             now,
@@ -2761,7 +2865,9 @@ impl WorkspaceRepository for MongoStore {
         }
         if req.target_user_id == auth.user_id {
             let _ = session.abort_transaction().await;
-            return Err(StoreError::InvalidInput("Target user is already Owner".into()));
+            return Err(StoreError::InvalidInput(
+                "Target user is already Owner".into(),
+            ));
         }
         let mem_col: Collection<Document> = self.db.collection("memberships");
         let target = mem_col
@@ -2942,7 +3048,9 @@ impl WorkspaceRepository for MongoStore {
             .map_err(|e| map_mongo_err(&e))?;
         let mut out = Vec::new();
         while cursor.advance().await.map_err(|e| map_mongo_err(&e))? {
-            let d = cursor.deserialize_current().map_err(|e| map_mongo_err(&e))?;
+            let d = cursor
+                .deserialize_current()
+                .map_err(|e| map_mongo_err(&e))?;
             if let (Ok(k), Ok(v)) = (d.get_str("key"), d.get_str("value_json"))
                 && k.starts_with(key_prefix)
             {

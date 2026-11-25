@@ -750,24 +750,23 @@ impl Worker {
                                 silent,
                             } => {
                                 let updates_dir = current_root.join("updates");
-                                let ev = match runtime.block_on(
-                                    crate::updater::download_update_package(
+                                let ev =
+                                    match runtime.block_on(crate::updater::download_update_package(
                                         &download_url,
                                         &expected_sha256,
                                         &version,
                                         &updates_dir,
-                                    ),
-                                ) {
-                                    Ok(pkg_path) => match crate::updater::launch_local_update_package(
-                                        &pkg_path,
-                                        None,
-                                        silent,
-                                    ) {
-                                        Ok(msg) => Event::UpdateInstallLaunched(msg),
-                                        Err(e) => Event::ActionError(e),
-                                    },
-                                    Err(msg) => Event::ActionError(msg),
-                                };
+                                    )) {
+                                        Ok(pkg_path) => {
+                                            match crate::updater::launch_local_update_package(
+                                                &pkg_path, None, silent,
+                                            ) {
+                                                Ok(msg) => Event::UpdateInstallLaunched(msg),
+                                                Err(e) => Event::ActionError(e),
+                                            }
+                                        }
+                                        Err(msg) => Event::ActionError(msg),
+                                    };
                                 if outgoing.send(ev).is_err() {
                                     break;
                                 }
@@ -785,9 +784,7 @@ impl Worker {
                                     Some(expected_sha256.as_str())
                                 };
                                 let ev = match crate::updater::launch_local_update_package(
-                                    &path,
-                                    sha_opt,
-                                    silent,
+                                    &path, sha_opt, silent,
                                 ) {
                                     Ok(msg) => Event::UpdateInstallLaunched(msg),
                                     Err(msg) => Event::ActionError(msg),
@@ -1013,10 +1010,7 @@ impl Worker {
                         runtime.spawn(async move {
                             match tokio::net::TcpListener::bind("127.0.0.1:0").await {
                                 Ok(listener) => {
-                                    let port = listener
-                                        .local_addr()
-                                        .map(|a| a.port())
-                                        .unwrap_or(0);
+                                    let port = listener.local_addr().map(|a| a.port()).unwrap_or(0);
                                     let redirect_uri = format!("http://127.0.0.1:{port}/callback");
                                     let pkce = PkceChallenge::generate();
                                     let authorize_url = pkce.build_authorize_url(
@@ -1095,7 +1089,12 @@ impl Worker {
                         let wake_fn = wake.clone();
                         runtime.spawn(async move {
                             let rep = swaggen_runner::collection_runner::run_collection(
-                                &state, &specs, &secret_map, &downloads, &config, tok,
+                                &state,
+                                &specs,
+                                &secret_map,
+                                &downloads,
+                                &config,
+                                tok,
                             )
                             .await;
                             let _ = out.send(Event::CollectionRunFinished(Box::new(rep)));
@@ -1109,7 +1108,9 @@ impl Worker {
                     }
                     Command::StartLocalMock { routes } => {
                         local_mock_handle = None;
-                        let event = match runtime.block_on(swaggen_runner::local_mock::start_local_mock(routes)) {
+                        let event = match runtime
+                            .block_on(swaggen_runner::local_mock::start_local_mock(routes))
+                        {
                             Ok(handle) => {
                                 let url = handle.base_url.clone();
                                 local_mock_handle = Some(handle);
@@ -1210,7 +1211,9 @@ impl Worker {
                             )
                             .await;
                             let msg = match res {
-                                Ok(list) => format!("SSE closed ({} event(s) buffered)", list.len()),
+                                Ok(list) => {
+                                    format!("SSE closed ({} event(s) buffered)", list.len())
+                                }
                                 Err(e) => format!("SSE error: {e}"),
                             };
                             let _ = out.send(Event::SseStopped(msg));
@@ -1262,10 +1265,10 @@ impl Worker {
                                     {
                                         for (var_key, val, is_secret) in &extracted {
                                             if *is_secret
-                                                && let Ok(sec_id) = LocalId::parse(
-                                                    var_key.to_ascii_lowercase(),
-                                                )
-                                                && let Ok(sec) = Secret::new(val.as_bytes().to_vec())
+                                                && let Ok(sec_id) =
+                                                    LocalId::parse(var_key.to_ascii_lowercase())
+                                                && let Ok(sec) =
+                                                    Secret::new(val.as_bytes().to_vec())
                                             {
                                                 let _ = sess.secrets.put(
                                                     &SecretRef {
@@ -1287,10 +1290,8 @@ impl Worker {
                                                         var_key, sec_id,
                                                     ));
                                                 }
-                                            } else if let Some(existing) = env
-                                                .variables
-                                                .iter_mut()
-                                                .find(|v| v.key == *var_key)
+                                            } else if let Some(existing) =
+                                                env.variables.iter_mut().find(|v| v.key == *var_key)
                                             {
                                                 existing.shared_value = val.clone();
                                             } else {

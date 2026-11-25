@@ -98,7 +98,10 @@ pub fn show_workspace_manager(app: &mut App, ui: &mut egui::Ui) {
     if swaggen_ui_kit::page_header(
         ui,
         "Your workspaces",
-        &format!("{} / Switch between Individual (local-only) & Team workspaces", app.state.meta.name),
+        &format!(
+            "{} / Switch between Individual (local-only) & Team workspaces",
+            app.state.meta.name
+        ),
         Some("Close"),
         true,
     ) {
@@ -226,8 +229,8 @@ pub fn show_workspace_manager(app: &mut App, ui: &mut egui::Ui) {
             ui.columns(3.min(teams.len().max(1)), |cols| {
                 for (idx, tw) in teams.iter().enumerate() {
                     let col_idx = idx % cols.len();
-                    let active = app.selected_team_workspace_id.as_deref()
-                        == Some(tw.workspace_id.as_str());
+                    let active =
+                        app.selected_team_workspace_id.as_deref() == Some(tw.workspace_id.as_str());
                     swaggen_ui_kit::surface_card(&mut cols[col_idx], |ui| {
                         ui.horizontal(|ui| {
                             ui.label(swaggen_ui_kit::bold_text(
@@ -256,11 +259,7 @@ pub fn show_workspace_manager(app: &mut App, ui: &mut egui::Ui) {
                         if swaggen_ui_kit::primary_button(
                             ui,
                             !active,
-                            if active {
-                                "Current team"
-                            } else {
-                                "Open team"
-                            },
+                            if active { "Current team" } else { "Open team" },
                         )
                         .clicked()
                         {
@@ -288,61 +287,96 @@ pub fn show_workspace_manager(app: &mut App, ui: &mut egui::Ui) {
         swaggen_ui_kit::surface_card(ui, |ui| {
             swaggen_ui_kit::card_header(ui, "Workspace settings");
             let mut changed = false;
-            swaggen_ui_kit::config_field_row(ui, "Workspace name", "Shown in sidebar and headers", |ui| {
-                ui.horizontal(|ui| {
+            swaggen_ui_kit::config_field_row(
+                ui,
+                "Workspace name",
+                "Shown in sidebar and headers",
+                |ui| {
+                    ui.horizontal(|ui| {
+                        if ui
+                            .add(
+                                egui::TextEdit::singleline(&mut app.state.meta.name)
+                                    .desired_width(260.0),
+                            )
+                            .changed()
+                        {
+                            changed = true;
+                        }
+                        if ui
+                            .checkbox(&mut app.state.meta.archived, "Archived")
+                            .changed()
+                        {
+                            changed = true;
+                        }
+                    });
+                },
+            );
+            swaggen_ui_kit::config_field_row(ui, "Description", "Team or project summary", |ui| {
+                if ui
+                    .add(
+                        egui::TextEdit::singleline(&mut app.state.meta.description)
+                            .desired_width(360.0),
+                    )
+                    .changed()
+                {
+                    changed = true;
+                }
+            });
+            swaggen_ui_kit::config_field_row(
+                ui,
+                "Default API Base URL",
+                "Workspace fallback {{base_url}}",
+                |ui| {
                     if ui
-                        .add(egui::TextEdit::singleline(&mut app.state.meta.name).desired_width(260.0))
+                        .add(
+                            egui::TextEdit::singleline(
+                                &mut app.state.meta.defaults.default_base_url,
+                            )
+                            .desired_width(360.0),
+                        )
                         .changed()
                     {
                         changed = true;
                     }
-                    if ui.checkbox(&mut app.state.meta.archived, "Archived").changed() {
+                },
+            );
+            swaggen_ui_kit::config_field_row(
+                ui,
+                "Naming convention",
+                "Endpoint & schema lint guideline",
+                |ui| {
+                    if ui
+                        .add(
+                            egui::TextEdit::singleline(
+                                &mut app.state.meta.defaults.naming_convention,
+                            )
+                            .desired_width(360.0),
+                        )
+                        .changed()
+                    {
                         changed = true;
                     }
-                });
-            });
-            swaggen_ui_kit::config_field_row(ui, "Description", "Team or project summary", |ui| {
-                if ui
-                    .add(egui::TextEdit::singleline(&mut app.state.meta.description).desired_width(360.0))
-                    .changed()
-                {
-                    changed = true;
-                }
-            });
-            swaggen_ui_kit::config_field_row(ui, "Default API Base URL", "Workspace fallback {{base_url}}", |ui| {
-                if ui
-                    .add(
-                        egui::TextEdit::singleline(&mut app.state.meta.defaults.default_base_url)
-                            .desired_width(360.0),
-                    )
-                    .changed()
-                {
-                    changed = true;
-                }
-            });
-            swaggen_ui_kit::config_field_row(ui, "Naming convention", "Endpoint & schema lint guideline", |ui| {
-                if ui
-                    .add(
-                        egui::TextEdit::singleline(&mut app.state.meta.defaults.naming_convention)
-                            .desired_width(360.0),
-                    )
-                    .changed()
-                {
-                    changed = true;
-                }
-            });
-            swaggen_ui_kit::config_field_row(ui, "Onboarding guide", "Notes shown to teammates", |ui| {
-                if ui
-                    .add(
-                        egui::TextEdit::multiline(&mut app.state.meta.defaults.onboarding_guide)
+                },
+            );
+            swaggen_ui_kit::config_field_row(
+                ui,
+                "Onboarding guide",
+                "Notes shown to teammates",
+                |ui| {
+                    if ui
+                        .add(
+                            egui::TextEdit::multiline(
+                                &mut app.state.meta.defaults.onboarding_guide,
+                            )
                             .desired_width(360.0)
                             .desired_rows(2),
-                    )
-                    .changed()
-                {
-                    changed = true;
-                }
-            });
+                        )
+                        .changed()
+                    {
+                        changed = true;
+                    }
+                },
+            );
             if changed {
                 app.mark_dirty();
             }
@@ -476,9 +510,7 @@ pub fn show_environments(app: &mut App, ui: &mut egui::Ui) {
             }
 
             ui.add_space(8.0);
-            ui.label(
-                egui::RichText::new("Personal local overrides (never published)").strong(),
-            );
+            ui.label(egui::RichText::new("Personal local overrides (never published)").strong());
             let keys: Vec<String> = env
                 .variables
                 .iter()
@@ -607,9 +639,7 @@ pub fn show_history(app: &mut App, ui: &mut egui::Ui) {
                 });
                 ui.monospace(&entry.resolved_url);
                 ui.horizontal(|ui| {
-                    if swaggen_ui_kit::secondary_button(ui, true, "Open as new copy")
-                        .clicked()
-                    {
+                    if swaggen_ui_kit::secondary_button(ui, true, "Open as new copy").clicked() {
                         open_snap = Some(entry.snapshot.clone());
                     }
                     if ui.small_button("Delete request history").clicked() {
@@ -1365,7 +1395,10 @@ pub fn show_command_palette(app: &mut App, ui: &mut egui::Ui) {
                             (MainMode::Workbench, "Open API Workbench"),
                             (MainMode::Specs, "Open API documentation & OpenAPI"),
                             (MainMode::Runner, "Run collection, Mocks & Protocols"),
-                            (MainMode::TeamSync, "Open Sync queue, Conflicts & Discussion"),
+                            (
+                                MainMode::TeamSync,
+                                "Open Sync queue, Conflicts & Discussion",
+                            ),
                             (MainMode::Server, "Connect Team Server & Accounts"),
                             (MainMode::Environments, "Manage Environments & Variables"),
                             (MainMode::Secrets, "Personal Secrets Vault (DPAPI)"),

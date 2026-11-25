@@ -184,8 +184,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
             }
         });
         ui.horizontal_wrapped(|ui| {
-            if swaggen_ui_kit::secondary_button(ui, true, "Convert Swagger 2.0 -> 3.0.3")
-                .clicked()
+            if swaggen_ui_kit::secondary_button(ui, true, "Convert Swagger 2.0 -> 3.0.3").clicked()
             {
                 match convert_swagger2_to_openapi3(&app.spec_editor_text) {
                     Ok((converted, rep)) => {
@@ -231,15 +230,13 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                         &resp.preview_bytes,
                     ));
                 }
-                app.status =
-                    format!("Detected {} contract drift item(s)", app.spec_drift_items.len());
+                app.status = format!(
+                    "Detected {} contract drift item(s)",
+                    app.spec_drift_items.len()
+                );
             }
-            if swaggen_ui_kit::secondary_button(
-                ui,
-                app.active_request().is_some(),
-                "Propose Patch",
-            )
-            .clicked()
+            if swaggen_ui_kit::secondary_button(ui, app.active_request().is_some(), "Propose Patch")
+                .clicked()
                 && let Some(req) = app.active_request()
             {
                 let patch = propose_spec_patch_from_request(req);
@@ -272,8 +269,10 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                 let _ = std::fs::create_dir_all(&sdk_dir);
                 let _ = std::fs::write(sdk_dir.join("client.rs"), rust_sdk);
                 let _ = std::fs::write(sdk_dir.join("client.ts"), ts_sdk);
-                app.status =
-                    format!("Generated pinned Rust & TS SDK stubs in {}", sdk_dir.display());
+                app.status = format!(
+                    "Generated pinned Rust & TS SDK stubs in {}",
+                    sdk_dir.display()
+                );
             }
         });
         ui.horizontal_wrapped(|ui| {
@@ -472,8 +471,9 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                                                 .map(|c| c.id.clone())
                                                 .unwrap_or_default();
                                             if !col_id.is_empty() {
-                                                let req =
-                                                    generate_linked_request(&doc_clone, op, &col_id);
+                                                let req = generate_linked_request(
+                                                    &doc_clone, op, &col_id,
+                                                );
                                                 let rid = req.id.clone();
                                                 app.state.requests.push(req);
                                                 app.state.open_or_focus_tab(&rid);

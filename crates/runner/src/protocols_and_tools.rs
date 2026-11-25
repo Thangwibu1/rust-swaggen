@@ -92,7 +92,12 @@ pub async fn execute_graphql(
         .and_then(Value::as_array)
         .map(|arr| {
             arr.iter()
-                .map(|e| e.get("message").and_then(Value::as_str).map(ToOwned::to_owned).unwrap_or_else(|| e.to_string()))
+                .map(|e| {
+                    e.get("message")
+                        .and_then(Value::as_str)
+                        .map(ToOwned::to_owned)
+                        .unwrap_or_else(|| e.to_string())
+                })
                 .collect()
         })
         .unwrap_or_default();
@@ -137,7 +142,9 @@ pub async fn stream_sse_bounded(
 ) -> Result<Vec<SseEventRecord>, String> {
     let url = url::Url::parse(url_str.trim()).map_err(|e| format!("Invalid SSE URL: {e}"))?;
     if url.scheme() != "http" {
-        return Err("Bounded direct SSE reader supports http:// URLs cleanly without buffering".into());
+        return Err(
+            "Bounded direct SSE reader supports http:// URLs cleanly without buffering".into(),
+        );
     }
     let host = url.host_str().ok_or_else(|| "Missing host".to_owned())?;
     let port = url.port_or_known_default().unwrap_or(80);
@@ -167,7 +174,10 @@ pub async fn stream_sse_bounded(
     // Skip HTTP status + headers until empty line.
     loop {
         line.clear();
-        let n = reader.read_line(&mut line).await.map_err(|e| e.to_string())?;
+        let n = reader
+            .read_line(&mut line)
+            .await
+            .map_err(|e| e.to_string())?;
         if n == 0 || line == "\r\n" || line == "\n" {
             break;
         }
@@ -209,7 +219,8 @@ pub async fn stream_sse_bounded(
                 events.push_back(ev);
                 while events.len() > cap_events || total_bytes > cap_bytes {
                     if let Some(popped) = events.pop_front() {
-                        total_bytes = total_bytes.saturating_sub(popped.data.len() + popped.event.len());
+                        total_bytes =
+                            total_bytes.saturating_sub(popped.data.len() + popped.event.len());
                     } else {
                         break;
                     }
@@ -313,27 +324,35 @@ pub fn generate_code_snippet(req: &ResolvedRequest, target: SnippetTarget) -> St
             )
         }
         SnippetTarget::DartHttp => {
-            let mut s = format!(
-                "final req = http.Request('{method}', Uri.parse('{url}'));\n"
-            );
+            let mut s = format!("final req = http.Request('{method}', Uri.parse('{url}'));\n");
             for h in &req.masked_headers {
                 s.push_str(&format!("req.headers['{}'] = '{}';\n", h.name, h.value));
             }
             if let Some(b) = body_opt {
-                s.push_str(&format!("req.body = {};\n", serde_json::to_string(b).unwrap_or_default()));
+                s.push_str(&format!(
+                    "req.body = {};\n",
+                    serde_json::to_string(b).unwrap_or_default()
+                ));
             }
             s.push_str("final res = await req.send();");
             s
         }
         SnippetTarget::GoHttp => {
             let body_expr = body_opt
-                .map(|b| format!("strings.NewReader({})", serde_json::to_string(b).unwrap_or_default()))
+                .map(|b| {
+                    format!(
+                        "strings.NewReader({})",
+                        serde_json::to_string(b).unwrap_or_default()
+                    )
+                })
                 .unwrap_or_else(|| "nil".into());
-            let mut s = format!(
-                "req, err := http.NewRequest(\"{method}\", \"{url}\", {body_expr})\n"
-            );
+            let mut s =
+                format!("req, err := http.NewRequest(\"{method}\", \"{url}\", {body_expr})\n");
             for h in &req.masked_headers {
-                s.push_str(&format!("req.Header.Add(\"{}\", \"{}\")\n", h.name, h.value));
+                s.push_str(&format!(
+                    "req.Header.Add(\"{}\", \"{}\")\n",
+                    h.name, h.value
+                ));
             }
             s.push_str("resp, err := http.DefaultClient.Do(req)");
             s
@@ -380,7 +399,9 @@ pub mod dev_utils {
     pub fn yaml_to_json(yaml_str: &str) -> Result<String, String> {
         let docs = yaml_rust2::YamlLoader::load_from_str(yaml_str)
             .map_err(|e| format!("Invalid YAML: {e}"))?;
-        let first = docs.first().ok_or_else(|| "Empty YAML document".to_owned())?;
+        let first = docs
+            .first()
+            .ok_or_else(|| "Empty YAML document".to_owned())?;
         let val = yaml_to_val(first);
         serde_json::to_string_pretty(&val).map_err(|e| e.to_string())
     }
@@ -417,7 +438,7 @@ pub mod dev_utils {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use axum::{Router, routing::post, Json};
+    use axum::{Json, Router, routing::post};
 
     #[tokio::test]
     async fn graphql_sse_cap_snippets_and_dev_utils_work() {
@@ -456,9 +477,13 @@ mod tests {
             if let Ok((mut s, _)) = sse_l.accept().await {
                 let mut req_buf = [0u8; 512];
                 let _ = tokio::io::AsyncReadExt::read(&mut s, &mut req_buf).await;
-                let _ = s.write_all(b"HTTP/1.1 200 OK\r\nContent-Type: text/event-stream\r\n\r\n").await;
+                let _ = s
+                    .write_all(b"HTTP/1.1 200 OK\r\nContent-Type: text/event-stream\r\n\r\n")
+                    .await;
                 for i in 1..=5 {
-                    let _ = s.write_all(format!("id: {i}\ndata: msg-{i}\n\n").as_bytes()).await;
+                    let _ = s
+                        .write_all(format!("id: {i}\ndata: msg-{i}\n\n").as_bytes())
+                        .await;
                 }
                 let _ = s.shutdown().await;
             }
@@ -484,8 +509,16 @@ mod tests {
             method: HttpMethod::Post,
             url: "https://api.test/v1?token=RAW_SECRET".into(),
             masked_url: "https://api.test/v1?token=••••••••".into(),
-            headers: vec![ResolvedHeader { name: "Authorization".into(), value: "Bearer RAW_SECRET".into(), generated: false }],
-            masked_headers: vec![ResolvedHeader { name: "Authorization".into(), value: "Bearer ••••••••".into(), generated: false }],
+            headers: vec![ResolvedHeader {
+                name: "Authorization".into(),
+                value: "Bearer RAW_SECRET".into(),
+                generated: false,
+            }],
+            masked_headers: vec![ResolvedHeader {
+                name: "Authorization".into(),
+                value: "Bearer ••••••••".into(),
+                generated: false,
+            }],
             body: RequestBody::None,
             masked_body_preview: r#"{"ok":true}"#.into(),
             auth_source: "Bearer".into(),
@@ -499,8 +532,15 @@ mod tests {
             assert!(!snip.contains("RAW_SECRET"));
             assert!(snip.contains("••••••••"));
         }
-        assert_eq!(dev_utils::base64_decode(&dev_utils::base64_encode("hello")).unwrap(), "hello");
-        assert!(dev_utils::yaml_to_json("a: 1\nb:\n  - ok").unwrap().contains("\"a\": 1"));
+        assert_eq!(
+            dev_utils::base64_decode(&dev_utils::base64_encode("hello")).unwrap(),
+            "hello"
+        );
+        assert!(
+            dev_utils::yaml_to_json("a: 1\nb:\n  - ok")
+                .unwrap()
+                .contains("\"a\": 1")
+        );
         let _ = std::fs::remove_dir_all(dl);
     }
 }

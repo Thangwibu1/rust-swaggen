@@ -14,8 +14,7 @@ use swaggen_domain::{
 };
 use swaggen_http_engine::execute_request;
 use swaggen_spec_engine::{
-    advanced::validate_response_against_endpoint,
-    assertions::evaluate_assertions,
+    advanced::validate_response_against_endpoint, assertions::evaluate_assertions,
     openapi::SpecDocument,
 };
 use tokio_util::sync::CancellationToken;
@@ -102,7 +101,11 @@ pub fn parse_dataset(raw: &str) -> Result<DatasetPreview, String> {
                     serde_json::Value::String(s) => (s, "string".to_owned()),
                     serde_json::Value::Number(n) => {
                         let s = n.to_string();
-                        let ty = if n.is_i64() || n.is_u64() { "int" } else { "float" };
+                        let ty = if n.is_i64() || n.is_u64() {
+                            "int"
+                        } else {
+                            "float"
+                        };
                         (s, ty.to_owned())
                     }
                     serde_json::Value::Bool(b) => (b.to_string(), "bool".to_owned()),
@@ -126,7 +129,9 @@ pub fn parse_dataset(raw: &str) -> Result<DatasetPreview, String> {
     }
 
     let mut lines = clean.lines().filter(|l| !l.trim().is_empty());
-    let header_line = lines.next().ok_or_else(|| "CSV missing header row".to_owned())?;
+    let header_line = lines
+        .next()
+        .ok_or_else(|| "CSV missing header row".to_owned())?;
     let columns = split_csv_line(header_line)?;
     if columns.is_empty() || columns.iter().any(|c| c.is_empty()) {
         return Err("CSV dataset header must contain non-empty column names".into());
@@ -246,10 +251,14 @@ impl CollectionRunReport {
             ));
             match step.outcome {
                 StepOutcome::Passed => {}
-                StepOutcome::Skipped => out.push_str("      <skipped message=\"Skipped after prior fail-fast\"/>\n"),
+                StepOutcome::Skipped => {
+                    out.push_str("      <skipped message=\"Skipped after prior fail-fast\"/>\n")
+                }
                 StepOutcome::FailedAssertions | StepOutcome::FailedContract => {
                     let msg = xml_escape(&step.detail);
-                    out.push_str(&format!("      <failure message=\"{msg}\">{msg}</failure>\n"));
+                    out.push_str(&format!(
+                        "      <failure message=\"{msg}\">{msg}</failure>\n"
+                    ));
                 }
                 StepOutcome::InfraError => {
                     let msg = xml_escape(&step.detail);
@@ -306,7 +315,11 @@ fn select_requests<'a>(state: &'a WorkspaceState, ids: &[String]) -> Vec<&'a Req
         .collect()
 }
 
-pub fn build_run_manifest(state: &WorkspaceState, cfg: &RunnerConfig, now_unix: i64) -> RunManifest {
+pub fn build_run_manifest(
+    state: &WorkspaceState,
+    cfg: &RunnerConfig,
+    now_unix: i64,
+) -> RunManifest {
     let selected = select_requests(state, &cfg.request_ids);
     let ids: Vec<String> = selected.iter().map(|r| r.id.clone()).collect();
     let env_name = state.active_environment().map(|e| e.name.clone());
@@ -430,18 +443,21 @@ pub async fn run_collection(
                     local_secrets,
                 };
                 let now_secs = time::OffsetDateTime::now_utc().unix_timestamp();
-                let resolved = resolve_request_preview(req, col, &fchain, &ctx, &working_cookies, now_secs);
+                let resolved =
+                    resolve_request_preview(req, col, &fchain, &ctx, &working_cookies, now_secs);
 
                 if !resolved.blocking_errors.is_empty() {
                     infra_errors += 1;
-                    let detail = sanitize_text(&resolved.blocking_errors.join("; "), &redaction).sanitized_text;
+                    let detail = sanitize_text(&resolved.blocking_errors.join("; "), &redaction)
+                        .sanitized_text;
                     steps.push(RunStepResult {
                         iteration: iter_idx,
                         dataset_row: row_opt.map(|r| r.index),
                         request_id: req.id.clone(),
                         request_name: req.name.clone(),
                         method: req.method.as_str().into(),
-                        redacted_url: sanitize_text(&resolved.masked_url, &redaction).sanitized_text,
+                        redacted_url: sanitize_text(&resolved.masked_url, &redaction)
+                            .sanitized_text,
                         status_code: None,
                         duration_ms: 0,
                         outcome: StepOutcome::InfraError,
@@ -468,10 +484,13 @@ pub async fn run_collection(
                         let mut extracted_keys = Vec::new();
                         for (k, v, _is_secret) in &extracted {
                             extracted_keys.push(k.clone());
-                            if let Some(ex) = working_env.variables.iter_mut().find(|x| x.key == *k) {
+                            if let Some(ex) = working_env.variables.iter_mut().find(|x| x.key == *k)
+                            {
                                 ex.shared_value = v.clone();
                             } else {
-                                working_env.variables.push(VariableEntry::public(k, v.clone()));
+                                working_env
+                                    .variables
+                                    .push(VariableEntry::public(k, v.clone()));
                             }
                         }
 
@@ -490,7 +509,9 @@ pub async fn run_collection(
                             && let Some(op_uid) = &req.linked_operation_uid
                         {
                             for sp in specs {
-                                if let Some(ep) = sp.operations.iter().find(|o| o.operation_uid == *op_uid) {
+                                if let Some(ep) =
+                                    sp.operations.iter().find(|o| o.operation_uid == *op_uid)
+                                {
                                     let ct = resp
                                         .headers
                                         .iter()
@@ -520,7 +541,10 @@ pub async fn run_collection(
                                 .filter(|a| !a.passed)
                                 .map(|a| format!("{}: {}", a.label, a.detail))
                                 .collect();
-                            (StepOutcome::FailedAssertions, sanitize_text(&msgs.join("; "), &redaction).sanitized_text)
+                            (
+                                StepOutcome::FailedAssertions,
+                                sanitize_text(&msgs.join("; "), &redaction).sanitized_text,
+                            )
                         } else if !contract_mismatches.is_empty() {
                             failed_contract += 1;
                             if cfg.stop_on_failure {
@@ -528,13 +552,17 @@ pub async fn run_collection(
                             }
                             (
                                 StepOutcome::FailedContract,
-                                sanitize_text(&contract_mismatches.join("; "), &redaction).sanitized_text,
+                                sanitize_text(&contract_mismatches.join("; "), &redaction)
+                                    .sanitized_text,
                             )
                         } else {
                             passed += 1;
                             (
                                 StepOutcome::Passed,
-                                format!("HTTP {} · {} assertion(s) passed", resp.status_code, assertions_passed),
+                                format!(
+                                    "HTTP {} · {} assertion(s) passed",
+                                    resp.status_code, assertions_passed
+                                ),
                             )
                         };
 
@@ -544,7 +572,8 @@ pub async fn run_collection(
                             request_id: req.id.clone(),
                             request_name: req.name.clone(),
                             method: req.method.as_str().into(),
-                            redacted_url: sanitize_text(&resolved.masked_url, &redaction).sanitized_text,
+                            redacted_url: sanitize_text(&resolved.masked_url, &redaction)
+                                .sanitized_text,
                             status_code: Some(resp.status_code),
                             duration_ms: resp.duration_ms,
                             outcome,
@@ -569,7 +598,8 @@ pub async fn run_collection(
                             request_id: req.id.clone(),
                             request_name: req.name.clone(),
                             method: req.method.as_str().into(),
-                            redacted_url: sanitize_text(&resolved.masked_url, &redaction).sanitized_text,
+                            redacted_url: sanitize_text(&resolved.masked_url, &redaction)
+                                .sanitized_text,
                             status_code: None,
                             duration_ms: err.duration_ms,
                             outcome: StepOutcome::InfraError,
@@ -577,7 +607,11 @@ pub async fn run_collection(
                             assertions_failed: 0,
                             contract_mismatches: Vec::new(),
                             extracted_keys: Vec::new(),
-                            detail: sanitize_text(&format!("{}: {}", err.kind.as_str(), err.message), &redaction).sanitized_text,
+                            detail: sanitize_text(
+                                &format!("{}: {}", err.kind.as_str(), err.message),
+                                &redaction,
+                            )
+                            .sanitized_text,
                         });
                         if canceled {
                             break;
@@ -668,27 +702,47 @@ pub async fn run_collection_parallel(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use axum::{Router, routing::{get, post}, Json};
+    use axum::{
+        Json, Router,
+        routing::{get, post},
+    };
     use swaggen_domain::dynamic_vars::{ExtractorSource, ResponseExtractorRule};
     use swaggen_domain::workspace::{AssertionRule, AssertionTarget, HttpMethod};
 
     #[tokio::test]
     async fn collection_runner_chains_extractors_dataset_fail_fast_and_junit_cleanly() {
         let app = Router::new()
-            .route("/login", post(|| async { Json(serde_json::json!({"token": "tok-abc"})) }))
-            .route("/items/{id}", get(|axum::extract::Path(id): axum::extract::Path<String>| async move {
-                Json(serde_json::json!({"id": id, "ok": true}))
-            }))
-            .route("/fail", get(|| async { (axum::http::StatusCode::INTERNAL_SERVER_ERROR, "boom") }));
+            .route(
+                "/login",
+                post(|| async { Json(serde_json::json!({"token": "tok-abc"})) }),
+            )
+            .route(
+                "/items/{id}",
+                get(
+                    |axum::extract::Path(id): axum::extract::Path<String>| async move {
+                        Json(serde_json::json!({"id": id, "ok": true}))
+                    },
+                ),
+            )
+            .route(
+                "/fail",
+                get(|| async { (axum::http::StatusCode::INTERNAL_SERVER_ERROR, "boom") }),
+            );
         let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
         let addr = listener.local_addr().unwrap();
         tokio::spawn(async move {
             let _ = axum::serve(listener, app).await;
         });
 
-        let mut ws = WorkspaceState::new_personal(swaggen_domain::LocalId::parse("run").unwrap(), "Run");
+        let mut ws =
+            WorkspaceState::new_personal(swaggen_domain::LocalId::parse("run").unwrap(), "Run");
         let cid = ws.collections[0].id.clone();
-        let mut r1 = RequestItem::new(&cid, "Login", HttpMethod::Post, format!("http://{addr}/login"));
+        let mut r1 = RequestItem::new(
+            &cid,
+            "Login",
+            HttpMethod::Post,
+            format!("http://{addr}/login"),
+        );
         r1.extractors.push(ResponseExtractorRule {
             id: "ex1".into(),
             target_var: "auth_tok".into(),
@@ -696,8 +750,16 @@ mod tests {
             expression: "$.token".into(),
             mark_secret: false,
         });
-        let mut r2 = RequestItem::new(&cid, "GetItem", HttpMethod::Get, format!("http://{addr}/items/{{{{item_id}}}}"));
-        r2.headers.push(swaggen_domain::workspace::KeyValueRow::new("X-Auth", "{{auth_tok}}"));
+        let mut r2 = RequestItem::new(
+            &cid,
+            "GetItem",
+            HttpMethod::Get,
+            format!("http://{addr}/items/{{{{item_id}}}}"),
+        );
+        r2.headers.push(swaggen_domain::workspace::KeyValueRow::new(
+            "X-Auth",
+            "{{auth_tok}}",
+        ));
         r2.assertions.push(AssertionRule {
             id: "a1".into(),
             label: "200".into(),
@@ -705,7 +767,12 @@ mod tests {
             expected: "200".into(),
             enabled: true,
         });
-        let mut r3 = RequestItem::new(&cid, "ShouldFail", HttpMethod::Get, format!("http://{addr}/fail"));
+        let mut r3 = RequestItem::new(
+            &cid,
+            "ShouldFail",
+            HttpMethod::Get,
+            format!("http://{addr}/fail"),
+        );
         r3.assertions.push(AssertionRule {
             id: "a2".into(),
             label: "Expect 200".into(),
@@ -713,7 +780,12 @@ mod tests {
             expected: "200".into(),
             enabled: true,
         });
-        let r4 = RequestItem::new(&cid, "AfterFail", HttpMethod::Get, format!("http://{addr}/login"));
+        let r4 = RequestItem::new(
+            &cid,
+            "AfterFail",
+            HttpMethod::Get,
+            format!("http://{addr}/login"),
+        );
         ws.requests = vec![r1.clone(), r2.clone(), r3.clone(), r4.clone()];
 
         let ds = parse_dataset("item_id,flag\n42,true\n").unwrap();
@@ -722,7 +794,10 @@ mod tests {
 
         let dl = std::env::temp_dir().join(format!("swaggen-run-dl-{}", std::process::id()));
         let mut sec = BTreeMap::new();
-        sec.insert(swaggen_domain::LocalId::parse("my_secret").unwrap(), "SECRET_VAL_XYZ".into());
+        sec.insert(
+            swaggen_domain::LocalId::parse("my_secret").unwrap(),
+            "SECRET_VAL_XYZ".into(),
+        );
         let cfg = RunnerConfig {
             request_ids: vec![r1.id.clone(), r2.id, r3.id, r4.id],
             iterations: 1,
@@ -742,7 +817,9 @@ mod tests {
             iterations: 3,
             ..RunnerConfig::default()
         };
-        let par_reps = run_collection_parallel(&ws, &[], &sec, &dl, &par_cfg, 2, CancellationToken::new()).await;
+        let par_reps =
+            run_collection_parallel(&ws, &[], &sec, &dl, &par_cfg, 2, CancellationToken::new())
+                .await;
         assert_eq!(par_reps.len(), 3);
         assert!(par_reps.iter().all(|r| r.passed == 1));
         let xml = rep.to_junit_xml();

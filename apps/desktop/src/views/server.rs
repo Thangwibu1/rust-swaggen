@@ -101,7 +101,11 @@ fn show_server_profiles(app: &mut App, ui: &mut egui::Ui) {
                                 "v{} · {}ms · {}",
                                 prof.last_server_version,
                                 prof.last_latency_ms.unwrap_or(0),
-                                if prof.mongo_ready { "DB ready" } else { "DB degraded" }
+                                if prof.mongo_ready {
+                                    "DB ready"
+                                } else {
+                                    "DB degraded"
+                                }
                             ),
                         );
                     }
@@ -156,26 +160,41 @@ fn show_server_profiles(app: &mut App, ui: &mut egui::Ui) {
         swaggen_ui_kit::config_field_row(ui, "Profile name", "Workspace server alias", |ui| {
             ui.add(egui::TextEdit::singleline(&mut app.server_name_input).desired_width(360.0));
         });
-        swaggen_ui_kit::config_field_row(ui, "Server address", "HTTPS origin of Swaggen server", |ui| {
-            ui.add(
-                egui::TextEdit::singleline(&mut app.server_url_input)
-                    .hint_text("https://swaggen-api.ngocthang.io.vn")
-                    .desired_width(360.0),
-            );
-            if let Err(reason) = validate_server_url(&app.server_url_input) {
-                ui.label(egui::RichText::new(reason).size(11.5).color(Tokens::TEXT_WARNING));
-            }
-        });
-        swaggen_ui_kit::config_field_row(ui, "TLS verification", "Host-scoped exception only", |ui| {
-            ui.checkbox(
-                &mut app.server_allow_self_signed,
-                "Trust self-signed TLS certificate strictly for this host only",
-            );
-        });
+        swaggen_ui_kit::config_field_row(
+            ui,
+            "Server address",
+            "HTTPS origin of Swaggen server",
+            |ui| {
+                ui.add(
+                    egui::TextEdit::singleline(&mut app.server_url_input)
+                        .hint_text("https://swaggen-api.ngocthang.io.vn")
+                        .desired_width(360.0),
+                );
+                if let Err(reason) = validate_server_url(&app.server_url_input) {
+                    ui.label(
+                        egui::RichText::new(reason)
+                            .size(11.5)
+                            .color(Tokens::TEXT_WARNING),
+                    );
+                }
+            },
+        );
+        swaggen_ui_kit::config_field_row(
+            ui,
+            "TLS verification",
+            "Host-scoped exception only",
+            |ui| {
+                ui.checkbox(
+                    &mut app.server_allow_self_signed,
+                    "Trust self-signed TLS certificate strictly for this host only",
+                );
+            },
+        );
         ui.add_space(4.0);
         if swaggen_ui_kit::primary_button(
             ui,
-            !app.server_name_input.trim().is_empty() && validate_server_url(&app.server_url_input).is_ok(),
+            !app.server_name_input.trim().is_empty()
+                && validate_server_url(&app.server_url_input).is_ok(),
             "Save & connect server",
         )
         .clicked()
@@ -187,7 +206,11 @@ fn show_server_profiles(app: &mut App, ui: &mut egui::Ui) {
                 .chars()
                 .map(|c| if c.is_ascii_alphanumeric() { c } else { '-' })
                 .collect();
-            let prof_id = if id.is_empty() { "team-server".into() } else { id };
+            let prof_id = if id.is_empty() {
+                "team-server".into()
+            } else {
+                id
+            };
             let prof = ServerProfile::new(
                 prof_id.clone(),
                 app.server_name_input.trim(),
@@ -199,7 +222,9 @@ fn show_server_profiles(app: &mut App, ui: &mut egui::Ui) {
             app.submit(Command::SaveServerProfiles {
                 store: app.server_profiles.clone(),
             });
-            app.submit(Command::TestServerConnection { profile_id: prof_id });
+            app.submit(Command::TestServerConnection {
+                profile_id: prof_id,
+            });
         }
     });
 }
@@ -215,7 +240,8 @@ fn show_auth_and_bootstrap(app: &mut App, ui: &mut egui::Ui) {
         return;
     };
 
-    let firebase_ready = active.firebase_project_id.is_some() && active.firebase_web_api_key.is_some();
+    let firebase_ready =
+        active.firebase_project_id.is_some() && active.firebase_web_api_key.is_some();
     if firebase_ready {
         swaggen_ui_kit::notice_banner(
             ui,
@@ -361,12 +387,8 @@ fn show_auth_and_bootstrap(app: &mut App, ui: &mut egui::Ui) {
                             .desired_width(180.0),
                     );
                 });
-                if swaggen_ui_kit::secondary_button(
-                    ui,
-                    !app.pending,
-                    "Initialize Internal Owner",
-                )
-                .clicked()
+                if swaggen_ui_kit::secondary_button(ui, !app.pending, "Initialize Internal Owner")
+                    .clicked()
                 {
                     let pw = std::mem::take(&mut app.auth_password);
                     let bt = std::mem::take(&mut app.auth_bootstrap_token);
@@ -378,8 +400,12 @@ fn show_auth_and_bootstrap(app: &mut App, ui: &mut egui::Ui) {
                         bootstrap_token: if bt.trim().is_empty() { None } else { Some(bt) },
                     });
                 }
-            } else if swaggen_ui_kit::secondary_button(ui, !app.pending, "Internal Password Sign In")
-                .clicked()
+            } else if swaggen_ui_kit::secondary_button(
+                ui,
+                !app.pending,
+                "Internal Password Sign In",
+            )
+            .clicked()
             {
                 let pw = std::mem::take(&mut app.auth_password);
                 app.submit(Command::ServerLogin {
@@ -431,7 +457,10 @@ fn show_team_workspaces(app: &mut App, ui: &mut egui::Ui) {
     for ws in &app.team_workspaces {
         let sel = app.selected_team_workspace_id.as_deref() == Some(&ws.workspace_id);
         ui.horizontal_wrapped(|ui| {
-            if ui.selectable_label(sel, format!("{} ({})", ws.name, ws.slug)).clicked() {
+            if ui
+                .selectable_label(sel, format!("{} ({})", ws.name, ws.slug))
+                .clicked()
+            {
                 select_ws = Some(ws.workspace_id.clone());
             }
             swaggen_ui_kit::status_badge(
@@ -444,10 +473,7 @@ fn show_team_workspaces(app: &mut App, ui: &mut egui::Ui) {
                 ws.role.as_str(),
             );
             if ws.role == Role::Viewer {
-                ui.label(
-                    egui::RichText::new("Read-only workspace")
-                        .color(Tokens::TEXT_WARNING),
-                );
+                ui.label(egui::RichText::new("Read-only workspace").color(Tokens::TEXT_WARNING));
             }
             ui.label(
                 egui::RichText::new(format!(
@@ -473,7 +499,9 @@ fn show_team_workspaces(app: &mut App, ui: &mut egui::Ui) {
             ui.strong("Invite teammates");
             ui.horizontal_wrapped(|ui| {
                 ui.label("Email:");
-                ui.add(egui::TextEdit::singleline(&mut app.invite_email_input).desired_width(200.0));
+                ui.add(
+                    egui::TextEdit::singleline(&mut app.invite_email_input).desired_width(200.0),
+                );
                 egui::ComboBox::from_id_salt("invite-role")
                     .selected_text(app.invite_role.as_str())
                     .show_ui(ui, |ui| {
@@ -516,7 +544,11 @@ fn show_team_workspaces(app: &mut App, ui: &mut egui::Ui) {
                     swaggen_ui_kit::status_badge(ui, NoticeKind::Info, m.role.as_str());
                     if m.role != Role::Owner {
                         for new_role in [Role::Admin, Role::Editor, Role::Viewer] {
-                            if m.role != new_role && ui.small_button(format!("Set {}", new_role.as_str())).clicked() {
+                            if m.role != new_role
+                                && ui
+                                    .small_button(format!("Set {}", new_role.as_str()))
+                                    .clicked()
+                            {
                                 app.submit(Command::UpdateMemberRole {
                                     profile_id: active.id.clone(),
                                     workspace_id: wid.clone(),
@@ -639,7 +671,10 @@ fn show_sessions_and_password(app: &mut App, ui: &mut egui::Ui) {
             ui.label("New password (min 10):");
             ui.add(egui::TextEdit::singleline(&mut app.pw_new_input).password(true));
         });
-        ui.checkbox(&mut app.pw_revoke_others, "Revoke all other signed-in devices");
+        ui.checkbox(
+            &mut app.pw_revoke_others,
+            "Revoke all other signed-in devices",
+        );
         if swaggen_ui_kit::primary_button(ui, !app.pending, "Update password").clicked() {
             let cur = std::mem::take(&mut app.pw_current_input);
             let next = std::mem::take(&mut app.pw_new_input);

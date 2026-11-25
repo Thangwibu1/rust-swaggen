@@ -10,7 +10,9 @@ use swaggen_ui_kit::{Edge, IconKind, NoticeKind, Tokens};
 
 pub fn show(app: &mut App, ui: &mut egui::Ui) {
     let active_prof = app.server_profiles.active().cloned();
-    let signed_in = active_prof.as_ref().is_some_and(|p| !p.session_id.is_empty());
+    let signed_in = active_prof
+        .as_ref()
+        .is_some_and(|p| !p.session_id.is_empty());
     let server_host = active_prof
         .as_ref()
         .map(|p| {
@@ -37,21 +39,17 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                     "Waiting for Google sign-in in your browser…".into()
                 } else if app.error {
                     app.status.clone()
-                } else if let Some(p) = active_prof.as_ref().filter(|p| !p.session_id.is_empty())
-                {
+                } else if let Some(p) = active_prof.as_ref().filter(|p| !p.session_id.is_empty()) {
                     format!("Signed in as {} · Choose a workspace to start", p.email)
                 } else {
-                    "Choose Individual (local-only) or sign in with Google for Team Workspaces".into()
+                    "Choose Individual (local-only) or sign in with Google for Team Workspaces"
+                        .into()
                 };
-                ui.label(
-                    egui::RichText::new(left)
-                        .size(11.0)
-                        .color(if app.error {
-                            Tokens::TEXT_DANGER
-                        } else {
-                            Tokens::TEXT_PRIMARY
-                        }),
-                );
+                ui.label(egui::RichText::new(left).size(11.0).color(if app.error {
+                    Tokens::TEXT_DANGER
+                } else {
+                    Tokens::TEXT_PRIMARY
+                }));
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                     ui.label(
                         egui::RichText::new("Rust engine  /  UTF-8  /  Windows")

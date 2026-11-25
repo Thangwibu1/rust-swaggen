@@ -56,11 +56,17 @@ fn is_restricted_v6(ip: Ipv6Addr) -> bool {
         || (seg[0] & 0xffc0) == 0xfe80
 }
 
-pub fn validate_outbound_url(raw_url: &str, policy: &SsrfPolicy) -> Result<(Url, String, u16), String> {
+pub fn validate_outbound_url(
+    raw_url: &str,
+    policy: &SsrfPolicy,
+) -> Result<(Url, String, u16), String> {
     let url = Url::parse(raw_url.trim()).map_err(|e| format!("Invalid target URL: {e}"))?;
     let scheme_ok = url.scheme() == "https" || (policy.allow_http && url.scheme() == "http");
     if !scheme_ok {
-        return Err(format!("Blocked URL scheme '{}' under SSRF policy", url.scheme()));
+        return Err(format!(
+            "Blocked URL scheme '{}' under SSRF policy",
+            url.scheme()
+        ));
     }
     let host = url
         .host_str()

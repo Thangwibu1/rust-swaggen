@@ -97,6 +97,7 @@ pub struct App {
     pub close_after_save: bool,
     pub firebase_auth_pending: bool,
     pub request_config_collapsed: bool,
+    pub response_maximized: bool,
 
     // Search & tree UI state
     pub search_query: String,
@@ -310,6 +311,7 @@ impl App {
             close_after_save: false,
             firebase_auth_pending: false,
             request_config_collapsed: false,
+            response_maximized: false,
             search_query: String::new(),
             filter_method: None,
             filter_tag: String::new(),
@@ -511,13 +513,17 @@ impl App {
                 | 'Ẩ' | 'Ẫ' | 'Ă' | 'Ằ' | 'Ắ' | 'Ặ' | 'Ẳ' | 'Ẵ' => Some('a'),
                 'è' | 'é' | 'ẹ' | 'ẻ' | 'ẽ' | 'ê' | 'ề' | 'ế' | 'ệ' | 'ể' | 'ễ' | 'È' | 'É'
                 | 'Ẹ' | 'Ẻ' | 'Ẽ' | 'Ê' | 'Ề' | 'Ế' | 'Ệ' | 'Ể' | 'Ễ' => Some('e'),
-                'ì' | 'í' | 'ị' | 'ỉ' | 'ĩ' | 'Ì' | 'Í' | 'Ị' | 'Ỉ' | 'Ĩ' => Some('i'),
+                'ì' | 'í' | 'ị' | 'ỉ' | 'ĩ' | 'Ì' | 'Í' | 'Ị' | 'Ỉ' | 'Ĩ' => {
+                    Some('i')
+                }
                 'ò' | 'ó' | 'ọ' | 'ỏ' | 'õ' | 'ô' | 'ồ' | 'ố' | 'ộ' | 'ổ' | 'ỗ' | 'ơ' | 'ờ'
                 | 'ớ' | 'ợ' | 'ở' | 'ỡ' | 'Ò' | 'Ó' | 'Ọ' | 'Ỏ' | 'Õ' | 'Ô' | 'Ồ' | 'Ố' | 'Ộ'
                 | 'Ổ' | 'Ỗ' | 'Ơ' | 'Ờ' | 'Ớ' | 'Ợ' | 'Ở' | 'Ỡ' => Some('o'),
                 'ù' | 'ú' | 'ụ' | 'ủ' | 'ũ' | 'ư' | 'ừ' | 'ứ' | 'ự' | 'ử' | 'ữ' | 'Ù' | 'Ú'
                 | 'Ụ' | 'Ủ' | 'Ũ' | 'Ư' | 'Ừ' | 'Ứ' | 'Ự' | 'Ử' | 'Ữ' => Some('u'),
-                'ỳ' | 'ý' | 'ỵ' | 'ỷ' | 'ỹ' | 'Ỳ' | 'Ý' | 'Ỵ' | 'Ỷ' | 'Ỹ' => Some('y'),
+                'ỳ' | 'ý' | 'ỵ' | 'ỷ' | 'ỹ' | 'Ỳ' | 'Ý' | 'Ỵ' | 'Ỷ' | 'Ỹ' => {
+                    Some('y')
+                }
                 'đ' | 'Đ' => Some('d'),
                 '-' | '_' | ' ' | '/' | '.' => None,
                 _ => None,
@@ -633,10 +639,13 @@ impl App {
         profile_id: String,
         bootstrap_token: Option<String>,
     ) {
-        match self.worker.commands.try_send(Command::FirebaseBrowserLogin {
-            profile_id,
-            bootstrap_token,
-        }) {
+        match self
+            .worker
+            .commands
+            .try_send(Command::FirebaseBrowserLogin {
+                profile_id,
+                bootstrap_token,
+            }) {
             Ok(()) => {
                 self.firebase_auth_pending = true;
                 self.error = false;
@@ -781,7 +790,8 @@ impl App {
                 }
                 Event::InvitationCreated(inv) => {
                     self.last_created_invite_token = inv.invite_token;
-                    self.status = format!("Created one-time invitation for {}", inv.invitation.email);
+                    self.status =
+                        format!("Created one-time invitation for {}", inv.invitation.email);
                 }
                 Event::SyncStateUpdated { state, message } => {
                     self.sync_state = *state;
@@ -789,7 +799,8 @@ impl App {
                 }
                 Event::EntityRevisionsLoaded(revs) => {
                     self.team_revisions = revs;
-                    self.status = format!("Loaded {} historical revisions", self.team_revisions.len());
+                    self.status =
+                        format!("Loaded {} historical revisions", self.team_revisions.len());
                 }
                 Event::CollabDataLoaded {
                     comments,
@@ -855,7 +866,8 @@ impl App {
                     total_bytes,
                 } => {
                     if self.inflight_execution_id == Some(execution_id) {
-                        self.transfer_progress = Some((execution_id, phase, bytes_done, total_bytes));
+                        self.transfer_progress =
+                            Some((execution_id, phase, bytes_done, total_bytes));
                     }
                 }
                 Event::OAuth2PendingAuthorize {
@@ -893,7 +905,10 @@ impl App {
                 }
                 Event::LocalMockState { base_url, logs } => {
                     self.status = match &base_url {
-                        Some(u) => format!("Local mock server active at {u} ({} log entries)", logs.len()),
+                        Some(u) => format!(
+                            "Local mock server active at {u} ({} log entries)",
+                            logs.len()
+                        ),
                         None => "Local mock server stopped".into(),
                     };
                     self.local_mock_url = base_url;
@@ -1272,8 +1287,12 @@ impl eframe::App for App {
         if ctx.input_mut(|i| i.consume_key(egui::Modifiers::CTRL, egui::Key::Enter)) {
             self.send_active_request(false);
         }
+        if ctx.input_mut(|i| i.consume_key(egui::Modifiers::CTRL, egui::Key::B)) {
+            self.state.layout.sidebar_collapsed = !self.state.layout.sidebar_collapsed;
+        }
         if ctx.input_mut(|i| i.consume_key(egui::Modifiers::CTRL, egui::Key::P)) {
             self.mode = MainMode::Workbench;
+            self.state.layout.sidebar_collapsed = false;
             self.focus_search = true;
         }
         if ctx.input_mut(|i| i.consume_key(egui::Modifiers::CTRL, egui::Key::W))
@@ -1407,7 +1426,11 @@ impl eframe::App for App {
                             IconKind::Blocks,
                             "API Workbench (Ctrl+P)",
                         ),
-                        (MainMode::Specs, IconKind::BookOpen, "API Definitions & Docs"),
+                        (
+                            MainMode::Specs,
+                            IconKind::BookOpen,
+                            "API Definitions & Docs",
+                        ),
                         (
                             MainMode::Runner,
                             IconKind::Play,
@@ -1494,24 +1517,26 @@ impl eframe::App for App {
                 });
             });
 
-        // 3. Left 248px Figma Project Sidebar (single right 1px divider).
-        let sidebar_frame = egui::Frame::new()
-            .fill(swaggen_ui_kit::surface_bg(ui))
-            .stroke(egui::Stroke::NONE)
-            .inner_margin(egui::Margin::symmetric(16, 18));
-        let sidebar_resp = egui::Panel::left("sidebar")
-            .resizable(true)
-            .default_size(self.state.layout.sidebar_width.clamp(228.0, 340.0))
-            .min_size(220.0)
-            .max_size(360.0)
-            .frame(sidebar_frame)
-            .show(ui, |ui| {
-                swaggen_ui_kit::paint_edge_divider(ui, ui.max_rect(), Edge::Right);
-                views::sidebar::show(self, ui);
-            });
-        let new_w = sidebar_resp.response.rect.width();
-        if (new_w - self.state.layout.sidebar_width).abs() > 2.0 {
-            self.state.layout.sidebar_width = new_w;
+        // 3. Left Resizable Figma Project Sidebar (175px..560px + Ctrl+B collapsible).
+        if !self.state.layout.sidebar_collapsed {
+            let sidebar_frame = egui::Frame::new()
+                .fill(swaggen_ui_kit::surface_bg(ui))
+                .stroke(egui::Stroke::NONE)
+                .inner_margin(egui::Margin::symmetric(16, 16));
+            let sidebar_resp = egui::Panel::left("sidebar")
+                .resizable(true)
+                .default_size(self.state.layout.sidebar_width.clamp(175.0, 560.0))
+                .min_size(175.0)
+                .max_size(560.0)
+                .frame(sidebar_frame)
+                .show(ui, |ui| {
+                    swaggen_ui_kit::paint_edge_divider(ui, ui.max_rect(), Edge::Right);
+                    views::sidebar::show(self, ui);
+                });
+            let new_w = sidebar_resp.response.rect.width();
+            if (new_w - self.state.layout.sidebar_width).abs() > 1.5 {
+                self.state.layout.sidebar_width = new_w;
+            }
         }
 
         // 4. Right Workspace Header (64px height matching Figma Shell/Workspace header, single bottom 1px divider).
@@ -1528,6 +1553,34 @@ impl eframe::App for App {
             .show(ui, |ui| {
                 swaggen_ui_kit::paint_edge_divider(ui, ui.max_rect(), Edge::Bottom);
                 ui.horizontal(|ui| {
+                    let toggle_lbl = if self.state.layout.sidebar_collapsed {
+                        "»"
+                    } else {
+                        "«"
+                    };
+                    if ui
+                        .add(
+                            egui::Button::new(
+                                egui::RichText::new(toggle_lbl)
+                                    .size(13.0)
+                                    .color(Tokens::TEXT_SECONDARY)
+                                    .strong(),
+                            )
+                            .fill(Tokens::BG_SURFACE)
+                            .stroke(egui::Stroke::new(1.0, Tokens::BORDER_DEFAULT))
+                            .min_size(egui::vec2(26.0, 26.0))
+                            .corner_radius(6),
+                        )
+                        .on_hover_text(if self.state.layout.sidebar_collapsed {
+                            "Expand project sidebar (Ctrl+B)"
+                        } else {
+                            "Collapse project sidebar (Ctrl+B)"
+                        })
+                        .clicked()
+                    {
+                        self.state.layout.sidebar_collapsed = !self.state.layout.sidebar_collapsed;
+                    }
+                    ui.add_space(4.0);
                     ui.label(swaggen_ui_kit::bold_text(
                         &self.screen_breadcrumb(),
                         13.0,
@@ -1539,8 +1592,12 @@ impl eframe::App for App {
 
                     ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                         if self.selected_team_workspace_id.is_some()
-                            && swaggen_ui_kit::secondary_button(ui, !self.pending, "Publish changes")
-                                .clicked()
+                            && swaggen_ui_kit::secondary_button(
+                                ui,
+                                !self.pending,
+                                "Publish changes",
+                            )
+                            .clicked()
                         {
                             self.sync_subtab = 0;
                             self.navigate_to(MainMode::TeamSync);
@@ -1599,10 +1656,7 @@ impl eframe::App for App {
                                         .strong(),
                                 )
                                 .fill(swaggen_ui_kit::surface_bg(ui))
-                                .stroke(egui::Stroke::new(
-                                    1.0,
-                                    swaggen_ui_kit::border_color(ui),
-                                ))
+                                .stroke(egui::Stroke::new(1.0, swaggen_ui_kit::border_color(ui)))
                                 .corner_radius(6),
                             )
                             .on_hover_text(if self.selected_team_workspace_id.is_some() {
@@ -1631,10 +1685,7 @@ impl eframe::App for App {
                                         .color(swaggen_ui_kit::text_primary(ui)),
                                 )
                                 .fill(swaggen_ui_kit::surface_bg(ui))
-                                .stroke(egui::Stroke::new(
-                                    1.0,
-                                    swaggen_ui_kit::border_color(ui),
-                                ))
+                                .stroke(egui::Stroke::new(1.0, swaggen_ui_kit::border_color(ui)))
                                 .corner_radius(6),
                             )
                             .on_hover_text("Manage environments & variables")
@@ -1652,36 +1703,117 @@ impl eframe::App for App {
 
         // Production request confirmation modal (R16 / EV07).
         if self.show_production_confirm {
-            egui::CentralPanel::default().frame(main_frame).show(ui, |ui| {
-                views::panels::show_production_confirm(self, ui);
-            });
+            egui::CentralPanel::default()
+                .frame(main_frame)
+                .show(ui, |ui| {
+                    views::panels::show_production_confirm(self, ui);
+                });
             return;
         }
 
         // Command Palette modal (UX04 / M03).
         if self.show_command_palette {
-            egui::CentralPanel::default().frame(main_frame).show(ui, |ui| {
-                views::panels::show_command_palette(self, ui);
-            });
+            egui::CentralPanel::default()
+                .frame(main_frame)
+                .show(ui, |ui| {
+                    views::panels::show_command_palette(self, ui);
+                });
             return;
         }
 
         // Workspace management modal (WS01 / A08 / A09).
         if self.show_workspace_modal {
-            egui::CentralPanel::default().frame(main_frame).show(ui, |ui| {
-                views::panels::show_workspace_manager(self, ui);
-            });
+            egui::CentralPanel::default()
+                .frame(main_frame)
+                .show(ui, |ui| {
+                    views::panels::show_workspace_manager(self, ui);
+                });
             return;
         }
 
-        // 5. Main Central Workspace Canvas (no nested outer ScrollArea trap in Workbench).
+        // 5. Main Central Workspace Canvas with draggable Request <-> Response splitters.
+        let main_frame = egui::Frame::new()
+            .fill(swaggen_ui_kit::page_bg(ui))
+            .inner_margin(egui::Margin::symmetric(20, 14));
         egui::CentralPanel::default()
             .frame(main_frame)
             .show(ui, |ui| match self.mode {
                 MainMode::Workbench => {
-                    views::request_pane::show(self, ui);
-                    ui.add_space(12.0);
-                    views::response_pane::show(self, ui, &ctx);
+                    let Some(req_idx) = views::request_pane::show_top_bar(self, ui) else {
+                        return;
+                    };
+                    if self.response_maximized {
+                        views::response_pane::show(self, ui, &ctx);
+                    } else if self.state.layout.workbench_side_by_side {
+                        let total_w = ui.available_width().max(480.0);
+                        let total_h = ui.available_height().max(180.0);
+                        let ratio = self.state.layout.response_split_ratio.clamp(0.22, 0.78);
+                        let req_w = (total_w * (1.0 - ratio) - 6.0)
+                            .clamp(230.0, (total_w - 250.0).max(230.0));
+                        ui.horizontal_top(|ui| {
+                            ui.spacing_mut().item_spacing.x = 4.0;
+                            ui.allocate_ui_with_layout(
+                                egui::vec2(req_w, total_h),
+                                egui::Layout::top_down(egui::Align::Min),
+                                |ui| {
+                                    views::request_pane::show_config_panel(
+                                        self, ui, req_idx, total_h,
+                                    );
+                                },
+                            );
+                            let (split_resp, dx) =
+                                swaggen_ui_kit::vertical_splitter(ui, "wb-vsplit", total_h);
+                            if dx.abs() > 0.0 {
+                                self.state.layout.response_split_ratio = (self
+                                    .state
+                                    .layout
+                                    .response_split_ratio
+                                    - dx / total_w)
+                                    .clamp(0.22, 0.78);
+                            }
+                            if split_resp
+                                .on_hover_text("Drag left/right to resize · Double-click to reset")
+                                .double_clicked()
+                            {
+                                self.state.layout.response_split_ratio = 0.50;
+                            }
+                            let resp_w = ui.available_width().max(220.0);
+                            ui.allocate_ui_with_layout(
+                                egui::vec2(resp_w, total_h),
+                                egui::Layout::top_down(egui::Align::Min),
+                                |ui| {
+                                    views::response_pane::show(self, ui, &ctx);
+                                },
+                            );
+                        });
+                    } else if self.request_config_collapsed {
+                        views::request_pane::show_config_panel(self, ui, req_idx, 0.0);
+                        ui.add_space(6.0);
+                        views::response_pane::show(self, ui, &ctx);
+                    } else {
+                        let total_h = ui.available_height().max(240.0);
+                        let ratio = self.state.layout.response_split_ratio.clamp(0.18, 0.85);
+                        let req_h = (total_h * (1.0 - ratio))
+                            .clamp(108.0, (total_h - 125.0).max(108.0));
+                        views::request_pane::show_config_panel(self, ui, req_idx, req_h);
+                        let (split_resp, dy) =
+                            swaggen_ui_kit::horizontal_splitter(ui, "wb-hsplit");
+                        if dy.abs() > 0.0 {
+                            self.state.layout.response_split_ratio = (self
+                                .state
+                                .layout
+                                .response_split_ratio
+                                - dy / total_h)
+                                .clamp(0.18, 0.85);
+                        }
+                        if split_resp
+                            .on_hover_text("Drag up/down to resize Request vs Response · Double-click to reset")
+                            .double_clicked()
+                        {
+                            self.state.layout.response_split_ratio = 0.56;
+                        }
+                        views::response_pane::show(self, ui, &ctx);
+                    }
                 }
                 MainMode::Runner => views::runner::show(self, ui, &ctx),
                 MainMode::Server => views::server::show(self, ui),
@@ -1707,11 +1839,15 @@ mod tests {
     #[test]
     fn slugify_workspace_id_normalizes_vietnamese_and_punctuation() {
         assert_eq!(
-            App::slugify_workspace_id("Dự án API cá nhân").unwrap().as_str(),
+            App::slugify_workspace_id("Dự án API cá nhân")
+                .unwrap()
+                .as_str(),
             "du-an-api-ca-nhan"
         );
         assert_eq!(
-            App::slugify_workspace_id("  Team Backend / v2  ").unwrap().as_str(),
+            App::slugify_workspace_id("  Team Backend / v2  ")
+                .unwrap()
+                .as_str(),
             "team-backend-v2"
         );
         assert!(App::slugify_workspace_id("   ").is_none());
@@ -1728,7 +1864,11 @@ mod tests {
                 .as_nanos()
         ));
         let worker = Worker::start(root.clone(), LocalId::parse("personal").unwrap(), || {});
-        let ws = match worker.events.recv_timeout(std::time::Duration::from_secs(5)).unwrap() {
+        let ws = match worker
+            .events
+            .recv_timeout(std::time::Duration::from_secs(5))
+            .unwrap()
+        {
             Event::Loaded { workspace, .. } => workspace,
             _ => panic!("expected Loaded"),
         };
@@ -1771,6 +1911,7 @@ mod tests {
             close_after_save: false,
             firebase_auth_pending: false,
             request_config_collapsed: false,
+            response_maximized: false,
             search_query: String::new(),
             filter_method: None,
             filter_tag: String::new(),
@@ -1925,7 +2066,10 @@ mod tests {
         app.open_request_in_workbench(&req_id);
         assert_eq!(app.mode, MainMode::Workbench);
         assert!(!app.show_workspace_modal);
-        assert!(!app.dirty(), "opening a request must not mark workspace dirty");
+        assert!(
+            !app.dirty(),
+            "opening a request must not mark workspace dirty"
+        );
 
         drop(app);
         let _ = std::fs::remove_dir_all(root);

@@ -36,14 +36,12 @@ fn open_sync_journal(
     profile_id: &str,
     workspace_id: &str,
 ) -> Result<SyncJournalStore, String> {
-    let dir = WorkspaceDirectory::open(root, sync_dir_id(workspace_id)).map_err(|e| e.to_string())?;
+    let dir =
+        WorkspaceDirectory::open(root, sync_dir_id(workspace_id)).map_err(|e| e.to_string())?;
     SyncJournalStore::open(&dir, profile_id, workspace_id).map_err(|e| e.to_string())
 }
 
-fn profile_and_token(
-    root: &Path,
-    profile_id: &str,
-) -> Result<(ServerProfile, String), String> {
+fn profile_and_token(root: &Path, profile_id: &str) -> Result<(ServerProfile, String), String> {
     let store = load_server_profiles(root);
     let prof = store
         .profiles
@@ -104,7 +102,8 @@ pub fn handle_sync_command(
             if let Err(e) = journal.save(st.clone()) {
                 return Ok(Event::ActionError(e.to_string()));
             }
-            let (synced, msg) = flush_outbox_and_catch_up(runtime, root, downloads, &profile_id, &workspace_id, st);
+            let (synced, msg) =
+                flush_outbox_and_catch_up(runtime, root, downloads, &profile_id, &workspace_id, st);
             if let Err(e) = journal.save(synced.clone()) {
                 return Ok(Event::ActionError(e.to_string()));
             }
@@ -409,9 +408,8 @@ fn flush_outbox_and_catch_up(
                 let mut pages = Vec::new();
                 let mut offset = 0usize;
                 loop {
-                    let spath = format!(
-                        "/v1/workspaces/{workspace_id}/snapshot?offset={offset}&limit=200"
-                    );
+                    let spath =
+                        format!("/v1/workspaces/{workspace_id}/snapshot?offset={offset}&limit=200");
                     match runtime.block_on(server_call::<(), SnapshotResponse>(
                         &prof,
                         HttpMethod::Get,
@@ -492,7 +490,10 @@ fn flush_outbox_and_catch_up(
         }
         Err(err) if err.contains("403") || err.contains("forbidden") => {
             st.apply_permission_blocked(&op_ids, &err, now);
-            (st, "Workspace write permission revoked; drafts kept locally".into())
+            (
+                st,
+                "Workspace write permission revoked; drafts kept locally".into(),
+            )
         }
         Err(err) => {
             st.apply_network_retry(&op_ids, &err, now);

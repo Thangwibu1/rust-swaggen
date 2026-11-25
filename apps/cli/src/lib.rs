@@ -72,10 +72,18 @@ pub fn collect_local_secrets(
 }
 
 pub async fn execute_cli_run(args: &CliRunArgs) -> Result<(CollectionRunReport, i32), String> {
-    let raw_ws = fs::read_to_string(&args.workspace_path)
-        .map_err(|e| format!("Failed reading workspace '{}': {e}", args.workspace_path.display()))?;
-    let mut ws: WorkspaceState = serde_json::from_str(&raw_ws)
-        .map_err(|e| format!("Invalid WorkspaceState JSON '{}': {e}", args.workspace_path.display()))?;
+    let raw_ws = fs::read_to_string(&args.workspace_path).map_err(|e| {
+        format!(
+            "Failed reading workspace '{}': {e}",
+            args.workspace_path.display()
+        )
+    })?;
+    let mut ws: WorkspaceState = serde_json::from_str(&raw_ws).map_err(|e| {
+        format!(
+            "Invalid WorkspaceState JSON '{}': {e}",
+            args.workspace_path.display()
+        )
+    })?;
 
     if let Some(ep) = &args.env_path {
         let raw_env = fs::read_to_string(ep)
@@ -109,7 +117,9 @@ pub async fn execute_cli_run(args: &CliRunArgs) -> Result<(CollectionRunReport, 
 
     let secrets = collect_local_secrets(args.secrets_root.as_deref(), &args.workspace_id);
     let mut redaction = RedactionPolicy::default();
-    redaction.extra_fields.extend(args.extra_redact_fields.clone());
+    redaction
+        .extra_fields
+        .extend(args.extra_redact_fields.clone());
     for v in secrets.values() {
         if !v.trim().is_empty() {
             redaction.extra_literal_values.push(v.clone());
@@ -127,7 +137,15 @@ pub async fn execute_cli_run(args: &CliRunArgs) -> Result<(CollectionRunReport, 
         dataset_rows,
         redaction_policy: redaction.clone(),
     };
-    let report = run_collection(&ws, &specs, &secrets, &downloads_dir, &cfg, CancellationToken::new()).await;
+    let report = run_collection(
+        &ws,
+        &specs,
+        &secrets,
+        &downloads_dir,
+        &cfg,
+        CancellationToken::new(),
+    )
+    .await;
     let _ = fs::remove_dir_all(&downloads_dir);
 
     if let Some(jp) = &args.report_json_path {
@@ -150,11 +168,15 @@ pub async fn execute_cli_run(args: &CliRunArgs) -> Result<(CollectionRunReport, 
     Ok((report, code))
 }
 
-pub fn generate_cli_snippet(workspace_path: &Path, request_index: usize, target: &str) -> Result<String, String> {
-    let raw_ws = fs::read_to_string(workspace_path)
-        .map_err(|e| format!("Failed reading workspace: {e}"))?;
-    let ws: WorkspaceState = serde_json::from_str(&raw_ws)
-        .map_err(|e| format!("Invalid WorkspaceState JSON: {e}"))?;
+pub fn generate_cli_snippet(
+    workspace_path: &Path,
+    request_index: usize,
+    target: &str,
+) -> Result<String, String> {
+    let raw_ws =
+        fs::read_to_string(workspace_path).map_err(|e| format!("Failed reading workspace: {e}"))?;
+    let ws: WorkspaceState =
+        serde_json::from_str(&raw_ws).map_err(|e| format!("Invalid WorkspaceState JSON: {e}"))?;
     let req = ws
         .requests
         .get(request_index)
@@ -182,14 +204,20 @@ pub fn generate_cli_snippet(workspace_path: &Path, request_index: usize, target:
 #[cfg(test)]
 mod tests {
     use super::*;
-    use axum::{Router, routing::get, Json};
+    use axum::{Json, Router, routing::get};
     use swaggen_domain::workspace::{AssertionRule, AssertionTarget, HttpMethod, RequestItem};
 
     #[tokio::test]
     async fn cli_runner_writes_redacted_junit_and_returns_accurate_exit_codes() {
         let app = Router::new()
-            .route("/ok", get(|| async { Json(serde_json::json!({"ok": true})) }))
-            .route("/bad", get(|| async { (axum::http::StatusCode::BAD_REQUEST, "nope") }));
+            .route(
+                "/ok",
+                get(|| async { Json(serde_json::json!({"ok": true})) }),
+            )
+            .route(
+                "/bad",
+                get(|| async { (axum::http::StatusCode::BAD_REQUEST, "nope") }),
+            );
         let l = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
         let addr = l.local_addr().unwrap();
         tokio::spawn(async move {
@@ -204,7 +232,12 @@ mod tests {
 
         let mut ws = WorkspaceState::new_personal(LocalId::parse("cli").unwrap(), "CLI");
         let cid = ws.collections[0].id.clone();
-        let mut r1 = RequestItem::new(&cid, "PassReq", HttpMethod::Get, format!("http://{addr}/ok?api_key={{{{cli_tok}}}}"));
+        let mut r1 = RequestItem::new(
+            &cid,
+            "PassReq",
+            HttpMethod::Get,
+            format!("http://{addr}/ok?api_key={{{{cli_tok}}}}"),
+        );
         r1.assertions.push(AssertionRule {
             id: "a1".into(),
             label: "Status 200".into(),

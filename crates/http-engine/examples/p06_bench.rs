@@ -34,7 +34,11 @@ async fn main() {
         let mut req = RequestItem::new(
             col_id.clone(),
             format!("Order Endpoint {i:04}"),
-            if i % 3 == 0 { HttpMethod::Post } else { HttpMethod::Get },
+            if i % 3 == 0 {
+                HttpMethod::Post
+            } else {
+                HttpMethod::Get
+            },
             format!("https://api.example.test/v1/orders/{i}?filter=active"),
         );
         req.tags = vec![format!("grp-{}", i % 10)];
@@ -77,7 +81,9 @@ async fn main() {
                         tokio::time::sleep(Duration::from_secs(5)).await;
                         return;
                     }
-                    let hdr = format!("HTTP/1.1 200 OK\r\nContent-Length: {total}\r\nConnection: close\r\n\r\n");
+                    let hdr = format!(
+                        "HTTP/1.1 200 OK\r\nContent-Length: {total}\r\nConnection: close\r\n\r\n"
+                    );
                     if sock.write_all(hdr.as_bytes()).await.is_err() {
                         return;
                     }
@@ -113,18 +119,26 @@ async fn main() {
     };
 
     for _ in 0..3 {
-        let r = execute_request(&stream_req(format!("http://{addr}/20mb")), &dl_dir, CancellationToken::new())
-            .await
-            .unwrap();
+        let r = execute_request(
+            &stream_req(format!("http://{addr}/20mb")),
+            &dl_dir,
+            CancellationToken::new(),
+        )
+        .await
+        .unwrap();
         assert_eq!(r.wire_bytes, 20 * 1024 * 1024);
         assert_eq!(r.preview_bytes.len(), PREVIEW_CAP_BYTES);
     }
     let mut stream_samples = Vec::with_capacity(10);
     for _ in 0..10 {
         let t0 = Instant::now();
-        let r = execute_request(&stream_req(format!("http://{addr}/20mb")), &dl_dir, CancellationToken::new())
-            .await
-            .unwrap();
+        let r = execute_request(
+            &stream_req(format!("http://{addr}/20mb")),
+            &dl_dir,
+            CancellationToken::new(),
+        )
+        .await
+        .unwrap();
         assert_eq!(r.wire_bytes, 20 * 1024 * 1024);
         assert_eq!(r.preview_bytes.len(), PREVIEW_CAP_BYTES);
         stream_samples.push(t0.elapsed().as_secs_f64() * 1000.0);
@@ -169,6 +183,10 @@ async fn main() {
     if let Some(p) = out_path.parent() {
         let _ = fs::create_dir_all(p);
     }
-    fs::write(&out_path, format!("{}\n", serde_json::to_string_pretty(&report).unwrap())).unwrap();
+    fs::write(
+        &out_path,
+        format!("{}\n", serde_json::to_string_pretty(&report).unwrap()),
+    )
+    .unwrap();
     println!("{}", serde_json::to_string_pretty(&report).unwrap());
 }

@@ -1,8 +1,6 @@
 //! Swaggen collaboration server binary.
 use std::{net::SocketAddr, sync::Arc};
-use swaggen_mongo_store::{
-    ServerStore, memory_backend::InMemoryStore, mongo_backend::MongoStore,
-};
+use swaggen_mongo_store::{ServerStore, memory_backend::InMemoryStore, mongo_backend::MongoStore};
 
 #[tokio::main]
 async fn main() {
@@ -25,7 +23,9 @@ async fn run(args: &[String]) -> Result<(), i32> {
         return Ok(());
     }
 
-    let bootstrap_secret = std::env::var("SWAGGEN_BOOTSTRAP_TOKEN").ok().filter(|s| !s.is_empty());
+    let bootstrap_secret = std::env::var("SWAGGEN_BOOTSTRAP_TOKEN")
+        .ok()
+        .filter(|s| !s.is_empty());
 
     if args.get(1).map(String::as_str) == Some("backup") {
         let out = args
@@ -66,8 +66,8 @@ async fn run(args: &[String]) -> Result<(), i32> {
             eprintln!("Restore failed: backup file missing");
             2
         })?;
-        let bundle: swaggen_mongo_store::backup::BackupBundle =
-            serde_json::from_str(&raw).map_err(|_| {
+        let bundle: swaggen_mongo_store::backup::BackupBundle = serde_json::from_str(&raw)
+            .map_err(|_| {
                 eprintln!("Restore failed: corrupt backup JSON");
                 2
             })?;
@@ -83,7 +83,9 @@ async fn run(args: &[String]) -> Result<(), i32> {
         let mongo = MongoStore::connect(&uri, &db_name, bootstrap_secret)
             .await
             .map_err(|_| 2)?;
-        if let Err(err) = swaggen_mongo_store::backup::restore_mongo_backup(mongo.database(), &bundle).await {
+        if let Err(err) =
+            swaggen_mongo_store::backup::restore_mongo_backup(mongo.database(), &bundle).await
+        {
             eprintln!("Restore failed: {err}");
             return Err(3);
         }
@@ -108,7 +110,9 @@ async fn run(args: &[String]) -> Result<(), i32> {
             eprintln!("FAIL: MongoDB transaction/rollback doctor probe failed");
             return Err(2);
         }
-        println!("PASS: MongoDB replica-set topology, migrations, and transaction rollback verified");
+        println!(
+            "PASS: MongoDB replica-set topology, migrations, and transaction rollback verified"
+        );
         return Ok(());
     }
 
@@ -117,14 +121,18 @@ async fn run(args: &[String]) -> Result<(), i32> {
         Arc::new(ServerStore::Memory(InMemoryStore::new(bootstrap_secret)))
     } else {
         let Ok(uri) = std::env::var("SWAGGEN_MONGO_URI") else {
-            eprintln!("Server startup aborted: SWAGGEN_MONGO_URI is required (pass --in-memory-dev only for disposable local testing)");
+            eprintln!(
+                "Server startup aborted: SWAGGEN_MONGO_URI is required (pass --in-memory-dev only for disposable local testing)"
+            );
             return Err(2);
         };
         let db = std::env::var("SWAGGEN_MONGO_DB").unwrap_or_else(|_| "swaggen".into());
         let mongo = MongoStore::connect(&uri, &db, bootstrap_secret)
             .await
             .map_err(|_| {
-                eprintln!("Server startup failed: MongoDB replica set unreachable or migrations failed");
+                eprintln!(
+                    "Server startup failed: MongoDB replica set unreachable or migrations failed"
+                );
                 2
             })?;
         Arc::new(ServerStore::Mongo(mongo))

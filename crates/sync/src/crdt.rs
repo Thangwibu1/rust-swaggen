@@ -63,7 +63,9 @@ impl CollaborativeTextCrdt {
     /// Enforces publish-time workspace authorization so revoked/Viewer clients cannot publish (CO10).
     pub fn merge_if_authorized(&mut self, remote: &Self, caller_role: Role) -> Result<(), String> {
         if !caller_role.can_write_entities() {
-            return Err("Publish blocked: caller role lacks write permission (revoked or Viewer)".into());
+            return Err(
+                "Publish blocked: caller role lacks write permission (revoked or Viewer)".into(),
+            );
         }
         self.merge_crdt(remote);
         Ok(())

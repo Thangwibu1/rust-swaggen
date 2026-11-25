@@ -208,8 +208,14 @@ impl WorkspaceRepository for ServerStore {
         now: i64,
     ) -> Result<(), StoreError> {
         match self {
-            Self::Mongo(m) => m.revoke_invitation(auth, workspace_id, invitation_id, now).await,
-            Self::Memory(m) => m.revoke_invitation(auth, workspace_id, invitation_id, now).await,
+            Self::Mongo(m) => {
+                m.revoke_invitation(auth, workspace_id, invitation_id, now)
+                    .await
+            }
+            Self::Memory(m) => {
+                m.revoke_invitation(auth, workspace_id, invitation_id, now)
+                    .await
+            }
         }
     }
     async fn accept_invitation(
@@ -362,8 +368,14 @@ impl WorkspaceRepository for ServerStore {
         now: i64,
     ) -> Result<CommentThreadRecord, StoreError> {
         match self {
-            Self::Mongo(m) => m.reply_comment(auth, workspace_id, comment_id, req, now).await,
-            Self::Memory(m) => m.reply_comment(auth, workspace_id, comment_id, req, now).await,
+            Self::Mongo(m) => {
+                m.reply_comment(auth, workspace_id, comment_id, req, now)
+                    .await
+            }
+            Self::Memory(m) => {
+                m.reply_comment(auth, workspace_id, comment_id, req, now)
+                    .await
+            }
         }
     }
     async fn resolve_comment(
@@ -375,8 +387,14 @@ impl WorkspaceRepository for ServerStore {
         now: i64,
     ) -> Result<CommentThreadRecord, StoreError> {
         match self {
-            Self::Mongo(m) => m.resolve_comment(auth, workspace_id, comment_id, req, now).await,
-            Self::Memory(m) => m.resolve_comment(auth, workspace_id, comment_id, req, now).await,
+            Self::Mongo(m) => {
+                m.resolve_comment(auth, workspace_id, comment_id, req, now)
+                    .await
+            }
+            Self::Memory(m) => {
+                m.resolve_comment(auth, workspace_id, comment_id, req, now)
+                    .await
+            }
         }
     }
     async fn list_comments(
@@ -419,8 +437,14 @@ impl WorkspaceRepository for ServerStore {
         now: i64,
     ) -> Result<TeamWorkspaceSummary, StoreError> {
         match self {
-            Self::Mongo(m) => m.set_workspace_archived(auth, workspace_id, archived, now).await,
-            Self::Memory(m) => m.set_workspace_archived(auth, workspace_id, archived, now).await,
+            Self::Mongo(m) => {
+                m.set_workspace_archived(auth, workspace_id, archived, now)
+                    .await
+            }
+            Self::Memory(m) => {
+                m.set_workspace_archived(auth, workspace_id, archived, now)
+                    .await
+            }
         }
     }
     async fn transfer_workspace_ownership(
@@ -659,7 +683,12 @@ mod tests {
             .await
             .unwrap();
         // Viewer read allowed in ws_a, write blocked, cross-workspace ws_b blocked!
-        assert!(store.list_entities(&viewer_ctx, &ws_a.workspace_id).await.is_ok());
+        assert!(
+            store
+                .list_entities(&viewer_ctx, &ws_a.workspace_id)
+                .await
+                .is_ok()
+        );
         assert!(matches!(
             store
                 .upsert_entity(
@@ -681,7 +710,10 @@ mod tests {
             StoreError::Forbidden(_)
         ));
         assert!(matches!(
-            store.list_entities(&viewer_ctx, &ws_b.workspace_id).await.unwrap_err(),
+            store
+                .list_entities(&viewer_ctx, &ws_b.workspace_id)
+                .await
+                .unwrap_err(),
             StoreError::Forbidden(_)
         ));
 

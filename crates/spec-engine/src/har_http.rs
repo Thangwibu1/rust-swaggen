@@ -39,7 +39,10 @@ pub fn import_har(
         let Some(req_obj) = ent.get("request") else {
             continue;
         };
-        let method_s = req_obj.get("method").and_then(Value::as_str).unwrap_or("GET");
+        let method_s = req_obj
+            .get("method")
+            .and_then(Value::as_str)
+            .unwrap_or("GET");
         let method = HttpMethod::parse(method_s).unwrap_or(HttpMethod::Get);
         let url_s = req_obj.get("url").and_then(Value::as_str).unwrap_or("");
         if url_s.is_empty() {
@@ -86,7 +89,11 @@ pub fn import_har(
     Ok((out, rep))
 }
 
-pub type DotHttpImportResult = (Vec<RequestItem>, BTreeMap<String, String>, CompatibilityReport);
+pub type DotHttpImportResult = (
+    Vec<RequestItem>,
+    BTreeMap<String, String>,
+    CompatibilityReport,
+);
 
 /// Imports VS Code / IntelliJ `.http` / `.rest` files (`###` delimited + `@var = val`) (IM10).
 pub fn import_dot_http(raw_text: &str, collection_id: &str) -> Result<DotHttpImportResult, String> {
@@ -149,7 +156,8 @@ pub fn import_dot_http(raw_text: &str, collection_id: &str) -> Result<DotHttpImp
             }
             if let Some((hk, hv)) = t.split_once(':') {
                 if is_sensitive_header(hk) {
-                    rep.warnings.push(format!("Masked sensitive .http header '{}'", hk.trim()));
+                    rep.warnings
+                        .push(format!("Masked sensitive .http header '{}'", hk.trim()));
                     headers.push(KeyValueRow::new(hk.trim(), "{{redacted_secret}}"));
                 } else {
                     headers.push(KeyValueRow::new(hk.trim(), hv.trim()));
@@ -202,7 +210,10 @@ mod tests {
         let dot_http = "@host = https://api.test\n### Create Order\nPOST {{host}}/orders\nAuthorization: Bearer RAW_TOK\nContent-Type: application/json\n\n{\"qty\":3}\n";
         let (hitems, vars, hrep) = import_dot_http(dot_http, "c1").unwrap();
         assert_eq!(hitems.len(), 1);
-        assert_eq!(vars.get("host").map(String::as_str), Some("https://api.test"));
+        assert_eq!(
+            vars.get("host").map(String::as_str),
+            Some("https://api.test")
+        );
         assert_eq!(hitems[0].name, "Create Order");
         assert!(!hrep.warnings.is_empty());
     }

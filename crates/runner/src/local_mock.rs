@@ -137,9 +137,10 @@ fn path_matches(pattern: &str, actual: &str) -> bool {
     if p_segs.len() != a_segs.len() {
         return false;
     }
-    p_segs.iter().zip(a_segs.iter()).all(|(p, a)| {
-        (p.starts_with('{') && p.ends_with('}')) || p.starts_with(':') || p == a
-    })
+    p_segs
+        .iter()
+        .zip(a_segs.iter())
+        .all(|(p, a)| (p.starts_with('{') && p.ends_with('}')) || p.starts_with(':') || p == a)
 }
 
 pub struct LocalMockHandle {
@@ -214,8 +215,10 @@ async fn mock_handler(
     }
     (
         StatusCode::NOT_FOUND,
-        serde_json::to_string(&json!({"error": "No mock route matched", "method": method.as_str(), "path": path}))
-            .unwrap_or_default(),
+        serde_json::to_string(
+            &json!({"error": "No mock route matched", "method": method.as_str(), "path": path}),
+        )
+        .unwrap_or_default(),
     )
         .into_response()
 }
@@ -254,7 +257,8 @@ mod tests {
 
     #[tokio::test]
     async fn local_mock_serves_example_and_deterministic_schema_seed_and_redacts_logs() {
-        let mut ws = WorkspaceState::new_personal(swaggen_domain::LocalId::parse("mk").unwrap(), "MK");
+        let mut ws =
+            WorkspaceState::new_personal(swaggen_domain::LocalId::parse("mk").unwrap(), "MK");
         let cid = ws.collections[0].id.clone();
         let req = swaggen_domain::workspace::RequestItem::new(
             &cid,
@@ -300,7 +304,8 @@ mod tests {
             request_vars: &[],
             local_secrets: &empty,
         };
-        let resolved = swaggen_domain::workspace::resolve_request_preview(&req_item, None, &[], &ctx, &[], 1);
+        let resolved =
+            swaggen_domain::workspace::resolve_request_preview(&req_item, None, &[], &ctx, &[], 1);
         let res = swaggen_http_engine::execute_request(
             &resolved,
             &dl,

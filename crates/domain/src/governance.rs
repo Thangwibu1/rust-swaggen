@@ -43,7 +43,9 @@ pub fn parse_deep_link(raw: &str) -> Result<SwaggenDeepLink, String> {
     let trimmed = raw.trim();
     let rest = trimmed
         .strip_prefix("swaggen://workspace/")
-        .ok_or_else(|| "Unsupported deep link scheme (expected swaggen://workspace/...)".to_owned())?;
+        .ok_or_else(|| {
+            "Unsupported deep link scheme (expected swaggen://workspace/...)".to_owned()
+        })?;
     let parts: Vec<&str> = rest.split('/').filter(|s| !s.is_empty()).collect();
     if parts.len() != 3 {
         return Err("Deep link must have form swaggen://workspace/<ws>/<kind>/<entity>".into());
@@ -100,7 +102,9 @@ pub fn create_sanitized_share_package(
         redacted_url: url_san.sanitized_text,
         redacted_headers: red_hdrs
             .into_iter()
-            .filter(|(k, _)| !k.eq_ignore_ascii_case("cookie") && !k.eq_ignore_ascii_case("set-cookie"))
+            .filter(|(k, _)| {
+                !k.eq_ignore_ascii_case("cookie") && !k.eq_ignore_ascii_case("set-cookie")
+            })
             .collect(),
         redacted_body: body_san.sanitized_text,
         status_code,
@@ -127,7 +131,10 @@ pub struct BranchMergeEvaluation {
     pub approved_by: Vec<String>,
 }
 
-pub fn evaluate_branch_merge(changes: &[BranchChange], approved_by: Vec<String>) -> BranchMergeEvaluation {
+pub fn evaluate_branch_merge(
+    changes: &[BranchChange],
+    approved_by: Vec<String>,
+) -> BranchMergeEvaluation {
     let mut clean_apply = Vec::new();
     let mut conflicts = Vec::new();
     for ch in changes {
@@ -201,7 +208,12 @@ pub fn generate_totp_sha256(secret_b32: &str, unix_secs: i64) -> Result<String, 
     Ok(format!("{:06}", bin % 1_000_000))
 }
 
-pub fn verify_totp_sha256(secret_b32: &str, candidate: &str, unix_secs: i64, skew_steps: i64) -> bool {
+pub fn verify_totp_sha256(
+    secret_b32: &str,
+    candidate: &str,
+    unix_secs: i64,
+    skew_steps: i64,
+) -> bool {
     let clean = candidate.trim();
     if clean.len() != 6 || !clean.bytes().all(|b| b.is_ascii_digit()) {
         return false;
@@ -321,7 +333,11 @@ impl SignedUpdateManifest {
     fn canonical_message(&self) -> String {
         format!(
             "{}|{}|{}|{}|{}",
-            self.version, self.channel, self.artifact_name, self.artifact_sha256, self.published_at_unix
+            self.version,
+            self.channel,
+            self.artifact_name,
+            self.artifact_sha256,
+            self.published_at_unix
         )
     }
 
@@ -343,14 +359,22 @@ pub fn verify_signed_update(
     let expected_sig = hex::encode(mac.finalize().into_bytes());
     if !constant_time_eq(
         expected_sig.as_bytes(),
-        manifest.manifest_hmac_sha256.trim().to_ascii_lowercase().as_bytes(),
+        manifest
+            .manifest_hmac_sha256
+            .trim()
+            .to_ascii_lowercase()
+            .as_bytes(),
     ) {
         return Err("Update manifest signature verification failed; update aborted".into());
     }
     let actual_hash = hex::encode(Sha256::digest(artifact_bytes));
     if !constant_time_eq(
         actual_hash.as_bytes(),
-        manifest.artifact_sha256.trim().to_ascii_lowercase().as_bytes(),
+        manifest
+            .artifact_sha256
+            .trim()
+            .to_ascii_lowercase()
+            .as_bytes(),
     ) {
         return Err("Update artifact SHA-256 mismatch; tampered binary rejected".into());
     }
@@ -375,7 +399,10 @@ mod tests {
             "Share",
             "GET",
             "https://api.test/v1?api_key=RAW123",
-            &[("Authorization".into(), "Bearer RAW_TOK".into()), ("Cookie".into(), "sid=99".into())],
+            &[
+                ("Authorization".into(), "Bearer RAW_TOK".into()),
+                ("Cookie".into(), "sid=99".into()),
+            ],
             r#"{"secret":"abc"}"#,
             Some(200),
             Some(12),

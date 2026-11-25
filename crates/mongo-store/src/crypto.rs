@@ -16,7 +16,9 @@ const LOGIN_MAX_FAILURES: usize = 5;
 pub fn normalize_email(email: &str) -> Result<String, StoreError> {
     let trimmed = email.trim().to_ascii_lowercase();
     let Some((local, domain)) = trimmed.split_once('@') else {
-        return Err(StoreError::InvalidInput("Valid email address is required".into()));
+        return Err(StoreError::InvalidInput(
+            "Valid email address is required".into(),
+        ));
     };
     if local.is_empty()
         || domain.is_empty()
@@ -24,7 +26,9 @@ pub fn normalize_email(email: &str) -> Result<String, StoreError> {
         || trimmed.len() > 254
         || trimmed.chars().any(char::is_whitespace)
     {
-        return Err(StoreError::InvalidInput("Valid email address is required".into()));
+        return Err(StoreError::InvalidInput(
+            "Valid email address is required".into(),
+        ));
     }
     Ok(trimmed)
 }

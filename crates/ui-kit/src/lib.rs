@@ -176,7 +176,10 @@ pub fn text_secondary(_ui: &egui::Ui) -> egui::Color32 {
 /// Returns RichText styled with the authentic JetBrains Mono Bold font family.
 pub fn bold_text(text: &str, size: f32, color: egui::Color32) -> egui::RichText {
     egui::RichText::new(text)
-        .font(egui::FontId::new(size, egui::FontFamily::Name("bold".into())))
+        .font(egui::FontId::new(
+            size,
+            egui::FontFamily::Name("bold".into()),
+        ))
         .color(color)
 }
 
@@ -452,7 +455,11 @@ pub fn google_button(ui: &mut egui::Ui, enabled: bool, label: &str) -> egui::Res
     let w = ui.available_width().max(220.0);
     let (rect, resp) = ui.allocate_exact_size(
         egui::vec2(w, 44.0),
-        if enabled { egui::Sense::click() } else { egui::Sense::hover() },
+        if enabled {
+            egui::Sense::click()
+        } else {
+            egui::Sense::hover()
+        },
     );
     let fill = if !enabled || resp.hovered() {
         subtle_bg(ui)
@@ -464,13 +471,21 @@ pub fn google_button(ui: &mut egui::Ui, enabled: bool, label: &str) -> egui::Res
     } else {
         border_color(ui)
     };
-    ui.painter()
-        .rect(rect, 8.0, fill, egui::Stroke::new(1.0, stroke_col), egui::StrokeKind::Middle);
+    ui.painter().rect(
+        rect,
+        8.0,
+        fill,
+        egui::Stroke::new(1.0, stroke_col),
+        egui::StrokeKind::Middle,
+    );
 
     let font_id = egui::FontId::new(13.5, egui::FontFamily::Name("bold".into()));
-    let text_color = if enabled { text_primary(ui) } else { text_secondary(ui) };
-    let galley = ui
-        .fonts_mut(|f| f.layout_no_wrap(label.to_owned(), font_id, text_color));
+    let text_color = if enabled {
+        text_primary(ui)
+    } else {
+        text_secondary(ui)
+    };
+    let galley = ui.fonts_mut(|f| f.layout_no_wrap(label.to_owned(), font_id, text_color));
     let icon_d = 18.0;
     let gap = 10.0;
     let total_w = icon_d + gap + galley.size().x;
@@ -479,7 +494,9 @@ pub fn google_button(ui: &mut egui::Ui, enabled: bool, label: &str) -> egui::Res
         egui::pos2(start_x + icon_d * 0.5, rect.center().y),
         egui::vec2(icon_d, icon_d),
     );
-    if let Some(tex) = load_figma_texture(ui.ctx(), "figma_brand_google_11_12128", FIGMA_GOOGLE_G_PNG) {
+    if let Some(tex) =
+        load_figma_texture(ui.ctx(), "figma_brand_google_11_12128", FIGMA_GOOGLE_G_PNG)
+    {
         ui.painter().image(
             tex.id(),
             icon_rect,
@@ -488,7 +505,10 @@ pub fn google_button(ui: &mut egui::Ui, enabled: bool, label: &str) -> egui::Res
         );
     }
     ui.painter().galley(
-        egui::pos2(start_x + icon_d + gap, rect.center().y - galley.size().y * 0.5),
+        egui::pos2(
+            start_x + icon_d + gap,
+            rect.center().y - galley.size().y * 0.5,
+        ),
         galley,
         text_color,
     );
@@ -615,12 +635,7 @@ pub fn nav_item(
 }
 
 /// Sidebar Endpoint row matching Figma Endpoint component (5:296).
-pub fn endpoint_row(
-    ui: &mut egui::Ui,
-    method: &str,
-    name: &str,
-    selected: bool,
-) -> egui::Response {
+pub fn endpoint_row(ui: &mut egui::Ui, method: &str, name: &str, selected: bool) -> egui::Response {
     let w = ui.available_width().max(120.0);
     let (rect, resp) = ui.allocate_exact_size(egui::vec2(w, 34.0), egui::Sense::click());
     let bg = if selected {
@@ -887,7 +902,11 @@ pub fn primary_button(ui: &mut egui::Ui, enabled: bool, label: &str) -> egui::Re
     ui.add_enabled(
         enabled,
         egui::Button::new(bold_text(label, 13.0, color))
-            .fill(if enabled { surface_bg(ui) } else { subtle_bg(ui) })
+            .fill(if enabled {
+                surface_bg(ui)
+            } else {
+                subtle_bg(ui)
+            })
             .stroke(egui::Stroke::new(1.0, border_color(ui)))
             .min_size(egui::vec2(124.0, 38.0))
             .corner_radius(6),
@@ -903,7 +922,11 @@ pub fn secondary_button(ui: &mut egui::Ui, enabled: bool, label: &str) -> egui::
     ui.add_enabled(
         enabled,
         egui::Button::new(bold_text(label, 13.0, color))
-            .fill(if enabled { Tokens::BG_SURFACE } else { Tokens::BG_DISABLED })
+            .fill(if enabled {
+                Tokens::BG_SURFACE
+            } else {
+                Tokens::BG_DISABLED
+            })
             .stroke(egui::Stroke::new(1.0, Tokens::BORDER_DEFAULT))
             .min_size(egui::vec2(84.0, 38.0))
             .corner_radius(6),
@@ -919,7 +942,11 @@ pub fn danger_button(ui: &mut egui::Ui, enabled: bool, label: &str) -> egui::Res
     ui.add_enabled(
         enabled,
         egui::Button::new(bold_text(label, 13.0, color))
-            .fill(if enabled { Tokens::BG_SURFACE } else { Tokens::BG_DISABLED })
+            .fill(if enabled {
+                Tokens::BG_SURFACE
+            } else {
+                Tokens::BG_DISABLED
+            })
             .stroke(egui::Stroke::new(1.0, Tokens::BORDER_DEFAULT))
             .min_size(egui::vec2(96.0, 38.0))
             .corner_radius(6),
@@ -1036,15 +1063,87 @@ pub fn code_surface(ui: &mut egui::Ui, text: &str) {
     code_surface_numbered(ui, text);
 }
 
-/// Line-numbered monospace code surface matching Figma Code editor (6:2082 / 6:5869).
+/// Interactive horizontal splitter bar (drags up/down with `ResizeVertical` cursor).
+/// Returns `(response, delta_y)`. Double-clicking can be checked via `response.double_clicked()`.
+pub fn horizontal_splitter(ui: &mut egui::Ui, id_salt: &str) -> (egui::Response, f32) {
+    let w = ui.available_width().max(80.0);
+    let (rect, resp) = ui.allocate_exact_size(egui::vec2(w, 10.0), egui::Sense::click_and_drag());
+    let active = resp.hovered() || resp.dragged();
+    if active {
+        ui.ctx().set_cursor_icon(egui::CursorIcon::ResizeVertical);
+    }
+    let _ = id_salt;
+    let line_color = if active {
+        Tokens::STATUS_INFO
+    } else {
+        Tokens::BORDER_DEFAULT
+    };
+    let pill_color = if active {
+        Tokens::STATUS_INFO
+    } else {
+        egui::Color32::from_rgb(0xCB, 0xD5, 0xE1)
+    };
+    let cy = rect.center().y;
+    ui.painter().line_segment(
+        [egui::pos2(rect.left(), cy), egui::pos2(rect.right(), cy)],
+        egui::Stroke::new(if active { 1.5 } else { 1.0 }, line_color),
+    );
+    let pill = egui::Rect::from_center_size(rect.center(), egui::vec2(38.0, 4.0));
+    ui.painter().rect_filled(pill, 2.0, pill_color);
+    let delta_y = if resp.dragged() {
+        resp.drag_delta().y
+    } else {
+        0.0
+    };
+    (resp, delta_y)
+}
+
+/// Interactive vertical splitter bar (drags left/right with `ResizeHorizontal` cursor).
+/// Returns `(response, delta_x)`. Double-clicking can be checked via `response.double_clicked()`.
+pub fn vertical_splitter(ui: &mut egui::Ui, id_salt: &str, height: f32) -> (egui::Response, f32) {
+    let h = height.max(80.0);
+    let (rect, resp) = ui.allocate_exact_size(egui::vec2(10.0, h), egui::Sense::click_and_drag());
+    let active = resp.hovered() || resp.dragged();
+    if active {
+        ui.ctx().set_cursor_icon(egui::CursorIcon::ResizeHorizontal);
+    }
+    let _ = id_salt;
+    let line_color = if active {
+        Tokens::STATUS_INFO
+    } else {
+        Tokens::BORDER_DEFAULT
+    };
+    let pill_color = if active {
+        Tokens::STATUS_INFO
+    } else {
+        egui::Color32::from_rgb(0xCB, 0xD5, 0xE1)
+    };
+    let cx = rect.center().x;
+    ui.painter().line_segment(
+        [egui::pos2(cx, rect.top()), egui::pos2(cx, rect.bottom())],
+        egui::Stroke::new(if active { 1.5 } else { 1.0 }, line_color),
+    );
+    let pill = egui::Rect::from_center_size(rect.center(), egui::vec2(4.0, 38.0));
+    ui.painter().rect_filled(pill, 2.0, pill_color);
+    let delta_x = if resp.dragged() {
+        resp.drag_delta().x
+    } else {
+        0.0
+    };
+    (resp, delta_x)
+}
+
+/// Line-numbered monospace code surface matching Figma Code editor (6:2082 / 6:5869),
+/// with compact IDE-grade line spacing so large JSON/XML bodies fit cleanly on screen.
 pub fn code_surface_numbered(ui: &mut egui::Ui, text: &str) {
     egui::Frame::new()
         .fill(surface_bg(ui))
         .stroke(egui::Stroke::new(1.0, border_color(ui)))
         .corner_radius(6)
-        .inner_margin(egui::Margin::symmetric(14, 12))
+        .inner_margin(egui::Margin::symmetric(12, 8))
         .show(ui, |ui| {
             ui.set_min_width(ui.available_width());
+            ui.spacing_mut().item_spacing = egui::vec2(6.0, 1.5);
             let mut total_lines = 0usize;
             for (idx, line) in text.lines().enumerate() {
                 total_lines = idx + 1;
@@ -1053,7 +1152,7 @@ pub fn code_surface_numbered(ui: &mut egui::Ui, text: &str) {
                 }
                 ui.horizontal(|ui| {
                     ui.allocate_ui_with_layout(
-                        egui::vec2(38.0, 20.0),
+                        egui::vec2(34.0, 16.5),
                         egui::Layout::left_to_right(egui::Align::Center),
                         |ui| {
                             ui.label(
@@ -1068,9 +1167,10 @@ pub fn code_surface_numbered(ui: &mut egui::Ui, text: &str) {
                         egui::Label::new(
                             egui::RichText::new(line)
                                 .monospace()
-                                .size(12.5)
+                                .size(12.0)
                                 .color(text_primary(ui)),
                         )
+                        .extend()
                         .selectable(true),
                     );
                 });

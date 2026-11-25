@@ -17,7 +17,9 @@ use swaggen_api_contract::{
 use swaggen_domain::{
     Error, LocalId, Secret, SecretRef,
     server_profiles::{ServerProfile, ServerProfileStore, validate_server_url},
-    workspace::{HttpMethod, RequestBody, RequestConnectionPolicy, ResolvedHeader, ResolvedRequest},
+    workspace::{
+        HttpMethod, RequestBody, RequestConnectionPolicy, ResolvedHeader, ResolvedRequest,
+    },
 };
 use swaggen_http_engine::execute_request;
 use swaggen_local_store::{WorkspaceDirectory, server_profiles_store::ServerProfileJournal};
@@ -62,7 +64,13 @@ fn save_session_token(root: &Path, profile: &ServerProfile, token: &str) -> Resu
     let key = profile.secret_key_id().map_err(|e| e.to_string())?;
     let secret = Secret::new(token.as_bytes().to_vec()).map_err(|e| e.to_string())?;
     store
-        .put(&SecretRef { workspace: ws, name: key }, &secret)
+        .put(
+            &SecretRef {
+                workspace: ws,
+                name: key,
+            },
+            &secret,
+        )
         .map_err(|e| e.to_string())
 }
 
@@ -70,7 +78,10 @@ pub fn read_session_token(root: &Path, profile: &ServerProfile) -> Result<String
     let (ws, store) = open_auth_secrets(root)?;
     let key = profile.secret_key_id().map_err(|e| e.to_string())?;
     let sec = store
-        .get(&SecretRef { workspace: ws, name: key })
+        .get(&SecretRef {
+            workspace: ws,
+            name: key,
+        })
         .map_err(|e| match e {
             Error::Missing => "Not signed in to this server profile".to_owned(),
             other => other.to_string(),
@@ -82,7 +93,10 @@ fn delete_session_token(root: &Path, profile: &ServerProfile) {
     if let Ok((ws, mut store)) = open_auth_secrets(root)
         && let Ok(key) = profile.secret_key_id()
     {
-        let _ = store.delete(&SecretRef { workspace: ws, name: key });
+        let _ = store.delete(&SecretRef {
+            workspace: ws,
+            name: key,
+        });
     }
 }
 
@@ -92,7 +106,10 @@ fn save_profiles(root: &Path, store: ServerProfileStore) -> Result<ServerProfile
     Ok(store)
 }
 
-fn get_profile(root: &Path, profile_id: &str) -> Result<(ServerProfileStore, ServerProfile), String> {
+fn get_profile(
+    root: &Path,
+    profile_id: &str,
+) -> Result<(ServerProfileStore, ServerProfile), String> {
     let store = load_server_profiles(root);
     let prof = store
         .profiles
@@ -427,7 +444,10 @@ pub fn handle_server_command(
                     match save_profiles(root, store) {
                         Ok(saved) => Event::ServerProfilesUpdated {
                             store: saved,
-                            message: format!("Owner initialized and signed in as {}", auth.user.email),
+                            message: format!(
+                                "Owner initialized and signed in as {}",
+                                auth.user.email
+                            ),
                         },
                         Err(e) => Event::ActionError(e),
                     }
@@ -499,7 +519,10 @@ pub fn handle_server_command(
                 password,
                 device_name: "Swaggen Desktop Windows".into(),
             };
-            let res = runtime.block_on(server_call::<AcceptInvitationRequest, AcceptInvitationResponse>(
+            let res = runtime.block_on(server_call::<
+                AcceptInvitationRequest,
+                AcceptInvitationResponse,
+            >(
                 &prof,
                 HttpMethod::Post,
                 "/v1/auth/invitations/accept",
@@ -773,16 +796,17 @@ pub fn handle_server_command(
             };
             let path = format!("/v1/workspaces/{workspace_id}/invitations");
             Ok(
-                match runtime.block_on(
-                    server_call::<CreateInvitationRequest, CreateInvitationResponse>(
-                        &prof,
-                        HttpMethod::Post,
-                        &path,
-                        Some(&tok),
-                        Some(&body),
-                        downloads,
-                    ),
-                ) {
+                match runtime.block_on(server_call::<
+                    CreateInvitationRequest,
+                    CreateInvitationResponse,
+                >(
+                    &prof,
+                    HttpMethod::Post,
+                    &path,
+                    Some(&tok),
+                    Some(&body),
+                    downloads,
+                )) {
                     Ok((inv, _)) => Event::InvitationCreated(inv),
                     Err(e) => Event::ActionError(e),
                 },
@@ -1068,14 +1092,17 @@ async fn firebase_rest_email_signin(
         .await
         .map_err(|e| format!("Firebase Identity Toolkit request failed: {}", e.message))?;
 
-    let val: serde_json::Value = serde_json::from_slice(&resp.preview_bytes)
-        .unwrap_or_else(|_| serde_json::json!({}));
+    let val: serde_json::Value =
+        serde_json::from_slice(&resp.preview_bytes).unwrap_or_else(|_| serde_json::json!({}));
     if !(200..300).contains(&resp.status_code) {
         let fb_msg = val
             .pointer("/error/message")
             .and_then(|v| v.as_str())
             .unwrap_or("Firebase authentication rejected");
-        return Err(format!("Firebase Auth error ({}): {fb_msg}", resp.status_code));
+        return Err(format!(
+            "Firebase Auth error ({}): {fb_msg}",
+            resp.status_code
+        ));
     }
     val.get("idToken")
         .and_then(|v| v.as_str())
@@ -1140,7 +1167,10 @@ mod tests {
             format!("http://{addr}"),
             false,
         ));
-        worker.commands.send(Command::SaveServerProfiles { store }).unwrap();
+        worker
+            .commands
+            .send(Command::SaveServerProfiles { store })
+            .unwrap();
         assert!(matches!(
             worker.events.recv_timeout(Duration::from_secs(5)).unwrap(),
             Event::ServerProfilesUpdated { .. }
@@ -1202,7 +1232,9 @@ mod tests {
                 .as_nanos()
         ));
         let store = load_server_profiles(&root);
-        let active = store.active().expect("default production profile should be active");
+        let active = store
+            .active()
+            .expect("default production profile should be active");
         assert_eq!(active.base_url, DEFAULT_SERVER_URL);
         assert!(!active.allow_self_signed_tls);
         let _ = std::fs::remove_dir_all(root);
@@ -1289,4 +1321,3 @@ mod tests {
         });
     }
 }
-

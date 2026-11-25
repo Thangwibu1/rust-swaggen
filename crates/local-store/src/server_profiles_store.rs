@@ -64,9 +64,7 @@ impl ServerProfileJournal {
             outbox: Vec::new(),
         };
         if self.frames >= 64 {
-            self.journal
-                .compact(&batch)
-                .map_err(|_| Error::Storage)?;
+            self.journal.compact(&batch).map_err(|_| Error::Storage)?;
             self.frames = 1;
         } else {
             self.journal.append(&batch).map_err(|_| Error::Storage)?;

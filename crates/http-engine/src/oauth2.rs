@@ -179,7 +179,10 @@ pub async fn exchange_token_form(
     let json_val: serde_json::Value = serde_json::from_slice(&resp.preview_bytes)
         .map_err(|e| format!("Invalid OAuth JSON token response: {e}"))?;
     if !(200..300).contains(&resp.status_code) {
-        return Err(format!("Token endpoint rejected request (HTTP {})", resp.status_code));
+        return Err(format!(
+            "Token endpoint rejected request (HTTP {})",
+            resp.status_code
+        ));
     }
     Ok(OAuthTokenSet {
         access_token: json_val
@@ -196,7 +199,9 @@ pub async fn exchange_token_form(
             .get("refresh_token")
             .and_then(serde_json::Value::as_str)
             .map(ToOwned::to_owned),
-        expires_in_secs: json_val.get("expires_in").and_then(serde_json::Value::as_u64),
+        expires_in_secs: json_val
+            .get("expires_in")
+            .and_then(serde_json::Value::as_u64),
         scope: json_val
             .get("scope")
             .and_then(serde_json::Value::as_str)
@@ -235,7 +240,11 @@ mod tests {
         });
         let mut s2 = tokio::net::TcpStream::connect(a2).await.unwrap();
         s2.write_all(
-            format!("GET /cb?code=authcode123&state={} HTTP/1.1\r\nHost: localhost\r\n\r\n", pkce.state).as_bytes(),
+            format!(
+                "GET /cb?code=authcode123&state={} HTTP/1.1\r\nHost: localhost\r\n\r\n",
+                pkce.state
+            )
+            .as_bytes(),
         )
         .await
         .unwrap();
@@ -263,7 +272,11 @@ mod tests {
         let _ = std::fs::create_dir_all(&dl);
         let tok = exchange_token_form(
             &format!("http://{taddr}/token"),
-            &[("grant_type", "authorization_code"), ("code", "authcode123"), ("code_verifier", &pkce.code_verifier)],
+            &[
+                ("grant_type", "authorization_code"),
+                ("code", "authcode123"),
+                ("code_verifier", &pkce.code_verifier),
+            ],
             &dl,
         )
         .await

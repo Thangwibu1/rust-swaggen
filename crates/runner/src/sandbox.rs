@@ -56,11 +56,23 @@ pub fn analyze_postman_script(script: &str) -> ScriptCompatibilityReport {
     let mut unsupported = Vec::new();
     let mut supported = 0usize;
     let checks = [
-        ("pm.sendRequest", "Unsupported async pm.sendRequest; convert to a chained Collection Runner step"),
-        ("require(", "Unsupported CommonJS require(); sandbox blocks module/filesystem loading"),
+        (
+            "pm.sendRequest",
+            "Unsupported async pm.sendRequest; convert to a chained Collection Runner step",
+        ),
+        (
+            "require(",
+            "Unsupported CommonJS require(); sandbox blocks module/filesystem loading",
+        ),
         ("eval(", "Blocked dynamic eval(); rewrite declaratively"),
-        ("xml2Json", "Unsupported xml2Json helper; use JSON responses or assertions"),
-        ("setTimeout", "Blocked async timers in bounded pre/test script sandbox"),
+        (
+            "xml2Json",
+            "Unsupported xml2Json helper; use JSON responses or assertions",
+        ),
+        (
+            "setTimeout",
+            "Blocked async timers in bounded pre/test script sandbox",
+        ),
         ("fs.", "Blocked filesystem access"),
         ("child_process", "Blocked subprocess spawning"),
     ];
@@ -139,7 +151,12 @@ impl JsVal {
             Self::Null | Self::Bool(_) | Self::Num(_) => 16,
             Self::Str(s) => 24 + s.len(),
             Self::Arr(a) => 24 + a.iter().map(Self::byte_estimate).sum::<usize>(),
-            Self::Obj(m) => 24 + m.iter().map(|(k, v)| k.len() + v.byte_estimate()).sum::<usize>(),
+            Self::Obj(m) => {
+                24 + m
+                    .iter()
+                    .map(|(k, v)| k.len() + v.byte_estimate())
+                    .sum::<usize>()
+            }
         }
     }
 }
@@ -159,7 +176,9 @@ fn js_to_json(v: &JsVal) -> Value {
     match v {
         JsVal::Null => Value::Null,
         JsVal::Bool(b) => Value::Bool(*b),
-        JsVal::Num(n) => serde_json::Number::from_f64(*n).map(Value::Number).unwrap_or(Value::Null),
+        JsVal::Num(n) => serde_json::Number::from_f64(*n)
+            .map(Value::Number)
+            .unwrap_or(Value::Null),
         JsVal::Str(s) => Value::String(s.clone()),
         JsVal::Arr(a) => Value::Array(a.iter().map(js_to_json).collect()),
         JsVal::Obj(m) => Value::Object(m.iter().map(|(k, v)| (k.clone(), js_to_json(v))).collect()),
@@ -339,7 +358,10 @@ impl Vm {
                     lhs.as_text()
                 ));
             }
-            if let Some(exp_arg) = tail.strip_prefix(".to.include(").and_then(|s| s.strip_suffix(')')) {
+            if let Some(exp_arg) = tail
+                .strip_prefix(".to.include(")
+                .and_then(|s| s.strip_suffix(')'))
+            {
                 let rhs = self.eval_expr(exp_arg)?;
                 if lhs.as_text().contains(&rhs.as_text()) {
                     return Ok(JsVal::Bool(true));
@@ -426,7 +448,10 @@ impl Vm {
                     self.mutated_env.insert(k, Some(v));
                     return Ok(JsVal::Null);
                 }
-                if let Some(arg) = call.strip_prefix("unset(").and_then(|s| s.strip_suffix(')')) {
+                if let Some(arg) = call
+                    .strip_prefix("unset(")
+                    .and_then(|s| s.strip_suffix(')'))
+                {
                     let k = self.eval_expr(arg)?.as_text();
                     self.env.remove(&k);
                     self.mutated_env.insert(k, None);
@@ -434,7 +459,10 @@ impl Vm {
                 }
             }
         }
-        if let Some(arg) = expr.strip_prefix("console.log(").and_then(|s| s.strip_suffix(')')) {
+        if let Some(arg) = expr
+            .strip_prefix("console.log(")
+            .and_then(|s| s.strip_suffix(')'))
+        {
             let txt = self.eval_expr(arg)?.as_text();
             self.alloc(txt.len())?;
             if self.logs.len() < 100 {
@@ -442,14 +470,21 @@ impl Vm {
             }
             return Ok(JsVal::Null);
         }
-        if let Some(arg) = expr.strip_prefix("JSON.parse(").and_then(|s| s.strip_suffix(')')) {
+        if let Some(arg) = expr
+            .strip_prefix("JSON.parse(")
+            .and_then(|s| s.strip_suffix(')'))
+        {
             let txt = self.eval_expr(arg)?.as_text();
-            let v: Value = serde_json::from_str(&txt).map_err(|e| format!("JSON.parse error: {e}"))?;
+            let v: Value =
+                serde_json::from_str(&txt).map_err(|e| format!("JSON.parse error: {e}"))?;
             let j = json_to_js(&v);
             self.alloc(j.byte_estimate())?;
             return Ok(j);
         }
-        if let Some(arg) = expr.strip_prefix("JSON.stringify(").and_then(|s| s.strip_suffix(')')) {
+        if let Some(arg) = expr
+            .strip_prefix("JSON.stringify(")
+            .and_then(|s| s.strip_suffix(')'))
+        {
             let v = self.eval_expr(arg)?;
             let s = js_to_json(&v).to_string();
             self.alloc(s.len())?;
@@ -516,7 +551,9 @@ impl Vm {
         if let Some(v) = self.locals.get(expr) {
             return Ok(v.clone());
         }
-        Err(format!("Unsupported or blocked identifier/expression in sandbox: '{expr}'"))
+        Err(format!(
+            "Unsupported or blocked identifier/expression in sandbox: '{expr}'"
+        ))
     }
 }
 
@@ -755,7 +792,10 @@ console.log("done");
 "#;
         let rep = execute_sandboxed_script(script, &ctx, SandboxLimits::default());
         assert!(rep.error.is_none(), "unexpected error: {:?}", rep.error);
-        assert_eq!(rep.mutated_env.get("extracted_user").unwrap().as_deref(), Some("Alice"));
+        assert_eq!(
+            rep.mutated_env.get("extracted_user").unwrap().as_deref(),
+            Some("Alice")
+        );
         assert_eq!(rep.test_results.len(), 1);
         assert!(rep.test_results[0].passed);
         assert_eq!(rep.logs, vec!["done".to_owned()]);
@@ -770,7 +810,12 @@ console.log("done");
                 max_memory_bytes: 64 * 1024,
             },
         );
-        assert!(inf.error.as_deref().unwrap_or("").contains("max instruction steps"));
+        assert!(
+            inf.error
+                .as_deref()
+                .unwrap_or("")
+                .contains("max instruction steps")
+        );
 
         // Unsupported Postman API triggers explicit migration report & blocks require('fs')
         let fs_script = "const fs = require('fs'); pm.sendRequest('https://evil.test');";

@@ -55,7 +55,9 @@ impl OutboxStatus {
     pub fn is_sendable(&self, now_unix: i64) -> bool {
         match self {
             Self::Pending => true,
-            Self::RetryWait { next_retry_unix, .. } => now_unix >= *next_retry_unix,
+            Self::RetryWait {
+                next_retry_unix, ..
+            } => now_unix >= *next_retry_unix,
             _ => false,
         }
     }
@@ -264,7 +266,12 @@ impl TeamSyncState {
         }
     }
 
-    pub fn apply_permission_blocked(&mut self, operation_ids: &[String], reason: &str, now_unix: i64) {
+    pub fn apply_permission_blocked(
+        &mut self,
+        operation_ids: &[String],
+        reason: &str,
+        now_unix: i64,
+    ) {
         for entry in &mut self.outbox {
             if operation_ids.contains(&entry.operation_id) {
                 entry.status = OutboxStatus::BlockedPermission {
@@ -287,7 +294,8 @@ impl TeamSyncState {
                     PublishResultKind::Applied | PublishResultKind::AlreadyAcked => {
                         entry.status = OutboxStatus::Acked;
                         if let Some(ref srv) = res.server_entity {
-                            self.base_entities.insert(srv.entity_id.clone(), srv.clone());
+                            self.base_entities
+                                .insert(srv.entity_id.clone(), srv.clone());
                             // Drop draft only if unchanged relative to published hash
                             if let Some(d) = self.drafts.get(&srv.entity_id) {
                                 let d_hash = compute_request_hash(
@@ -312,7 +320,8 @@ impl TeamSyncState {
                             .map(|s| s.payload_json.clone())
                             .unwrap_or_else(|| "{}".into());
                         if let Some(ref srv) = res.server_entity {
-                            self.base_entities.insert(srv.entity_id.clone(), srv.clone());
+                            self.base_entities
+                                .insert(srv.entity_id.clone(), srv.clone());
                         }
                         entry.status = OutboxStatus::Conflicted {
                             server_revision: res.server_revision,
@@ -322,7 +331,8 @@ impl TeamSyncState {
                     }
                     PublishResultKind::ConflictDeletedRemote => {
                         if let Some(ref srv) = res.server_entity {
-                            self.base_entities.insert(srv.entity_id.clone(), srv.clone());
+                            self.base_entities
+                                .insert(srv.entity_id.clone(), srv.clone());
                         }
                         entry.status = OutboxStatus::DeletedRemoteConflict {
                             server_revision: res.server_revision,
@@ -594,7 +604,11 @@ fn flatten_json(val: &Value, prefix: &str, out: &mut BTreeMap<String, String>) {
     }
 }
 
-pub fn compute_three_way_diff(base_json: &str, local_json: &str, server_json: &str) -> Vec<FieldDiff> {
+pub fn compute_three_way_diff(
+    base_json: &str,
+    local_json: &str,
+    server_json: &str,
+) -> Vec<FieldDiff> {
     let mut b_map = BTreeMap::new();
     let mut l_map = BTreeMap::new();
     let mut s_map = BTreeMap::new();

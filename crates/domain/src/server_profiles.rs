@@ -135,7 +135,10 @@ pub fn validate_server_url(raw: &str) -> Result<(String, String, bool), String> 
     let is_tls = parsed.scheme == "https";
     let is_loopback = matches!(parsed.host.as_str(), "127.0.0.1" | "localhost" | "::1");
     if !is_tls && !is_loopback {
-        return Err("Remote server URL must use https:// (http:// is allowed only for 127.0.0.1/localhost)".to_owned());
+        return Err(
+            "Remote server URL must use https:// (http:// is allowed only for 127.0.0.1/localhost)"
+                .to_owned(),
+        );
     }
     Ok((trimmed.to_owned(), parsed.host, is_tls))
 }

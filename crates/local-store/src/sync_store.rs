@@ -23,7 +23,11 @@ pub struct SyncJournalStore {
 }
 
 impl SyncJournalStore {
-    pub fn open(dir: &WorkspaceDirectory, profile_id: &str, workspace_id: &str) -> Result<Self, Error> {
+    pub fn open(
+        dir: &WorkspaceDirectory,
+        profile_id: &str,
+        workspace_id: &str,
+    ) -> Result<Self, Error> {
         dir.check()?;
         let path = dir.root_path().join("sync.journal");
         let (journal, batches) = Journal::open(&path).map_err(|_| Error::Recovery)?;
@@ -61,9 +65,7 @@ impl SyncJournalStore {
             outbox: Vec::new(),
         };
         if self.frames >= 48 {
-            self.journal
-                .compact(&batch)
-                .map_err(|_| Error::Storage)?;
+            self.journal.compact(&batch).map_err(|_| Error::Storage)?;
             self.frames = 1;
         } else {
             self.journal.append(&batch).map_err(|_| Error::Storage)?;

@@ -446,7 +446,9 @@ fn decode_pem_blocks(pem: &str, expected_label_sub: &str) -> Result<Vec<Vec<u8>>
         }
         if t.starts_with("-----END ") && in_block {
             in_block = false;
-            let bytes = STANDARD.decode(&b64).map_err(|e| format!("Invalid PEM base64: {e}"))?;
+            let bytes = STANDARD
+                .decode(&b64)
+                .map_err(|e| format!("Invalid PEM base64: {e}"))?;
             blocks.push(bytes);
             continue;
         }
@@ -562,10 +564,11 @@ async fn send_single_http(
         })?;
 
     let t_dns = Instant::now();
-    let addrs: Vec<std::net::SocketAddr> = tokio::net::lookup_host((target_host.as_str(), target_port))
-        .await
-        .map_err(|e| classify_io_error(&e, elapsed_ms()))?
-        .collect();
+    let addrs: Vec<std::net::SocketAddr> =
+        tokio::net::lookup_host((target_host.as_str(), target_port))
+            .await
+            .map_err(|e| classify_io_error(&e, elapsed_ms()))?
+            .collect();
     if addrs.is_empty() {
         return Err(HttpExecutionError {
             kind: HttpErrorKind::Dns,
@@ -583,10 +586,9 @@ async fn send_single_http(
 
     let (resp, tls_ms) = match url.scheme() {
         "http" => {
-            let (mut sender, conn) =
-                hyper::client::conn::http1::handshake(TokioIo::new(stream))
-                    .await
-                    .map_err(|e| classify_hyper_error(&e.to_string(), elapsed_ms()))?;
+            let (mut sender, conn) = hyper::client::conn::http1::handshake(TokioIo::new(stream))
+                .await
+                .map_err(|e| classify_hyper_error(&e.to_string(), elapsed_ms()))?;
             tokio::spawn(async move {
                 let _ = conn.await;
             });
@@ -606,11 +608,13 @@ async fn send_single_http(
                     message: format!("Failed to read custom CA file '{ca_path}': {e}"),
                     duration_ms: elapsed_ms(),
                 })?;
-                for der in decode_pem_blocks(&pem, "CERTIFICATE").map_err(|e| HttpExecutionError {
-                    kind: HttpErrorKind::TlsVerification,
-                    message: e,
-                    duration_ms: elapsed_ms(),
-                })? {
+                for der in
+                    decode_pem_blocks(&pem, "CERTIFICATE").map_err(|e| HttpExecutionError {
+                        kind: HttpErrorKind::TlsVerification,
+                        message: e,
+                        duration_ms: elapsed_ms(),
+                    })?
+                {
                     let _ = root_store.add(CertificateDer::from(der));
                 }
             }
@@ -659,25 +663,28 @@ async fn send_single_http(
                         duration_ms: elapsed_ms(),
                     });
                 }
-                let cert_pem = fs::read_to_string(&mc.cert_pem_path).map_err(|e| HttpExecutionError {
-                    kind: HttpErrorKind::TlsVerification,
-                    message: format!("Failed to read mTLS client cert: {e}"),
-                    duration_ms: elapsed_ms(),
-                })?;
-                let key_pem = fs::read_to_string(&mc.key_pem_path).map_err(|e| HttpExecutionError {
-                    kind: HttpErrorKind::TlsVerification,
-                    message: format!("Failed to read mTLS client key: {e}"),
-                    duration_ms: elapsed_ms(),
-                })?;
-                let certs: Vec<CertificateDer<'static>> = decode_pem_blocks(&cert_pem, "CERTIFICATE")
-                    .map_err(|e| HttpExecutionError {
+                let cert_pem =
+                    fs::read_to_string(&mc.cert_pem_path).map_err(|e| HttpExecutionError {
                         kind: HttpErrorKind::TlsVerification,
-                        message: e,
+                        message: format!("Failed to read mTLS client cert: {e}"),
                         duration_ms: elapsed_ms(),
-                    })?
-                    .into_iter()
-                    .map(CertificateDer::from)
-                    .collect();
+                    })?;
+                let key_pem =
+                    fs::read_to_string(&mc.key_pem_path).map_err(|e| HttpExecutionError {
+                        kind: HttpErrorKind::TlsVerification,
+                        message: format!("Failed to read mTLS client key: {e}"),
+                        duration_ms: elapsed_ms(),
+                    })?;
+                let certs: Vec<CertificateDer<'static>> =
+                    decode_pem_blocks(&cert_pem, "CERTIFICATE")
+                        .map_err(|e| HttpExecutionError {
+                            kind: HttpErrorKind::TlsVerification,
+                            message: e,
+                            duration_ms: elapsed_ms(),
+                        })?
+                        .into_iter()
+                        .map(CertificateDer::from)
+                        .collect();
                 let key_der = decode_pem_blocks(&key_pem, "PRIVATE KEY")
                     .map_err(|e| HttpExecutionError {
                         kind: HttpErrorKind::TlsVerification,
@@ -692,7 +699,10 @@ async fn send_single_http(
                         duration_ms: elapsed_ms(),
                     })?;
                 base_builder
-                    .with_client_auth_cert(certs, PrivateKeyDer::Pkcs8(PrivatePkcs8KeyDer::from(key_der)))
+                    .with_client_auth_cert(
+                        certs,
+                        PrivateKeyDer::Pkcs8(PrivatePkcs8KeyDer::from(key_der)),
+                    )
                     .map_err(|e| HttpExecutionError {
                         kind: HttpErrorKind::TlsVerification,
                         message: format!("mTLS client cert rejected: {e}"),
