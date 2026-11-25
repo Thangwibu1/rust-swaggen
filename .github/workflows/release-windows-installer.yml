@@ -54,10 +54,11 @@ jobs:
         run: |
           powershell -NoProfile -ExecutionPolicy Bypass -File tools\bundle-result.ps1 -Version "${{ steps.ver.outputs.version }}" -Online
 
-      - name: Install WiX Toolset v4
+      - name: Install WiX Toolset v4 & UI Extension
         shell: pwsh
         run: |
           dotnet tool install --global wix --version 4.0.5
+          wix extension add -g WixToolset.UI.wixext/4.0.5
 
       - name: Build Inno Setup (.exe) + WiX (.msi) + Portable (.zip) + latest.json
         shell: pwsh
@@ -68,12 +69,12 @@ jobs:
           $bundle = (Resolve-Path "result\v$v").Path
           $out = (New-Item -ItemType Directory -Force -Path "release-assets").FullName
 
-          # 1. Inno Setup 6 Wizard EXE (supports both 1-click install and in-place silent auto-update)
+          # 1. Inno Setup 6 Full Wizard EXE (Swaggen logo, Welcome, License, Choose Folder, Shortcuts, Launch)
           & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" "/DAppVersion=$v" "/DBundleDir=$bundle" "/O$out" "installer\swaggen.iss"
           if ($LASTEXITCODE -ne 0) { throw "ISCC failed with exit code $LASTEXITCODE" }
 
-          # 2. WiX v4 MSI Installer (supports in-place MajorUpgrade)
-          wix build -arch x64 -d "AppVersion=$v.0" -d "BundleDir=$bundle" -o "$out\Swaggen-$v-x64.msi" "installer\swaggen.wxs"
+          # 2. WiX v4 Full Interactive Wizard MSI (WixUI_InstallDir with Swaggen logo + Choose Folder)
+          wix build -arch x64 -ext WixToolset.UI.wixext -d "AppVersion=$v.0" -d "BundleDir=$bundle" -o "$out\Swaggen-$v-x64.msi" "installer\swaggen.wxs"
           if ($LASTEXITCODE -ne 0) { throw "wix build failed with exit code $LASTEXITCODE" }
 
           # 3. Portable ZIP (can also be applied in-place from Swaggen Settings -> Software Updates)

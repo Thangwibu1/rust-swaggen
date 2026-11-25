@@ -1,4 +1,5 @@
-<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
   <Package
     Name="Swaggen"
     Manufacturer="Swaggen"
@@ -8,9 +9,19 @@
     <MajorUpgrade DowngradeErrorMessage="A newer version of Swaggen is already installed." />
     <MediaTemplate EmbedCab="yes" />
 
+    <!-- Brand Logo & Full Step-by-Step Interactive Wizard (Welcome -> License -> Choose Folder -> Install -> Finish) -->
+    <Icon Id="SwaggenIcon.ico" SourceFile="assets\swaggen.ico" />
+    <Property Id="ARPPRODUCTICON" Value="SwaggenIcon.ico" />
+    <Property Id="ARPHELPLINK" Value="https://github.com/Thangwibu1/rust-swaggen/releases" />
+    <WixVariable Id="WixUILicenseRtf" Value="installer\LICENSE.rtf" />
+    <WixVariable Id="WixUIBannerBmp" Value="installer\assets\msi-banner.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="installer\assets\msi-dialog.bmp" />
+    <ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
+
     <StandardDirectory Id="LocalAppDataFolder">
       <Directory Id="INSTALLFOLDER" Name="Swaggen">
         <Directory Id="BINFOLDER" Name="bin" />
+        <Directory Id="ASSETSFOLDER" Name="assets" />
       </Directory>
     </StandardDirectory>
 
@@ -22,6 +33,7 @@
 
     <Feature Id="MainFeature" Title="Swaggen Desktop &amp; CLI" Level="1">
       <ComponentGroupRef Id="ProductComponents" />
+      <ComponentRef Id="BrandIconComponent" />
       <ComponentRef Id="StartMenuShortcuts" />
       <ComponentRef Id="DesktopShortcut" />
     </Feature>
@@ -36,14 +48,18 @@
       </Component>
     </ComponentGroup>
 
+    <Component Id="BrandIconComponent" Directory="ASSETSFOLDER" Guid="1A2C4E6F-8B0D-4C2E-9F1A-2B3C4D5E6F05">
+      <File Id="SwaggenIcoFile" Source="assets\swaggen.ico" KeyPath="yes" />
+    </Component>
+
     <Component Id="StartMenuShortcuts" Directory="ApplicationProgramsFolder" Guid="1A2C4E6F-8B0D-4C2E-9F1A-2B3C4D5E6F03">
-      <Shortcut Id="SwaggenStartMenuShortcut" Name="Swaggen" Target="[BINFOLDER]swaggen-desktop.exe" WorkingDirectory="INSTALLFOLDER" />
+      <Shortcut Id="SwaggenStartMenuShortcut" Name="Swaggen" Target="[BINFOLDER]swaggen-desktop.exe" WorkingDirectory="INSTALLFOLDER" Icon="SwaggenIcon.ico" />
       <RemoveFolder Id="CleanStartMenuFolder" On="uninstall" />
       <RegistryValue Root="HKCU" Key="Software\Swaggen\Installed" Name="StartMenu" Type="integer" Value="1" KeyPath="yes" />
     </Component>
 
     <Component Id="DesktopShortcut" Directory="DesktopFolder" Guid="1A2C4E6F-8B0D-4C2E-9F1A-2B3C4D5E6F04">
-      <Shortcut Id="SwaggenDesktopShortcut" Name="Swaggen" Target="[BINFOLDER]swaggen-desktop.exe" WorkingDirectory="INSTALLFOLDER" />
+      <Shortcut Id="SwaggenDesktopShortcut" Name="Swaggen" Target="[BINFOLDER]swaggen-desktop.exe" WorkingDirectory="INSTALLFOLDER" Icon="SwaggenIcon.ico" />
       <RegistryValue Root="HKCU" Key="Software\Swaggen\Installed" Name="Desktop" Type="integer" Value="1" KeyPath="yes" />
     </Component>
   </Package>

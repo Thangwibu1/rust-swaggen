@@ -1,5 +1,5 @@
 param(
-    [string]$Version = "0.1.3",
+    [string]$Version = "0.1.4",
     [string]$InstallDir = (Join-Path $env:LOCALAPPDATA "Swaggen"),
     [switch]$Silent
 )
@@ -13,6 +13,13 @@ if (-not (Test-Path $PayloadZip)) {
 }
 
 if (-not $Silent) {
+    $dlg = New-Object System.Windows.Forms.FolderBrowserDialog
+    $dlg.Description = "Choose installation folder for Swaggen v$Version"
+    $dlg.SelectedPath = $InstallDir
+    $dlg.ShowNewFolderButton = $true
+    if ($dlg.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK -and -not [string]::IsNullOrWhiteSpace($dlg.SelectedPath)) {
+        $InstallDir = $dlg.SelectedPath
+    }
     Write-Host "========================================" -ForegroundColor Cyan
     Write-Host "  Swaggen Desktop Installer v$Version" -ForegroundColor Cyan
     Write-Host "========================================" -ForegroundColor Cyan
@@ -44,10 +51,12 @@ $ShortcutTargets = @(
     (Join-Path $StartMenuDir "Swaggen.lnk"),
     (Join-Path ([Environment]::GetFolderPath("Desktop")) "Swaggen.lnk")
 )
+$IcoPath = Join-Path $InstallDir "assets\swaggen.ico"
 foreach ($lnkPath in $ShortcutTargets) {
     $sc = $WshShell.CreateShortcut($lnkPath)
     $sc.TargetPath = $DesktopExe
     $sc.WorkingDirectory = $InstallDir
+    if (Test-Path $IcoPath) { $sc.IconLocation = "$IcoPath,0" } else { $sc.IconLocation = "$DesktopExe,0" }
     $sc.Description = "Swaggen - Native Windows API Client & Collaboration Studio"
     $sc.Save()
 }

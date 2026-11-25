@@ -29,17 +29,25 @@ fn options() -> Result<(PathBuf, LocalId), Error> {
     Ok((root, workspace))
 }
 
+fn load_app_icon() -> Option<egui::IconData> {
+    eframe::icon_data::from_png_bytes(include_bytes!("../../../assets/swaggen-icon-256.png")).ok()
+}
+
 fn main() -> eframe::Result {
     let (root, workspace) = match options() {
         Ok(v) => v,
         Err(_) => std::process::exit(2),
     };
+    let mut viewport = egui::ViewportBuilder::default()
+        .with_inner_size([1440.0, 900.0])
+        .with_min_inner_size([720.0, 480.0]);
+    if let Some(icon) = load_app_icon() {
+        viewport = viewport.with_icon(icon);
+    }
     eframe::run_native(
         "Swaggen",
         eframe::NativeOptions {
-            viewport: egui::ViewportBuilder::default()
-                .with_inner_size([1440.0, 900.0])
-                .with_min_inner_size([720.0, 480.0]),
+            viewport,
             renderer: eframe::Renderer::Wgpu,
             ..Default::default()
         },

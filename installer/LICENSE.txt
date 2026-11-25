@@ -1,0 +1,24 @@
+Swaggen Desktop - End User Software License Agreement
+=====================================================
+
+Copyright (c) 2026 Swaggen. All rights reserved.
+
+1. License Grant
+   Swaggen Desktop is provided as a native Windows API design, testing, and
+   team collaboration studio. You are granted a non-exclusive license to
+   install and use Swaggen Desktop on Windows computers.
+
+2. Privacy & Local Security
+   - Swaggen runs natively on Windows without WebView2 or hidden telemetry.
+   - Local workspaces, history, and DPAPI-protected personal secrets stay on
+     your device unless you explicitly publish them to your team server.
+   - Third-party open-source notices are included in the installation folder.
+
+3. Updates
+   Swaggen can check for official releases on GitHub Releases and verify
+   SHA-256 checksums before upgrading in-place while preserving your local
+   workspaces and secrets.
+
+4. Disclaimer
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED.

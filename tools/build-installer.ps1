@@ -25,6 +25,7 @@ $PayloadFiles = @(
     (Join-Path $BundleDir "bin"),
     (Join-Path $BundleDir "config"),
     (Join-Path $BundleDir "docs"),
+    (Join-Path $RepoRoot "assets"),
     (Join-Path $BundleDir "Swaggen.cmd"),
     (Join-Path $BundleDir "Swaggen-Portable.cmd"),
     (Join-Path $BundleDir "README.txt"),
