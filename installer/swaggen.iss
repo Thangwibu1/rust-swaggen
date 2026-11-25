@@ -27,6 +27,11 @@ OutputDir=..\dist\installer
 OutputBaseFilename=Swaggen-Setup-{#AppVersion}-x64
 UninstallDisplayIcon={app}\bin\swaggen-desktop.exe
 ChangesEnvironment=yes
+CloseApplications=force
+RestartApplications=yes
+UsePreviousAppDir=yes
+UsePreviousGroup=yes
+UsePreviousTasks=yes
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -40,7 +45,8 @@ Source: "{#BundleDir}\bin\swaggen-desktop.exe"; DestDir: "{app}\bin"; Flags: ign
 Source: "{#BundleDir}\bin\swaggen-cli.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#BundleDir}\config\*"; DestDir: "{app}\config"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#BundleDir}\docs\*"; DestDir: "{app}\docs"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "{#BundleDir}\Launch-Swaggen.cmd"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#BundleDir}\Swaggen.cmd"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#BundleDir}\Swaggen-Portable.cmd"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#BundleDir}\README.txt"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]

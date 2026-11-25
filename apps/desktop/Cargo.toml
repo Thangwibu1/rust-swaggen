@@ -7,8 +7,10 @@ publish.workspace = true
 
 [dependencies]
 eframe.workspace = true
+hex.workspace = true
 serde.workspace = true
 serde_json.workspace = true
+sha2.workspace = true
 swaggen-api-contract.workspace = true
 swaggen-domain.workspace = true
 swaggen-http-engine.workspace = true

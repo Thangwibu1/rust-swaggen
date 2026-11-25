@@ -246,6 +246,11 @@ pub struct App {
     pub theme: swaggen_ui_kit::UiTheme,
     pub locale: swaggen_ui_kit::UiLocale,
     pub deep_link_input: String,
+    pub update_feed_url: String,
+    pub update_check: Option<crate::updater::UpdateCheckOutcome>,
+    pub local_update_path: String,
+    pub local_update_sha256: String,
+    pub update_silent_install: bool,
     pub update_manifest_json: String,
     pub update_signing_key: String,
     pub update_payload_text: String,
@@ -432,6 +437,11 @@ impl App {
             theme: swaggen_ui_kit::UiTheme::Light,
             locale: swaggen_ui_kit::UiLocale::En,
             deep_link_input: "swaggen://workspace/personal/mode/runner".into(),
+            update_feed_url: crate::updater::DEFAULT_UPDATE_FEED_URL.into(),
+            update_check: None,
+            local_update_path: String::new(),
+            local_update_sha256: String::new(),
+            update_silent_install: true,
             update_manifest_json: String::new(),
             update_signing_key: String::new(),
             update_payload_text: String::new(),
@@ -771,6 +781,20 @@ impl App {
                 }
                 Event::SseStopped(msg) => {
                     self.sse_running = false;
+                    self.status = msg;
+                }
+                Event::UpdateCheckResult(outcome) => {
+                    self.status = if outcome.update_available {
+                        format!(
+                            "Update available: v{} (current v{})",
+                            outcome.latest.version, outcome.current_version
+                        )
+                    } else {
+                        format!("Swaggen v{} is up to date", outcome.current_version)
+                    };
+                    self.update_check = Some(outcome);
+                }
+                Event::UpdateInstallLaunched(msg) => {
                     self.status = msg;
                 }
                 Event::HttpCompleted {
@@ -1361,6 +1385,30 @@ impl eframe::App for App {
                         .clicked()
                         {
                             self.show_workspace_modal = !self.show_workspace_modal;
+                        }
+                        if let Some(ref uc) = self.update_check
+                            && uc.update_available
+                        {
+                            if swaggen_ui_kit::primary_button(
+                                ui,
+                                !self.pending,
+                                &format!("Update v{}", uc.latest.version),
+                            )
+                            .clicked()
+                            {
+                                self.mode = MainMode::Privacy;
+                            }
+                        } else if swaggen_ui_kit::secondary_button(
+                            ui,
+                            !self.pending,
+                            swaggen_ui_kit::tr(self.locale, "Updates", "Cập nhật"),
+                        )
+                        .clicked()
+                        {
+                            self.mode = MainMode::Privacy;
+                            self.submit(Command::CheckForUpdates {
+                                feed_url: self.update_feed_url.clone(),
+                            });
                         }
                         if swaggen_ui_kit::secondary_button(
                             ui,

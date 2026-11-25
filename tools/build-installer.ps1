@@ -25,9 +25,10 @@ $PayloadFiles = @(
     (Join-Path $BundleDir "bin"),
     (Join-Path $BundleDir "config"),
     (Join-Path $BundleDir "docs"),
-    (Join-Path $BundleDir "Launch-Swaggen.cmd"),
+    (Join-Path $BundleDir "Swaggen.cmd"),
+    (Join-Path $BundleDir "Swaggen-Portable.cmd"),
     (Join-Path $BundleDir "README.txt"),
-    (Join-Path $BundleDir "manifest.json")
+    (Join-Path $BundleDir "version.json")
 ) | Where-Object { Test-Path $_ }
 Compress-Archive -Path $PayloadFiles -DestinationPath $PayloadZip -Force
 

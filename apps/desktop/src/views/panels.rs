@@ -873,14 +873,165 @@ pub fn show_storage(app: &mut App, ui: &mut egui::Ui) {
 pub fn show_privacy(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
     swaggen_ui_kit::page_header(
         ui,
-        "Privacy & diagnostics",
-        "Analytics and automatic crash reporting are disabled. Only typed local commands are permitted.",
-        None,
+        "Updates, privacy & diagnostics",
+        "Check for Swaggen updates from GitHub Releases, apply downloaded update packages in-place, and review local privacy diagnostics.",
+        Some(&format!("v{}", crate::updater::APP_VERSION)),
         false,
     );
     show_settings_group_tabs(app, ui);
     egui::ScrollArea::vertical().show(ui, |ui| {
+        // 1. In-App Auto-Updater (Option 1: GitHub Releases) & Local Package Updater (Option 2: .exe/.msi/.zip)
         swaggen_ui_kit::surface_card(ui, |ui| {
+            ui.horizontal(|ui| {
+                ui.label(swaggen_ui_kit::bold_text(
+                    "Software Updates",
+                    15.0,
+                    swaggen_ui_kit::text_primary(ui),
+                ));
+                ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                    swaggen_ui_kit::pill_badge(
+                        ui,
+                        Tokens::STATUS_INFO,
+                        &format!("Installed v{}", crate::updater::APP_VERSION),
+                    );
+                });
+            });
+            ui.add_space(6.0);
+            ui.label(
+                egui::RichText::new(
+                    "Option 1: Auto-check and download verified updates directly from GitHub Releases (SHA-256 checked).",
+                )
+                .size(12.0)
+                .color(swaggen_ui_kit::text_secondary(ui)),
+            );
+            ui.add_space(8.0);
+            ui.horizontal(|ui| {
+                let feed_w = (ui.available_width() - 170.0).max(200.0);
+                swaggen_ui_kit::text_input(
+                    ui,
+                    &mut app.update_feed_url,
+                    crate::updater::DEFAULT_UPDATE_FEED_URL,
+                    feed_w,
+                    false,
+                );
+                if swaggen_ui_kit::primary_button(ui, !app.pending, "Check for updates").clicked() {
+                    app.submit(Command::CheckForUpdates {
+                        feed_url: app.update_feed_url.trim().to_owned(),
+                    });
+                }
+            });
+            ui.add_space(6.0);
+            ui.checkbox(
+                &mut app.update_silent_install,
+                "Silent in-place upgrade (auto-close Swaggen, upgrade binaries, and relaunch)",
+            );
+
+            if let Some(ref uc) = app.update_check.clone() {
+                ui.add_space(8.0);
+                if uc.update_available {
+                    swaggen_ui_kit::notice_banner(
+                        ui,
+                        NoticeKind::Success,
+                        &format!("New version v{} available", uc.latest.version),
+                        &format!(
+                            "{} · SHA-256: {}",
+                            if uc.latest.notes.is_empty() {
+                                "Ready to download and install in-place."
+                            } else {
+                                uc.latest.notes.as_str()
+                            },
+                            &uc.latest.installer_sha256[..16.min(uc.latest.installer_sha256.len())]
+                        ),
+                    );
+                    ui.add_space(8.0);
+                    ui.horizontal_wrapped(|ui| {
+                        if swaggen_ui_kit::primary_button(
+                            ui,
+                            !app.pending && !uc.latest.installer_url.is_empty(),
+                            &format!("Download & Install v{} (.exe)", uc.latest.version),
+                        )
+                        .clicked()
+                        {
+                            app.submit(Command::DownloadAndInstallUpdate {
+                                download_url: uc.latest.installer_url.clone(),
+                                expected_sha256: uc.latest.installer_sha256.clone(),
+                                version: uc.latest.version.clone(),
+                                silent: app.update_silent_install,
+                            });
+                        }
+                        if !uc.latest.portable_url.is_empty()
+                            && swaggen_ui_kit::secondary_button(
+                                ui,
+                                !app.pending,
+                                "Download & Apply Portable ZIP",
+                            )
+                            .clicked()
+                        {
+                            app.submit(Command::DownloadAndInstallUpdate {
+                                download_url: uc.latest.portable_url.clone(),
+                                expected_sha256: uc.latest.portable_sha256.clone(),
+                                version: uc.latest.version.clone(),
+                                silent: app.update_silent_install,
+                            });
+                        }
+                    });
+                } else {
+                    swaggen_ui_kit::notice_banner(
+                        ui,
+                        NoticeKind::Info,
+                        &format!("Up to date (v{})", uc.current_version),
+                        &format!(
+                            "Latest published release on feed is v{}.",
+                            uc.latest.version
+                        ),
+                    );
+                }
+            }
+
+            ui.add_space(12.0);
+            ui.separator();
+            ui.add_space(8.0);
+            ui.label(swaggen_ui_kit::bold_text(
+                "Option 2: Install downloaded update file straight into Swaggen (.exe / .msi / .zip)",
+                13.0,
+                swaggen_ui_kit::text_primary(ui),
+            ));
+            ui.add_space(6.0);
+            let local_w = ui.available_width();
+            swaggen_ui_kit::text_input(
+                ui,
+                &mut app.local_update_path,
+                "C:\\Users\\...\\Downloads\\Swaggen-Setup-0.1.4-x64.exe (or .msi / .zip)",
+                local_w,
+                false,
+            );
+            ui.add_space(6.0);
+            swaggen_ui_kit::text_input(
+                ui,
+                &mut app.local_update_sha256,
+                "Optional SHA-256 checksum from SHA256SUMS.txt",
+                local_w,
+                false,
+            );
+            ui.add_space(8.0);
+            if swaggen_ui_kit::secondary_button(
+                ui,
+                !app.pending && !app.local_update_path.trim().is_empty(),
+                "Install local update package now",
+            )
+            .clicked()
+            {
+                app.submit(Command::InstallLocalUpdatePackage {
+                    path: PathBuf::from(app.local_update_path.trim()),
+                    expected_sha256: app.local_update_sha256.trim().to_owned(),
+                    silent: app.update_silent_install,
+                });
+            }
+        });
+
+        ui.add_space(10.0);
+        swaggen_ui_kit::surface_card(ui, |ui| {
+            swaggen_ui_kit::card_header(ui, "Privacy & Local Security");
             ui.label(format!(
                 "Analytics: {}",
                 if app.policy.analytics_enabled {

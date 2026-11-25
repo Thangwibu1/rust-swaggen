@@ -259,6 +259,20 @@ pub enum Command {
         max_events: usize,
     },
     StopSse,
+    CheckForUpdates {
+        feed_url: String,
+    },
+    DownloadAndInstallUpdate {
+        download_url: String,
+        expected_sha256: String,
+        version: String,
+        silent: bool,
+    },
+    InstallLocalUpdatePackage {
+        path: PathBuf,
+        expected_sha256: String,
+        silent: bool,
+    },
     #[doc(hidden)]
     InternalHttpFinished {
         execution_id: u64,
@@ -363,6 +377,8 @@ pub enum Event {
     GraphQlFinished(swaggen_runner::protocols_and_tools::GraphQlOutcome),
     SseEventReceived(swaggen_runner::protocols_and_tools::SseEventRecord),
     SseStopped(String),
+    UpdateCheckResult(crate::updater::UpdateCheckOutcome),
+    UpdateInstallLaunched(String),
     HttpFailed {
         execution_id: u64,
         request_id: String,
@@ -660,7 +676,77 @@ impl Worker {
                             wake();
                             continue;
                         }
-                        Err(cmd2) => cmd2,
+                        Err(cmd2) => match cmd2 {
+                            Command::CheckForUpdates { feed_url } => {
+                                let ev = match runtime.block_on(
+                                    crate::updater::fetch_latest_manifest(&feed_url, &dl_dir),
+                                ) {
+                                    Ok(outcome) => Event::UpdateCheckResult(outcome),
+                                    Err(msg) => Event::ActionError(msg),
+                                };
+                                if outgoing.send(ev).is_err() {
+                                    break;
+                                }
+                                wake();
+                                continue;
+                            }
+                            Command::DownloadAndInstallUpdate {
+                                download_url,
+                                expected_sha256,
+                                version,
+                                silent,
+                            } => {
+                                let updates_dir = current_root.join("updates");
+                                let ev = match runtime.block_on(
+                                    crate::updater::download_update_package(
+                                        &download_url,
+                                        &expected_sha256,
+                                        &version,
+                                        &updates_dir,
+                                    ),
+                                ) {
+                                    Ok(pkg_path) => match crate::updater::launch_local_update_package(
+                                        &pkg_path,
+                                        None,
+                                        silent,
+                                    ) {
+                                        Ok(msg) => Event::UpdateInstallLaunched(msg),
+                                        Err(e) => Event::ActionError(e),
+                                    },
+                                    Err(msg) => Event::ActionError(msg),
+                                };
+                                if outgoing.send(ev).is_err() {
+                                    break;
+                                }
+                                wake();
+                                continue;
+                            }
+                            Command::InstallLocalUpdatePackage {
+                                path,
+                                expected_sha256,
+                                silent,
+                            } => {
+                                let sha_opt = if expected_sha256.trim().is_empty() {
+                                    None
+                                } else {
+                                    Some(expected_sha256.as_str())
+                                };
+                                let ev = match crate::updater::launch_local_update_package(
+                                    &path,
+                                    sha_opt,
+                                    silent,
+                                ) {
+                                    Ok(msg) => Event::UpdateInstallLaunched(msg),
+                                    Err(msg) => Event::ActionError(msg),
+                                };
+                                if outgoing.send(ev).is_err() {
+                                    break;
+                                }
+                                wake();
+                                continue;
+                            }
+                            other => other,
+                        },
                     },
                 };
 
@@ -1402,6 +1488,9 @@ impl Worker {
                     | Command::CreateTeamComment { .. }
                     | Command::ResolveTeamComment { .. }
                     | Command::MarkTeamNotificationsRead { .. }
+                    | Command::CheckForUpdates { .. }
+                    | Command::DownloadAndInstallUpdate { .. }
+                    | Command::InstallLocalUpdatePackage { .. }
                     | Command::Shutdown => unreachable!(),
                 }
             }

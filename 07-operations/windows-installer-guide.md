@@ -28,20 +28,28 @@ Khi người dùng nhấn đúp `Swaggen-Setup-0.1.3-x64.exe`, bộ cài sẽ t�
 
 ---
 
-## Cách 2: Tự động build Inno Setup (`.exe` chuyên nghiệp) + WiX (`.msi`) trên GitHub Releases (Khuyên dùng khi phát hành public)
+## Cách 2: Tự động build Inno Setup (`.exe` chuyên nghiệp) + WiX (`.msi`) + Auto-Update `latest.json` trên GitHub Releases (Khuyên dùng)
 
-Repo đã có sẵn workflow `.github/workflows/release-windows-installer.yml`. Bạn chỉ cần tạo tag mới và push:
+Repo đã có sẵn workflow `.github/workflows/release-windows-installer.yml`. Mỗi khi bạn phát hành bản mới, chỉ cần tăng `version` trong `Cargo.toml`, commit rồi đẩy tag:
 
 ```powershell
 git tag v0.1.3
 git push origin v0.1.3
 ```
 
-GitHub Actions (`windows-latest`) sẽ tự động biên dịch và tạo trang **GitHub Release** đính kèm sẵn 4 file để gửi link tải trực tiếp cho người dùng:
-- `Swaggen-Setup-0.1.3-x64.exe` (Wizard cài đặt Inno Setup 6 đẹp, nén LZMA2 siêu nhỏ)
-- `Swaggen-0.1.3-x64.msi` (Bộ cài Windows MSI cho doanh nghiệp/IT)
-- `Swaggen-Portable-0.1.3-win64.zip` (Bản giải nén chạy ngay không cần cài)
-- `SHA256SUMS.txt` (Mã băm kiểm tra toàn vẹn)
+GitHub Actions (`windows-latest`) sẽ tự động biên dịch và tạo trang **GitHub Release** đính kèm sẵn **5 file**:
+- `Swaggen-Setup-0.1.3-x64.exe` — Wizard cài đặt Inno Setup 6 (tự nhận diện bản cũ, đóng app đang chạy, cập nhật đè lên giữ nguyên toàn bộ dữ liệu + mở lại app)
+- `Swaggen-0.1.3-x64.msi` — Bộ cài Windows MSI có `MajorUpgrade`
+- `Swaggen-Portable-0.1.3-win64.zip` — Bản chạy portable (cũng nạp thẳng vào chức năng update trong app được)
+- `latest.json` — Manifest cập nhật tự động cho nút **Check for updates** ngay trong ứng dụng Desktop
+- `SHA256SUMS.txt` — Mã băm kiểm tra toàn vẹn
+
+### Hai cách cập nhật cho người dùng cuối
+1. **Tự động ngay trong app (1 click)**:
+   - Bấm nút **`Updates`** trên thanh tiêu đề (hoặc vào **Settings → Privacy & Updates** → bấm **Check for updates**).
+   - App tự đọc `https://github.com/Thangwibu1/rust-swaggen/releases/latest/download/latest.json`, báo phiên bản mới, tải file `.exe` / `.zip`, **tự kiểm tra SHA-256** rồi cài đè tự động và mở lại app.
+2. **Cập nhật bằng file tải về (Offline / Thủ công)**:
+   - Tải `Swaggen-Setup-<ver>-x64.exe` hoặc `.msi` từ trang GitHub Releases → **nhấn đúp trực tiếp** (Inno Setup/WiX tự nâng cấp đè lên bản cũ mà không mất workspace hay secrets), **HOẶC** chọn trực tiếp file `.exe` / `.msi` / `.zip` ở mục **Option 2: Install downloaded update file** ngay trong màn hình **Updates** của Swaggen.
 
 ---
 

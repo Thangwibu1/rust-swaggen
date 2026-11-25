@@ -26,6 +26,17 @@ jobs:
         with:
           targets: x86_64-pc-windows-msvc
 
+      - name: Cache Cargo registry & target
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
       - name: Determine version
         id: ver
         shell: pwsh
@@ -36,36 +47,65 @@ jobs:
             $v = "${{ github.ref_name }}".TrimStart("v")
           }
           "version=$v" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          "tag=v$v" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
       - name: Build release binaries & portable bundle
         shell: pwsh
         run: |
-          powershell -NoProfile -ExecutionPolicy Bypass -File tools\bundle-result.ps1 -Version "${{ steps.ver.outputs.version }}"
+          powershell -NoProfile -ExecutionPolicy Bypass -File tools\bundle-result.ps1 -Version "${{ steps.ver.outputs.version }}" -Online
 
       - name: Install WiX Toolset v4
         shell: pwsh
         run: |
           dotnet tool install --global wix --version 4.0.5
 
-      - name: Build Inno Setup (.exe) + WiX (.msi) + Portable (.zip)
+      - name: Build Inno Setup (.exe) + WiX (.msi) + Portable (.zip) + latest.json
         shell: pwsh
         run: |
           $v = "${{ steps.ver.outputs.version }}"
+          $tag = "${{ steps.ver.outputs.tag }}"
+          $repo = "${{ github.repository }}"
           $bundle = (Resolve-Path "result\v$v").Path
           $out = (New-Item -ItemType Directory -Force -Path "release-assets").FullName
 
-          # 1. Inno Setup Wizard EXE (preinstalled on windows-latest)
+          # 1. Inno Setup 6 Wizard EXE (supports both 1-click install and in-place silent auto-update)
           & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" "/DAppVersion=$v" "/DBundleDir=$bundle" "/O$out" "installer\swaggen.iss"
+          if ($LASTEXITCODE -ne 0) { throw "ISCC failed with exit code $LASTEXITCODE" }
 
-          # 2. WiX v4 MSI Installer
+          # 2. WiX v4 MSI Installer (supports in-place MajorUpgrade)
           wix build -arch x64 -d "AppVersion=$v.0" -d "BundleDir=$bundle" -o "$out\Swaggen-$v-x64.msi" "installer\swaggen.wxs"
+          if ($LASTEXITCODE -ne 0) { throw "wix build failed with exit code $LASTEXITCODE" }
 
-          # 3. Portable ZIP
-          Compress-Archive -Path "$bundle\*" -DestinationPath "$out\Swaggen-Portable-$v-win64.zip" -Force
+          # 3. Portable ZIP (can also be applied in-place from Swaggen Settings -> Software Updates)
+          Compress-Archive -Path "$bundle\bin", "$bundle\config", "$bundle\docs", "$bundle\Swaggen.cmd", "$bundle\Swaggen-Portable.cmd", "$bundle\README.txt", "$bundle\version.json" -DestinationPath "$out\Swaggen-Portable-$v-win64.zip" -Force
 
-          # 4. SHA-256 Checksums
-          Get-ChildItem -Path $out -File | ForEach-Object {
-            "$((Get-FileHash $_.FullName -Algorithm SHA256).Hash)  $($_.Name)"
+          # 4. Compute SHA-256 hashes & generate latest.json for in-app auto-updater
+          $exePath = "$out\Swaggen-Setup-$v-x64.exe"
+          $msiPath = "$out\Swaggen-$v-x64.msi"
+          $zipPath = "$out\Swaggen-Portable-$v-win64.zip"
+
+          $exeSha = (Get-FileHash $exePath -Algorithm SHA256).Hash.ToLowerInvariant()
+          $msiSha = (Get-FileHash $msiPath -Algorithm SHA256).Hash.ToLowerInvariant()
+          $zipSha = (Get-FileHash $zipPath -Algorithm SHA256).Hash.ToLowerInvariant()
+
+          $baseUrl = "https://github.com/$repo/releases/download/$tag"
+          $latestObj = [ordered]@{
+            version          = $v
+            tag              = $tag
+            published_at     = (Get-Date).ToUniversalTime().ToString("o")
+            installer_url    = "$baseUrl/Swaggen-Setup-$v-x64.exe"
+            installer_sha256 = $exeSha
+            msi_url          = "$baseUrl/Swaggen-$v-x64.msi"
+            msi_sha256       = $msiSha
+            portable_url     = "$baseUrl/Swaggen-Portable-$v-win64.zip"
+            portable_sha256  = $zipSha
+            notes            = "Swaggen $tag Windows release (Inno Setup EXE, WiX MSI, Portable ZIP)."
+          }
+          $latestObj | ConvertTo-Json -Depth 4 | Set-Content -Path "$out\latest.json" -Encoding UTF8
+
+          # 5. SHA256SUMS.txt
+          Get-ChildItem -Path $out -File | Where-Object { $_.Name -ne "SHA256SUMS.txt" } | ForEach-Object {
+            "$((Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant())  $($_.Name)"
           } | Set-Content -Path "$out\SHA256SUMS.txt" -Encoding UTF8
 
       - name: Publish GitHub Release

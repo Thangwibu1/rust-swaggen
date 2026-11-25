@@ -18,7 +18,7 @@ members = [
 exclude = ["spikes/p00", "spikes/p00-native", "spikes/p00-egui", "spikes/p00-transport"]
 
 [workspace.package]
-version = "0.1.0"
+version = "0.1.3"
 edition = "2024"
 rust-version = "1.100"
 publish = false

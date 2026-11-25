@@ -1,6 +1,7 @@
 param(
     [string]$Version = "",
-    [switch]$SkipBuild
+    [switch]$SkipBuild,
+    [switch]$Online
 )
 
 $ErrorActionPreference = "Stop"
@@ -19,7 +20,11 @@ if ([string]::IsNullOrWhiteSpace($Version)) {
 $Target = "x86_64-pc-windows-msvc"
 if (-not $SkipBuild) {
     Write-Host "Building release binaries ($Target)..."
-    cargo +stable build --release --offline --locked -p swaggen-desktop -p swaggen-cli -p swaggen-server --target $Target
+    $BuildArgs = @("build", "--release", "--locked", "-p", "swaggen-desktop", "-p", "swaggen-cli", "-p", "swaggen-server", "--target", $Target)
+    if (-not $Online -and $env:CI -ne "true") {
+        $BuildArgs = @("+stable") + $BuildArgs + @("--offline")
+    }
+    cargo @BuildArgs
     if ($LASTEXITCODE -ne 0) { throw "Cargo release build failed with exit code $LASTEXITCODE" }
 }
 
