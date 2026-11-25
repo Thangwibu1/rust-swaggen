@@ -576,6 +576,114 @@ pub fn rail_icon_button(
     resp.on_hover_text(tooltip)
 }
 
+/// Compact 24x24 icon-only button for switching Workbench split layout (Top/Bottom vs Left/Right).
+pub fn split_layout_icon_button(ui: &mut egui::Ui, side_by_side: bool) -> egui::Response {
+    let (rect, resp) = ui.allocate_exact_size(egui::vec2(24.0, 24.0), egui::Sense::click());
+    let fill = if resp.hovered() {
+        Tokens::BG_SELECTED
+    } else {
+        Tokens::BG_SURFACE
+    };
+    let border = if resp.hovered() {
+        Tokens::STATUS_INFO
+    } else {
+        Tokens::BORDER_DEFAULT
+    };
+    let fg = if resp.hovered() {
+        Tokens::STATUS_INFO
+    } else {
+        Tokens::TEXT_SECONDARY
+    };
+    ui.painter().rect(
+        rect,
+        5.0,
+        fill,
+        egui::Stroke::new(1.0, border),
+        egui::StrokeKind::Middle,
+    );
+
+    let box_rect = egui::Rect::from_center_size(rect.center(), egui::vec2(13.0, 11.0));
+    let shade = egui::Color32::from_rgba_unmultiplied(fg.r(), fg.g(), fg.b(), 38);
+    if side_by_side {
+        let left_half = egui::Rect::from_min_max(
+            box_rect.min,
+            egui::pos2(box_rect.center().x, box_rect.bottom()),
+        );
+        ui.painter().rect_filled(left_half, 1.5, shade);
+        ui.painter().line_segment(
+            [
+                egui::pos2(box_rect.center().x, box_rect.top()),
+                egui::pos2(box_rect.center().x, box_rect.bottom()),
+            ],
+            egui::Stroke::new(1.25, fg),
+        );
+    } else {
+        let top_half = egui::Rect::from_min_max(
+            box_rect.min,
+            egui::pos2(box_rect.right(), box_rect.center().y),
+        );
+        ui.painter().rect_filled(top_half, 1.5, shade);
+        ui.painter().line_segment(
+            [
+                egui::pos2(box_rect.left(), box_rect.center().y),
+                egui::pos2(box_rect.right(), box_rect.center().y),
+            ],
+            egui::Stroke::new(1.25, fg),
+        );
+    }
+    ui.painter().rect_stroke(
+        box_rect,
+        2.0,
+        egui::Stroke::new(1.25, fg),
+        egui::StrokeKind::Middle,
+    );
+
+    let tip = if side_by_side {
+        "Layout: Side-by-Side (click to switch to Top / Bottom)"
+    } else {
+        "Layout: Top / Bottom (click to switch to Side-by-Side)"
+    };
+    resp.on_hover_text(tip)
+}
+
+/// Compact 27x27 icon-only Filter button for the Sidebar search bar.
+pub fn filter_icon_button(ui: &mut egui::Ui, active: bool) -> egui::Response {
+    let (rect, resp) = ui.allocate_exact_size(egui::vec2(27.0, 27.0), egui::Sense::click());
+    let fill = if active || resp.hovered() {
+        Tokens::BG_SELECTED
+    } else {
+        Tokens::BG_SURFACE
+    };
+    let border = if active || resp.hovered() {
+        Tokens::STATUS_INFO
+    } else {
+        Tokens::BORDER_DEFAULT
+    };
+    let fg = if active || resp.hovered() {
+        Tokens::STATUS_INFO
+    } else {
+        Tokens::TEXT_SECONDARY
+    };
+    ui.painter().rect(
+        rect,
+        5.0,
+        fill,
+        egui::Stroke::new(1.0, border),
+        egui::StrokeKind::Middle,
+    );
+    let c = rect.center();
+    for (dy, half_w) in [(-3.5_f32, 5.5_f32), (0.0, 3.6), (3.5, 1.8)] {
+        ui.painter().line_segment(
+            [
+                egui::pos2(c.x - half_w, c.y + dy),
+                egui::pos2(c.x + half_w, c.y + dy),
+            ],
+            egui::Stroke::new(1.4, fg),
+        );
+    }
+    resp.on_hover_text("Filter requests by HTTP method or tag")
+}
+
 /// Compact Sidebar navigation row (28px tall).
 pub fn nav_item(
     ui: &mut egui::Ui,

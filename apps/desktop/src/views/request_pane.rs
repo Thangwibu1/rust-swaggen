@@ -143,24 +143,7 @@ pub fn show_top_bar(app: &mut App, ui: &mut egui::Ui) -> Option<usize> {
         }
 
         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-            let split_lbl = if app.state.layout.workbench_side_by_side {
-                "Layout: Left / Right ↔"
-            } else {
-                "Layout: Top / Bottom ↕"
-            };
-            if ui
-                .add(
-                    egui::Button::new(
-                        egui::RichText::new(split_lbl)
-                            .size(11.0)
-                            .color(Tokens::TEXT_SECONDARY),
-                    )
-                    .fill(Tokens::BG_SURFACE)
-                    .stroke(egui::Stroke::new(1.0, Tokens::BORDER_DEFAULT))
-                    .min_size(egui::vec2(120.0, 23.0))
-                    .corner_radius(5),
-                )
-                .on_hover_text("Switch Request/Response split between Top-Bottom and Side-by-Side")
+            if swaggen_ui_kit::split_layout_icon_button(ui, app.state.layout.workbench_side_by_side)
                 .clicked()
             {
                 app.state.layout.workbench_side_by_side = !app.state.layout.workbench_side_by_side;
@@ -411,103 +394,110 @@ pub fn show_top_bar(app: &mut App, ui: &mut egui::Ui) -> Option<usize> {
             app.send_active_request(false);
         }
 
-        // `⋯` Request Options Menu (replaces bulky Duplicate & Save draft buttons!)
-        let menu_lbl = if app.dirty() { "⋯*" } else { "⋯" };
-        let dots_btn = ui.add(
-            egui::Button::new(
-                egui::RichText::new(menu_lbl)
-                    .size(13.0)
-                    .color(if app.dirty() {
-                        Tokens::STATUS_INFO
-                    } else {
-                        Tokens::TEXT_PRIMARY
-                    })
-                    .strong(),
-            )
-            .fill(Tokens::BG_SURFACE)
-            .stroke(egui::Stroke::new(1.0, Tokens::BORDER_DEFAULT))
-            .min_size(egui::vec2(28.0, 28.0))
-            .corner_radius(5),
-        );
-        let req_menu_id = ui.make_persistent_id(("top_req_menu", &req_id));
-        let dots_btn = dots_btn.on_hover_text(
-            "Request actions: Save draft, Duplicate, Rename, Move to collection, Delete",
-        );
-        if dots_btn.clicked() {
-            egui::Popup::toggle_id(ui.ctx(), req_menu_id);
-        }
-        egui::Popup::new(req_menu_id, ui.ctx().clone(), &dots_btn, ui.layer_id()).show(|ui| {
-            ui.set_min_width(210.0);
-            ui.label(
-                egui::RichText::new("Request name")
-                    .size(10.5)
-                    .color(Tokens::TEXT_SECONDARY),
-            );
-            if ui
-                .text_edit_singleline(&mut app.state.requests[req_idx].name)
-                .changed()
-            {
-                changed = true;
-            }
-            let mut tags_csv = app.state.requests[req_idx].tags.join(", ");
-            ui.label(
-                egui::RichText::new("Tags (comma separated)")
-                    .size(10.5)
-                    .color(Tokens::TEXT_SECONDARY),
-            );
-            if ui.text_edit_singleline(&mut tags_csv).changed() {
-                app.state.requests[req_idx].tags = tags_csv
-                    .split(',')
-                    .map(|s| s.trim().to_owned())
-                    .filter(|s| !s.is_empty())
-                    .collect();
-                changed = true;
-            }
-            ui.separator();
-            if ui
-                .button(if app.dirty() {
-                    "Save draft* (Ctrl+S)"
-                } else {
-                    "Save draft (Ctrl+S)"
-                })
-                .clicked()
-            {
-                do_save = true;
-                ui.close();
-            }
-            if ui.button("Duplicate request").clicked() {
-                do_duplicate = true;
-                ui.close();
-            }
-            ui.menu_button("Move to collection ▸", |ui| {
-                ui.set_min_width(155.0);
-                for (cid, cname) in &all_cols {
-                    let is_cur = *cid == cur_col_id;
-                    let lbl = if is_cur {
-                        format!("✓ {cname}")
-                    } else {
-                        cname.clone()
-                    };
-                    if ui.button(lbl).clicked() {
-                        if !is_cur {
-                            move_to_col = Some(cid.clone());
-                        }
+        // `⋯` Request Options Menu (click `⋯` to open/close; click outside or press Esc to dismiss!)
+        ui.push_id(("top_req_menu_btn", &req_id), |ui| {
+            let menu_lbl = if app.dirty() { "⋯*" } else { "⋯" };
+            let dots_btn = ui
+                .add(
+                    egui::Button::new(
+                        egui::RichText::new(menu_lbl)
+                            .size(13.0)
+                            .color(if app.dirty() {
+                                Tokens::STATUS_INFO
+                            } else {
+                                Tokens::TEXT_PRIMARY
+                            })
+                            .strong(),
+                    )
+                    .fill(Tokens::BG_SURFACE)
+                    .stroke(egui::Stroke::new(1.0, Tokens::BORDER_DEFAULT))
+                    .min_size(egui::vec2(28.0, 28.0))
+                    .corner_radius(5),
+                )
+                .on_hover_text(
+                    "Request actions: Save draft, Duplicate, Rename, Move to collection, Delete",
+                );
+            egui::Popup::menu(&dots_btn)
+                .align(egui::RectAlign::BOTTOM_END)
+                .close_behavior(egui::PopupCloseBehavior::CloseOnClickOutside)
+                .show(|ui| {
+                    ui.set_min_width(210.0);
+                    ui.label(
+                        egui::RichText::new("Request name")
+                            .size(10.5)
+                            .color(Tokens::TEXT_SECONDARY),
+                    );
+                    let name_resp = ui.text_edit_singleline(&mut app.state.requests[req_idx].name);
+                    if name_resp.changed() {
+                        changed = true;
+                    }
+                    if name_resp.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter)) {
                         ui.close();
                     }
-                }
-            });
-            if ui.button("Copy as cURL").clicked() {
-                do_copy_curl = true;
-                ui.close();
-            }
-            ui.separator();
-            if ui
-                .button(egui::RichText::new("Delete request").color(Tokens::TEXT_DANGER))
-                .clicked()
-            {
-                do_delete = true;
-                ui.close();
-            }
+                    let mut tags_csv = app.state.requests[req_idx].tags.join(", ");
+                    ui.label(
+                        egui::RichText::new("Tags (comma separated)")
+                            .size(10.5)
+                            .color(Tokens::TEXT_SECONDARY),
+                    );
+                    let tags_resp = ui.text_edit_singleline(&mut tags_csv);
+                    if tags_resp.changed() {
+                        app.state.requests[req_idx].tags = tags_csv
+                            .split(',')
+                            .map(|s| s.trim().to_owned())
+                            .filter(|s| !s.is_empty())
+                            .collect();
+                        changed = true;
+                    }
+                    if tags_resp.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter)) {
+                        ui.close();
+                    }
+                    ui.separator();
+                    if ui
+                        .button(if app.dirty() {
+                            "Save draft* (Ctrl+S)"
+                        } else {
+                            "Save draft (Ctrl+S)"
+                        })
+                        .clicked()
+                    {
+                        do_save = true;
+                        ui.close();
+                    }
+                    if ui.button("Duplicate request").clicked() {
+                        do_duplicate = true;
+                        ui.close();
+                    }
+                    ui.menu_button("Move to collection ▸", |ui| {
+                        ui.set_min_width(155.0);
+                        for (cid, cname) in &all_cols {
+                            let is_cur = *cid == cur_col_id;
+                            let lbl = if is_cur {
+                                format!("✓ {cname}")
+                            } else {
+                                cname.clone()
+                            };
+                            if ui.button(lbl).clicked() {
+                                if !is_cur {
+                                    move_to_col = Some(cid.clone());
+                                }
+                                ui.close();
+                            }
+                        }
+                    });
+                    if ui.button("Copy as cURL").clicked() {
+                        do_copy_curl = true;
+                        ui.close();
+                    }
+                    ui.separator();
+                    if ui
+                        .button(egui::RichText::new("Delete request").color(Tokens::TEXT_DANGER))
+                        .clicked()
+                    {
+                        do_delete = true;
+                        ui.close();
+                    }
+                });
         });
     });
     ui.add_space(3.0);

@@ -63,10 +63,10 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
     });
     ui.add_space(4.0);
 
-    // 2. Compact Search APIs + aligned Filter button (same 28px height, fits 100% inside sidebar)
+    // 2. Compact Search APIs + aligned Filter icon button (fits 100% inside sidebar without clipping)
     ui.horizontal(|ui| {
         ui.spacing_mut().item_spacing.x = 4.0;
-        let search_w = (ui.available_width() - 32.0).max(80.0);
+        let search_w = (ui.available_width() - 42.0).max(60.0);
         let search_resp = swaggen_ui_kit::text_input(
             ui,
             &mut app.search_query,
@@ -80,25 +80,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
         }
         let f_active =
             app.show_sidebar_filters || app.filter_method.is_some() || !app.filter_tag.is_empty();
-        if ui
-            .add(
-                egui::Button::new(egui::RichText::new("Filter").size(10.5).color(if f_active {
-                    Tokens::STATUS_INFO
-                } else {
-                    Tokens::TEXT_SECONDARY
-                }))
-                .fill(if f_active {
-                    Tokens::BG_SELECTED
-                } else {
-                    Tokens::BG_SURFACE
-                })
-                .stroke(egui::Stroke::new(1.0, Tokens::BORDER_DEFAULT))
-                .min_size(egui::vec2(28.0, 28.0))
-                .corner_radius(5),
-            )
-            .on_hover_text("Filter requests by HTTP method or tag")
-            .clicked()
-        {
+        if swaggen_ui_kit::filter_icon_button(ui, f_active).clicked() {
             app.show_sidebar_filters = !app.show_sidebar_filters;
         }
     });
@@ -423,27 +405,28 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                             Tokens::TEXT_SECONDARY
                         },
                     );
-                    let col_popup_id = ui.make_persistent_id(("col_popup", &col.id));
-                    if dots_resp.clicked() {
-                        egui::Popup::toggle_id(ui.ctx(), col_popup_id);
-                    }
+                    let dots_resp = dots_resp.on_hover_text("Collection actions");
                     let mut col_name_buf = col.name.clone();
                     let col_id_clone = col.id.clone();
                     let show_col_menu =
                         |ui: &mut egui::Ui,
                          acts: &mut SidebarActions,
                          col_name_buf: &mut String| {
-                            ui.set_min_width(168.0);
+                            ui.set_min_width(172.0);
                             ui.label(
                                 egui::RichText::new("Collection name")
                                     .size(10.5)
                                     .color(Tokens::TEXT_SECONDARY),
                             );
-                            if ui.text_edit_singleline(col_name_buf).changed()
-                                && !col_name_buf.trim().is_empty()
-                            {
+                            let name_resp = ui.text_edit_singleline(col_name_buf);
+                            if name_resp.changed() && !col_name_buf.trim().is_empty() {
                                 acts.rename_col =
                                     Some((col_id_clone.clone(), col_name_buf.trim().to_owned()));
+                            }
+                            if name_resp.lost_focus()
+                                && ui.input(|i| i.key_pressed(egui::Key::Enter))
+                            {
+                                ui.close();
                             }
                             ui.separator();
                             if ui.button("+ New request").clicked() {
@@ -476,7 +459,8 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                                 }
                             }
                         };
-                    egui::Popup::new(col_popup_id, ui.ctx().clone(), &dots_resp, ui.layer_id())
+                    egui::Popup::menu(&dots_resp)
+                        .close_behavior(egui::PopupCloseBehavior::CloseOnClickOutside)
                         .show(|ui| show_col_menu(ui, &mut acts, &mut col_name_buf));
                     toggle_resp.context_menu(|ui| show_col_menu(ui, &mut acts, &mut col_name_buf));
 
@@ -886,11 +870,7 @@ fn render_request_row(
         ui.ctx().set_cursor_icon(egui::CursorIcon::Grabbing);
     }
 
-    let popup_id = ui.make_persistent_id(("req_actions_popup", &req.id));
     let dots_resp = dots_resp.on_hover_text("Request actions (Save, Duplicate, Move, Delete)");
-    if dots_resp.clicked() {
-        egui::Popup::toggle_id(ui.ctx(), popup_id);
-    }
 
     let mut name_buf = req.name.clone();
     let req_id_clone = req.id.clone();
@@ -902,8 +882,12 @@ fn render_request_row(
                 .size(10.5)
                 .color(Tokens::TEXT_SECONDARY),
         );
-        if ui.text_edit_singleline(name_buf).changed() && !name_buf.trim().is_empty() {
+        let name_resp = ui.text_edit_singleline(name_buf);
+        if name_resp.changed() && !name_buf.trim().is_empty() {
             acts.rename_req = Some((req_id_clone.clone(), name_buf.trim().to_owned()));
+        }
+        if name_resp.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter)) {
+            ui.close();
         }
         ui.separator();
         if ui
@@ -948,7 +932,8 @@ fn render_request_row(
         }
     };
 
-    egui::Popup::new(popup_id, ui.ctx().clone(), &dots_resp, ui.layer_id())
+    egui::Popup::menu(&dots_resp)
+        .close_behavior(egui::PopupCloseBehavior::CloseOnClickOutside)
         .show(|ui| render_menu(ui, acts, &mut name_buf));
     main_resp.context_menu(|ui| render_menu(ui, acts, &mut name_buf));
 }
