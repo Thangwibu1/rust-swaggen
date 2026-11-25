@@ -263,7 +263,8 @@ fn show_auth_and_bootstrap(app: &mut App, ui: &mut egui::Ui) {
     }
     ui.add_space(12.0);
 
-    ui.columns(2, |cols| {
+    let auth_cols = if ui.available_width() < 680.0 { 1 } else { 2 };
+    ui.columns(auth_cols, |cols| {
         swaggen_ui_kit::surface_card(&mut cols[0], |ui| {
             swaggen_ui_kit::card_header(ui, "Sign In with Google");
             ui.label(
@@ -306,7 +307,11 @@ fn show_auth_and_bootstrap(app: &mut App, ui: &mut egui::Ui) {
             }
         });
 
-        swaggen_ui_kit::surface_card(&mut cols[1], |ui| {
+        if cols.len() == 1 {
+            cols[0].add_space(12.0);
+        }
+        let right_idx = 1 % cols.len();
+        swaggen_ui_kit::surface_card(&mut cols[right_idx], |ui| {
             swaggen_ui_kit::card_header(ui, "Accept Single-Use Team Invitation");
             let field_w = ui.available_width();
             swaggen_ui_kit::text_input(

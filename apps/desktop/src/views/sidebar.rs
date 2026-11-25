@@ -18,6 +18,7 @@ struct SidebarActions {
     del_folder_id: Option<String>,
     dup_req_id: Option<String>,
     del_req_id: Option<String>,
+    reorder_req: Option<(String, bool)>,
     move_req_to: Option<(String, String, Option<String>)>,
     rename_req: Option<(String, String)>,
     save_draft_now: bool,
@@ -29,41 +30,138 @@ struct SidebarActions {
 pub fn show(app: &mut App, ui: &mut egui::Ui) {
     let sidebar_full_rect = ui.max_rect();
 
-    // 1. Compact Brand title + workspace switcher
+    // 1. Brand title + Prominent Bordered Workspace Switcher Dropdown right beside Logo (F2)
     ui.horizontal(|ui| {
+        ui.spacing_mut().item_spacing.x = 6.0;
         ui.label(swaggen_ui_kit::bold_text(
             "SWAGGEN",
-            14.5,
-            Tokens::TEXT_PRIMARY,
+            13.5,
+            swaggen_ui_kit::text_primary(ui),
         ));
-        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-            let kind_label = if app.selected_team_workspace_id.is_some() {
-                "Team"
-            } else {
-                "Personal"
-            };
-            if ui
-                .add(
-                    egui::Button::new(
-                        egui::RichText::new(format!("{} · {kind_label} ▾", app.state.meta.name))
-                            .size(11.0)
-                            .color(Tokens::TEXT_SECONDARY),
-                    )
-                    .fill(egui::Color32::TRANSPARENT)
-                    .stroke(egui::Stroke::NONE)
-                    .frame(false),
+        let kind_badge = if app.selected_team_workspace_id.is_some() {
+            "Team"
+        } else {
+            "Personal"
+        };
+        let ws_btn_w = (ui.available_width() - 2.0).max(86.0);
+        let max_ws_chars = ((ws_btn_w - 58.0) / 6.5).max(5.0) as usize;
+        let ws_short: String = if app.state.meta.name.chars().count() > max_ws_chars {
+            let mut s: String = app
+                .state
+                .meta
+                .name
+                .chars()
+                .take(max_ws_chars.saturating_sub(1))
+                .collect();
+            s.push('…');
+            s
+        } else {
+            app.state.meta.name.clone()
+        };
+        let ws_btn = ui
+            .add_sized(
+                [ws_btn_w, 25.0],
+                egui::Button::new(
+                    egui::RichText::new(format!("{ws_short} · {kind_badge} ▾"))
+                        .size(11.0)
+                        .color(swaggen_ui_kit::text_primary(ui))
+                        .strong(),
                 )
-                .on_hover_text("Switch Individual / Team workspace")
-                .clicked()
-            {
-                app.hide_secret();
-                app.show_command_palette = false;
-                app.show_production_confirm = false;
-                app.show_workspace_modal = !app.show_workspace_modal;
+                .fill(swaggen_ui_kit::subtle_bg(ui))
+                .stroke(egui::Stroke::new(1.0, swaggen_ui_kit::border_color(ui)))
+                .corner_radius(5),
+            )
+            .on_hover_text("Switch Individual or Team Workspace");
+
+        let mut switch_local_ws: Option<swaggen_domain::LocalId> = None;
+        let mut switch_team_ws: Option<(String, String)> = None;
+        let mut open_ws_manager = false;
+        let local_ws_list = app.available_workspaces.clone();
+        let cur_ws_id = app.workspace_id.clone();
+        let cur_team_id = app.selected_team_workspace_id.clone();
+        let team_ws_list: Vec<(String, String, String)> = app
+            .team_workspaces
+            .iter()
+            .map(|tw| {
+                (
+                    tw.workspace_id.clone(),
+                    tw.name.clone(),
+                    format!("{:?}", tw.role),
+                )
+            })
+            .collect();
+
+        egui::Popup::menu(&ws_btn)
+            .id(egui::Id::unique("sidebar_ws_switcher_popup"))
+            .close_behavior(egui::PopupCloseBehavior::CloseOnClickOutside)
+            .show(|ui| {
+                ui.set_min_width(215.0);
+                ui.label(
+                    egui::RichText::new("INDIVIDUAL WORKSPACES (LOCAL)")
+                        .size(10.0)
+                        .color(swaggen_ui_kit::text_secondary(ui))
+                        .strong(),
+                );
+                for wid in &local_ws_list {
+                    let is_active = cur_team_id.is_none() && *wid == cur_ws_id;
+                    if ui
+                        .selectable_label(is_active, format!("📁 {}", wid.as_str()))
+                        .clicked()
+                    {
+                        switch_local_ws = Some(wid.clone());
+                        ui.close();
+                    }
+                }
+                if !team_ws_list.is_empty() {
+                    ui.separator();
+                    ui.label(
+                        egui::RichText::new("TEAM WORKSPACES")
+                            .size(10.0)
+                            .color(swaggen_ui_kit::text_secondary(ui))
+                            .strong(),
+                    );
+                    for (tid, tname, role_str) in &team_ws_list {
+                        let is_active = cur_team_id.as_deref() == Some(tid.as_str());
+                        if ui
+                            .selectable_label(is_active, format!("👥 {tname} ({role_str})"))
+                            .clicked()
+                        {
+                            switch_team_ws = Some((tid.clone(), tname.clone()));
+                            ui.close();
+                        }
+                    }
+                }
+                ui.separator();
+                if ui.button("+ Create or Manage Workspaces…").clicked() {
+                    open_ws_manager = true;
+                    ui.close();
+                }
+            });
+
+        if let Some(target_id) = switch_local_ws {
+            app.selected_team_workspace_id = None;
+            if target_id != app.workspace_id {
+                app.submit(crate::worker::Command::SwitchWorkspace { id: target_id });
             }
-        });
+        }
+        if let Some((tid, tname)) = switch_team_ws {
+            app.selected_team_workspace_id = Some(tid.clone());
+            app.status = format!("Active team workspace: {tname}");
+            if let Some(pid) = app.server_profiles.active().map(|p| p.id.clone()) {
+                app.submit(crate::worker::Command::LoadTeamWorkspaceDetails {
+                    profile_id: pid,
+                    workspace_id: tid,
+                });
+            }
+        }
+        if open_ws_manager {
+            app.hide_secret();
+            app.show_command_palette = false;
+            app.show_production_confirm = false;
+            app.show_workspace_modal = true;
+        }
     });
-    ui.add_space(4.0);
+    ui.add_space(5.0);
 
     // 2. Compact Search APIs + aligned Filter icon button (fits 100% inside sidebar without clipping)
     ui.horizontal(|ui| {
@@ -188,6 +286,8 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                     description: String::new(),
                     auth: Default::default(),
                     variables: Vec::new(),
+                    pre_request_script: String::new(),
+                    post_response_script: String::new(),
                     order_key: app.state.collections.len() as u64,
                 };
                 app.state.collections.push(col);
@@ -567,6 +667,8 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
             name: format!("Folder {}", app.state.folders.len() + 1),
             description: String::new(),
             auth: Default::default(),
+            pre_request_script: String::new(),
+            post_response_script: String::new(),
             order_key: app.state.folders.len() as u64,
         };
         app.state.folders.push(folder);
@@ -578,9 +680,15 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
         app.open_request_in_workbench(&new_id);
         app.mark_dirty();
     }
+    if let Some((rid, move_up)) = acts.reorder_req
+        && app.state.reorder_request(&rid, move_up)
+    {
+        app.mark_dirty();
+    }
     if let Some(rid) = acts.del_req_id
         && app.state.delete_request(&rid)
     {
+        app.status = "Moved request to Trash (restore anytime from Sidebar Trash)".into();
         app.mark_dirty();
     }
     if let Some((rid, target_cid, target_fid)) = acts.move_req_to
@@ -715,6 +823,81 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
         .clicked()
         {
             app.navigate_to(MainMode::Secrets);
+        }
+        if !app.state.trashed_requests.is_empty() {
+            let trash_btn = swaggen_ui_kit::nav_item(
+                ui,
+                IconKind::Trash,
+                "Trash (Restore)",
+                Some(app.state.trashed_requests.len()),
+                app.show_sidebar_trash,
+            );
+            let mut restore_id: Option<String> = None;
+            let mut empty_all = false;
+            let trashed_snapshot: Vec<(String, String, String)> = app
+                .state
+                .trashed_requests
+                .iter()
+                .rev()
+                .map(|r| (r.id.clone(), r.method.as_str().to_owned(), r.name.clone()))
+                .collect();
+            egui::Popup::menu(&trash_btn)
+                .id(egui::Id::unique("sidebar_trash_popup"))
+                .close_behavior(egui::PopupCloseBehavior::CloseOnClickOutside)
+                .show(|ui| {
+                    ui.set_min_width(220.0);
+                    ui.horizontal(|ui| {
+                        ui.label(
+                            egui::RichText::new("RECENTLY DELETED")
+                                .size(10.0)
+                                .color(swaggen_ui_kit::text_secondary(ui))
+                                .strong(),
+                        );
+                        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                            if ui
+                                .small_button(
+                                    egui::RichText::new("Empty").color(Tokens::TEXT_DANGER),
+                                )
+                                .clicked()
+                            {
+                                empty_all = true;
+                                ui.close();
+                            }
+                        });
+                    });
+                    ui.separator();
+                    for (tid, tm, tname) in &trashed_snapshot {
+                        ui.horizontal(|ui| {
+                            ui.monospace(
+                                egui::RichText::new(tm)
+                                    .size(10.0)
+                                    .color(swaggen_ui_kit::method_color(tm)),
+                            );
+                            ui.label(egui::RichText::new(tname).size(11.5));
+                            ui.with_layout(
+                                egui::Layout::right_to_left(egui::Align::Center),
+                                |ui| {
+                                    if ui.small_button("Restore").clicked() {
+                                        restore_id = Some(tid.clone());
+                                        ui.close();
+                                    }
+                                },
+                            );
+                        });
+                    }
+                });
+            if let Some(rid) = restore_id
+                && let Some(restored_id) = app.state.restore_trashed_request(&rid)
+            {
+                app.open_request_in_workbench(&restored_id);
+                app.mark_dirty();
+                app.status = "Restored request from Trash".into();
+            }
+            if empty_all {
+                app.state.empty_trash();
+                app.mark_dirty();
+                app.status = "Emptied workspace Trash".into();
+            }
         }
     }
 }
@@ -972,6 +1155,16 @@ fn render_request_row(
             acts.dup_req_id = Some(req_id_clone.clone());
             ui.close();
         }
+        ui.horizontal(|ui| {
+            if ui.small_button("↑ Move up").clicked() {
+                acts.reorder_req = Some((req_id_clone.clone(), true));
+                ui.close();
+            }
+            if ui.small_button("↓ Move down").clicked() {
+                acts.reorder_req = Some((req_id_clone.clone(), false));
+                ui.close();
+            }
+        });
         ui.menu_button("Move to collection ▸", |ui| {
             ui.set_min_width(150.0);
             for (cid, cname) in all_collections {

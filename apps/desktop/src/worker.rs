@@ -239,17 +239,36 @@ pub enum Command {
         scope: String,
         downloads_dir: PathBuf,
     },
+    RunOAuth2ClientCredentials {
+        token_url: String,
+        client_id: String,
+        client_secret: String,
+        scope: String,
+        downloads_dir: PathBuf,
+    },
     RunCollection {
         state: Box<WorkspaceState>,
         specs: Vec<SpecDocument>,
         config: swaggen_runner::collection_runner::RunnerConfig,
+        concurrency: usize,
     },
     CancelRunner,
     StartLocalMock {
         routes: Vec<swaggen_runner::local_mock::MockRoute>,
+        scenarios: Vec<swaggen_runner::advanced_protocols::MockScenarioRule>,
+        port: u16,
     },
     StopLocalMock,
     PollMockTraffic,
+    SendWebSocketMessage {
+        url: String,
+        message: String,
+    },
+    CallGrpcUnary {
+        endpoint: String,
+        service_method: String,
+        field_text: String,
+    },
     ExecuteGraphQl {
         endpoint: String,
         query: String,
@@ -283,6 +302,8 @@ pub enum Command {
     InternalHttpFinished {
         execution_id: u64,
         request: Box<RequestItem>,
+        state: Box<WorkspaceState>,
+        pre_script_report: Option<swaggen_runner::sandbox::SandboxExecutionReport>,
         resolved_url: String,
         now_secs: i64,
         result: Box<Result<HttpResponseData, HttpExecutionError>>,
@@ -362,6 +383,11 @@ pub enum Event {
         snapshot: Box<RequestItem>,
         response: HttpResponseData,
         extracted: Vec<(String, String, bool)>,
+        pre_script_report: Option<swaggen_runner::sandbox::SandboxExecutionReport>,
+        post_script_report: Option<swaggen_runner::sandbox::SandboxExecutionReport>,
+        mutated_env: BTreeMap<String, Option<String>>,
+        mutated_collection_vars: BTreeMap<String, Option<String>>,
+        mutated_globals: BTreeMap<String, Option<String>>,
         history: Vec<HistoryEntry>,
         storage_stats: StorageStats,
     },
@@ -388,6 +414,8 @@ pub enum Event {
     },
     SseEventReceived(swaggen_runner::protocols_and_tools::SseEventRecord),
     SseStopped(String),
+    WebSocketFinished(Result<String, String>),
+    GrpcUnaryFinished(Result<String, String>),
     UpdateCheckResult(crate::updater::UpdateCheckOutcome),
     UpdateInstallLaunched(String),
     HttpFailed {
@@ -1005,8 +1033,8 @@ impl Worker {
                     }
                     Command::SendHttp {
                         execution_id,
-                        request,
-                        state,
+                        mut request,
+                        mut state,
                     } => {
                         // Retrieve DPAPI secrets inside the worker ONLY for execution (EV05).
                         let mut secret_map = BTreeMap::new();
@@ -1019,6 +1047,94 @@ impl Worker {
                                 secret_map.insert(name, text.to_owned());
                             }
                         }
+
+                        // Execute Collection -> Folder -> Request Pre-request JS script before resolving {{variables}}!
+                        let mut combined_pre = String::new();
+                        if let Some(c) = state
+                            .collections
+                            .iter()
+                            .find(|c| c.id == request.collection_id)
+                            && !c.pre_request_script.trim().is_empty()
+                        {
+                            combined_pre.push_str(&c.pre_request_script);
+                            combined_pre.push('\n');
+                        }
+                        for f in folder_chain(&state.folders, request.folder_id.as_deref()) {
+                            if !f.pre_request_script.trim().is_empty() {
+                                combined_pre.push_str(&f.pre_request_script);
+                                combined_pre.push('\n');
+                            }
+                        }
+                        if !request.pre_request_script.trim().is_empty() {
+                            combined_pre.push_str(&request.pre_request_script);
+                        }
+
+                        let pre_script_report = if !combined_pre.trim().is_empty() {
+                            let env_vars: BTreeMap<String, String> = state
+                                .active_environment()
+                                .map(|e| {
+                                    e.variables
+                                        .iter()
+                                        .filter(|v| v.enabled)
+                                        .map(|v| (v.key.clone(), v.shared_value.clone()))
+                                        .collect()
+                                })
+                                .unwrap_or_default();
+                            let col_vars_map: BTreeMap<String, String> = state
+                                .collections
+                                .iter()
+                                .find(|c| c.id == request.collection_id)
+                                .map(|c| {
+                                    c.variables
+                                        .iter()
+                                        .filter(|v| v.enabled)
+                                        .map(|v| (v.key.clone(), v.shared_value.clone()))
+                                        .collect()
+                                })
+                                .unwrap_or_default();
+                            let global_vars: BTreeMap<String, String> = state
+                                .workspace_vars
+                                .iter()
+                                .filter(|v| v.enabled)
+                                .map(|v| (v.key.clone(), v.shared_value.clone()))
+                                .collect();
+                            let req_vars_map: BTreeMap<String, String> = request
+                                .local_vars
+                                .iter()
+                                .filter(|v| v.enabled)
+                                .map(|v| (v.key.clone(), v.shared_value.clone()))
+                                .collect();
+                            let pre_ctx = swaggen_runner::sandbox::ScriptContextSnapshot {
+                                env_vars,
+                                collection_vars: col_vars_map,
+                                global_vars,
+                                request_vars: req_vars_map,
+                                request_method: request.method.as_str().into(),
+                                request_url: request.url.clone(),
+                                request_headers: request
+                                    .headers
+                                    .iter()
+                                    .filter(|h| h.enabled)
+                                    .map(|h| (h.key.clone(), h.value.clone()))
+                                    .collect(),
+                                ..swaggen_runner::sandbox::ScriptContextSnapshot::default()
+                            };
+                            let rep = swaggen_runner::sandbox::execute_sandboxed_script(
+                                &combined_pre,
+                                &pre_ctx,
+                                swaggen_runner::sandbox::SandboxLimits::default(),
+                            );
+                            apply_script_var_mutations_to_state(
+                                &mut state,
+                                &mut request,
+                                &rep,
+                                true,
+                            );
+                            Some(rep)
+                        } else {
+                            None
+                        };
+
                         let col = state
                             .collections
                             .iter()
@@ -1077,6 +1193,8 @@ impl Worker {
                             let _ = reply_cmd.send(Command::InternalHttpFinished {
                                 execution_id,
                                 request,
+                                state,
+                                pre_script_report,
                                 resolved_url: resolved.masked_url,
                                 now_secs,
                                 result: Box::new(res),
@@ -1152,10 +1270,39 @@ impl Worker {
                             }
                         });
                     }
+                    Command::RunOAuth2ClientCredentials {
+                        token_url,
+                        client_id,
+                        client_secret,
+                        scope,
+                        downloads_dir,
+                    } => {
+                        let out = outgoing.clone();
+                        let wake_fn = wake.clone();
+                        runtime.spawn(async move {
+                            let mut form = vec![
+                                ("grant_type", "client_credentials"),
+                                ("client_id", client_id.as_str()),
+                                ("client_secret", client_secret.as_str()),
+                            ];
+                            if !scope.trim().is_empty() {
+                                form.push(("scope", scope.trim()));
+                            }
+                            let ev = match exchange_token_form(&token_url, &form, &downloads_dir)
+                                .await
+                            {
+                                Ok(tok) => Event::OAuth2TokenReceived(tok),
+                                Err(e) => Event::ActionError(e),
+                            };
+                            let _ = out.send(ev);
+                            wake_fn();
+                        });
+                    }
                     Command::RunCollection {
                         state,
                         specs,
                         config,
+                        concurrency,
                     } => {
                         let tok = CancellationToken::new();
                         runner_cancel = Some(tok.clone());
@@ -1173,15 +1320,68 @@ impl Worker {
                         let out = outgoing.clone();
                         let wake_fn = wake.clone();
                         runtime.spawn(async move {
-                            let rep = swaggen_runner::collection_runner::run_collection(
-                                &state,
-                                &specs,
-                                &secret_map,
-                                &downloads,
-                                &config,
-                                tok,
-                            )
-                            .await;
+                            let rep = if concurrency > 1 {
+                                let t0 = std::time::Instant::now();
+                                let started = time::OffsetDateTime::now_utc().unix_timestamp();
+                                let manifest =
+                                    swaggen_runner::collection_runner::build_run_manifest(
+                                        &state, &config, started,
+                                    );
+                                let shards =
+                                    swaggen_runner::collection_runner::run_collection_parallel(
+                                        &state,
+                                        &specs,
+                                        &secret_map,
+                                        &downloads,
+                                        &config,
+                                        concurrency,
+                                        tok,
+                                    )
+                                    .await;
+                                let mut steps = Vec::new();
+                                let mut passed = 0;
+                                let mut failed_assertions = 0;
+                                let mut failed_contract = 0;
+                                let mut skipped = 0;
+                                let mut infra_errors = 0;
+                                let mut canceled = false;
+                                for (s_idx, s) in shards.into_iter().enumerate() {
+                                    passed += s.passed;
+                                    failed_assertions += s.failed_assertions;
+                                    failed_contract += s.failed_contract;
+                                    skipped += s.skipped;
+                                    infra_errors += s.infra_errors;
+                                    canceled |= s.canceled;
+                                    for mut st in s.steps {
+                                        st.iteration = s_idx;
+                                        steps.push(st);
+                                    }
+                                }
+                                swaggen_runner::collection_runner::CollectionRunReport {
+                                    manifest,
+                                    started_at_unix: started,
+                                    finished_at_unix: time::OffsetDateTime::now_utc()
+                                        .unix_timestamp(),
+                                    total_duration_ms: t0.elapsed().as_millis() as u64,
+                                    canceled,
+                                    passed,
+                                    failed_assertions,
+                                    failed_contract,
+                                    skipped,
+                                    infra_errors,
+                                    steps,
+                                }
+                            } else {
+                                swaggen_runner::collection_runner::run_collection(
+                                    &state,
+                                    &specs,
+                                    &secret_map,
+                                    &downloads,
+                                    &config,
+                                    tok,
+                                )
+                                .await
+                            };
                             let _ = out.send(Event::CollectionRunFinished(Box::new(rep)));
                             wake_fn();
                         });
@@ -1191,11 +1391,17 @@ impl Worker {
                             tok.cancel();
                         }
                     }
-                    Command::StartLocalMock { routes } => {
+                    Command::StartLocalMock {
+                        routes,
+                        scenarios,
+                        port,
+                    } => {
                         local_mock_handle = None;
-                        let event = match runtime
-                            .block_on(swaggen_runner::local_mock::start_local_mock(routes))
-                        {
+                        let event = match runtime.block_on(
+                            swaggen_runner::local_mock::start_local_mock_with_options(
+                                routes, scenarios, port,
+                            ),
+                        ) {
                             Ok(handle) => {
                                 let url = handle.base_url.clone();
                                 local_mock_handle = Some(handle);
@@ -1210,6 +1416,123 @@ impl Worker {
                             break;
                         }
                         wake();
+                    }
+                    Command::SendWebSocketMessage { url, message } => {
+                        let out = outgoing.clone();
+                        let wake_fn = wake.clone();
+                        runtime.spawn(async move {
+                            let res = swaggen_runner::advanced_protocols::ws_exchange_text(
+                                &url,
+                                &message,
+                                CancellationToken::new(),
+                            )
+                            .await;
+                            let _ = out.send(Event::WebSocketFinished(res));
+                            wake_fn();
+                        });
+                    }
+                    Command::CallGrpcUnary {
+                        endpoint,
+                        service_method,
+                        field_text,
+                    } => {
+                        let dl = sess.ws_store.downloads_dir();
+                        let out = outgoing.clone();
+                        let wake_fn = wake.clone();
+                        runtime.spawn(async move {
+                            let proto_bytes =
+                                swaggen_runner::advanced_protocols::encode_proto_string_field(
+                                    1,
+                                    &field_text,
+                                );
+                            let grpc_frame = swaggen_runner::advanced_protocols::encode_grpc_frame(
+                                false,
+                                &proto_bytes,
+                            );
+                            let full_url = format!(
+                                "{}/{}",
+                                endpoint.trim_end_matches('/'),
+                                service_method.trim_start_matches('/')
+                            );
+                            let tmp_bin = dl.join(format!("grpc-req-{}.bin", new_uid()));
+                            let _ = std::fs::write(&tmp_bin, &grpc_frame);
+                            let req = swaggen_domain::workspace::ResolvedRequest {
+                                method: swaggen_domain::workspace::HttpMethod::Post,
+                                url: full_url.clone(),
+                                masked_url: full_url,
+                                headers: vec![
+                                    swaggen_domain::workspace::ResolvedHeader {
+                                        name: "Content-Type".into(),
+                                        value: "application/grpc+proto".into(),
+                                        generated: true,
+                                    },
+                                    swaggen_domain::workspace::ResolvedHeader {
+                                        name: "TE".into(),
+                                        value: "trailers".into(),
+                                        generated: true,
+                                    },
+                                ],
+                                masked_headers: Vec::new(),
+                                body: swaggen_domain::workspace::RequestBody::Binary {
+                                    local_path: Some(tmp_bin.display().to_string()),
+                                    content_type: "application/grpc+proto".into(),
+                                },
+                                masked_body_preview: format!(
+                                    "<gRPC frame {} bytes>",
+                                    grpc_frame.len()
+                                ),
+                                auth_source: "None".into(),
+                                warnings: Vec::new(),
+                                blocking_errors: Vec::new(),
+                                requires_production_confirm: false,
+                                connection:
+                                    swaggen_domain::workspace::RequestConnectionPolicy::default(),
+                            };
+                            let res = match execute_request(&req, &dl, CancellationToken::new())
+                                .await
+                            {
+                                Ok(resp) => {
+                                    let _ = std::fs::remove_file(&tmp_bin);
+                                    if let Ok((_, inner)) =
+                                        swaggen_runner::advanced_protocols::decode_grpc_frame(
+                                            &resp.preview_bytes,
+                                        )
+                                    {
+                                        match swaggen_runner::advanced_protocols::decode_proto_string_field(&inner, 1) {
+                                            Ok(decoded_str) => Ok(format!(
+                                                "HTTP {} · Decoded Protobuf field #1:\n{}",
+                                                resp.status_code, decoded_str
+                                            )),
+                                            Err(_) => Ok(format!(
+                                                "HTTP {} · Raw gRPC payload ({} bytes): {}",
+                                                resp.status_code,
+                                                inner.len(),
+                                                hex::encode(&inner)
+                                            )),
+                                        }
+                                    } else {
+                                        Ok(format!(
+                                            "HTTP {} ({} ms)\n{}",
+                                            resp.status_code,
+                                            resp.duration_ms,
+                                            String::from_utf8_lossy(&resp.preview_bytes)
+                                        ))
+                                    }
+                                }
+                                Err(e) => {
+                                    let _ = std::fs::remove_file(&tmp_bin);
+                                    Err(format!(
+                                        "{}: {} (Framed {} bytes: {})",
+                                        e.kind.as_str(),
+                                        e.message,
+                                        grpc_frame.len(),
+                                        hex::encode(&grpc_frame)
+                                    ))
+                                }
+                            };
+                            let _ = out.send(Event::GrpcUnaryFinished(res));
+                            wake_fn();
+                        });
                     }
                     Command::StopLocalMock => {
                         local_mock_handle = None;
@@ -1312,7 +1635,9 @@ impl Worker {
                     }
                     Command::InternalHttpFinished {
                         execution_id,
-                        request,
+                        mut request,
+                        mut state,
+                        pre_script_report,
                         resolved_url,
                         now_secs,
                         result,
@@ -1324,6 +1649,113 @@ impl Worker {
                                     &response.headers,
                                     &response.preview_bytes,
                                 );
+
+                                // Run Collection -> Folder -> Request Post-response JS script!
+                                let mut combined_post = String::new();
+                                if let Some(c) = state
+                                    .collections
+                                    .iter()
+                                    .find(|c| c.id == request.collection_id)
+                                    && !c.post_response_script.trim().is_empty()
+                                {
+                                    combined_post.push_str(&c.post_response_script);
+                                    combined_post.push('\n');
+                                }
+                                for f in folder_chain(&state.folders, request.folder_id.as_deref())
+                                {
+                                    if !f.post_response_script.trim().is_empty() {
+                                        combined_post.push_str(&f.post_response_script);
+                                        combined_post.push('\n');
+                                    }
+                                }
+                                if !request.post_response_script.trim().is_empty() {
+                                    combined_post.push_str(&request.post_response_script);
+                                }
+
+                                let post_script_report = if !combined_post.trim().is_empty() {
+                                    let env_vars: BTreeMap<String, String> = state
+                                        .active_environment()
+                                        .map(|e| {
+                                            e.variables
+                                                .iter()
+                                                .filter(|v| v.enabled)
+                                                .map(|v| (v.key.clone(), v.shared_value.clone()))
+                                                .collect()
+                                        })
+                                        .unwrap_or_default();
+                                    let col_vars_map: BTreeMap<String, String> = state
+                                        .collections
+                                        .iter()
+                                        .find(|c| c.id == request.collection_id)
+                                        .map(|c| {
+                                            c.variables
+                                                .iter()
+                                                .filter(|v| v.enabled)
+                                                .map(|v| (v.key.clone(), v.shared_value.clone()))
+                                                .collect()
+                                        })
+                                        .unwrap_or_default();
+                                    let global_vars: BTreeMap<String, String> = state
+                                        .workspace_vars
+                                        .iter()
+                                        .filter(|v| v.enabled)
+                                        .map(|v| (v.key.clone(), v.shared_value.clone()))
+                                        .collect();
+                                    let post_ctx = swaggen_runner::sandbox::ScriptContextSnapshot {
+                                        env_vars,
+                                        collection_vars: col_vars_map,
+                                        global_vars,
+                                        request_vars: request
+                                            .local_vars
+                                            .iter()
+                                            .filter(|v| v.enabled)
+                                            .map(|v| (v.key.clone(), v.shared_value.clone()))
+                                            .collect(),
+                                        request_method: request.method.as_str().into(),
+                                        request_url: resolved_url.clone(),
+                                        response_status: response.status_code,
+                                        response_time_ms: response.duration_ms,
+                                        response_body: String::from_utf8_lossy(
+                                            &response.preview_bytes,
+                                        )
+                                        .into_owned(),
+                                        response_headers: response.headers.clone(),
+                                        ..swaggen_runner::sandbox::ScriptContextSnapshot::default()
+                                    };
+                                    let rep = swaggen_runner::sandbox::execute_sandboxed_script(
+                                        &combined_post,
+                                        &post_ctx,
+                                        swaggen_runner::sandbox::SandboxLimits::default(),
+                                    );
+                                    apply_script_var_mutations_to_state(
+                                        &mut state,
+                                        &mut request,
+                                        &rep,
+                                        false,
+                                    );
+                                    Some(rep)
+                                } else {
+                                    None
+                                };
+
+                                let mut merged_env_mut = BTreeMap::new();
+                                let mut merged_col_mut = BTreeMap::new();
+                                let mut merged_glob_mut = BTreeMap::new();
+                                for rep in [&pre_script_report, &post_script_report]
+                                    .into_iter()
+                                    .flatten()
+                                {
+                                    for (k, v) in &rep.mutated_env {
+                                        merged_env_mut.insert(k.clone(), v.clone());
+                                    }
+                                    for (k, v) in &rep.mutated_collection_vars {
+                                        merged_col_mut.insert(k.clone(), v.clone());
+                                    }
+                                    for (k, v) in &rep.mutated_globals {
+                                        merged_glob_mut.insert(k.clone(), v.clone());
+                                    }
+                                }
+
                                 let entry = HistoryEntry {
                                     id: new_uid(),
                                     timestamp_epoch_secs: now_secs,
@@ -1339,11 +1771,23 @@ impl Worker {
                                     snapshot: (*request).clone(),
                                 };
                                 let _ = sess.ws_store.record_history(entry);
-                                if !response.captured_cookies.is_empty() || !extracted.is_empty() {
+                                if !response.captured_cookies.is_empty()
+                                    || !extracted.is_empty()
+                                    || !merged_env_mut.is_empty()
+                                    || !merged_col_mut.is_empty()
+                                    || !merged_glob_mut.is_empty()
+                                {
                                     let mut next = sess.ws_store.state().clone();
                                     for ck in &response.captured_cookies {
                                         upsert_cookie(&mut next.cookies, ck.clone());
                                     }
+                                    apply_merged_mutations(
+                                        &mut next,
+                                        &request.collection_id,
+                                        &merged_env_mut,
+                                        &merged_col_mut,
+                                        &merged_glob_mut,
+                                    );
                                     if let Some(env_id) = next.active_environment_id.clone()
                                         && let Some(env) =
                                             next.environments.iter_mut().find(|e| e.id == env_id)
@@ -1408,6 +1852,11 @@ impl Worker {
                                     snapshot: request,
                                     response,
                                     extracted: extracted_public,
+                                    pre_script_report,
+                                    post_script_report,
+                                    mutated_env: merged_env_mut,
+                                    mutated_collection_vars: merged_col_mut,
+                                    mutated_globals: merged_glob_mut,
                                     history: sess.ws_store.history().to_vec(),
                                     storage_stats: sess.ws_store.storage_stats().unwrap_or(
                                         StorageStats {
@@ -1638,6 +2087,82 @@ impl Worker {
         });
 
         Self { commands, events }
+    }
+}
+
+fn upsert_var_list(list: &mut Vec<VariableEntry>, map: &BTreeMap<String, Option<String>>) {
+    for (k, v_opt) in map {
+        match v_opt {
+            Some(val) => {
+                if let Some(ex) = list.iter_mut().find(|x| x.key == *k) {
+                    ex.shared_value = val.clone();
+                    ex.enabled = true;
+                } else {
+                    list.push(VariableEntry::public(k, val.clone()));
+                }
+            }
+            None => list.retain(|x| x.key != *k),
+        }
+    }
+}
+
+pub fn apply_merged_mutations(
+    state: &mut WorkspaceState,
+    collection_id: &str,
+    env_mut: &BTreeMap<String, Option<String>>,
+    col_mut: &BTreeMap<String, Option<String>>,
+    glob_mut: &BTreeMap<String, Option<String>>,
+) {
+    if !env_mut.is_empty()
+        && let Some(env_id) = state.active_environment_id.clone()
+        && let Some(env) = state.environments.iter_mut().find(|e| e.id == env_id)
+    {
+        upsert_var_list(&mut env.variables, env_mut);
+    }
+    if !col_mut.is_empty()
+        && let Some(col) = state.collections.iter_mut().find(|c| c.id == collection_id)
+    {
+        upsert_var_list(&mut col.variables, col_mut);
+    }
+    if !glob_mut.is_empty() {
+        upsert_var_list(&mut state.workspace_vars, glob_mut);
+    }
+}
+
+fn apply_script_var_mutations_to_state(
+    state: &mut WorkspaceState,
+    request: &mut RequestItem,
+    rep: &swaggen_runner::sandbox::SandboxExecutionReport,
+    apply_headers: bool,
+) {
+    apply_merged_mutations(
+        state,
+        &request.collection_id,
+        &rep.mutated_env,
+        &rep.mutated_collection_vars,
+        &rep.mutated_globals,
+    );
+    upsert_var_list(&mut request.local_vars, &rep.mutated_request_vars);
+    if apply_headers {
+        for (hk, hv_opt) in &rep.mutated_request_headers {
+            match hv_opt {
+                Some(hv) => {
+                    if let Some(ex) = request
+                        .headers
+                        .iter_mut()
+                        .find(|h| h.key.eq_ignore_ascii_case(hk))
+                    {
+                        ex.value = hv.clone();
+                        ex.enabled = true;
+                    } else {
+                        request
+                            .headers
+                            .push(swaggen_domain::workspace::KeyValueRow::new(hk, hv.clone()));
+                    }
+                }
+                None => request.headers.retain(|h| !h.key.eq_ignore_ascii_case(hk)),
+            }
+        }
     }
 }
 

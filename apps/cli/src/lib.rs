@@ -268,6 +268,7 @@ mod tests {
         assert_eq!(code_missing, EXIT_INFRA_OR_USAGE);
 
         ws.requests[0].url = format!("http://{addr}/ok?api_key=TOPSECRET99");
+        ws.requests[0].sync_params_from_url();
         fs::write(&ws_path, serde_json::to_string(&ws).unwrap()).unwrap();
         let (_, code_ok) = execute_cli_run(&args).await.unwrap();
         assert_eq!(code_ok, EXIT_OK);
@@ -275,6 +276,7 @@ mod tests {
         assert!(!junit_txt.contains("TOPSECRET99"));
 
         ws.requests[0].url = format!("http://{addr}/bad");
+        ws.requests[0].sync_params_from_url();
         fs::write(&ws_path, serde_json::to_string(&ws).unwrap()).unwrap();
         let (_, code_fail) = execute_cli_run(&args).await.unwrap();
         assert_eq!(code_fail, EXIT_TEST_FAILURE);

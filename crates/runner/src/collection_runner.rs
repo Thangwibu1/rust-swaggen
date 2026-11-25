@@ -6,7 +6,7 @@ use sha2::{Digest, Sha256};
 use std::{collections::BTreeMap, path::Path, time::Duration};
 use swaggen_domain::{
     dynamic_vars::apply_response_extractors,
-    security::{RedactionPolicy, sanitize_text},
+    security::{RedactionPolicy, sanitize_headers, sanitize_text},
     workspace::{
         Environment, RequestItem, VariableContext, VariableEntry, WorkspaceState, folder_chain,
         resolve_request_preview,
@@ -191,6 +191,20 @@ pub struct RunStepResult {
     pub contract_mismatches: Vec<String>,
     pub extracted_keys: Vec<String>,
     pub detail: String,
+    #[serde(default)]
+    pub request_headers_preview: Vec<(String, String)>,
+    #[serde(default)]
+    pub request_body_preview: String,
+    #[serde(default)]
+    pub response_headers_preview: Vec<(String, String)>,
+    #[serde(default)]
+    pub response_body_preview: String,
+    #[serde(default)]
+    pub script_tests: Vec<crate::sandbox::ScriptTestResult>,
+    #[serde(default)]
+    pub console_logs: Vec<String>,
+    #[serde(default)]
+    pub timings_summary: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -416,6 +430,13 @@ pub async fn run_collection(
                         contract_mismatches: Vec::new(),
                         extracted_keys: Vec::new(),
                         detail: "Skipped after fail-fast stop condition".into(),
+                        request_headers_preview: Vec::new(),
+                        request_body_preview: String::new(),
+                        response_headers_preview: Vec::new(),
+                        response_body_preview: String::new(),
+                        script_tests: Vec::new(),
+                        console_logs: Vec::new(),
+                        timings_summary: String::new(),
                     });
                     continue;
                 }
@@ -432,19 +453,160 @@ pub async fn run_collection(
                     }
                 }
 
+                let mut working_req = req.clone();
+                let mut step_logs = Vec::new();
+                let mut step_script_tests = Vec::new();
+                let mut extracted_keys = Vec::new();
+
                 let col = state.collections.iter().find(|c| c.id == req.collection_id);
                 let fchain = folder_chain(&state.folders, req.folder_id.as_deref());
+
+                // Run Collection -> Folder -> Request pre-request scripts before resolving {{variables}}!
+                let mut combined_pre = String::new();
+                if let Some(c) = col
+                    && !c.pre_request_script.trim().is_empty()
+                {
+                    combined_pre.push_str(&c.pre_request_script);
+                    combined_pre.push('\n');
+                }
+                for f in &fchain {
+                    if !f.pre_request_script.trim().is_empty() {
+                        combined_pre.push_str(&f.pre_request_script);
+                        combined_pre.push('\n');
+                    }
+                }
+                if !working_req.pre_request_script.trim().is_empty() {
+                    combined_pre.push_str(&working_req.pre_request_script);
+                }
+                if !combined_pre.trim().is_empty() {
+                    let pre_ctx = crate::sandbox::ScriptContextSnapshot {
+                        env_vars: iter_env
+                            .variables
+                            .iter()
+                            .filter(|v| v.enabled)
+                            .map(|v| (v.key.clone(), v.shared_value.clone()))
+                            .collect(),
+                        collection_vars: col
+                            .map(|c| {
+                                c.variables
+                                    .iter()
+                                    .filter(|v| v.enabled)
+                                    .map(|v| (v.key.clone(), v.shared_value.clone()))
+                                    .collect()
+                            })
+                            .unwrap_or_default(),
+                        global_vars: state
+                            .workspace_vars
+                            .iter()
+                            .filter(|v| v.enabled)
+                            .map(|v| (v.key.clone(), v.shared_value.clone()))
+                            .collect(),
+                        request_vars: working_req
+                            .local_vars
+                            .iter()
+                            .filter(|v| v.enabled)
+                            .map(|v| (v.key.clone(), v.shared_value.clone()))
+                            .collect(),
+                        request_method: working_req.method.as_str().into(),
+                        request_url: working_req.url.clone(),
+                        request_headers: working_req
+                            .headers
+                            .iter()
+                            .filter(|h| h.enabled)
+                            .map(|h| (h.key.clone(), h.value.clone()))
+                            .collect(),
+                        ..crate::sandbox::ScriptContextSnapshot::default()
+                    };
+                    let pre_rep = crate::sandbox::execute_sandboxed_script(
+                        &combined_pre,
+                        &pre_ctx,
+                        crate::sandbox::SandboxLimits::default(),
+                    );
+                    step_logs.extend(pre_rep.logs);
+                    step_script_tests.extend(pre_rep.test_results);
+                    for (k, val_opt) in pre_rep.mutated_env {
+                        match val_opt {
+                            Some(v) => {
+                                extracted_keys.push(k.clone());
+                                for target_env in [&mut iter_env, &mut working_env] {
+                                    if let Some(ex) =
+                                        target_env.variables.iter_mut().find(|x| x.key == k)
+                                    {
+                                        ex.shared_value = v.clone();
+                                    } else {
+                                        target_env
+                                            .variables
+                                            .push(VariableEntry::public(&k, v.clone()));
+                                    }
+                                }
+                            }
+                            None => {
+                                iter_env.variables.retain(|x| x.key != k);
+                                working_env.variables.retain(|x| x.key != k);
+                            }
+                        }
+                    }
+                    for (k, val_opt) in pre_rep.mutated_request_vars {
+                        match val_opt {
+                            Some(v) => {
+                                if let Some(ex) =
+                                    working_req.local_vars.iter_mut().find(|x| x.key == k)
+                                {
+                                    ex.shared_value = v;
+                                } else {
+                                    working_req.local_vars.push(VariableEntry::public(k, v));
+                                }
+                            }
+                            None => working_req.local_vars.retain(|x| x.key != k),
+                        }
+                    }
+                    for (hk, hv_opt) in pre_rep.mutated_request_headers {
+                        match hv_opt {
+                            Some(hv) => {
+                                if let Some(ex) = working_req
+                                    .headers
+                                    .iter_mut()
+                                    .find(|h| h.key.eq_ignore_ascii_case(&hk))
+                                {
+                                    ex.value = hv;
+                                    ex.enabled = true;
+                                } else {
+                                    working_req
+                                        .headers
+                                        .push(swaggen_domain::workspace::KeyValueRow::new(hk, hv));
+                                }
+                            }
+                            None => working_req
+                                .headers
+                                .retain(|h| !h.key.eq_ignore_ascii_case(&hk)),
+                        }
+                    }
+                }
+
                 let col_vars = col.map(|c| c.variables.as_slice()).unwrap_or(&[]);
                 let ctx = VariableContext {
                     workspace_vars: &state.workspace_vars,
                     collection_vars: col_vars,
                     environment: Some(&iter_env),
-                    request_vars: &req.local_vars,
+                    request_vars: &working_req.local_vars,
                     local_secrets,
                 };
                 let now_secs = time::OffsetDateTime::now_utc().unix_timestamp();
-                let resolved =
-                    resolve_request_preview(req, col, &fchain, &ctx, &working_cookies, now_secs);
+                let resolved = resolve_request_preview(
+                    &working_req,
+                    col,
+                    &fchain,
+                    &ctx,
+                    &working_cookies,
+                    now_secs,
+                );
+                let req_hdr_prev: Vec<(String, String)> = resolved
+                    .masked_headers
+                    .iter()
+                    .map(|h| (h.name.clone(), h.value.clone()))
+                    .collect();
+                let req_body_prev =
+                    sanitize_text(&resolved.masked_body_preview, &redaction).sanitized_text;
 
                 if !resolved.blocking_errors.is_empty() {
                     infra_errors += 1;
@@ -464,8 +626,15 @@ pub async fn run_collection(
                         assertions_passed: 0,
                         assertions_failed: 0,
                         contract_mismatches: Vec::new(),
-                        extracted_keys: Vec::new(),
+                        extracted_keys,
                         detail,
+                        request_headers_preview: req_hdr_prev,
+                        request_body_preview: req_body_prev,
+                        response_headers_preview: Vec::new(),
+                        response_body_preview: String::new(),
+                        script_tests: step_script_tests,
+                        console_logs: step_logs,
+                        timings_summary: String::new(),
                     });
                     if cfg.stop_on_failure {
                         fail_fast_triggered = true;
@@ -477,11 +646,10 @@ pub async fn run_collection(
                     Ok(resp) => {
                         working_cookies.extend(resp.captured_cookies.clone());
                         let extracted = apply_response_extractors(
-                            &req.extractors,
+                            &working_req.extractors,
                             &resp.headers,
                             &resp.preview_bytes,
                         );
-                        let mut extracted_keys = Vec::new();
                         for (k, v, _is_secret) in &extracted {
                             extracted_keys.push(k.clone());
                             if let Some(ex) = working_env.variables.iter_mut().find(|x| x.key == *k)
@@ -494,15 +662,109 @@ pub async fn run_collection(
                             }
                         }
 
+                        let resp_body_str =
+                            String::from_utf8_lossy(&resp.preview_bytes).into_owned();
+
+                        // Run Collection -> Folder -> Request post-response scripts!
+                        let mut combined_post = String::new();
+                        if let Some(c) = col
+                            && !c.post_response_script.trim().is_empty()
+                        {
+                            combined_post.push_str(&c.post_response_script);
+                            combined_post.push('\n');
+                        }
+                        for f in &fchain {
+                            if !f.post_response_script.trim().is_empty() {
+                                combined_post.push_str(&f.post_response_script);
+                                combined_post.push('\n');
+                            }
+                        }
+                        if !working_req.post_response_script.trim().is_empty() {
+                            combined_post.push_str(&working_req.post_response_script);
+                        }
+                        if !combined_post.trim().is_empty() {
+                            let post_ctx = crate::sandbox::ScriptContextSnapshot {
+                                env_vars: working_env
+                                    .variables
+                                    .iter()
+                                    .filter(|v| v.enabled)
+                                    .map(|v| (v.key.clone(), v.shared_value.clone()))
+                                    .collect(),
+                                collection_vars: col
+                                    .map(|c| {
+                                        c.variables
+                                            .iter()
+                                            .filter(|v| v.enabled)
+                                            .map(|v| (v.key.clone(), v.shared_value.clone()))
+                                            .collect()
+                                    })
+                                    .unwrap_or_default(),
+                                global_vars: state
+                                    .workspace_vars
+                                    .iter()
+                                    .filter(|v| v.enabled)
+                                    .map(|v| (v.key.clone(), v.shared_value.clone()))
+                                    .collect(),
+                                request_vars: working_req
+                                    .local_vars
+                                    .iter()
+                                    .filter(|v| v.enabled)
+                                    .map(|v| (v.key.clone(), v.shared_value.clone()))
+                                    .collect(),
+                                request_method: working_req.method.as_str().into(),
+                                request_url: resolved.masked_url.clone(),
+                                response_status: resp.status_code,
+                                response_time_ms: resp.duration_ms,
+                                response_body: resp_body_str.clone(),
+                                response_headers: resp.headers.clone(),
+                                ..crate::sandbox::ScriptContextSnapshot::default()
+                            };
+                            let post_rep = crate::sandbox::execute_sandboxed_script(
+                                &combined_post,
+                                &post_ctx,
+                                crate::sandbox::SandboxLimits::default(),
+                            );
+                            step_logs.extend(post_rep.logs);
+                            if let Some(script_err) = post_rep.error {
+                                step_script_tests.push(crate::sandbox::ScriptTestResult {
+                                    name: "Post-response script runtime".into(),
+                                    passed: false,
+                                    error: Some(script_err),
+                                });
+                            }
+                            step_script_tests.extend(post_rep.test_results);
+                            for (k, val_opt) in post_rep.mutated_env {
+                                match val_opt {
+                                    Some(v) => {
+                                        if !extracted_keys.contains(&k) {
+                                            extracted_keys.push(k.clone());
+                                        }
+                                        if let Some(ex) =
+                                            working_env.variables.iter_mut().find(|x| x.key == k)
+                                        {
+                                            ex.shared_value = v;
+                                        } else {
+                                            working_env.variables.push(VariableEntry::public(k, v));
+                                        }
+                                    }
+                                    None => working_env.variables.retain(|x| x.key != k),
+                                }
+                            }
+                        }
+
                         let a_res = evaluate_assertions(
-                            &req.assertions,
+                            &working_req.assertions,
                             resp.status_code,
                             resp.duration_ms,
                             &resp.headers,
                             &resp.preview_bytes,
                         );
-                        let assertions_passed = a_res.iter().filter(|a| a.passed).count();
-                        let assertions_failed = a_res.len().saturating_sub(assertions_passed);
+                        let script_passed = step_script_tests.iter().filter(|t| t.passed).count();
+                        let script_failed = step_script_tests.len().saturating_sub(script_passed);
+                        let decl_passed = a_res.iter().filter(|a| a.passed).count();
+                        let decl_failed = a_res.len().saturating_sub(decl_passed);
+                        let assertions_passed = decl_passed + script_passed;
+                        let assertions_failed = decl_failed + script_failed;
 
                         let mut contract_mismatches = Vec::new();
                         if cfg.validate_contract
@@ -536,11 +798,18 @@ pub async fn run_collection(
                             if cfg.stop_on_failure {
                                 fail_fast_triggered = true;
                             }
-                            let msgs: Vec<String> = a_res
+                            let mut msgs: Vec<String> = a_res
                                 .into_iter()
                                 .filter(|a| !a.passed)
                                 .map(|a| format!("{}: {}", a.label, a.detail))
                                 .collect();
+                            for st in step_script_tests.iter().filter(|t| !t.passed) {
+                                msgs.push(format!(
+                                    "{}: {}",
+                                    st.name,
+                                    st.error.as_deref().unwrap_or("failed")
+                                ));
+                            }
                             (
                                 StepOutcome::FailedAssertions,
                                 sanitize_text(&msgs.join("; "), &redaction).sanitized_text,
@@ -566,6 +835,22 @@ pub async fn run_collection(
                             )
                         };
 
+                        let (resp_hdr_clean, _) = sanitize_headers(&resp.headers, &redaction);
+                        let resp_preview_trimmed: String =
+                            sanitize_text(&resp_body_str, &redaction)
+                                .sanitized_text
+                                .chars()
+                                .take(4096)
+                                .collect();
+                        let timings_summary = format!(
+                            "DNS {}ms · TCP {}ms · TLS {}ms · TTFB {}ms · Total {}ms",
+                            resp.timings.dns_ms.unwrap_or(0),
+                            resp.timings.tcp_ms.unwrap_or(0),
+                            resp.timings.tls_ms.unwrap_or(0),
+                            resp.timings.ttfb_ms.unwrap_or(0),
+                            resp.timings.total_ms
+                        );
+
                         steps.push(RunStepResult {
                             iteration: iter_idx,
                             dataset_row: row_opt.map(|r| r.index),
@@ -582,6 +867,13 @@ pub async fn run_collection(
                             contract_mismatches,
                             extracted_keys,
                             detail,
+                            request_headers_preview: req_hdr_prev,
+                            request_body_preview: req_body_prev,
+                            response_headers_preview: resp_hdr_clean,
+                            response_body_preview: resp_preview_trimmed,
+                            script_tests: step_script_tests,
+                            console_logs: step_logs,
+                            timings_summary,
                         });
                     }
                     Err(err) => {
@@ -606,12 +898,19 @@ pub async fn run_collection(
                             assertions_passed: 0,
                             assertions_failed: 0,
                             contract_mismatches: Vec::new(),
-                            extracted_keys: Vec::new(),
+                            extracted_keys,
                             detail: sanitize_text(
                                 &format!("{}: {}", err.kind.as_str(), err.message),
                                 &redaction,
                             )
                             .sanitized_text,
+                            request_headers_preview: req_hdr_prev,
+                            request_body_preview: req_body_prev,
+                            response_headers_preview: Vec::new(),
+                            response_body_preview: String::new(),
+                            script_tests: step_script_tests,
+                            console_logs: step_logs,
+                            timings_summary: String::new(),
                         });
                         if canceled {
                             break;

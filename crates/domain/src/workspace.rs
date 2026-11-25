@@ -179,6 +179,13 @@ pub enum ApiKeyPlacement {
     Query,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub enum OAuthGrantType {
+    #[default]
+    AuthorizationCodePkce,
+    ClientCredentials,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub enum AuthConfig {
     #[default]
@@ -196,6 +203,51 @@ pub enum AuthConfig {
         value: String,
         placement: ApiKeyPlacement,
     },
+    OAuth2 {
+        #[serde(default)]
+        grant_type: OAuthGrantType,
+        auth_url: String,
+        token_url: String,
+        client_id: String,
+        #[serde(default)]
+        client_secret: String,
+        #[serde(default)]
+        scope: String,
+        #[serde(default)]
+        access_token: String,
+    },
+    AwsSigV4 {
+        access_key: String,
+        secret_key: String,
+        region: String,
+        service: String,
+        #[serde(default)]
+        session_token: String,
+    },
+    Digest {
+        username: String,
+        password: String,
+        realm: String,
+        nonce: String,
+    },
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub enum HttpVersionPolicy {
+    #[default]
+    Auto,
+    Http1Only,
+    Http2PriorKnowledge,
+}
+
+impl HttpVersionPolicy {
+    pub fn label(self) -> &'static str {
+        match self {
+            Self::Auto => "Auto (HTTP/1.1 + TLS ALPN)",
+            Self::Http1Only => "HTTP/1.1 only",
+            Self::Http2PriorKnowledge => "HTTP/2 (ALPN h2 / h2c)",
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -225,6 +277,8 @@ pub struct ClientCertMapping {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct RequestConnectionPolicy {
     pub timeout_ms: u64,
+    #[serde(default)]
+    pub http_version: HttpVersionPolicy,
     pub follow_redirects: bool,
     pub max_redirects: usize,
     pub send_auth_on_cross_host_redirect: bool,
@@ -241,6 +295,7 @@ impl Default for RequestConnectionPolicy {
     fn default() -> Self {
         Self {
             timeout_ms: 30_000,
+            http_version: HttpVersionPolicy::Auto,
             follow_redirects: true,
             max_redirects: 10,
             send_auth_on_cross_host_redirect: false,
@@ -291,6 +346,10 @@ pub struct RequestItem {
     #[serde(default)]
     pub extractors: Vec<crate::dynamic_vars::ResponseExtractorRule>,
     #[serde(default)]
+    pub pre_request_script: String,
+    #[serde(default)]
+    pub post_response_script: String,
+    #[serde(default)]
     pub idempotency_mode: IdempotencyMode,
     #[serde(default)]
     pub custom_idempotency_key: String,
@@ -327,6 +386,8 @@ impl RequestItem {
             local_vars: Vec::new(),
             assertions: Vec::new(),
             extractors: Vec::new(),
+            pre_request_script: String::new(),
+            post_response_script: String::new(),
             idempotency_mode: IdempotencyMode::AutoOnMutating,
             custom_idempotency_key: String::new(),
             idempotency_nonce: 0,
@@ -473,6 +534,10 @@ pub struct Folder {
     pub name: String,
     pub description: String,
     pub auth: AuthConfig,
+    #[serde(default)]
+    pub pre_request_script: String,
+    #[serde(default)]
+    pub post_response_script: String,
     pub order_key: u64,
 }
 
@@ -483,6 +548,10 @@ pub struct Collection {
     pub description: String,
     pub auth: AuthConfig,
     pub variables: Vec<VariableEntry>,
+    #[serde(default)]
+    pub pre_request_script: String,
+    #[serde(default)]
+    pub post_response_script: String,
     pub order_key: u64,
 }
 
@@ -524,24 +593,74 @@ pub struct PersonalVarOverride {
     pub secret_ref: Option<LocalId>,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub enum EnvTier {
+    Local,
+    #[default]
+    Development,
+    Staging,
+    Production,
+    Custom,
+}
+
+impl EnvTier {
+    pub fn label(self) -> &'static str {
+        match self {
+            Self::Local => "Local",
+            Self::Development => "Development",
+            Self::Staging => "Staging",
+            Self::Production => "Production",
+            Self::Custom => "Custom",
+        }
+    }
+
+    pub fn infer(name: &str, is_production: bool) -> Self {
+        if is_production {
+            return Self::Production;
+        }
+        let lower = name.trim().to_ascii_lowercase();
+        if lower.contains("prod") {
+            Self::Production
+        } else if lower.contains("stag") || lower.contains("uat") || lower.contains("qa") {
+            Self::Staging
+        } else if lower.contains("local") {
+            Self::Local
+        } else if lower.contains("dev") {
+            Self::Development
+        } else {
+            Self::Custom
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Environment {
     pub id: String,
     pub name: String,
     pub is_production: bool,
+    #[serde(default)]
+    pub tier: Option<EnvTier>,
     pub variables: Vec<VariableEntry>,
     pub personal_overrides: BTreeMap<String, PersonalVarOverride>,
 }
 
 impl Environment {
     pub fn new(name: impl Into<String>, is_production: bool) -> Self {
+        let name_str = name.into();
+        let inferred = EnvTier::infer(&name_str, is_production);
         Self {
             id: new_uid(),
-            name: name.into(),
+            name: name_str,
             is_production,
+            tier: Some(inferred),
             variables: Vec::new(),
             personal_overrides: BTreeMap::new(),
         }
+    }
+
+    pub fn effective_tier(&self) -> EnvTier {
+        self.tier
+            .unwrap_or_else(|| EnvTier::infer(&self.name, self.is_production))
     }
 }
 
@@ -931,9 +1050,34 @@ pub fn resolve_request_preview(
 
     // 1. Substitute URL & path params.
     // When `request.query_params` has rows, strip the inline `?query` mirror from `request.url`
-    // so synced URLs never double-append query parameters on send/preview.
+    // so synced URLs never double-append query parameters on send/preview. If `request.url`
+    // carries a freshly hand-edited `?query` that diverges from `request.query_params`, honor it.
     let (url_base_part, url_inline_query, url_fragment) = split_url_parts(&request.url);
-    let effective_url_template = if !request.query_params.is_empty() {
+    let parsed_inline_rows = if url_inline_query.is_some() {
+        extract_url_query_rows(&request.url)
+    } else {
+        Vec::new()
+    };
+    let inline_diverges_from_table = url_inline_query.is_some() && {
+        let enabled_table: Vec<(&str, &str)> = request
+            .query_params
+            .iter()
+            .filter(|q| q.enabled && !q.key.is_empty())
+            .map(|q| (q.key.as_str(), q.value.as_str()))
+            .collect();
+        let inline_pairs: Vec<(&str, &str)> = parsed_inline_rows
+            .iter()
+            .filter(|q| !q.key.is_empty())
+            .map(|q| (q.key.as_str(), q.value.as_str()))
+            .collect();
+        enabled_table != inline_pairs
+    };
+    let effective_query_rows: &[KeyValueRow] = if inline_diverges_from_table {
+        &parsed_inline_rows
+    } else {
+        &request.query_params
+    };
+    let effective_url_template = if !effective_query_rows.is_empty() {
         url_base_part.to_owned()
     } else if let Some(inline_q) = url_inline_query {
         format!("{url_base_part}?{inline_q}")
@@ -976,8 +1120,7 @@ pub fn resolve_request_preview(
     // 2. Append ordered query params (preserving duplicates, encoding cleanly).
     let mut query_pairs = Vec::new();
     let mut masked_query_pairs = Vec::new();
-    for q in request
-        .query_params
+    for q in effective_query_rows
         .iter()
         .filter(|q| q.enabled && !q.key.is_empty())
     {
@@ -996,27 +1139,59 @@ pub fn resolve_request_preview(
         masked_query_pairs.push((key, mval));
     }
 
-    // 3. Resolve Auth & inject header or query API key.
+    // 3. Resolve Auth & inject header or query API key (AU04, AU08, AU10).
     let eff_auth = resolve_effective_auth(collection, folder_chain, request);
     let mut headers = Vec::new();
     let mut masked_headers = Vec::new();
+    let mut deferred_sigv4: Option<(String, String, String, String, String)> = None;
+    let mut deferred_digest: Option<(String, String, String, String)> = None;
     match &eff_auth.config {
         AuthConfig::Inherit | AuthConfig::NoAuth => {}
         AuthConfig::Bearer { token } => {
-            let real = vars.substitute(token, false).unwrap_or_else(|e| {
-                blocking_errors.push(e.to_string());
-                token.clone()
-            });
-            headers.push(ResolvedHeader {
-                name: "Authorization".into(),
-                value: format!("Bearer {real}"),
-                generated: true,
-            });
-            masked_headers.push(ResolvedHeader {
-                name: "Authorization".into(),
-                value: "Bearer ••••••••".into(),
-                generated: true,
-            });
+            if token.trim().is_empty() {
+                warnings.push(
+                    "Bearer auth selected with empty token — enter a token or {{variable}} in Auth."
+                        .into(),
+                );
+            } else {
+                let real = vars.substitute(token, false).unwrap_or_else(|e| {
+                    blocking_errors.push(e.to_string());
+                    token.clone()
+                });
+                headers.push(ResolvedHeader {
+                    name: "Authorization".into(),
+                    value: format!("Bearer {real}"),
+                    generated: true,
+                });
+                masked_headers.push(ResolvedHeader {
+                    name: "Authorization".into(),
+                    value: "Bearer ••••••••".into(),
+                    generated: true,
+                });
+            }
+        }
+        AuthConfig::OAuth2 { access_token, .. } => {
+            if access_token.trim().is_empty() {
+                warnings.push(
+                    "OAuth 2.0 selected without an active access token — fetch a token in Auth."
+                        .into(),
+                );
+            } else {
+                let real = vars.substitute(access_token, false).unwrap_or_else(|e| {
+                    blocking_errors.push(e.to_string());
+                    access_token.clone()
+                });
+                headers.push(ResolvedHeader {
+                    name: "Authorization".into(),
+                    value: format!("Bearer {real}"),
+                    generated: true,
+                });
+                masked_headers.push(ResolvedHeader {
+                    name: "Authorization".into(),
+                    value: "Bearer ••••••••".into(),
+                    generated: true,
+                });
+            }
         }
         AuthConfig::Basic { username, password } => {
             let u = vars.substitute(username, false).unwrap_or_else(|e| {
@@ -1054,23 +1229,79 @@ pub fn resolve_request_preview(
             });
             match placement {
                 ApiKeyPlacement::Header => {
-                    headers.push(ResolvedHeader {
-                        name: real_k.clone(),
-                        value: real_v,
-                        generated: true,
-                    });
-                    masked_headers.push(ResolvedHeader {
-                        name: real_k,
-                        value: "••••••••".into(),
-                        generated: true,
-                    });
+                    if !real_k.trim().is_empty() {
+                        headers.push(ResolvedHeader {
+                            name: real_k.clone(),
+                            value: real_v,
+                            generated: true,
+                        });
+                        masked_headers.push(ResolvedHeader {
+                            name: real_k,
+                            value: "••••••••".into(),
+                            generated: true,
+                        });
+                    }
                 }
                 ApiKeyPlacement::Query => {
-                    warnings.push("API key in query string (H05): visible in server logs and scrubbed on default export.".into());
-                    query_pairs.push((real_k.clone(), real_v));
-                    masked_query_pairs.push((real_k, "••••••••".into()));
+                    if !real_k.trim().is_empty() {
+                        warnings.push("API key in query string (H05): visible in server logs and scrubbed on default export.".into());
+                        query_pairs.push((real_k.clone(), real_v));
+                        masked_query_pairs.push((real_k, "••••••••".into()));
+                    }
                 }
             }
+        }
+        AuthConfig::AwsSigV4 {
+            access_key,
+            secret_key,
+            region,
+            service,
+            session_token,
+        } => {
+            let ak = vars.substitute(access_key, false).unwrap_or_else(|e| {
+                blocking_errors.push(e.to_string());
+                access_key.clone()
+            });
+            let sk = vars.substitute(secret_key, false).unwrap_or_else(|e| {
+                blocking_errors.push(e.to_string());
+                secret_key.clone()
+            });
+            let reg = vars.substitute(region, false).unwrap_or_else(|e| {
+                blocking_errors.push(e.to_string());
+                region.clone()
+            });
+            let svc = vars.substitute(service, false).unwrap_or_else(|e| {
+                blocking_errors.push(e.to_string());
+                service.clone()
+            });
+            let st = vars
+                .substitute(session_token, false)
+                .unwrap_or_else(|_| session_token.clone());
+            deferred_sigv4 = Some((ak, sk, reg, svc, st));
+        }
+        AuthConfig::Digest {
+            username,
+            password,
+            realm,
+            nonce,
+        } => {
+            let u = vars.substitute(username, false).unwrap_or_else(|e| {
+                blocking_errors.push(e.to_string());
+                username.clone()
+            });
+            let p = vars.substitute(password, false).unwrap_or_else(|e| {
+                blocking_errors.push(e.to_string());
+                password.clone()
+            });
+            let r = vars.substitute(realm, false).unwrap_or_else(|e| {
+                blocking_errors.push(e.to_string());
+                realm.clone()
+            });
+            let n = vars.substitute(nonce, false).unwrap_or_else(|e| {
+                blocking_errors.push(e.to_string());
+                nonce.clone()
+            });
+            deferred_digest = Some((u, p, r, n));
         }
     }
 
@@ -1408,6 +1639,115 @@ pub fn resolve_request_preview(
         },
     };
 
+    // 5b. Deferred AWS SigV4 / HTTP Digest signing using final URL & resolved body (AU10).
+    if let Some((ak, sk, reg, svc, st)) = deferred_sigv4
+        && !ak.trim().is_empty()
+        && let Ok(parsed) = url::Url::parse(&final_url)
+    {
+        let host = match parsed.port() {
+            Some(p) => format!("{}:{p}", parsed.host_str().unwrap_or_default()),
+            None => parsed.host_str().unwrap_or_default().to_owned(),
+        };
+        let payload_bytes = match &resolved_body {
+            RequestBody::Json(s) | RequestBody::Text(s) | RequestBody::Xml(s) => s.as_bytes(),
+            _ => b"",
+        };
+        let dt = time::OffsetDateTime::from_unix_timestamp(now_epoch_secs)
+            .unwrap_or(time::OffsetDateTime::UNIX_EPOCH);
+        let amz_date = format!(
+            "{:04}{:02}{:02}T{:02}{:02}{:02}Z",
+            dt.year(),
+            dt.month() as u8,
+            dt.day(),
+            dt.hour(),
+            dt.minute(),
+            dt.second()
+        );
+        if let Some((auth_hdr, payload_sha)) = compute_aws_sigv4_headers(
+            request.method.as_str(),
+            &host,
+            parsed.path(),
+            parsed.query().unwrap_or(""),
+            &reg,
+            &svc,
+            &ak,
+            &sk,
+            &amz_date,
+            payload_bytes,
+        ) {
+            headers.push(ResolvedHeader {
+                name: "x-amz-date".into(),
+                value: amz_date.clone(),
+                generated: true,
+            });
+            masked_headers.push(ResolvedHeader {
+                name: "x-amz-date".into(),
+                value: amz_date,
+                generated: true,
+            });
+            headers.push(ResolvedHeader {
+                name: "x-amz-content-sha256".into(),
+                value: payload_sha.clone(),
+                generated: true,
+            });
+            masked_headers.push(ResolvedHeader {
+                name: "x-amz-content-sha256".into(),
+                value: payload_sha,
+                generated: true,
+            });
+            if !st.trim().is_empty() {
+                headers.push(ResolvedHeader {
+                    name: "x-amz-security-token".into(),
+                    value: st,
+                    generated: true,
+                });
+                masked_headers.push(ResolvedHeader {
+                    name: "x-amz-security-token".into(),
+                    value: "••••••••".into(),
+                    generated: true,
+                });
+            }
+            headers.push(ResolvedHeader {
+                name: "Authorization".into(),
+                value: auth_hdr,
+                generated: true,
+            });
+            masked_headers.push(ResolvedHeader {
+                name: "Authorization".into(),
+                value: "AWS4-HMAC-SHA256 ••••••••".into(),
+                generated: true,
+            });
+        }
+    }
+    if let Some((u, p, realm, nonce)) = deferred_digest
+        && !u.trim().is_empty()
+        && let Ok(parsed) = url::Url::parse(&final_url)
+    {
+        let mut uri_path = parsed.path().to_owned();
+        if let Some(q) = parsed.query() {
+            uri_path.push('?');
+            uri_path.push_str(q);
+        }
+        let digest_hdr = compute_digest_sha256_header(
+            &u,
+            &p,
+            &realm,
+            &nonce,
+            request.method.as_str(),
+            &uri_path,
+        );
+        headers.push(ResolvedHeader {
+            name: "Authorization".into(),
+            value: digest_hdr,
+            generated: true,
+        });
+        masked_headers.push(ResolvedHeader {
+            name: "Authorization".into(),
+            value: "Digest ••••••••".into(),
+            generated: true,
+        });
+    }
+
     // 6. Idempotency-Key generation for mutating HTTP (`POST` / `PATCH`) & GraphQL `mutation` requests.
     let should_inject_idempotency = match request.idempotency_mode {
         IdempotencyMode::Disabled => false,
@@ -1471,6 +1811,279 @@ pub fn resolve_request_preview(
         requires_production_confirm,
         connection: request.connection.clone(),
     }
+}
+
+#[allow(clippy::too_many_arguments)]
+fn compute_aws_sigv4_headers(
+    method: &str,
+    host: &str,
+    path: &str,
+    query: &str,
+    region: &str,
+    service: &str,
+    access_key: &str,
+    secret_key: &str,
+    amz_date: &str,
+    payload: &[u8],
+) -> Option<(String, String)> {
+    use hmac::{Hmac, KeyInit, Mac};
+    use sha2::{Digest, Sha256};
+    type HmacSha256 = Hmac<Sha256>;
+    let hmac_bytes = |key: &[u8], data: &[u8]| -> Option<Vec<u8>> {
+        let mut mac = HmacSha256::new_from_slice(key).ok()?;
+        mac.update(data);
+        Some(mac.finalize().into_bytes().to_vec())
+    };
+    let date_stamp = amz_date.get(..8)?;
+    let payload_hash = hex::encode(Sha256::digest(payload));
+    let canonical_headers = format!("host:{}\nx-amz-date:{amz_date}\n", host.trim());
+    let signed_headers = "host;x-amz-date";
+    let canonical_req = format!(
+        "{}\n{}\n{query}\n{canonical_headers}\n{signed_headers}\n{payload_hash}",
+        method.to_ascii_uppercase(),
+        if path.is_empty() { "/" } else { path },
+    );
+    let scope = format!(
+        "{date_stamp}/{}/{}/aws4_request",
+        if region.trim().is_empty() {
+            "us-east-1"
+        } else {
+            region.trim()
+        },
+        if service.trim().is_empty() {
+            "execute-api"
+        } else {
+            service.trim()
+        }
+    );
+    let string_to_sign = format!(
+        "AWS4-HMAC-SHA256\n{amz_date}\n{scope}\n{}",
+        hex::encode(Sha256::digest(canonical_req.as_bytes()))
+    );
+    let k_date = hmac_bytes(
+        format!("AWS4{secret_key}").as_bytes(),
+        date_stamp.as_bytes(),
+    )?;
+    let k_region = hmac_bytes(
+        &k_date,
+        if region.trim().is_empty() {
+            b"us-east-1"
+        } else {
+            region.trim().as_bytes()
+        },
+    )?;
+    let k_service = hmac_bytes(
+        &k_region,
+        if service.trim().is_empty() {
+            b"execute-api"
+        } else {
+            service.trim().as_bytes()
+        },
+    )?;
+    let k_signing = hmac_bytes(&k_service, b"aws4_request")?;
+    let sig = hex::encode(hmac_bytes(&k_signing, string_to_sign.as_bytes())?);
+    let auth = format!(
+        "AWS4-HMAC-SHA256 Credential={access_key}/{scope}, SignedHeaders={signed_headers}, Signature={sig}"
+    );
+    Some((auth, payload_hash))
+}
+
+fn compute_digest_sha256_header(
+    username: &str,
+    password: &str,
+    realm: &str,
+    nonce: &str,
+    method: &str,
+    uri: &str,
+) -> String {
+    use sha2::{Digest, Sha256};
+    let nc = "00000001";
+    let cnonce = "swaggen01";
+    let ha1 = hex::encode(Sha256::digest(
+        format!("{username}:{realm}:{password}").as_bytes(),
+    ));
+    let ha2 = hex::encode(Sha256::digest(format!("{method}:{uri}").as_bytes()));
+    let resp = hex::encode(Sha256::digest(
+        format!("{ha1}:{nonce}:{nc}:{cnonce}:auth:{ha2}").as_bytes(),
+    ));
+    format!(
+        "Digest username=\"{username}\", realm=\"{realm}\", nonce=\"{nonce}\", uri=\"{uri}\", algorithm=SHA-256, qop=auth, nc={nc}, cnonce=\"{cnonce}\", response=\"{resp}\""
+    )
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ReferencedVariableStatus {
+    pub name: String,
+    pub resolved_value: Option<String>,
+    pub masked_value: Option<String>,
+    pub source: Option<String>,
+    pub is_secret: bool,
+    pub error: Option<String>,
+}
+
+pub fn extract_template_var_names(input: &str, out: &mut Vec<String>) {
+    let mut rest = input;
+    while let Some(start) = rest.find("{{") {
+        let after = &rest[start + 2..];
+        let Some(end) = after.find("}}") else {
+            break;
+        };
+        let name = after[..end].trim();
+        if !name.is_empty() && !out.iter().any(|x| x == name) {
+            out.push(name.to_owned());
+        }
+        rest = &after[end + 2..];
+    }
+}
+
+/// Inspects every `{{variable}}` referenced in the request's URL, params, headers, body, and auth,
+/// returning live resolution values, scope sources, or missing/circular warnings for the UI!
+pub fn inspect_request_variables(
+    request: &RequestItem,
+    collection: Option<&Collection>,
+    folder_chain: &[&Folder],
+    vars: &VariableContext<'_>,
+) -> Vec<ReferencedVariableStatus> {
+    let mut names = Vec::new();
+    extract_template_var_names(&request.url, &mut names);
+    for p in request.path_params.iter().filter(|r| r.enabled) {
+        extract_template_var_names(&p.value, &mut names);
+    }
+    for q in request.query_params.iter().filter(|r| r.enabled) {
+        extract_template_var_names(&q.key, &mut names);
+        extract_template_var_names(&q.value, &mut names);
+    }
+    for h in request.headers.iter().filter(|r| r.enabled) {
+        extract_template_var_names(&h.value, &mut names);
+    }
+    match &request.body {
+        RequestBody::None | RequestBody::Binary { .. } => {}
+        RequestBody::Json(s) | RequestBody::Text(s) | RequestBody::Xml(s) => {
+            extract_template_var_names(s, &mut names);
+        }
+        RequestBody::GraphQl {
+            query,
+            variables,
+            operation_name,
+        } => {
+            extract_template_var_names(query, &mut names);
+            extract_template_var_names(variables, &mut names);
+            if let Some(op) = operation_name {
+                extract_template_var_names(op, &mut names);
+            }
+        }
+        RequestBody::FormUrlEncoded(rows) => {
+            for r in rows.iter().filter(|r| r.enabled) {
+                extract_template_var_names(&r.key, &mut names);
+                extract_template_var_names(&r.value, &mut names);
+            }
+        }
+        RequestBody::Multipart(fields) => {
+            for f in fields.iter().filter(|f| f.enabled) {
+                if let MultipartValueKind::Text(v) = &f.value {
+                    extract_template_var_names(v, &mut names);
+                }
+            }
+        }
+    }
+    let eff_auth = resolve_effective_auth(collection, folder_chain, request);
+    match &eff_auth.config {
+        AuthConfig::Inherit | AuthConfig::NoAuth => {}
+        AuthConfig::Bearer { token } => extract_template_var_names(token, &mut names),
+        AuthConfig::OAuth2 {
+            auth_url,
+            token_url,
+            client_id,
+            client_secret,
+            access_token,
+            ..
+        } => {
+            extract_template_var_names(auth_url, &mut names);
+            extract_template_var_names(token_url, &mut names);
+            extract_template_var_names(client_id, &mut names);
+            extract_template_var_names(client_secret, &mut names);
+            extract_template_var_names(access_token, &mut names);
+        }
+        AuthConfig::Basic { username, password } => {
+            extract_template_var_names(username, &mut names);
+            extract_template_var_names(password, &mut names);
+        }
+        AuthConfig::ApiKey { key, value, .. } => {
+            extract_template_var_names(key, &mut names);
+            extract_template_var_names(value, &mut names);
+        }
+        AuthConfig::AwsSigV4 {
+            access_key,
+            secret_key,
+            region,
+            service,
+            session_token,
+        } => {
+            extract_template_var_names(access_key, &mut names);
+            extract_template_var_names(secret_key, &mut names);
+            extract_template_var_names(region, &mut names);
+            extract_template_var_names(service, &mut names);
+            extract_template_var_names(session_token, &mut names);
+        }
+        AuthConfig::Digest {
+            username,
+            password,
+            realm,
+            nonce,
+        } => {
+            extract_template_var_names(username, &mut names);
+            extract_template_var_names(password, &mut names);
+            extract_template_var_names(realm, &mut names);
+            extract_template_var_names(nonce, &mut names);
+        }
+    }
+
+    names
+        .into_iter()
+        .map(|name| {
+            if name.starts_with('$')
+                && let Some(dyn_val) = crate::dynamic_vars::eval_dynamic_token(
+                    &name,
+                    1,
+                    time::OffsetDateTime::now_utc().unix_timestamp(),
+                )
+            {
+                return ReferencedVariableStatus {
+                    name,
+                    resolved_value: Some(dyn_val.clone()),
+                    masked_value: Some(dyn_val),
+                    source: Some("Dynamic Generator".into()),
+                    is_secret: false,
+                    error: None,
+                };
+            }
+            let tpl = format!("{{{{{name}}}}}");
+            let eff = vars.inspect(&name);
+            match vars.substitute(&tpl, false) {
+                Ok(resolved_val) => {
+                    let masked_val = vars
+                        .substitute(&tpl, true)
+                        .unwrap_or_else(|_| "••••••••".into());
+                    ReferencedVariableStatus {
+                        name,
+                        resolved_value: Some(resolved_val),
+                        masked_value: Some(masked_val),
+                        source: eff.as_ref().map(|e| e.source.clone()),
+                        is_secret: eff.as_ref().is_some_and(|e| e.is_secret),
+                        error: None,
+                    }
+                }
+                Err(err) => ReferencedVariableStatus {
+                    name,
+                    resolved_value: None,
+                    masked_value: None,
+                    source: eff.as_ref().map(|e| e.source.clone()),
+                    is_secret: eff.as_ref().is_some_and(|e| e.is_secret),
+                    error: Some(err.to_string()),
+                },
+            }
+        })
+        .collect()
 }
 
 fn compute_deterministic_idempotency_key(
@@ -2136,6 +2749,8 @@ pub struct WorkspaceState {
     pub collections: Vec<Collection>,
     pub folders: Vec<Folder>,
     pub requests: Vec<RequestItem>,
+    #[serde(default)]
+    pub trashed_requests: Vec<RequestItem>,
     pub environments: Vec<Environment>,
     pub active_environment_id: Option<String>,
     pub workspace_vars: Vec<VariableEntry>,
@@ -2156,6 +2771,8 @@ impl WorkspaceState {
             description: "Default offline personal collection".into(),
             auth: AuthConfig::Inherit,
             variables: Vec::new(),
+            pre_request_script: String::new(),
+            post_response_script: String::new(),
             order_key: 0,
         };
         let req = RequestItem::new(
@@ -2168,8 +2785,16 @@ impl WorkspaceState {
         let mut dev = Environment::new("Development", false);
         dev.variables
             .push(VariableEntry::public("base_url", "http://127.0.0.1:8080"));
-        let staging = Environment::new("Staging", false);
-        let prod = Environment::new("Production", true);
+        let mut staging = Environment::new("Staging", false);
+        staging.variables.push(VariableEntry::public(
+            "base_url",
+            "https://staging.api.example.test",
+        ));
+        let mut prod = Environment::new("Production", true);
+        prod.variables.push(VariableEntry::public(
+            "base_url",
+            "https://api.example.test",
+        ));
         let tab = RequestTab {
             id: new_uid(),
             request_id: req.id.clone(),
@@ -2190,6 +2815,7 @@ impl WorkspaceState {
             collections: vec![col],
             folders: Vec::new(),
             requests: vec![req],
+            trashed_requests: Vec::new(),
             environments: vec![dev, staging, prod],
             active_environment_id: active_env_id,
             workspace_vars: Vec::new(),
@@ -2287,16 +2913,88 @@ impl WorkspaceState {
     }
 
     pub fn delete_request(&mut self, request_id: &str) -> bool {
-        let before = self.requests.len();
-        self.requests.retain(|r| r.id != request_id);
-        if self.requests.len() == before {
+        let Some(pos) = self.requests.iter().position(|r| r.id == request_id) else {
             return false;
+        };
+        let removed = self.requests.remove(pos);
+        if self.trashed_requests.len() >= 100 {
+            self.trashed_requests.remove(0);
         }
+        self.trashed_requests.push(removed);
         self.open_tabs.retain(|t| t.request_id != request_id);
         if let Some(ref active) = self.active_tab_id
             && !self.open_tabs.iter().any(|t| &t.id == active)
         {
             self.active_tab_id = self.open_tabs.first().map(|t| t.id.clone());
+        }
+        true
+    }
+
+    pub fn restore_trashed_request(&mut self, request_id: &str) -> Option<String> {
+        let pos = self
+            .trashed_requests
+            .iter()
+            .position(|r| r.id == request_id)?;
+        let mut restored = self.trashed_requests.remove(pos);
+        if !self
+            .collections
+            .iter()
+            .any(|c| c.id == restored.collection_id)
+        {
+            if let Some(first_col) = self.collections.first() {
+                restored.collection_id = first_col.id.clone();
+                restored.folder_id = None;
+            }
+        } else if let Some(ref fid) = restored.folder_id
+            && !self.folders.iter().any(|f| f.id == *fid)
+        {
+            restored.folder_id = None;
+        }
+        let id = restored.id.clone();
+        self.requests.push(restored);
+        Some(id)
+    }
+
+    pub fn purge_trashed_request(&mut self, request_id: &str) -> bool {
+        let before = self.trashed_requests.len();
+        self.trashed_requests.retain(|r| r.id != request_id);
+        self.trashed_requests.len() != before
+    }
+
+    pub fn empty_trash(&mut self) {
+        self.trashed_requests.clear();
+    }
+
+    pub fn reorder_request(&mut self, request_id: &str, move_up: bool) -> bool {
+        let Some(idx) = self.requests.iter().position(|r| r.id == request_id) else {
+            return false;
+        };
+        let col_id = self.requests[idx].collection_id.clone();
+        let folder_id = self.requests[idx].folder_id.clone();
+        let peer_indices: Vec<usize> = self
+            .requests
+            .iter()
+            .enumerate()
+            .filter(|(_, r)| r.collection_id == col_id && r.folder_id == folder_id)
+            .map(|(i, _)| i)
+            .collect();
+        let Some(pos_in_peers) = peer_indices.iter().position(|&i| i == idx) else {
+            return false;
+        };
+        let swap_idx = if move_up {
+            if pos_in_peers == 0 {
+                return false;
+            }
+            peer_indices[pos_in_peers - 1]
+        } else {
+            if pos_in_peers + 1 >= peer_indices.len() {
+                return false;
+            }
+            peer_indices[pos_in_peers + 1]
+        };
+        self.requests.swap(idx, swap_idx);
+        for (k, r) in self.requests.iter_mut().enumerate() {
+            r.order_key = k as u64;
         }
         true
     }
@@ -2539,6 +3237,8 @@ mod tests {
                 token: "{{token}}".into(),
             },
             variables: Vec::new(),
+            pre_request_script: String::new(),
+            post_response_script: String::new(),
             order_key: 0,
         };
         let folder = Folder {
@@ -2548,6 +3248,8 @@ mod tests {
             name: "Admin".into(),
             description: String::new(),
             auth: AuthConfig::Inherit,
+            pre_request_script: String::new(),
+            post_response_script: String::new(),
             order_key: 0,
         };
         let mut req = RequestItem::new(
@@ -2771,5 +3473,107 @@ mod tests {
                 .any(|h| h.name.eq_ignore_ascii_case("Idempotency-Key")),
             "read-only GraphQL query must not inject Idempotency-Key under AutoOnMutating"
         );
+    }
+
+    #[test]
+    fn v0_1_16_auth_sigv4_digest_variable_inspector_and_soft_trash() {
+        let mut ws = WorkspaceState::new_personal(LocalId::parse("personal").unwrap(), "Personal");
+        assert_eq!(ws.environments.len(), 3);
+        // Every starter environment now includes a base_url variable so switching environments never breaks {{base_url}}.
+        for env in &ws.environments {
+            assert!(env.variables.iter().any(|v| v.key == "base_url"));
+        }
+
+        // Add a second request, test reordering and soft-delete trash + restore.
+        let col_id = ws.collections[0].id.clone();
+        let r2 = RequestItem::new(
+            col_id,
+            "Second Endpoint",
+            HttpMethod::Post,
+            "{{base_url}}/items/{{missing_id}}",
+        );
+        let r2_id = r2.id.clone();
+        ws.requests.push(r2);
+        assert!(ws.reorder_request(&r2_id, true));
+        assert_eq!(ws.requests[0].id, r2_id);
+
+        // Inspect variables: {{base_url}} resolves, {{missing_id}} reports missing error without crashing.
+        let active_env = ws.active_environment().cloned();
+        let col = ws.collections.first();
+        let var_ctx = VariableContext {
+            workspace_vars: &ws.workspace_vars,
+            collection_vars: col.map(|c| c.variables.as_slice()).unwrap_or(&[]),
+            environment: active_env.as_ref(),
+            request_vars: &[],
+            local_secrets: &BTreeMap::new(),
+        };
+        let statuses = inspect_request_variables(&ws.requests[0], col, &[], &var_ctx);
+        assert_eq!(statuses.len(), 2);
+        assert_eq!(statuses[0].name, "base_url");
+        assert!(statuses[0].error.is_none());
+        assert_eq!(statuses[1].name, "missing_id");
+        assert!(statuses[1].error.is_some());
+
+        // AWS SigV4 & Digest auth header generation
+        let mut sig_req = RequestItem::new(
+            "col-starter",
+            "SigV4 Check",
+            HttpMethod::Get,
+            "https://s3.us-east-1.amazonaws.com/bucket/key",
+        );
+        sig_req.auth = AuthConfig::AwsSigV4 {
+            access_key: "AKIAIOSFODNN7EXAMPLE".into(),
+            secret_key: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY".into(),
+            region: "us-east-1".into(),
+            service: "s3".into(),
+            session_token: "tok-123".into(),
+        };
+        let resolved_sig =
+            resolve_request_preview(&sig_req, None, &[], &var_ctx, &[], 1_700_000_000);
+        assert!(resolved_sig.blocking_errors.is_empty());
+        assert!(
+            resolved_sig
+                .headers
+                .iter()
+                .any(|h| h.name == "Authorization" && h.value.starts_with("AWS4-HMAC-SHA256 "))
+        );
+        assert!(
+            resolved_sig
+                .headers
+                .iter()
+                .any(
+                    |h| h.name.eq_ignore_ascii_case("x-amz-security-token") && h.value == "tok-123"
+                )
+        );
+
+        let mut dig_req = RequestItem::new(
+            "col-starter",
+            "Digest Check",
+            HttpMethod::Get,
+            "https://api.example.test/protected",
+        );
+        dig_req.auth = AuthConfig::Digest {
+            username: "alice".into(),
+            password: "secret".into(),
+            realm: "api".into(),
+            nonce: "dcd98b7102dd2f0e8b11d0f600bfb0c093".into(),
+        };
+        let resolved_dig =
+            resolve_request_preview(&dig_req, None, &[], &var_ctx, &[], 1_700_000_000);
+        assert!(
+            resolved_dig
+                .headers
+                .iter()
+                .any(|h| h.name == "Authorization"
+                    && h.value.starts_with("Digest username=\"alice\""))
+        );
+
+        // Soft-delete to Trash & Restore
+        assert!(ws.delete_request(&r2_id));
+        assert_eq!(ws.trashed_requests.len(), 1);
+        assert!(!ws.requests.iter().any(|r| r.id == r2_id));
+        assert!(ws.restore_trashed_request(&r2_id).is_some());
+        assert!(ws.trashed_requests.is_empty());
+        assert!(ws.requests.iter().any(|r| r.id == r2_id));
     }
 }

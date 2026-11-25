@@ -164,6 +164,7 @@ pub fn import_postman_collection_v2_1(
         unsupported_items: Vec::new(),
     };
     let col_auth = parse_postman_auth(root.get("auth"), &mut report);
+    let (col_pre, col_post) = extract_postman_scripts(root.get("event"));
     let mut folders = Vec::new();
     let mut requests = Vec::new();
     if let Some(items) = root.get("item").and_then(Value::as_array) {
@@ -184,9 +185,47 @@ pub fn import_postman_collection_v2_1(
         description: col_desc,
         auth: col_auth,
         variables,
+        pre_request_script: col_pre,
+        post_response_script: col_post,
         order_key: 0,
     };
     Ok((collection, folders, requests, report))
+}
+
+fn extract_postman_scripts(events_val: Option<&Value>) -> (String, String) {
+    let mut pre = String::new();
+    let mut post = String::new();
+    let Some(events) = events_val.and_then(Value::as_array) else {
+        return (pre, post);
+    };
+    for ev in events {
+        let listen = ev.get("listen").and_then(Value::as_str).unwrap_or("");
+        let exec = ev.get("script").and_then(|s| s.get("exec"));
+        let code = if let Some(lines) = exec.and_then(Value::as_array) {
+            lines
+                .iter()
+                .filter_map(Value::as_str)
+                .collect::<Vec<_>>()
+                .join("\n")
+        } else {
+            exec.and_then(Value::as_str).unwrap_or_default().to_owned()
+        };
+        if code.trim().is_empty() {
+            continue;
+        }
+        if listen == "prerequest" {
+            if !pre.is_empty() {
+                pre.push('\n');
+            }
+            pre.push_str(&code);
+        } else if listen == "test" {
+            if !post.is_empty() {
+                post.push('\n');
+            }
+            post.push_str(&code);
+        }
+    }
+    (pre, post)
 }
 
 fn walk_postman_items(
@@ -203,11 +242,12 @@ fn walk_postman_items(
             .and_then(Value::as_str)
             .unwrap_or("Unnamed")
             .to_owned();
+        let (pre_script, post_script) = extract_postman_scripts(item.get("event"));
         if let Some(events) = item.get("event").and_then(Value::as_array)
             && !events.is_empty()
         {
             report.unsupported_items.push(format!(
-                "Postman scripts on '{name}' are not executed in Phase A (preserved as warning)"
+                "Postman scripts on '{name}' imported into isolated Swaggen pm.* sandbox (Node/async APIs require review)"
             ));
         }
         if let Some(sub_items) = item.get("item").and_then(Value::as_array) {
@@ -223,6 +263,8 @@ fn walk_postman_items(
                     .unwrap_or_default()
                     .to_owned(),
                 auth: parse_postman_auth(item.get("auth"), report),
+                pre_request_script: pre_script,
+                post_response_script: post_script,
                 order_key: folders.len() as u64,
             });
             walk_postman_items(
@@ -242,6 +284,8 @@ fn walk_postman_items(
             let (url_str, query_params, path_params) = parse_postman_url(req_obj.get("url"));
             let mut req = RequestItem::new(col_id, name, method, url_str);
             req.folder_id = parent_folder_id.map(ToOwned::to_owned);
+            req.pre_request_script = pre_script;
+            req.post_response_script = post_script;
             if !query_params.is_empty() {
                 req.query_params = query_params;
                 req.sync_url_from_query_params();

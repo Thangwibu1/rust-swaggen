@@ -60,22 +60,23 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
             });
         });
 
+    let h_margin = if ui.available_width() < 760.0 { 18 } else { 48 };
     egui::CentralPanel::default()
         .frame(
             egui::Frame::new()
                 .fill(swaggen_ui_kit::page_bg(ui))
-                .inner_margin(egui::Margin::symmetric(48, 28)),
+                .inner_margin(egui::Margin::symmetric(h_margin, 24)),
         )
         .show(ui, |ui| {
             egui::ScrollArea::vertical().show(ui, |ui| {
                 // Brand hero header (clean transparent Figma Brand/Mark + wordmark)
-                ui.horizontal(|ui| {
+                ui.horizontal_wrapped(|ui| {
                     swaggen_ui_kit::brand_mark(ui, 34.0);
                     ui.add_space(10.0);
                     ui.label(swaggen_ui_kit::bold_text(
                         "swaggen",
                         22.0,
-                        Tokens::TEXT_PRIMARY,
+                        swaggen_ui_kit::text_primary(ui),
                     ));
                     ui.add_space(14.0);
                     swaggen_ui_kit::pill_badge(ui, Tokens::STATUS_SUCCESS, "Local-First");
@@ -85,7 +86,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                 ui.label(swaggen_ui_kit::bold_text(
                     "Choose your workspace",
                     28.0,
-                    Tokens::TEXT_PRIMARY,
+                    swaggen_ui_kit::text_primary(ui),
                 ));
                 ui.add_space(4.0);
                 ui.label(
@@ -93,11 +94,12 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                         "Start in an Individual workspace strictly on this device (no collaboration), or connect a Team workspace to sync collections and API specs.",
                     )
                     .size(13.0)
-                    .color(Tokens::TEXT_SECONDARY),
+                    .color(swaggen_ui_kit::text_secondary(ui)),
                 );
                 ui.add_space(18.0);
 
-                ui.columns(2, |cols| {
+                let welcome_cols = if ui.available_width() < 720.0 { 1 } else { 2 };
+                ui.columns(welcome_cols, |cols| {
                     // Column 1: Individual / Local Workspace (No Collaboration)
                     let left = &mut cols[0];
                     egui::Frame::new()
@@ -239,7 +241,11 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                         });
 
                     // Column 2: Team Workspace (Collaborate via Google + Swaggen Server)
-                    let right = &mut cols[1];
+                    if cols.len() == 1 {
+                        cols[0].add_space(12.0);
+                    }
+                    let right_idx = 1 % cols.len();
+                    let right = &mut cols[right_idx];
                     egui::Frame::new()
                         .fill(Tokens::BG_SURFACE)
                         .stroke(egui::Stroke::new(1.0, Tokens::BORDER_DEFAULT))

@@ -18,13 +18,12 @@ pub fn show(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
     let card_h = ui.available_height().max(96.0);
 
     egui::Frame::new()
-        .fill(Tokens::BG_SURFACE)
-        .stroke(egui::Stroke::new(1.0, Tokens::BORDER_DEFAULT))
-        .corner_radius(8)
-        .inner_margin(egui::Margin::symmetric(12, 8))
+        .fill(swaggen_ui_kit::surface_bg(ui))
+        .stroke(egui::Stroke::NONE)
+        .inner_margin(egui::Margin::symmetric(4, 4))
         .show(ui, |ui| {
             ui.set_min_width(ui.available_width());
-            ui.set_min_height((card_h - 16.0).max(80.0));
+            ui.set_min_height((card_h - 8.0).max(80.0));
 
             if is_inflight {
                 ui.horizontal(|ui| {
@@ -246,6 +245,24 @@ pub fn show(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
                     });
 
                     // Compact Row 2: Merged Sub-tabs (left) + Format & Search (right) on ONE single bar!
+                    let script_test_total = app
+                        .script_reports
+                        .get(&req_id)
+                        .map(|(pre, post)| {
+                            pre.as_ref().map(|r| r.test_results.len()).unwrap_or(0)
+                                + post.as_ref().map(|r| r.test_results.len()).unwrap_or(0)
+                        })
+                        .unwrap_or(0);
+                    let decl_test_total = app
+                        .active_request()
+                        .map(|r| r.assertions.len())
+                        .unwrap_or(0);
+                    let total_tests = script_test_total + decl_test_total;
+                    let tests_tab_lbl = if total_tests > 0 {
+                        format!("Tests & Console ({total_tests})")
+                    } else {
+                        "Tests & Console".into()
+                    };
                     ui.horizontal_wrapped(|ui| {
                         ui.spacing_mut().item_spacing.x = 2.0;
                         for (tab, label) in [
@@ -258,7 +275,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
                                     resp.captured_cookies.len()
                                 ),
                             ),
-                            (ResponseSubTab::Assertions, "Tests"),
+                            (ResponseSubTab::Assertions, tests_tab_lbl.as_str()),
                             (
                                 ResponseSubTab::Redirects,
                                 &format!("Redirects ({})", resp.redirect_chain.len()),
@@ -484,13 +501,65 @@ pub fn show(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
                                 }
                             }
                             ResponseSubTab::Assertions => {
+                                let script_pair = app.script_reports.get(&req_id).cloned();
                                 let rules = app
                                     .active_request()
                                     .map(|r| r.assertions.as_slice())
                                     .unwrap_or(&[]);
-                                if rules.is_empty() {
-                                    ui.label("No assertions defined on this request.");
-                                } else {
+
+                                if let Some((pre_opt, post_opt)) = &script_pair {
+                                    for (phase_name, rep_opt) in [
+                                        ("Pre-request JS", pre_opt),
+                                        ("Post-response JS", post_opt),
+                                    ] {
+                                        if let Some(rep) = rep_opt {
+                                            if let Some(ref err) = rep.error {
+                                                swaggen_ui_kit::notice_banner(
+                                                    ui,
+                                                    NoticeKind::Danger,
+                                                    &format!("{phase_name} error"),
+                                                    err,
+                                                );
+                                            }
+                                            for t in &rep.test_results {
+                                                ui.horizontal_wrapped(|ui| {
+                                                    swaggen_ui_kit::status_badge(
+                                                        ui,
+                                                        if t.passed {
+                                                            NoticeKind::Success
+                                                        } else {
+                                                            NoticeKind::Danger
+                                                        },
+                                                        if t.passed { "PASS" } else { "FAIL" },
+                                                    );
+                                                    ui.label(
+                                                        egui::RichText::new(&t.name).strong(),
+                                                    );
+                                                    if let Some(ref e) = t.error {
+                                                        ui.label(
+                                                            egui::RichText::new(e)
+                                                                .color(Tokens::TEXT_DANGER),
+                                                        );
+                                                    }
+                                                });
+                                            }
+                                            if !rep.logs.is_empty() {
+                                                ui.add_space(4.0);
+                                                ui.label(swaggen_ui_kit::bold_text(
+                                                    &format!("{phase_name} console.log"),
+                                                    11.0,
+                                                    swaggen_ui_kit::text_secondary(ui),
+                                                ));
+                                                swaggen_ui_kit::code_surface(
+                                                    ui,
+                                                    &rep.logs.join("\n"),
+                                                );
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if !rules.is_empty() {
                                     let results = evaluate_assertions(
                                         rules,
                                         resp.status_code,
@@ -499,7 +568,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
                                         &resp.preview_bytes,
                                     );
                                     for res in results {
-                                        ui.horizontal(|ui| {
+                                        ui.horizontal_wrapped(|ui| {
                                             swaggen_ui_kit::status_badge(
                                                 ui,
                                                 if res.passed {
@@ -513,6 +582,13 @@ pub fn show(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
                                             ui.label(&res.detail);
                                         });
                                     }
+                                } else if script_pair.is_none() {
+                                    ui.label(
+                                        egui::RichText::new(
+                                            "No test results yet. Add JS assertions in Scripts (Post-response) or rules in Assertions.",
+                                        )
+                                        .color(swaggen_ui_kit::text_secondary(ui)),
+                                    );
                                 }
                             }
                             ResponseSubTab::Redirects => {

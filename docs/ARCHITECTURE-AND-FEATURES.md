@@ -153,40 +153,42 @@ Backend (`axum 0.8.9`) phục vụ đồng bộ đội nhóm, quản lý quyền
 
 ---
 
-## 6. Tổng hợp Toàn bộ Tính năng Đã Hoàn thiện (Tính đến `v0.1.14`)
+## 6. Tổng hợp Toàn bộ Tính năng Đã Hoàn thiện (Tính đến `v0.1.16`)
 
-### A. API Workbench (REST & GraphQL)
-1. **Thực thi HTTP cục bộ từ PC**: Hỗ trợ `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `HEAD`, `OPTIONS` trực tiếp từ máy người dùng qua `swaggen-http-engine`, hiển thị tiến độ upload/download và cho phép `Cancel` tức thì.
-2. **Đồng bộ URL ↔ Query String & Path Params 2 chiều**:
-   - Tự động tách `?key=val` từ URL vào bảng `Query String` (giữ nguyên thứ tự và key trùng lặp, bỏ qua `{{var}}` khi tách host/port).
-   - Tự động nhận diện `:param` và `{param}` vào bảng `Path Params`; sửa ở URL hay ở bảng đều cập nhật tức thì sang phía còn lại.
-   - **Smart Filter Suggestions**: Tự động gợi ý các tham số lọc (`page`, `limit`, tên trường JSON) từ kết quả JSON trả về.
-   - Tự động ẩn tab `Body` khi dùng `GET`/`HEAD`.
-3. **GraphQL Studio toàn diện**:
-   - Tạo nhanh bằng nút `+ GQL` hoặc chuyển đổi qua lại `REST | GQL` ngay trên thanh URL.
-   - Trình soạn thảo đôi **Query/Mutation** ↔ **Variables (JSON)** có thanh kéo phân cách, bộ chọn `Operation`, nút `Sync $Vars` tự sinh JSON biến từ `$var` trong câu truy vấn.
-   - **Live Schema Introspection (`Fetch Schema`)** chạy trực tiếp từ PC để dựng **Schema Explorer**, bấm `Use` để sinh mẫu Query/Mutation hoàn chỉnh.
-   - Phân tích tĩnh **độ sâu, tổng số field, cảnh báo sớm N+1** và nhận diện mảng `errors[]` + telemetry `DB Queries: N (Batched)` trong Response.
-4. **Auth, Headers, Body & Cookies**:
-   - Kế thừa Auth (`Collection` → `Folder` → `Request`): `Bearer`, `Basic`, `API Key` (Header/Query), kèm **OAuth 2.0 PKCE Loopback Helper**.
-   - Body: `None`, `JSON` (kèm Format & kiểm tra cú pháp), `GraphQL`, `Text`, `XML`, `Form URL-encoded`, `Multipart` (text + file upload), `Binary`.
-   - Tự động bắt `Set-Cookie` và gửi lại `Cookie` khớp domain/path/secure/hết hạn.
-5. **Response Inspector & Diff**:
-   - Hỗ trợ `Expand` / `Restore` toàn vùng làm việc, Pretty JSON, lọc dòng, cây JSONPath click để copy, Raw, XML, Hex Binary, so sánh **Response Diff** giữa 2 lần gọi (có ignore fields), và lưu **Sanitized Example** tự che bí mật.
-6. **UI/UX High-Density & Drag-and-Drop**:
-   - Toàn bộ các panel (Sidebar, Request/Response Top-Bottom hoặc Left-Right, Key/Value columns, GraphQL Query/Variables) đều có **splitter kéo thả 1:1** ổn định (`egui::Id::unique` + `pointer_interact_pos()`).
-   - Kéo-thả Request giữa các Collection/Folder ngay trên Sidebar; các thao tác `Save draft`, `Duplicate`, `Rename`, `Move to collection`, `Delete` gọn trong popup `⋯` tự đóng khi click ra ngoài hoặc nhấn `Esc`.
+### A. API Workbench (Postman-Style Flat UI, REST & GraphQL)
+1. **Thực thi HTTP cục bộ trực tiếp từ PC**: Hỗ trợ `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `HEAD`, `OPTIONS` và `GRAPHQL` qua `swaggen-http-engine`, tuỳ chọn `HTTP Version` (`Auto / HTTP/1.1 / HTTP/2`), Local HTTP Proxy, Custom Root CA & mTLS Client Certificate, hiển thị tiến độ upload/download và `Cancel` tức thì.
+2. **Giao diện chuẩn Postman & Responsive Split-Screen (`v0.1.16`)**:
+   - **Flat Open Tab Strip** với viền nhấn xanh `#1D4ED8` phía trên (bỏ các khung card lồng nhau), thanh URL hợp nhất `[ Method ▾ | URL ] [ Send ] [ ⋯ ]` (gộp `GRAPHQL` vào ngay bộ chọn Method).
+   - **Bảng Key-Value dạng lưới phẳng (`✓ | KEY | VALUE | DESCRIPTION | ×`)** không viền lồng nhau, có vạch kéo chia cột `KEY | VALUE` mượt 1:1.
+   - **Đường chia vùng mỏng `1px` duy nhất** (loại bỏ vạch kéo màu xám và viền đôi giữa Request/Response), tự động co giãn mượt và gập cột thông minh khi chia đôi màn hình Windows (`Win + Left/Right`).
+   - **Workspace Switcher nổi bật ngay cạnh logo `SWAGGEN`** trên Sidebar, kèm sắp xếp thứ tự Request (`↑`/`↓`), kéo-thả giữa các Folder, và **Thùng rác khôi phục mềm (Trash & Restore)**.
+3. **Biến Môi trường 3 Tầng & Live `{{variable}}` Pills (`v0.1.16`)**:
+   - Quản lý trực quan 3 tầng biến trong `Environments`: **1. Deployment Environments** (`Local / Development / Staging / Production`), **2. Collection Variables**, **3. Global Workspace Variables**; click chọn môi trường là kích hoạt ngay kèm bộ chọn nhanh ở góc phải thanh Header.
+   - Ngay dưới thanh URL hiển thị **Live `{{variable}}` Status Pills**: báo rõ giá trị & tầng biến đang nhận, hoặc cảnh báo vàng `⚠ {{var}} · Click to set value` cho phép gán giá trị chỉ với 1 cú click.
+4. **GraphQL Studio toàn diện**:
+   - Chọn `GRAPHQL` ngay trong Method dropdown hoặc nút `+ GQL`.
+   - Trình soạn thảo đôi **Query/Mutation** ↔ **Variables (JSON)** có thanh kéo phân cách `1px`, bộ chọn `Operation`, nút `Sync $Vars`.
+   - **Live Schema Introspection (`Fetch Schema`)**, **Schema Explorer** bấm `Use` sinh mẫu Query/Mutation, phân tích tĩnh độ sâu/tổng field/N+1 và hiển thị `DB Queries: N (Batched)`.
+5. **Auth đầy đủ chuẩn Doanh nghiệp**:
+   - Kế thừa Auth (`Collection` → `Folder` → `Request`): `Bearer`, `Basic`, `API Key` (Header/Query), **OAuth 2.0** (`Authorization Code + PKCE` loopback & `Client Credentials` 1-click fetch token), **AWS Signature v4** (HMAC-SHA256 canonical signing), và **Digest Auth** (RFC 7616 SHA-256).
+6. **Pre-request & Post-response JS Automation trên từng Request (`v0.1.16`)**:
+   - Tab **`Scripts` (`Pre-request` | `Post-response (Tests)`)** trên mọi Request (và kế thừa từ `Collection` → `Folder` → `Request`, tự động import từ Postman v2.1 `event`).
+   - Sandbox JS thuần Rust cô lập hoàn toàn, hỗ trợ song song cú pháp **Postman `pm.*`** (`pm.environment/collectionVariables/globals/variables.get/set`, `pm.request.headers.upsert`, `pm.response.json()`, `pm.test`, `pm.expect`) VÀ **Playwright `test()` / `expect()`** (`.toBe`, `.toEqual`, `.toContain`, `.toHaveProperty`, `.toBeLessThan`), `Date.now()`, `crypto.randomUUID()`, `btoa`/`atob`, kèm thư viện mẫu 1-click và `Dry-run`.
 
-### B. Kiểm thử Tự động, Mock, Specs & CLI
-7. **Assertions & Response Extractors**: Kiểm tra Status, Max Duration (ms), Header, JSONPath, Body Contains; trích xuất giá trị từ JSONPath/Header lưu vào biến môi trường hoặc Secret DPAPI.
-8. **Collection Runner & Sandbox Scripts**: Chạy hàng loạt request theo dataset CSV/JSON, xuất báo cáo JSON / JUnit XML; hỗ trợ Sandbox Script kiểu `pm.test(...)` và hệ thống Extension cấp quyền chi tiết.
-9. **Local Mock Server & SSE**: Khởi tạo HTTP mock server cục bộ trên máy để test offline kèm log traffic; hỗ trợ theo dõi stream **Server-Sent Events (SSE)**.
-10. **OpenAPI / Swagger & Importers**: Kiểm định & chỉnh sửa OpenAPI 3.0/3.1, Swagger 2.0, Schema Tree, Contract Drift; Import từ **cURL**, **Postman v2.1** (REST & GraphQL), **HAR**, **`.http`**; sinh code snippet (`cURL`, `Rust`, `JavaScript`, `Dart`, `Go`).
-11. **Headless CLI (`swaggen-cli`)**: Chạy test suite trong CI/CD (`swaggen-cli run`) và xuất snippet (`swaggen-cli snippet`).
+### B. Playwright-Style Test Runner, Realtime Protocols, OpenAPI Studio & CLI
+7. **Playwright-Style Test Runner Studio (`v0.1.16`)**:
+   - Hỗ trợ 4 chế độ kiểm thử rõ ràng: **Unit Test**, **Functional (Data-driven CSV/JSON)**, **Integration**, và **End-to-End (E2E Workflow)** với chạy tuần tự hoặc **song song đa luồng (`Workers`)**.
+   - Bố cục 2 cột kiểu Playwright UI: Cây chọn Endpoint `[✓]` bên trái + Timeline thực thi & **Step Trace Inspector** (`Response` | `Request` | `Tests & Console` | `Variables & Timings`) bên phải; xuất báo cáo JSON & JUnit XML.
+8. **Scenario Mock Server & Giao thức Realtime (`WebSocket · SSE · gRPC`)**:
+   - Local Mock Server tuỳ chỉnh cổng (`Port`), hỗ trợ **Conditional Scenario Rules** (khớp method/path/query/header để trả status code và độ trễ giả lập `delay_ms`).
+   - Hỗ trợ kết nối trực tiếp **WebSocket (`ws://`/`wss://`)**, **Server-Sent Events (`SSE`)**, và **gRPC Unary over HTTP/2**.
+9. **OpenAPI / Swagger Studio 3 Chế độ & Import/Export Hub (`v0.1.16`)**:
+   - Có nút `×` xoá từng tab Spec, tự động phát hiện và cảnh báo thân thiện khi URL trả về trang HTML thay vì JSON/YAML, nạp file `.yaml`/`.json` từ ổ đĩa, và 3 chế độ: **Swagger Docs Preview** (mặc định), **Split YAML/JSON Editor + Docs**, **Linter, Contract Drift & SDK Generator**.
+   - **Import & Export Hub** gọn 2 tab: Import từ `OpenAPI / Swagger`, `Postman v2.1` (kèm scripts), `cURL`, `HAR 1.2`, `.http` có **Import Preview** trước khi nạp; Export ra Collection/OpenAPI/Git Sync/Offline Encrypted Bundle.
+10. **Headless CLI (`swaggen-cli`)**: Chạy test suite trong CI/CD (`swaggen-cli run`) và xuất code snippet (`cURL`, `Rust`, `JavaScript`, `Python`, `Go`, `C#`, `Java`, `PHP`, `Dart`).
 
-### C. Cộng tác Đội nhóm, Bảo mật & Đóng gói
-12. **Auth & RBAC**: Đăng nhập **Google qua Firebase** (mở trình duyệt loopback), tài khoản nội bộ Argon2id, TOTP MFA, quản lý & thu hồi phiên thiết bị, phân quyền `Owner / Admin / Editor / Viewer`, lời mời dùng 1 lần (one-time invite token).
-13. **Offline-First Sync & Versioning**: Hàng đợi Outbox bền vững trên ổ đĩa, đồng bộ delta/cursor, phát hiện xung đột & chọn giữ bản Local/Remote/CRDT Merge, lịch sử Revision & Restore, Branch & Merge Request, Comment Thread trên từng API, Realtime SSE Notifications.
-14. **End-to-End Idempotency**: Chống double-click trên UI, tự động sinh `Idempotency-Key` SHA-256 cho `POST`/`PATCH`/GraphQL `mutation`, nút `Rotate Key`, và middleware Server replay `2xx` / chặn `409 Conflict` khi sai lệch payload.
-15. **Bảo mật & Quyền riêng tư**: Lưu secret bằng **Windows DPAPI**, không gửi secret ra log/export/sync khi chưa làm sạch, kiểm tra **SSRF Guard** trước khi gọi webhook/outbound URL, Production Environment confirmation dialog trước khi gửi lệnh ghi lên môi trường Production.
-16. **Đóng gói & Cập nhật Windows**: Đóng gói đầy đủ bản Portable `.zip`, bộ cài Inno Setup `.exe`, bộ cài `.msi`, kèm `SHA256SUMS.txt` và hệ thống kiểm tra cập nhật ký số (`latest.json`).
+### C. Cộng tác Đội nhóm, Bảo mật, Giao diện Light/Dark & Đóng gói
+11. **Auth & RBAC**: Đăng nhập **Google qua Firebase** (loopback browser), tài khoản nội bộ Argon2id, TOTP MFA, quản lý & thu hồi phiên thiết bị, phân quyền `Owner / Admin / Editor / Viewer`, one-time invite token.
+12. **Offline-First Sync & Versioning**: Hàng đợi Outbox bền vững trên ổ đĩa, đồng bộ delta/cursor, giải quyết xung đột 3 chiều (Base / Local / Server), lịch sử Revision & Restore, Branch & Merge Request, Comment Thread trên từng API, Realtime SSE Notifications.
+13. **End-to-End Idempotency**: Chống double-click trên UI, tự động sinh `Idempotency-Key` SHA-256 cho `POST`/`PATCH`/GraphQL `mutation`, nút `Rotate Key`, và middleware Server replay `2xx` / chặn `409 Conflict`.
+14. **Bảo mật, Đa giao diện & Đóng gói Windows**: Lưu secret bằng **Windows DPAPI**, **SSRF Guard**, Production Environment confirmation dialog, tuỳ chọn giao diện **Light (Pure White chuẩn Figma mặc định) / Dark (Slate)** + ngôn ngữ `English / Tiếng Việt`, đóng gói Portable `.zip`, Inno Setup `.exe`, `.msi`, `SHA256SUMS.txt` và cập nhật ký số (`latest.json`).

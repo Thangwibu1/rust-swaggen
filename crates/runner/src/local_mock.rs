@@ -1,4 +1,5 @@
 //! Local Mock Server generated from sanitized ResponseExamples & schema-seeded OpenAPI specs (MK01, MK02).
+use crate::advanced_protocols::{MockScenarioRule, match_scenario_rule};
 use axum::{
     Router,
     body::Bytes,
@@ -166,6 +167,7 @@ impl Drop for LocalMockHandle {
 #[derive(Clone)]
 struct MockAppState {
     routes: Arc<Vec<MockRoute>>,
+    scenarios: Arc<Vec<MockScenarioRule>>,
     logs: Arc<Mutex<Vec<MockTrafficLog>>>,
 }
 
@@ -177,6 +179,7 @@ async fn mock_handler(
     body: Bytes,
 ) -> Response {
     let path = uri.path();
+    let query = uri.query().unwrap_or("");
     let req_headers: Vec<(String, String)> = headers
         .iter()
         .map(|(k, v)| (k.as_str().to_owned(), v.to_str().unwrap_or("").to_owned()))
@@ -184,6 +187,38 @@ async fn mock_handler(
     let _sanitized_hdrs = sanitize_headers(&req_headers, &RedactionPolicy::default());
     let body_txt = String::from_utf8_lossy(&body);
     let body_red = sanitize_text(&body_txt, &RedactionPolicy::default()).sanitized_text;
+
+    if let Some((rule, _)) = match_scenario_rule(
+        &st.scenarios,
+        method.as_str(),
+        path,
+        &req_headers,
+        query,
+        &body_txt,
+    ) {
+        if rule.delay_ms > 0 {
+            tokio::time::sleep(std::time::Duration::from_millis(rule.delay_ms.min(10_000))).await;
+        }
+        if let Ok(mut logs) = st.logs.lock() {
+            if logs.len() >= 200 {
+                logs.remove(0);
+            }
+            logs.push(MockTrafficLog {
+                method: method.as_str().into(),
+                path: path.to_owned(),
+                status: rule.status,
+                matched_source: format!("scenario:{}", rule.id),
+                body_preview_redacted: body_red.chars().take(512).collect(),
+            });
+        }
+        let status = StatusCode::from_u16(rule.status).unwrap_or(StatusCode::OK);
+        let mut resp = (status, rule.response_body.clone()).into_response();
+        resp.headers_mut().insert(
+            HeaderName::from_static("content-type"),
+            HeaderValue::from_static("application/json"),
+        );
+        return resp;
+    }
 
     if let Some(matched) = st
         .routes
@@ -224,13 +259,22 @@ async fn mock_handler(
 }
 
 pub async fn start_local_mock(routes: Vec<MockRoute>) -> Result<LocalMockHandle, String> {
-    let listener = tokio::net::TcpListener::bind("127.0.0.1:0")
+    start_local_mock_with_options(routes, Vec::new(), 0).await
+}
+
+pub async fn start_local_mock_with_options(
+    routes: Vec<MockRoute>,
+    scenarios: Vec<MockScenarioRule>,
+    port: u16,
+) -> Result<LocalMockHandle, String> {
+    let listener = tokio::net::TcpListener::bind(("127.0.0.1", port))
         .await
-        .map_err(|e| format!("Failed to bind local mock server: {e}"))?;
+        .map_err(|e| format!("Failed to bind local mock server on 127.0.0.1:{port}: {e}"))?;
     let addr = listener.local_addr().map_err(|e| e.to_string())?;
     let logs = Arc::new(Mutex::new(Vec::new()));
     let app_state = MockAppState {
         routes: Arc::new(routes),
+        scenarios: Arc::new(scenarios),
         logs: logs.clone(),
     };
     let app = Router::new().fallback(mock_handler).with_state(app_state);

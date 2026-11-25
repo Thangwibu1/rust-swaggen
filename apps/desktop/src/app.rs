@@ -46,6 +46,7 @@ pub enum RequestSubTab {
     Headers,
     Body,
     Auth,
+    Scripts,
     Assertions,
     Connection,
     Resolved,
@@ -264,10 +265,44 @@ pub struct App {
     pub update_signing_key: String,
     pub update_payload_text: String,
 
-    // P10 Sandboxed Script + Extensions UI state
+    // P10 Sandboxed Script + Extensions + v0.1.16 UX/Automation UI state
     pub sandbox_script_text: String,
     pub sandbox_report: Option<swaggen_runner::sandbox::SandboxExecutionReport>,
     pub extensions: Vec<swaggen_domain::extensions::ExtensionManifest>,
+    pub dark_mode: bool,
+    pub script_subtab_post: bool,
+    pub script_reports: HashMap<
+        String,
+        (
+            Option<swaggen_runner::sandbox::SandboxExecutionReport>,
+            Option<swaggen_runner::sandbox::SandboxExecutionReport>,
+        ),
+    >,
+    pub env_scope_tab: usize,
+    pub selected_collection_var_idx: usize,
+    pub quick_var_name: String,
+    pub quick_var_value: String,
+    pub spec_view_mode: usize,
+    pub spec_local_file_path: String,
+    pub runner_test_kind: usize,
+    pub runner_selected_requests: std::collections::BTreeSet<String>,
+    pub runner_concurrency: usize,
+    pub runner_selected_step_idx: usize,
+    pub runner_trace_tab: usize,
+    pub mock_port_input: String,
+    pub mock_scenarios: Vec<swaggen_runner::advanced_protocols::MockScenarioRule>,
+    pub protocol_subtab: usize,
+    pub ws_url_input: String,
+    pub ws_message_input: String,
+    pub ws_logs: Vec<String>,
+    pub grpc_endpoint_input: String,
+    pub grpc_method_input: String,
+    pub grpc_payload_input: String,
+    pub grpc_output: String,
+    pub import_hub_tab: usize,
+    pub import_source_kind: usize,
+    pub import_file_path: String,
+    pub show_sidebar_trash: bool,
 }
 
 impl App {
@@ -471,6 +506,34 @@ impl App {
                     .into_iter()
                     .collect(),
             )],
+            dark_mode: false,
+            script_subtab_post: true,
+            script_reports: HashMap::new(),
+            env_scope_tab: 0,
+            selected_collection_var_idx: 0,
+            quick_var_name: String::new(),
+            quick_var_value: String::new(),
+            spec_view_mode: 0,
+            spec_local_file_path: String::new(),
+            runner_test_kind: 0,
+            runner_selected_requests: std::collections::BTreeSet::new(),
+            runner_concurrency: 1,
+            runner_selected_step_idx: 0,
+            runner_trace_tab: 0,
+            mock_port_input: "0".into(),
+            mock_scenarios: Vec::new(),
+            protocol_subtab: 0,
+            ws_url_input: "ws://127.0.0.1:8080/ws".into(),
+            ws_message_input: "{\"ping\":1}".into(),
+            ws_logs: Vec::new(),
+            grpc_endpoint_input: "http://127.0.0.1:50051".into(),
+            grpc_method_input: "greeter.Greeter/SayHello".into(),
+            grpc_payload_input: "Swaggen".into(),
+            grpc_output: String::new(),
+            import_hub_tab: 0,
+            import_source_kind: 0,
+            import_file_path: String::new(),
+            show_sidebar_trash: false,
         }
     }
 
@@ -920,6 +983,15 @@ impl App {
                     self.status = format!("OAuth2 PKCE callback listening at {redirect_uri}");
                 }
                 Event::OAuth2TokenReceived(tok) => {
+                    if let Some(rid) = self.active_request_id()
+                        && let Some(req) = self.state.requests.iter_mut().find(|r| r.id == rid)
+                        && let swaggen_domain::workspace::AuthConfig::OAuth2 {
+                            access_token, ..
+                        } = &mut req.auth
+                    {
+                        *access_token = tok.access_token.clone();
+                        self.mark_dirty();
+                    }
                     if let Ok(id) = LocalId::parse("oauth_access_token")
                         && let Ok(sec) = Secret::new(tok.access_token.as_bytes().to_vec())
                     {
@@ -929,7 +1001,7 @@ impl App {
                         });
                     }
                     self.status = format!(
-                        "OAuth2 token received ({}; saved locally as secret 'oauth_access_token')",
+                        "OAuth2 token received ({}; attached & saved locally as 'oauth_access_token')",
                         tok.token_type
                     );
                 }
@@ -995,6 +1067,28 @@ impl App {
                     self.sse_running = false;
                     self.status = msg;
                 }
+                Event::WebSocketFinished(res) => match res {
+                    Ok(reply) => {
+                        self.ws_logs.push(format!("← {reply}"));
+                        self.status = "WebSocket frame exchanged cleanly".into();
+                    }
+                    Err(err) => {
+                        self.error = true;
+                        self.ws_logs.push(format!("✖ {err}"));
+                        self.status = format!("WebSocket error: {err}");
+                    }
+                },
+                Event::GrpcUnaryFinished(res) => match res {
+                    Ok(out) => {
+                        self.grpc_output = out;
+                        self.status = "gRPC unary call finished".into();
+                    }
+                    Err(err) => {
+                        self.error = true;
+                        self.grpc_output = err.clone();
+                        self.status = err;
+                    }
+                },
                 Event::UpdateCheckResult(outcome) => {
                     self.status = if outcome.update_available {
                         format!(
@@ -1012,8 +1106,14 @@ impl App {
                 Event::HttpCompleted {
                     execution_id,
                     request_id,
+                    snapshot,
                     response,
                     extracted,
+                    pre_script_report,
+                    post_script_report,
+                    mutated_env,
+                    mutated_collection_vars,
+                    mutated_globals,
                     history,
                     storage_stats,
                     ..
@@ -1035,7 +1135,28 @@ impl App {
                             self.state.cookies.push(ck.clone());
                         }
                     }
-                    let extracted_count = extracted.len();
+                    crate::worker::apply_merged_mutations(
+                        &mut self.state,
+                        &snapshot.collection_id,
+                        &mutated_env,
+                        &mutated_collection_vars,
+                        &mutated_globals,
+                    );
+                    let script_var_count =
+                        mutated_env.len() + mutated_collection_vars.len() + mutated_globals.len();
+                    let script_tests_count = pre_script_report
+                        .as_ref()
+                        .map(|r| r.test_results.len())
+                        .unwrap_or(0)
+                        + post_script_report
+                            .as_ref()
+                            .map(|r| r.test_results.len())
+                            .unwrap_or(0);
+                    if pre_script_report.is_some() || post_script_report.is_some() {
+                        self.script_reports
+                            .insert(request_id.clone(), (pre_script_report, post_script_report));
+                    }
+                    let extracted_count = extracted.len() + script_var_count;
                     if extracted_count > 0
                         && let Some(env_id) = self.state.active_environment_id.clone()
                         && let Some(env) =
@@ -1070,12 +1191,17 @@ impl App {
                         }
                     };
                     self.status = format!(
-                        "HTTP {} ({} ms · {} bytes{})",
+                        "HTTP {} ({} ms · {} bytes{}{})",
                         response.status_code,
                         response.duration_ms,
                         response.decoded_bytes,
                         if extracted_count > 0 {
-                            format!(" · {extracted_count} var(s) extracted")
+                            format!(" · {extracted_count} var(s) updated")
+                        } else {
+                            String::new()
+                        },
+                        if script_tests_count > 0 {
+                            format!(" · {script_tests_count} script test(s)")
                         } else {
                             String::new()
                         }
@@ -1580,13 +1706,19 @@ impl eframe::App for App {
             });
         swaggen_ui_kit::paint_edge_divider(ui, rail_resp.response.rect, Edge::Right);
 
-        // 3. Left Project Sidebar + Dedicated Pointer-Locked Outer Resizer Strip (192px..520px).
+        // 3. Left Project Sidebar + Razor-Thin 1px Resizer Strip (responsive to half-screen snap).
+        let window_total_w = ctx.content_rect().width().max(480.0);
+        let responsive_sidebar_max = (window_total_w * 0.38).clamp(192.0, 480.0);
         if !self.state.layout.sidebar_collapsed {
-            let cur_sidebar_w = self.state.layout.sidebar_width.clamp(192.0, 520.0);
+            let cur_sidebar_w = self
+                .state
+                .layout
+                .sidebar_width
+                .clamp(186.0, responsive_sidebar_max);
             let sidebar_frame = egui::Frame::new()
                 .fill(swaggen_ui_kit::surface_bg(ui))
                 .stroke(egui::Stroke::NONE)
-                .inner_margin(egui::Margin::symmetric(8, 10));
+                .inner_margin(egui::Margin::symmetric(8, 8));
             egui::Panel::left("sidebar")
                 .resizable(false)
                 .exact_size(cur_sidebar_w)
@@ -1601,7 +1733,7 @@ impl eframe::App for App {
                 .inner_margin(egui::Margin::ZERO);
             egui::Panel::left("sidebar_resizer")
                 .resizable(false)
-                .exact_size(6.0)
+                .exact_size(4.0)
                 .frame(resizer_frame)
                 .show(ui, |ui| {
                     let full_rect = ui.max_rect();
@@ -1614,14 +1746,15 @@ impl eframe::App for App {
                     if resp.dragged()
                         && let Some(pos) = ctx.pointer_interact_pos()
                     {
-                        self.state.layout.sidebar_width = (pos.x - rail_w).clamp(192.0, 520.0);
+                        self.state.layout.sidebar_width =
+                            (pos.x - rail_w).clamp(186.0, responsive_sidebar_max);
                         ctx.request_repaint();
                     }
                     if resp
                         .on_hover_text("Drag left/right to resize Sidebar · Double-click to reset")
                         .double_clicked()
                     {
-                        self.state.layout.sidebar_width = 250.0;
+                        self.state.layout.sidebar_width = 248.0;
                     }
                     let lx = full_rect.center().x;
                     ui.painter().line_segment(
@@ -1634,15 +1767,10 @@ impl eframe::App for App {
                             if active {
                                 Tokens::STATUS_INFO
                             } else {
-                                Tokens::BORDER_DEFAULT
+                                swaggen_ui_kit::border_color(ui)
                             },
                         ),
                     );
-                    if active {
-                        let pill =
-                            egui::Rect::from_center_size(full_rect.center(), egui::vec2(3.5, 34.0));
-                        ui.painter().rect_filled(pill, 2.0, Tokens::STATUS_INFO);
-                    }
                 });
         }
 
@@ -1778,41 +1906,112 @@ impl eframe::App for App {
                                 self.show_workspace_modal = true;
                             }
                         }
-                        if self.mode != MainMode::Workbench {
-                            let env_label = self
-                                .state
-                                .active_environment()
-                                .map(|e| e.name.as_str())
-                                .unwrap_or("No env");
-                            if ui
-                                .add(
-                                    egui::Button::new(
-                                        egui::RichText::new(env_label)
-                                            .size(11.5)
-                                            .color(swaggen_ui_kit::text_primary(ui)),
-                                    )
-                                    .fill(swaggen_ui_kit::surface_bg(ui))
-                                    .stroke(egui::Stroke::new(
-                                        1.0,
-                                        swaggen_ui_kit::border_color(ui),
-                                    ))
-                                    .corner_radius(6),
-                                )
-                                .on_hover_text("Manage environments & variables")
-                                .clicked()
-                            {
-                                self.navigate_to(MainMode::Environments);
+                        let active_env = self.state.active_environment();
+                        let env_color = match active_env.map(|e| e.effective_tier()) {
+                            Some(swaggen_domain::workspace::EnvTier::Production) => {
+                                Tokens::TEXT_DANGER
                             }
-                        }
+                            Some(swaggen_domain::workspace::EnvTier::Staging) => {
+                                Tokens::TEXT_WARNING
+                            }
+                            Some(
+                                swaggen_domain::workspace::EnvTier::Development
+                                | swaggen_domain::workspace::EnvTier::Local,
+                            ) => Tokens::STATUS_SUCCESS,
+                            Some(swaggen_domain::workspace::EnvTier::Custom) => Tokens::STATUS_INFO,
+                            None => swaggen_ui_kit::text_secondary(ui),
+                        };
+                        let env_btn_label = active_env
+                            .map(|e| format!("● {} ▾", e.name))
+                            .unwrap_or_else(|| "○ No Environment ▾".into());
+                        let env_btn = ui
+                            .add(
+                                egui::Button::new(
+                                    egui::RichText::new(env_btn_label)
+                                        .size(11.5)
+                                        .color(env_color)
+                                        .strong(),
+                                )
+                                .fill(swaggen_ui_kit::surface_bg(ui))
+                                .stroke(egui::Stroke::new(1.0, swaggen_ui_kit::border_color(ui)))
+                                .corner_radius(6),
+                            )
+                            .on_hover_text(
+                                "Active Environment for {{variables}} (click to switch)",
+                            );
+                        egui::Popup::menu(&env_btn)
+                            .id(egui::Id::unique("swaggen_top_env_picker"))
+                            .close_behavior(egui::PopupCloseBehavior::CloseOnClickOutside)
+                            .show(|ui| {
+                                ui.set_min_width(210.0);
+                                ui.label(
+                                    egui::RichText::new("ACTIVE ENVIRONMENT")
+                                        .size(10.0)
+                                        .color(swaggen_ui_kit::text_secondary(ui)),
+                                );
+                                if ui
+                                    .selectable_label(
+                                        self.state.active_environment_id.is_none(),
+                                        "No Environment",
+                                    )
+                                    .clicked()
+                                {
+                                    self.state.active_environment_id = None;
+                                    self.mark_dirty();
+                                    ui.close();
+                                }
+                                let env_items: Vec<(String, String, bool, usize)> = self
+                                    .state
+                                    .environments
+                                    .iter()
+                                    .map(|e| {
+                                        (
+                                            e.id.clone(),
+                                            e.name.clone(),
+                                            e.is_production,
+                                            e.variables.len(),
+                                        )
+                                    })
+                                    .collect();
+                                for (idx, (eid, ename, is_prod, vcount)) in
+                                    env_items.into_iter().enumerate()
+                                {
+                                    let is_act =
+                                        self.state.active_environment_id.as_deref() == Some(&eid);
+                                    let badge = if is_prod { " [PROD]" } else { "" };
+                                    if ui
+                                        .selectable_label(
+                                            is_act,
+                                            format!("{ename}{badge}  ({vcount} vars)"),
+                                        )
+                                        .clicked()
+                                    {
+                                        self.state.active_environment_id = Some(eid);
+                                        self.selected_env_idx = idx;
+                                        self.mark_dirty();
+                                        ui.close();
+                                    }
+                                }
+                                ui.separator();
+                                if ui.button("⚙ Manage Environments & Variables…").clicked() {
+                                    self.navigate_to(MainMode::Environments);
+                                    ui.close();
+                                }
+                            });
+                        let show_cmd_label = if window_total_w < 820.0 {
+                            "Ctrl+K"
+                        } else {
+                            "Search / Commands  Ctrl+K"
+                        };
                         if ui
                             .add(
                                 egui::Button::new(
-                                    egui::RichText::new("Search / Commands  Ctrl+K")
+                                    egui::RichText::new(show_cmd_label)
                                         .size(11.0)
-                                        .color(Tokens::TEXT_SECONDARY),
+                                        .color(swaggen_ui_kit::text_secondary(ui)),
                                 )
-                                .fill(Tokens::BG_SUBTLE)
-                                .stroke(egui::Stroke::new(1.0, Tokens::BORDER_DEFAULT))
+                                .fill(swaggen_ui_kit::subtle_bg(ui))
+                                .stroke(egui::Stroke::new(1.0, swaggen_ui_kit::border_color(ui)))
                                 .corner_radius(6),
                             )
                             .on_hover_text("Open Quick Command Palette (Ctrl+K)")
@@ -2229,6 +2428,34 @@ mod tests {
             sandbox_script_text: String::new(),
             sandbox_report: None,
             extensions: Vec::new(),
+            dark_mode: false,
+            script_subtab_post: true,
+            script_reports: HashMap::new(),
+            env_scope_tab: 0,
+            selected_collection_var_idx: 0,
+            quick_var_name: String::new(),
+            quick_var_value: String::new(),
+            spec_view_mode: 0,
+            spec_local_file_path: String::new(),
+            runner_test_kind: 0,
+            runner_selected_requests: Default::default(),
+            runner_concurrency: 1,
+            runner_selected_step_idx: 0,
+            runner_trace_tab: 0,
+            mock_port_input: "0".into(),
+            mock_scenarios: Vec::new(),
+            protocol_subtab: 0,
+            ws_url_input: String::new(),
+            ws_message_input: String::new(),
+            ws_logs: Vec::new(),
+            grpc_endpoint_input: String::new(),
+            grpc_method_input: String::new(),
+            grpc_payload_input: String::new(),
+            grpc_output: String::new(),
+            import_hub_tab: 0,
+            import_source_kind: 0,
+            import_file_path: String::new(),
+            show_sidebar_trash: false,
         };
 
         app.navigate_to(MainMode::Environments);

@@ -245,14 +245,18 @@ fn show_conflicts(app: &mut App, ui: &mut egui::Ui, profile_id: &str, wid: &str)
                     &entry.local_payload_json,
                     server_payload_json,
                 );
-                ui.columns(3, |cols| {
-                    swaggen_ui_kit::surface_card(&mut cols[0], |ui| {
+                let diff_cols = if ui.available_width() < 680.0 { 1 } else { 3 };
+                ui.columns(diff_cols, |cols| {
+                    let c0 = 0;
+                    let c1 = 1 % cols.len();
+                    let c2 = 2 % cols.len();
+                    swaggen_ui_kit::surface_card(&mut cols[c0], |ui| {
                         swaggen_ui_kit::card_header(ui, "Base (Common Ancestor)");
                         for d in &diffs {
                             ui.monospace(format!("{}: {}", d.path, d.base_val));
                         }
                     });
-                    swaggen_ui_kit::surface_card(&mut cols[1], |ui| {
+                    swaggen_ui_kit::surface_card(&mut cols[c1], |ui| {
                         swaggen_ui_kit::card_header(ui, "Your Local Version");
                         for d in &diffs {
                             ui.label(
@@ -262,7 +266,7 @@ fn show_conflicts(app: &mut App, ui: &mut egui::Ui, profile_id: &str, wid: &str)
                             );
                         }
                     });
-                    swaggen_ui_kit::surface_card(&mut cols[2], |ui| {
+                    swaggen_ui_kit::surface_card(&mut cols[c2], |ui| {
                         swaggen_ui_kit::card_header(ui, "Server Version");
                         for d in &diffs {
                             ui.label(
@@ -385,7 +389,9 @@ fn show_comments(app: &mut App, ui: &mut egui::Ui, profile_id: &str, wid: &str) 
     }
 
     let mut resolve_cid: Option<String> = None;
-    ui.columns(2, |cols| {
+    let discuss_cols = if ui.available_width() < 680.0 { 1 } else { 2 };
+    ui.columns(discuss_cols, |cols| {
+        let right_idx = 1 % cols.len();
         // Left column: Selected endpoint preview
         swaggen_ui_kit::surface_card(&mut cols[0], |ui| {
             swaggen_ui_kit::card_header(ui, "Referenced Endpoint");
@@ -429,7 +435,7 @@ fn show_comments(app: &mut App, ui: &mut egui::Ui, profile_id: &str, wid: &str) 
         });
 
         // Right column: Figma C04 Discussion thread + reply box
-        swaggen_ui_kit::surface_card(&mut cols[1], |ui| {
+        swaggen_ui_kit::surface_card(&mut cols[right_idx], |ui| {
             ui.horizontal(|ui| {
                 ui.label(swaggen_ui_kit::bold_text(
                     "Discussion",

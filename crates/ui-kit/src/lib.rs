@@ -145,32 +145,60 @@ pub fn tr(locale: UiLocale, en: &'static str, vi: &'static str) -> &'static str 
     }
 }
 
-pub fn page_bg(_ui: &egui::Ui) -> egui::Color32 {
-    Tokens::BG_PAGE
+pub fn page_bg(ui: &egui::Ui) -> egui::Color32 {
+    if ui.visuals().dark_mode {
+        egui::Color32::from_rgb(0x0F, 0x17, 0x2A)
+    } else {
+        Tokens::BG_PAGE
+    }
 }
 
-pub fn surface_bg(_ui: &egui::Ui) -> egui::Color32 {
-    Tokens::BG_SURFACE
+pub fn surface_bg(ui: &egui::Ui) -> egui::Color32 {
+    if ui.visuals().dark_mode {
+        egui::Color32::from_rgb(0x11, 0x18, 0x27)
+    } else {
+        Tokens::BG_SURFACE
+    }
 }
 
-pub fn subtle_bg(_ui: &egui::Ui) -> egui::Color32 {
-    Tokens::BG_SUBTLE
+pub fn subtle_bg(ui: &egui::Ui) -> egui::Color32 {
+    if ui.visuals().dark_mode {
+        egui::Color32::from_rgb(0x1E, 0x29, 0x3B)
+    } else {
+        Tokens::BG_SUBTLE
+    }
 }
 
-pub fn selected_bg(_ui: &egui::Ui) -> egui::Color32 {
-    Tokens::BG_SELECTED
+pub fn selected_bg(ui: &egui::Ui) -> egui::Color32 {
+    if ui.visuals().dark_mode {
+        egui::Color32::from_rgb(0x1E, 0x3A, 0x8A)
+    } else {
+        Tokens::BG_SELECTED
+    }
 }
 
-pub fn border_color(_ui: &egui::Ui) -> egui::Color32 {
-    Tokens::BORDER_DEFAULT
+pub fn border_color(ui: &egui::Ui) -> egui::Color32 {
+    if ui.visuals().dark_mode {
+        egui::Color32::from_rgb(0x33, 0x41, 0x55)
+    } else {
+        Tokens::BORDER_DEFAULT
+    }
 }
 
-pub fn text_primary(_ui: &egui::Ui) -> egui::Color32 {
-    Tokens::TEXT_PRIMARY
+pub fn text_primary(ui: &egui::Ui) -> egui::Color32 {
+    if ui.visuals().dark_mode {
+        egui::Color32::from_rgb(0xF1, 0xF5, 0xF9)
+    } else {
+        Tokens::TEXT_PRIMARY
+    }
 }
 
-pub fn text_secondary(_ui: &egui::Ui) -> egui::Color32 {
-    Tokens::TEXT_SECONDARY
+pub fn text_secondary(ui: &egui::Ui) -> egui::Color32 {
+    if ui.visuals().dark_mode {
+        egui::Color32::from_rgb(0x94, 0xA3, 0xB8)
+    } else {
+        Tokens::TEXT_SECONDARY
+    }
 }
 
 /// Returns RichText styled with the authentic JetBrains Mono Bold font family.
@@ -345,9 +373,58 @@ pub fn install(context: &egui::Context) {
     visuals.window_stroke = egui::Stroke::new(1.0, Tokens::BORDER_DEFAULT);
     visuals.window_corner_radius = egui::CornerRadius::same(10);
     style.visuals = visuals;
-    context.set_style_of(egui_theme, style);
+    context.set_style_of(egui_theme, style.clone());
+
+    let mut dark_style = style;
+    let mut dark_vis = egui::Visuals::dark();
+    let d_surface = egui::Color32::from_rgb(0x11, 0x18, 0x27);
+    let d_subtle = egui::Color32::from_rgb(0x1E, 0x29, 0x3B);
+    let d_sel = egui::Color32::from_rgb(0x1E, 0x3A, 0x8A);
+    let d_border = egui::Color32::from_rgb(0x33, 0x41, 0x55);
+    let d_text = egui::Color32::from_rgb(0xF1, 0xF5, 0xF9);
+    dark_vis.panel_fill = d_surface;
+    dark_vis.window_fill = d_surface;
+    dark_vis.extreme_bg_color = d_surface;
+    dark_vis.faint_bg_color = d_subtle;
+    dark_vis.override_text_color = Some(d_text);
+    dark_vis.widgets.noninteractive.bg_fill = d_surface;
+    dark_vis.widgets.noninteractive.weak_bg_fill = d_surface;
+    dark_vis.widgets.noninteractive.bg_stroke = egui::Stroke::new(1.0, d_border);
+    dark_vis.widgets.noninteractive.fg_stroke = egui::Stroke::new(1.0, d_text);
+    dark_vis.widgets.inactive.bg_fill = d_surface;
+    dark_vis.widgets.inactive.weak_bg_fill = d_surface;
+    dark_vis.widgets.inactive.bg_stroke = egui::Stroke::new(1.0, d_border);
+    dark_vis.widgets.inactive.fg_stroke = egui::Stroke::new(1.0, d_text);
+    dark_vis.widgets.inactive.corner_radius = egui::CornerRadius::same(6);
+    dark_vis.widgets.hovered.bg_fill = d_subtle;
+    dark_vis.widgets.hovered.weak_bg_fill = d_subtle;
+    dark_vis.widgets.hovered.bg_stroke =
+        egui::Stroke::new(1.0, egui::Color32::from_rgb(0x60, 0xA5, 0xFA));
+    dark_vis.widgets.hovered.fg_stroke = egui::Stroke::new(1.0, d_text);
+    dark_vis.widgets.hovered.corner_radius = egui::CornerRadius::same(6);
+    dark_vis.widgets.active.bg_fill = d_sel;
+    dark_vis.widgets.active.weak_bg_fill = d_sel;
+    dark_vis.widgets.active.bg_stroke =
+        egui::Stroke::new(1.5, egui::Color32::from_rgb(0x60, 0xA5, 0xFA));
+    dark_vis.widgets.active.fg_stroke = egui::Stroke::new(1.5, d_text);
+    dark_vis.widgets.active.corner_radius = egui::CornerRadius::same(6);
+    dark_vis.selection.bg_fill = d_sel;
+    dark_vis.selection.stroke = egui::Stroke::new(1.5, egui::Color32::from_rgb(0x60, 0xA5, 0xFA));
+    dark_vis.window_stroke = egui::Stroke::new(1.0, d_border);
+    dark_vis.window_corner_radius = egui::CornerRadius::same(10);
+    dark_style.visuals = dark_vis;
+    context.set_style_of(egui::Theme::Dark, dark_style);
+
     context.set_theme(egui_theme);
     context.enable_accesskit();
+}
+
+pub fn apply_theme(context: &egui::Context, dark_mode: bool) {
+    context.set_theme(if dark_mode {
+        egui::Theme::Dark
+    } else {
+        egui::Theme::Light
+    });
 }
 
 /// Compact Figma Input component: 29px tall bordered white input with crisp focus ring.
@@ -1031,19 +1108,19 @@ pub fn primary_button(ui: &mut egui::Ui, enabled: bool, label: &str) -> egui::Re
 
 pub fn secondary_button(ui: &mut egui::Ui, enabled: bool, label: &str) -> egui::Response {
     let color = if enabled {
-        Tokens::TEXT_PRIMARY
+        text_primary(ui)
     } else {
-        Tokens::TEXT_SECONDARY
+        text_secondary(ui)
     };
     ui.add_enabled(
         enabled,
         egui::Button::new(egui::RichText::new(label).size(12.0).color(color))
             .fill(if enabled {
-                Tokens::BG_SURFACE
+                surface_bg(ui)
             } else {
-                Tokens::BG_DISABLED
+                subtle_bg(ui)
             })
-            .stroke(egui::Stroke::new(1.0, Tokens::BORDER_DEFAULT))
+            .stroke(egui::Stroke::new(1.0, border_color(ui)))
             .min_size(egui::vec2(58.0, 28.0))
             .corner_radius(5),
     )
@@ -1053,17 +1130,17 @@ pub fn danger_button(ui: &mut egui::Ui, enabled: bool, label: &str) -> egui::Res
     let color = if enabled {
         Tokens::TEXT_DANGER
     } else {
-        Tokens::TEXT_SECONDARY
+        text_secondary(ui)
     };
     ui.add_enabled(
         enabled,
         egui::Button::new(bold_text(label, 12.0, color))
             .fill(if enabled {
-                Tokens::BG_SURFACE
+                surface_bg(ui)
             } else {
-                Tokens::BG_DISABLED
+                subtle_bg(ui)
             })
-            .stroke(egui::Stroke::new(1.0, Tokens::BORDER_DEFAULT))
+            .stroke(egui::Stroke::new(1.0, border_color(ui)))
             .min_size(egui::vec2(68.0, 28.0))
             .corner_radius(5),
     )
@@ -1195,11 +1272,10 @@ pub fn code_surface(ui: &mut egui::Ui, text: &str) {
     code_surface_numbered(ui, text);
 }
 
-/// Interactive horizontal splitter bar anchored by a stable `egui::Id` so drag focus NEVER drops
-/// even when sibling scrollbars or dynamic rows appear/disappear.
+/// Razor-thin 1px interactive horizontal splitter bar anchored by a stable `egui::Id`.
 pub fn horizontal_splitter(ui: &mut egui::Ui, id_salt: &str) -> (egui::Response, f32) {
     let w = ui.available_width().max(60.0);
-    let (_, rect) = ui.allocate_space(egui::vec2(w, 8.0));
+    let (_, rect) = ui.allocate_space(egui::vec2(w, 5.0));
     let id = egui::Id::unique(("swaggen_hsplit", id_salt));
     let resp = ui.interact(rect, id, egui::Sense::click_and_drag());
     let active = resp.hovered() || resp.dragged();
@@ -1212,20 +1288,13 @@ pub fn horizontal_splitter(ui: &mut egui::Ui, id_salt: &str) -> (egui::Response,
     let line_color = if active {
         Tokens::STATUS_INFO
     } else {
-        Tokens::BORDER_DEFAULT
-    };
-    let pill_color = if active {
-        Tokens::STATUS_INFO
-    } else {
-        egui::Color32::from_rgb(0xCB, 0xD5, 0xE1)
+        border_color(ui)
     };
     let cy = rect.center().y;
     ui.painter().line_segment(
         [egui::pos2(rect.left(), cy), egui::pos2(rect.right(), cy)],
         egui::Stroke::new(if active { 1.5 } else { 1.0 }, line_color),
     );
-    let pill = egui::Rect::from_center_size(rect.center(), egui::vec2(34.0, 3.5));
-    ui.painter().rect_filled(pill, 2.0, pill_color);
     let delta_y = if resp.dragged() {
         resp.drag_delta().y
     } else {
@@ -1234,10 +1303,10 @@ pub fn horizontal_splitter(ui: &mut egui::Ui, id_salt: &str) -> (egui::Response,
     (resp, delta_y)
 }
 
-/// Interactive vertical splitter bar anchored by a stable `egui::Id` so drag focus NEVER drops.
+/// Razor-thin 1px interactive vertical splitter bar anchored by a stable `egui::Id`.
 pub fn vertical_splitter(ui: &mut egui::Ui, id_salt: &str, height: f32) -> (egui::Response, f32) {
     let h = height.max(60.0);
-    let (_, rect) = ui.allocate_space(egui::vec2(8.0, h));
+    let (_, rect) = ui.allocate_space(egui::vec2(5.0, h));
     let id = egui::Id::unique(("swaggen_vsplit", id_salt));
     let resp = ui.interact(rect, id, egui::Sense::click_and_drag());
     let active = resp.hovered() || resp.dragged();
@@ -1250,20 +1319,13 @@ pub fn vertical_splitter(ui: &mut egui::Ui, id_salt: &str, height: f32) -> (egui
     let line_color = if active {
         Tokens::STATUS_INFO
     } else {
-        Tokens::BORDER_DEFAULT
-    };
-    let pill_color = if active {
-        Tokens::STATUS_INFO
-    } else {
-        egui::Color32::from_rgb(0xCB, 0xD5, 0xE1)
+        border_color(ui)
     };
     let cx = rect.center().x;
     ui.painter().line_segment(
         [egui::pos2(cx, rect.top()), egui::pos2(cx, rect.bottom())],
         egui::Stroke::new(if active { 1.5 } else { 1.0 }, line_color),
     );
-    let pill = egui::Rect::from_center_size(rect.center(), egui::vec2(3.5, 34.0));
-    ui.painter().rect_filled(pill, 2.0, pill_color);
     let delta_x = if resp.dragged() {
         resp.drag_delta().x
     } else {
