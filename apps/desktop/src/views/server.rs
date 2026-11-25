@@ -401,8 +401,8 @@ fn show_team_workspaces(app: &mut App, ui: &mut egui::Ui) {
         swaggen_ui_kit::notice_banner(
             ui,
             NoticeKind::Warning,
-            "Sign in required (A04)",
-            "Sign in with your internal server account to access team workspaces.",
+            "Sign in required",
+            "Sign in with Google to access and manage team workspaces.",
         );
         return;
     }
@@ -445,7 +445,7 @@ fn show_team_workspaces(app: &mut App, ui: &mut egui::Ui) {
             );
             if ws.role == Role::Viewer {
                 ui.label(
-                    egui::RichText::new("Read-only workspace (X03)")
+                    egui::RichText::new("Read-only workspace")
                         .color(Tokens::TEXT_WARNING),
                 );
             }
@@ -470,7 +470,7 @@ fn show_team_workspaces(app: &mut App, ui: &mut egui::Ui) {
         ui.add_space(6.0);
         let wid = details.workspace_id.clone();
         swaggen_ui_kit::surface_card(ui, |ui| {
-            ui.strong("Invite teammates (C02 / W05)");
+            ui.strong("Invite teammates");
             ui.horizontal_wrapped(|ui| {
                 ui.label("Email:");
                 ui.add(egui::TextEdit::singleline(&mut app.invite_email_input).desired_width(200.0));
@@ -507,7 +507,7 @@ fn show_team_workspaces(app: &mut App, ui: &mut egui::Ui) {
         ui.add_space(4.0);
         swaggen_ui_kit::surface_card(ui, |ui| {
             ui.strong(format!(
-                "Workspace members (C01 / W06) · mem_rev {}",
+                "Workspace members · mem_rev {}",
                 details.membership_revision
             ));
             for m in &details.members {
@@ -544,7 +544,7 @@ fn show_team_workspaces(app: &mut App, ui: &mut egui::Ui) {
                             "pending"
                         };
                         ui.label(state);
-                        if state == "pending" && ui.small_button("Revoke (W21)").clicked() {
+                        if state == "pending" && ui.small_button("Revoke").clicked() {
                             app.submit(Command::RevokeServerInvitation {
                                 profile_id: active.id.clone(),
                                 workspace_id: wid.clone(),
@@ -558,7 +558,7 @@ fn show_team_workspaces(app: &mut App, ui: &mut egui::Ui) {
 
         ui.add_space(4.0);
         swaggen_ui_kit::surface_card(ui, |ui| {
-            ui.strong("Workspace security audit log (S07)");
+            ui.strong("Workspace security audit log");
             if app.team_audit_events.is_empty() {
                 ui.label(
                     egui::RichText::new("No audit entries loaded (Admin/Owner required).")
@@ -577,7 +577,7 @@ fn show_team_workspaces(app: &mut App, ui: &mut egui::Ui) {
 
     ui.add_space(4.0);
     swaggen_ui_kit::surface_card(ui, |ui| {
-        ui.strong("Role Permission Matrix (WS05 / SC04)");
+        ui.strong("Role Permission Matrix");
         for row in permission_matrix() {
             ui.label(format!(
                 "{}: Owner={} · Admin={} · Editor={} · Viewer={}",
@@ -594,7 +594,7 @@ fn show_sessions_and_password(app: &mut App, ui: &mut egui::Ui) {
     };
     swaggen_ui_kit::surface_card(ui, |ui| {
         ui.horizontal_wrapped(|ui| {
-            ui.strong("Active device sessions (WS03 / SC03)");
+            ui.strong("Active device sessions");
             if swaggen_ui_kit::secondary_button(ui, !app.pending, "Refresh sessions").clicked() {
                 app.submit(Command::ListServerSessions {
                     profile_id: active.id.clone(),
@@ -630,7 +630,7 @@ fn show_sessions_and_password(app: &mut App, ui: &mut egui::Ui) {
 
     ui.add_space(6.0);
     swaggen_ui_kit::surface_card(ui, |ui| {
-        ui.strong("Change password (WS03)");
+        ui.strong("Change password");
         ui.horizontal(|ui| {
             ui.label("Current password:");
             ui.add(egui::TextEdit::singleline(&mut app.pw_current_input).password(true));

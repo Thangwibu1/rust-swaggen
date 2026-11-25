@@ -1,5 +1,5 @@
 //! Shared Figma-aligned white-surface design system (Tokens, JetBrains Mono Regular + Bold,
-//! theme-aware light/dark helpers, single-edge dividers, custom vector BrandMark/icons,
+//! single-edge dividers, authentic Figma BrandMark/Google/Icon assets,
 //! Google Sign-In button, and reusable desktop components).
 //! No network IO, telemetry, or remote rendering.
 use eframe::egui;
@@ -8,21 +8,12 @@ use std::path::PathBuf;
 pub struct Tokens;
 
 impl Tokens {
-    // Core surfaces (exact Figma variable definitions from Swaggen file)
+    // Core surfaces (exact Figma variable definitions from Swaggen file — white-surface only)
     pub const BG_PAGE: egui::Color32 = egui::Color32::WHITE;
     pub const BG_SURFACE: egui::Color32 = egui::Color32::WHITE;
     pub const BG_SUBTLE: egui::Color32 = egui::Color32::from_rgb(0xF8, 0xFA, 0xFC);
     pub const BG_SELECTED: egui::Color32 = egui::Color32::from_rgb(0xEF, 0xF6, 0xFF);
     pub const BG_DISABLED: egui::Color32 = egui::Color32::from_rgb(0xED, 0xF0, 0xED);
-
-    // Dark theme surfaces
-    pub const DARK_BG_PAGE: egui::Color32 = egui::Color32::from_rgb(0x11, 0x13, 0x16);
-    pub const DARK_BG_SURFACE: egui::Color32 = egui::Color32::from_rgb(0x16, 0x19, 0x1D);
-    pub const DARK_BG_SUBTLE: egui::Color32 = egui::Color32::from_rgb(0x1E, 0x22, 0x28);
-    pub const DARK_BG_SELECTED: egui::Color32 = egui::Color32::from_rgb(0x1A, 0x2C, 0x47);
-    pub const DARK_BORDER: egui::Color32 = egui::Color32::from_rgb(0x2A, 0x2F, 0x37);
-    pub const DARK_TEXT_PRIMARY: egui::Color32 = egui::Color32::from_rgb(0xF1, 0xF3, 0xF5);
-    pub const DARK_TEXT_SECONDARY: egui::Color32 = egui::Color32::from_rgb(0x9A, 0xA0, 0xA6);
 
     // Typography & borders
     pub const TEXT_PRIMARY: egui::Color32 = egui::Color32::from_rgb(0x20, 0x21, 0x24);
@@ -87,13 +78,6 @@ impl NoticeKind {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
-pub enum UiTheme {
-    #[default]
-    Light,
-    Dark,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum UiLocale {
     #[default]
     En,
@@ -122,6 +106,29 @@ pub enum IconKind {
     ChevronRight,
     AlertCircle,
     Check,
+    Copy,
+    Trash,
+}
+
+/// Returns the authentic Figma semantic foreground color for each navigation/action icon.
+pub fn icon_semantic_color(kind: IconKind) -> egui::Color32 {
+    match kind {
+        IconKind::BookOpen | IconKind::Globe | IconKind::Terminal => Tokens::METHOD_HEAD,
+        IconKind::Play | IconKind::GitBranch | IconKind::Users => Tokens::METHOD_PATCH,
+        IconKind::Folder | IconKind::Bell | IconKind::KeyRound | IconKind::AlertCircle => {
+            Tokens::METHOD_POST
+        }
+        IconKind::FileCode | IconKind::History => Tokens::STATUS_INFO,
+        IconKind::ShieldCheck | IconKind::Check => Tokens::STATUS_SUCCESS,
+        IconKind::Trash => Tokens::TEXT_DANGER,
+        IconKind::Blocks
+        | IconKind::Settings
+        | IconKind::Search
+        | IconKind::Plus
+        | IconKind::ChevronDown
+        | IconKind::ChevronRight
+        | IconKind::Copy => Tokens::TEXT_PRIMARY,
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -138,64 +145,32 @@ pub fn tr(locale: UiLocale, en: &'static str, vi: &'static str) -> &'static str 
     }
 }
 
-pub fn is_dark(ui: &egui::Ui) -> bool {
-    ui.visuals().dark_mode
+pub fn page_bg(_ui: &egui::Ui) -> egui::Color32 {
+    Tokens::BG_PAGE
 }
 
-pub fn page_bg(ui: &egui::Ui) -> egui::Color32 {
-    if is_dark(ui) {
-        Tokens::DARK_BG_PAGE
-    } else {
-        Tokens::BG_PAGE
-    }
+pub fn surface_bg(_ui: &egui::Ui) -> egui::Color32 {
+    Tokens::BG_SURFACE
 }
 
-pub fn surface_bg(ui: &egui::Ui) -> egui::Color32 {
-    if is_dark(ui) {
-        Tokens::DARK_BG_SURFACE
-    } else {
-        Tokens::BG_SURFACE
-    }
+pub fn subtle_bg(_ui: &egui::Ui) -> egui::Color32 {
+    Tokens::BG_SUBTLE
 }
 
-pub fn subtle_bg(ui: &egui::Ui) -> egui::Color32 {
-    if is_dark(ui) {
-        Tokens::DARK_BG_SUBTLE
-    } else {
-        Tokens::BG_SUBTLE
-    }
+pub fn selected_bg(_ui: &egui::Ui) -> egui::Color32 {
+    Tokens::BG_SELECTED
 }
 
-pub fn selected_bg(ui: &egui::Ui) -> egui::Color32 {
-    if is_dark(ui) {
-        Tokens::DARK_BG_SELECTED
-    } else {
-        Tokens::BG_SELECTED
-    }
+pub fn border_color(_ui: &egui::Ui) -> egui::Color32 {
+    Tokens::BORDER_DEFAULT
 }
 
-pub fn border_color(ui: &egui::Ui) -> egui::Color32 {
-    if is_dark(ui) {
-        Tokens::DARK_BORDER
-    } else {
-        Tokens::BORDER_DEFAULT
-    }
+pub fn text_primary(_ui: &egui::Ui) -> egui::Color32 {
+    Tokens::TEXT_PRIMARY
 }
 
-pub fn text_primary(ui: &egui::Ui) -> egui::Color32 {
-    if is_dark(ui) {
-        Tokens::DARK_TEXT_PRIMARY
-    } else {
-        Tokens::TEXT_PRIMARY
-    }
-}
-
-pub fn text_secondary(ui: &egui::Ui) -> egui::Color32 {
-    if is_dark(ui) {
-        Tokens::DARK_TEXT_SECONDARY
-    } else {
-        Tokens::TEXT_SECONDARY
-    }
+pub fn text_secondary(_ui: &egui::Ui) -> egui::Color32 {
+    Tokens::TEXT_SECONDARY
 }
 
 /// Returns RichText styled with the authentic JetBrains Mono Bold font family.
@@ -305,18 +280,11 @@ fn configure_fonts(context: &egui::Context) {
     context.set_fonts(defs);
 }
 
+/// Installs the authentic Figma white-surface Light design system & JetBrains Mono fonts.
 pub fn install(context: &egui::Context) {
-    install_with_theme(context, UiTheme::Light);
-}
-
-pub fn install_with_theme(context: &egui::Context, theme: UiTheme) {
     configure_fonts(context);
 
-    let egui_theme = if theme == UiTheme::Dark {
-        egui::Theme::Dark
-    } else {
-        egui::Theme::Light
-    };
+    let egui_theme = egui::Theme::Light;
     let mut style = (*context.style_of(egui_theme)).clone();
     style.spacing.item_spacing = egui::vec2(8.0, 8.0);
     style.spacing.button_padding = egui::vec2(12.0, 8.0);
@@ -343,27 +311,6 @@ pub fn install_with_theme(context: &egui::Context, theme: UiTheme) {
         egui::TextStyle::Small,
         egui::FontId::new(11.5, egui::FontFamily::Proportional),
     );
-
-    if theme == UiTheme::Dark {
-        let mut visuals = egui::Visuals::dark();
-        visuals.panel_fill = Tokens::DARK_BG_SURFACE;
-        visuals.window_fill = Tokens::DARK_BG_SURFACE;
-        visuals.extreme_bg_color = Tokens::DARK_BG_PAGE;
-        visuals.faint_bg_color = Tokens::DARK_BG_SUBTLE;
-        visuals.selection.bg_fill = Tokens::DARK_BG_SELECTED;
-        visuals.widgets.inactive.bg_fill = Tokens::DARK_BG_SURFACE;
-        visuals.widgets.inactive.bg_stroke = egui::Stroke::new(1.0, Tokens::DARK_BORDER);
-        visuals.widgets.inactive.corner_radius = egui::CornerRadius::same(6);
-        visuals.widgets.hovered.bg_fill = Tokens::DARK_BG_SUBTLE;
-        visuals.widgets.hovered.corner_radius = egui::CornerRadius::same(6);
-        visuals.window_stroke = egui::Stroke::new(1.0, Tokens::DARK_BORDER);
-        visuals.window_corner_radius = egui::CornerRadius::same(10);
-        style.visuals = visuals;
-        context.set_style_of(egui_theme, style);
-        context.set_theme(egui_theme);
-        context.enable_accesskit();
-        return;
-    }
 
     let mut visuals = egui::Visuals::light();
     visuals.panel_fill = Tokens::BG_SURFACE;
@@ -430,6 +377,56 @@ pub fn text_input(
 
 const FIGMA_BRAND_MARK_PNG: &[u8] = include_bytes!("../../../assets/brand-mark.png");
 const FIGMA_GOOGLE_G_PNG: &[u8] = include_bytes!("../../../assets/google-g.png");
+
+const ICON_BLOCKS_PNG: &[u8] = include_bytes!("../../../assets/icons/blocks.png");
+const ICON_BOOK_OPEN_PNG: &[u8] = include_bytes!("../../../assets/icons/book-open.png");
+const ICON_PLAY_PNG: &[u8] = include_bytes!("../../../assets/icons/play.png");
+const ICON_GIT_BRANCH_PNG: &[u8] = include_bytes!("../../../assets/icons/git-branch.png");
+const ICON_USERS_PNG: &[u8] = include_bytes!("../../../assets/icons/users.png");
+const ICON_BELL_PNG: &[u8] = include_bytes!("../../../assets/icons/bell.png");
+const ICON_TERMINAL_PNG: &[u8] = include_bytes!("../../../assets/icons/terminal.png");
+const ICON_SETTINGS_PNG: &[u8] = include_bytes!("../../../assets/icons/settings.png");
+const ICON_FOLDER_PNG: &[u8] = include_bytes!("../../../assets/icons/folder.png");
+const ICON_FILE_CODE_PNG: &[u8] = include_bytes!("../../../assets/icons/file-code.png");
+const ICON_HISTORY_PNG: &[u8] = include_bytes!("../../../assets/icons/history.png");
+const ICON_GLOBE_PNG: &[u8] = include_bytes!("../../../assets/icons/globe.png");
+const ICON_KEY_ROUND_PNG: &[u8] = include_bytes!("../../../assets/icons/key-round.png");
+const ICON_SEARCH_PNG: &[u8] = include_bytes!("../../../assets/icons/search.png");
+const ICON_PLUS_PNG: &[u8] = include_bytes!("../../../assets/icons/plus.png");
+const ICON_CHEVRON_DOWN_PNG: &[u8] = include_bytes!("../../../assets/icons/chevron-down.png");
+const ICON_CHEVRON_RIGHT_PNG: &[u8] = include_bytes!("../../../assets/icons/chevron-right.png");
+const ICON_SHIELD_CHECK_PNG: &[u8] = include_bytes!("../../../assets/icons/shield-check.png");
+const ICON_CIRCLE_ALERT_PNG: &[u8] = include_bytes!("../../../assets/icons/circle-alert.png");
+const ICON_CHECK_PNG: &[u8] = include_bytes!("../../../assets/icons/check.png");
+const ICON_COPY_PNG: &[u8] = include_bytes!("../../../assets/icons/copy.png");
+const ICON_TRASH_PNG: &[u8] = include_bytes!("../../../assets/icons/trash.png");
+
+fn icon_asset_spec(kind: IconKind) -> (&'static str, &'static [u8]) {
+    match kind {
+        IconKind::Blocks => ("figma_icon_blocks", ICON_BLOCKS_PNG),
+        IconKind::BookOpen => ("figma_icon_book_open", ICON_BOOK_OPEN_PNG),
+        IconKind::Play => ("figma_icon_play", ICON_PLAY_PNG),
+        IconKind::GitBranch => ("figma_icon_git_branch", ICON_GIT_BRANCH_PNG),
+        IconKind::Users => ("figma_icon_users", ICON_USERS_PNG),
+        IconKind::Bell => ("figma_icon_bell", ICON_BELL_PNG),
+        IconKind::Terminal => ("figma_icon_terminal", ICON_TERMINAL_PNG),
+        IconKind::Settings => ("figma_icon_settings", ICON_SETTINGS_PNG),
+        IconKind::Folder => ("figma_icon_folder", ICON_FOLDER_PNG),
+        IconKind::FileCode => ("figma_icon_file_code", ICON_FILE_CODE_PNG),
+        IconKind::History => ("figma_icon_history", ICON_HISTORY_PNG),
+        IconKind::Globe => ("figma_icon_globe", ICON_GLOBE_PNG),
+        IconKind::KeyRound => ("figma_icon_key_round", ICON_KEY_ROUND_PNG),
+        IconKind::Search => ("figma_icon_search", ICON_SEARCH_PNG),
+        IconKind::Plus => ("figma_icon_plus", ICON_PLUS_PNG),
+        IconKind::ChevronDown => ("figma_icon_chevron_down", ICON_CHEVRON_DOWN_PNG),
+        IconKind::ChevronRight => ("figma_icon_chevron_right", ICON_CHEVRON_RIGHT_PNG),
+        IconKind::ShieldCheck => ("figma_icon_shield_check", ICON_SHIELD_CHECK_PNG),
+        IconKind::AlertCircle => ("figma_icon_circle_alert", ICON_CIRCLE_ALERT_PNG),
+        IconKind::Check => ("figma_icon_check", ICON_CHECK_PNG),
+        IconKind::Copy => ("figma_icon_copy", ICON_COPY_PNG),
+        IconKind::Trash => ("figma_icon_trash", ICON_TRASH_PNG),
+    }
+}
 
 fn load_figma_texture(
     ctx: &egui::Context,
@@ -511,188 +508,21 @@ pub fn brand_mark(ui: &mut egui::Ui, size: f32) {
     }
 }
 
-/// Paints minimal crisp 1.5px stroke Lucide-style vector icons matching 01-component-library.
+/// Paints authentic Figma `Icon/*` transparent PNG assets tinted cleanly with `color`.
 pub fn paint_icon(painter: &egui::Painter, rect: egui::Rect, kind: IconKind, color: egui::Color32) {
-    let c = rect.center();
-    let r = rect.width().min(rect.height()) * 0.38;
-    let st = egui::Stroke::new(1.5, color);
-    match kind {
-        IconKind::Blocks => {
-            let s = r * 0.85;
-            painter.rect_stroke(
-                egui::Rect::from_min_max(c - egui::vec2(s, s), c - egui::vec2(1.5, 1.5)),
-                2.0,
-                st,
-                egui::StrokeKind::Middle,
-            );
-            painter.rect_stroke(
-                egui::Rect::from_min_max(c + egui::vec2(1.5, -s), c + egui::vec2(s, -1.5)),
-                2.0,
-                st,
-                egui::StrokeKind::Middle,
-            );
-            painter.rect_stroke(
-                egui::Rect::from_min_max(c + egui::vec2(-s, 1.5), c + egui::vec2(-1.5, s)),
-                2.0,
-                st,
-                egui::StrokeKind::Middle,
-            );
-            painter.rect_stroke(
-                egui::Rect::from_min_max(c + egui::vec2(1.5, 1.5), c + egui::vec2(s, s)),
-                2.0,
-                st,
-                egui::StrokeKind::Middle,
-            );
-        }
-        IconKind::BookOpen => {
-            painter.rect_stroke(
-                egui::Rect::from_center_size(c, egui::vec2(r * 1.9, r * 1.5)),
-                2.0,
-                st,
-                egui::StrokeKind::Middle,
-            );
-            painter.line_segment([c + egui::vec2(0.0, -r * 0.75), c + egui::vec2(0.0, r * 0.75)], st);
-        }
-        IconKind::Play => {
-            painter.add(egui::Shape::closed_line(
-                vec![
-                    c + egui::vec2(-r * 0.55, -r * 0.85),
-                    c + egui::vec2(r * 0.85, 0.0),
-                    c + egui::vec2(-r * 0.55, r * 0.85),
-                ],
-                st,
-            ));
-        }
-        IconKind::GitBranch => {
-            painter.circle_stroke(c + egui::vec2(-r * 0.5, -r * 0.55), 2.5, st);
-            painter.circle_stroke(c + egui::vec2(-r * 0.5, r * 0.55), 2.5, st);
-            painter.circle_stroke(c + egui::vec2(r * 0.55, -r * 0.25), 2.5, st);
-            painter.line_segment(
-                [c + egui::vec2(-r * 0.5, -r * 0.3), c + egui::vec2(-r * 0.5, r * 0.3)],
-                st,
-            );
-            painter.line_segment(
-                [c + egui::vec2(-r * 0.5, r * 0.1), c + egui::vec2(r * 0.35, -r * 0.2)],
-                st,
-            );
-        }
-        IconKind::Users => {
-            painter.circle_stroke(c + egui::vec2(-r * 0.25, -r * 0.4), r * 0.38, st);
-            painter.line_segment(
-                [c + egui::vec2(-r * 0.9, r * 0.75), c + egui::vec2(r * 0.4, r * 0.75)],
-                st,
-            );
-            painter.circle_stroke(c + egui::vec2(r * 0.55, -r * 0.3), r * 0.28, st);
-        }
-        IconKind::Globe => {
-            painter.circle_stroke(c, r * 0.95, st);
-            painter.line_segment([c + egui::vec2(-r * 0.9, 0.0), c + egui::vec2(r * 0.9, 0.0)], st);
-            painter.line_segment([c + egui::vec2(0.0, -r * 0.9), c + egui::vec2(0.0, r * 0.9)], st);
-        }
-        IconKind::Terminal => {
-            painter.line_segment(
-                [c + egui::vec2(-r * 0.7, -r * 0.45), c + egui::vec2(-r * 0.15, 0.0)],
-                st,
-            );
-            painter.line_segment(
-                [c + egui::vec2(-r * 0.15, 0.0), c + egui::vec2(-r * 0.7, r * 0.45)],
-                st,
-            );
-            painter.line_segment(
-                [c + egui::vec2(r * 0.05, r * 0.45), c + egui::vec2(r * 0.75, r * 0.45)],
-                st,
-            );
-        }
-        IconKind::Settings => {
-            painter.circle_stroke(c, r * 0.4, st);
-            painter.circle_stroke(c, r * 0.85, st);
-        }
-        IconKind::Folder => {
-            painter.rect_stroke(
-                egui::Rect::from_center_size(c + egui::vec2(0.0, 1.0), egui::vec2(r * 1.9, r * 1.4)),
-                2.0,
-                st,
-                egui::StrokeKind::Middle,
-            );
-            painter.line_segment(
-                [c + egui::vec2(-r * 0.95, -r * 0.65), c + egui::vec2(-r * 0.2, -r * 0.65)],
-                st,
-            );
-        }
-        IconKind::FileCode => {
-            painter.rect_stroke(
-                egui::Rect::from_center_size(c, egui::vec2(r * 1.5, r * 1.9)),
-                2.0,
-                st,
-                egui::StrokeKind::Middle,
-            );
-            painter.line_segment([c + egui::vec2(-r * 0.3, 0.0), c + egui::vec2(r * 0.3, 0.0)], st);
-        }
-        IconKind::History => {
-            painter.circle_stroke(c, r * 0.9, st);
-            painter.line_segment([c, c + egui::vec2(0.0, -r * 0.5)], st);
-            painter.line_segment([c, c + egui::vec2(r * 0.4, r * 0.2)], st);
-        }
-        IconKind::Search => {
-            painter.circle_stroke(c + egui::vec2(-r * 0.18, -r * 0.18), r * 0.6, st);
-            painter.line_segment(
-                [c + egui::vec2(r * 0.25, r * 0.25), c + egui::vec2(r * 0.85, r * 0.85)],
-                st,
-            );
-        }
-        IconKind::Bell => {
-            painter.circle_stroke(c + egui::vec2(0.0, -r * 0.1), r * 0.65, st);
-            painter.line_segment(
-                [c + egui::vec2(-r * 0.8, r * 0.55), c + egui::vec2(r * 0.8, r * 0.55)],
-                st,
-            );
-        }
-        IconKind::ShieldCheck => {
-            painter.rect_stroke(
-                egui::Rect::from_center_size(c, egui::vec2(r * 1.5, r * 1.7)),
-                4.0,
-                st,
-                egui::StrokeKind::Middle,
-            );
-            painter.line_segment(
-                [c + egui::vec2(-r * 0.35, 0.0), c + egui::vec2(-r * 0.05, r * 0.35)],
-                st,
-            );
-            painter.line_segment(
-                [c + egui::vec2(-r * 0.05, r * 0.35), c + egui::vec2(r * 0.45, -r * 0.3)],
-                st,
-            );
-        }
-        IconKind::KeyRound => {
-            painter.circle_stroke(c + egui::vec2(-r * 0.4, 0.0), r * 0.4, st);
-            painter.line_segment([c, c + egui::vec2(r * 0.85, 0.0)], st);
-            painter.line_segment([c + egui::vec2(r * 0.6, 0.0), c + egui::vec2(r * 0.6, r * 0.35)], st);
-        }
-        IconKind::Plus => {
-            painter.line_segment([c + egui::vec2(-r * 0.7, 0.0), c + egui::vec2(r * 0.7, 0.0)], st);
-            painter.line_segment([c + egui::vec2(0.0, -r * 0.7), c + egui::vec2(0.0, r * 0.7)], st);
-        }
-        IconKind::ChevronDown => {
-            painter.line_segment([c + egui::vec2(-r * 0.6, -r * 0.25), c + egui::vec2(0.0, r * 0.35)], st);
-            painter.line_segment([c + egui::vec2(0.0, r * 0.35), c + egui::vec2(r * 0.6, -r * 0.25)], st);
-        }
-        IconKind::ChevronRight => {
-            painter.line_segment([c + egui::vec2(-r * 0.25, -r * 0.6), c + egui::vec2(r * 0.35, 0.0)], st);
-            painter.line_segment([c + egui::vec2(r * 0.35, 0.0), c + egui::vec2(-r * 0.25, r * 0.6)], st);
-        }
-        IconKind::AlertCircle => {
-            painter.circle_stroke(c, r * 0.9, st);
-            painter.line_segment([c + egui::vec2(0.0, -r * 0.4), c + egui::vec2(0.0, r * 0.1)], st);
-            painter.circle_filled(c + egui::vec2(0.0, r * 0.45), 1.2, color);
-        }
-        IconKind::Check => {
-            painter.line_segment([c + egui::vec2(-r * 0.55, 0.0), c + egui::vec2(-r * 0.1, r * 0.45)], st);
-            painter.line_segment([c + egui::vec2(-r * 0.1, r * 0.45), c + egui::vec2(r * 0.65, -r * 0.4)], st);
-        }
+    let (key, png_bytes) = icon_asset_spec(kind);
+    if let Some(tex) = load_figma_texture(painter.ctx(), key, png_bytes) {
+        painter.image(
+            tex.id(),
+            rect,
+            egui::Rect::from_min_max(egui::pos2(0.0, 0.0), egui::pos2(1.0, 1.0)),
+            color,
+        );
     }
 }
 
-/// Activity rail icon button (40x40 rounded button inside the 64px Figma rail).
+/// Activity rail icon button matching Figma `Shell/Activity rail` (`6:1913`):
+/// subtle `#EFF6FF` active pill with crisp `#1D4ED8` left accent bar, and semantic icon colors.
 pub fn rail_icon_button(
     ui: &mut egui::Ui,
     selected: bool,
@@ -701,30 +531,33 @@ pub fn rail_icon_button(
 ) -> egui::Response {
     let (rect, resp) = ui.allocate_exact_size(egui::vec2(40.0, 40.0), egui::Sense::click());
     let fill = if selected {
-        selected_bg(ui)
+        Tokens::BG_SELECTED
     } else if resp.hovered() {
-        subtle_bg(ui)
+        Tokens::BG_SUBTLE
     } else {
-        surface_bg(ui)
-    };
-    let stroke = if selected {
-        egui::Stroke::new(1.0, Tokens::STATUS_INFO)
-    } else if resp.hovered() {
-        egui::Stroke::new(1.0, border_color(ui))
-    } else {
-        egui::Stroke::NONE
+        Tokens::BG_SURFACE
     };
     let icon_color = if selected {
         Tokens::STATUS_INFO
     } else {
-        text_primary(ui)
+        icon_semantic_color(kind)
     };
-    ui.painter().rect(rect, 8.0, fill, stroke, egui::StrokeKind::Middle);
+    ui.painter().rect_filled(rect, 8.0, fill);
+    if selected {
+        ui.painter().rect_filled(
+            egui::Rect::from_min_size(
+                egui::pos2(rect.left() - 8.0, rect.top() + 8.0),
+                egui::vec2(3.0, rect.height() - 16.0),
+            ),
+            1.5,
+            Tokens::STATUS_INFO,
+        );
+    }
     paint_icon(ui.painter(), rect.shrink(10.0), kind, icon_color);
     resp.on_hover_text(tooltip)
 }
 
-/// Sidebar navigation row matching Figma Shell/Project sidebar Navigation item (5:223).
+/// Sidebar navigation row matching Figma `Shell/Project sidebar` Navigation item (`5:223`).
 pub fn nav_item(
     ui: &mut egui::Ui,
     kind: IconKind,
@@ -734,27 +567,36 @@ pub fn nav_item(
 ) -> egui::Response {
     let w = ui.available_width().max(120.0);
     let (rect, resp) = ui.allocate_exact_size(egui::vec2(w, 36.0), egui::Sense::click());
-    let bg = if selected {
-        selected_bg(ui)
-    } else if resp.hovered() {
-        subtle_bg(ui)
+    let bg = if selected || resp.hovered() {
+        Tokens::BG_SUBTLE
     } else {
-        surface_bg(ui)
+        Tokens::BG_SURFACE
     };
     ui.painter().rect_filled(rect, 6.0, bg);
-    let color = if selected {
+    let icon_color = if selected {
         Tokens::STATUS_INFO
     } else {
-        text_primary(ui)
+        icon_semantic_color(kind)
     };
-    let icon_rect = egui::Rect::from_min_size(rect.min + egui::vec2(10.0, 8.0), egui::vec2(20.0, 20.0));
-    paint_icon(ui.painter(), icon_rect, kind, color);
+    let text_color = if selected {
+        Tokens::STATUS_INFO
+    } else {
+        Tokens::TEXT_PRIMARY
+    };
+    let icon_rect =
+        egui::Rect::from_min_size(rect.min + egui::vec2(10.0, 8.0), egui::vec2(20.0, 20.0));
+    paint_icon(ui.painter(), icon_rect, kind, icon_color);
+    let font = if selected {
+        egui::FontId::new(13.0, egui::FontFamily::Name("bold".into()))
+    } else {
+        egui::FontId::new(13.0, egui::FontFamily::Proportional)
+    };
     ui.painter().text(
         rect.min + egui::vec2(38.0, rect.height() * 0.5),
         egui::Align2::LEFT_CENTER,
         label,
-        egui::FontId::new(13.0, egui::FontFamily::Proportional),
-        color,
+        font,
+        text_color,
     );
     if let Some(n) = count {
         ui.painter().text(
@@ -762,7 +604,11 @@ pub fn nav_item(
             egui::Align2::RIGHT_CENTER,
             n.to_string(),
             egui::FontId::new(11.5, egui::FontFamily::Monospace),
-            if selected { Tokens::STATUS_INFO } else { text_secondary(ui) },
+            if selected {
+                Tokens::STATUS_INFO
+            } else {
+                Tokens::TEXT_SECONDARY
+            },
         );
     }
     resp
@@ -826,6 +672,27 @@ pub fn page_header(
     action_label: Option<&str>,
     action_enabled: bool,
 ) -> bool {
+    page_header_styled(ui, title, subtitle, action_label, action_enabled, true)
+}
+
+pub fn page_header_secondary(
+    ui: &mut egui::Ui,
+    title: &str,
+    subtitle: &str,
+    action_label: Option<&str>,
+    action_enabled: bool,
+) -> bool {
+    page_header_styled(ui, title, subtitle, action_label, action_enabled, false)
+}
+
+fn page_header_styled(
+    ui: &mut egui::Ui,
+    title: &str,
+    subtitle: &str,
+    action_label: Option<&str>,
+    action_enabled: bool,
+    primary_action: bool,
+) -> bool {
     let mut clicked = false;
     ui.horizontal(|ui| {
         ui.vertical(|ui| {
@@ -838,13 +705,18 @@ pub fn page_header(
         });
         if let Some(lbl) = action_label {
             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                if primary_button(ui, action_enabled, lbl).clicked() {
+                let btn = if primary_action {
+                    primary_button(ui, action_enabled, lbl)
+                } else {
+                    secondary_button(ui, action_enabled, lbl)
+                };
+                if btn.clicked() {
                     clicked = true;
                 }
             });
         }
     });
-    ui.add_space(12.0);
+    ui.add_space(10.0);
     clicked
 }
 
@@ -852,29 +724,61 @@ pub fn section(ui: &mut egui::Ui, title: &str, subtitle: &str) {
     let _ = page_header(ui, title, subtitle, None, false);
 }
 
-/// Figma clean bordered card (corner radius 10, padding 20x24).
+/// Figma clean bordered card (corner radius 10, padding 24x20).
 pub fn surface_card(ui: &mut egui::Ui, add_contents: impl FnOnce(&mut egui::Ui)) {
     egui::Frame::new()
         .fill(surface_bg(ui))
         .stroke(egui::Stroke::new(1.0, border_color(ui)))
         .corner_radius(10)
-        .inner_margin(egui::Margin::symmetric(24, 20))
+        .inner_margin(egui::Margin::symmetric(24, 18))
         .show(ui, |ui| {
             ui.set_min_width(ui.available_width());
             add_contents(ui);
         });
 }
 
-/// Card section header row (title left + subtle chevron indicator right).
+/// Clean card section title (without fake non-clickable chevron).
 pub fn card_header(ui: &mut egui::Ui, title: &str) {
     ui.horizontal(|ui| {
         ui.label(bold_text(title, 13.5, text_primary(ui)));
-        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-            let (rect, _) = ui.allocate_exact_size(egui::vec2(16.0, 16.0), egui::Sense::hover());
-            paint_icon(ui.painter(), rect, IconKind::ChevronDown, text_secondary(ui));
-        });
     });
-    ui.add_space(10.0);
+    ui.add_space(8.0);
+}
+
+/// Interactive collapsible card header with real toggle chevron (matches Figma R01 cards).
+pub fn collapsible_card_header(ui: &mut egui::Ui, title: &str, collapsed: &mut bool) -> bool {
+    let w = ui.available_width().max(120.0);
+    let (rect, resp) = ui.allocate_exact_size(egui::vec2(w, 24.0), egui::Sense::click());
+    if resp.hovered() {
+        ui.painter().rect_filled(rect, 6.0, Tokens::BG_SUBTLE);
+    }
+    ui.painter().text(
+        egui::pos2(rect.left() + 4.0, rect.center().y),
+        egui::Align2::LEFT_CENTER,
+        title,
+        egui::FontId::new(13.5, egui::FontFamily::Name("bold".into())),
+        Tokens::TEXT_PRIMARY,
+    );
+    let icon_rect = egui::Rect::from_center_size(
+        egui::pos2(rect.right() - 12.0, rect.center().y),
+        egui::vec2(16.0, 16.0),
+    );
+    paint_icon(
+        ui.painter(),
+        icon_rect,
+        if *collapsed {
+            IconKind::ChevronRight
+        } else {
+            IconKind::ChevronDown
+        },
+        Tokens::TEXT_SECONDARY,
+    );
+    let toggled = resp.clicked();
+    if toggled {
+        *collapsed = !*collapsed;
+    }
+    ui.add_space(6.0);
+    toggled
 }
 
 /// Two-column configuration row matching Figma A05 / T02 / S01 / I01 cards.
@@ -991,27 +895,33 @@ pub fn primary_button(ui: &mut egui::Ui, enabled: bool, label: &str) -> egui::Re
 }
 
 pub fn secondary_button(ui: &mut egui::Ui, enabled: bool, label: &str) -> egui::Response {
+    let color = if enabled {
+        Tokens::TEXT_PRIMARY
+    } else {
+        Tokens::TEXT_SECONDARY
+    };
     ui.add_enabled(
         enabled,
-        egui::Button::new(
-            egui::RichText::new(label)
-                .size(13.0)
-                .color(text_primary(ui)),
-        )
-        .fill(surface_bg(ui))
-        .stroke(egui::Stroke::new(1.0, border_color(ui)))
-        .min_size(egui::vec2(72.0, 36.0))
-        .corner_radius(6),
+        egui::Button::new(bold_text(label, 13.0, color))
+            .fill(if enabled { Tokens::BG_SURFACE } else { Tokens::BG_DISABLED })
+            .stroke(egui::Stroke::new(1.0, Tokens::BORDER_DEFAULT))
+            .min_size(egui::vec2(84.0, 38.0))
+            .corner_radius(6),
     )
 }
 
 pub fn danger_button(ui: &mut egui::Ui, enabled: bool, label: &str) -> egui::Response {
+    let color = if enabled {
+        Tokens::TEXT_DANGER
+    } else {
+        Tokens::TEXT_SECONDARY
+    };
     ui.add_enabled(
         enabled,
-        egui::Button::new(bold_text(label, 13.0, Tokens::TEXT_DANGER))
-            .fill(surface_bg(ui))
-            .stroke(egui::Stroke::new(1.0, Tokens::TEXT_DANGER))
-            .min_size(egui::vec2(96.0, 36.0))
+        egui::Button::new(bold_text(label, 13.0, color))
+            .fill(if enabled { Tokens::BG_SURFACE } else { Tokens::BG_DISABLED })
+            .stroke(egui::Stroke::new(1.0, Tokens::BORDER_DEFAULT))
+            .min_size(egui::vec2(96.0, 38.0))
             .corner_radius(6),
     )
 }
@@ -1032,20 +942,25 @@ pub fn status_badge(ui: &mut egui::Ui, kind: NoticeKind, text: &str) {
     pill_badge(ui, kind.color(), text);
 }
 
-pub fn avatar_circle(ui: &mut egui::Ui, initials: &str, _tone: AvatarTone) -> egui::Response {
+pub fn avatar_circle(ui: &mut egui::Ui, initials: &str, tone: AvatarTone) -> egui::Response {
     let (rect, resp) = ui.allocate_exact_size(egui::vec2(32.0, 32.0), egui::Sense::click());
+    let fill = match tone {
+        AvatarTone::Teal => egui::Color32::from_rgb(0xEC, 0xFD, 0xF5),
+        AvatarTone::Salmon => egui::Color32::from_rgb(0xFF, 0xF1, 0xEE),
+        AvatarTone::Cream => egui::Color32::from_rgb(0xFF, 0xFA, 0xEB),
+    };
     ui.painter().circle(
         rect.center(),
         15.0,
-        surface_bg(ui),
-        egui::Stroke::new(1.0, border_color(ui)),
+        fill,
+        egui::Stroke::new(1.0, Tokens::BORDER_DEFAULT),
     );
     ui.painter().text(
         rect.center(),
         egui::Align2::CENTER_CENTER,
         initials,
         egui::FontId::new(11.0, egui::FontFamily::Monospace),
-        text_primary(ui),
+        Tokens::TEXT_PRIMARY,
     );
     resp
 }
@@ -1130,10 +1045,15 @@ pub fn code_surface_numbered(ui: &mut egui::Ui, text: &str) {
         .inner_margin(egui::Margin::symmetric(14, 12))
         .show(ui, |ui| {
             ui.set_min_width(ui.available_width());
-            for (idx, line) in text.lines().take(250).enumerate() {
+            let mut total_lines = 0usize;
+            for (idx, line) in text.lines().enumerate() {
+                total_lines = idx + 1;
+                if idx >= 2000 {
+                    continue;
+                }
                 ui.horizontal(|ui| {
                     ui.allocate_ui_with_layout(
-                        egui::vec2(32.0, 22.0),
+                        egui::vec2(38.0, 20.0),
                         egui::Layout::left_to_right(egui::Align::Center),
                         |ui| {
                             ui.label(
@@ -1154,6 +1074,16 @@ pub fn code_surface_numbered(ui: &mut egui::Ui, text: &str) {
                         .selectable(true),
                     );
                 });
+            }
+            if total_lines > 2000 {
+                ui.label(
+                    egui::RichText::new(format!(
+                        "… showing first 2,000 lines ({total_lines} total lines). Use Copy or Save to export full body."
+                    ))
+                    .monospace()
+                    .size(11.5)
+                    .color(Tokens::TEXT_WARNING),
+                );
             }
             if text.is_empty() {
                 ui.label(

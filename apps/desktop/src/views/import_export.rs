@@ -72,9 +72,9 @@ pub fn show(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
         });
         ui.add_space(8.0);
 
-        // 2. Postman Collection v2.1 & Environment (IM02, IM03, IM06).
+        // 2. Postman Collection v2.1 & Environment.
         swaggen_ui_kit::surface_card(ui, |ui| {
-            ui.heading("2. Postman Collection v2.1 & Environment (IM02 / IM03 / IM06)");
+            swaggen_ui_kit::card_header(ui, "Postman Collection v2.1, Environment, HAR & .http");
             ui.add(
                 egui::TextEdit::multiline(&mut app.postman_input)
                     .desired_width(ui.available_width())
@@ -127,7 +127,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
                         }
                     }
                 }
-                if swaggen_ui_kit::secondary_button(ui, true, "Import HAR 1.2 (IM10)").clicked() {
+                if swaggen_ui_kit::secondary_button(ui, true, "Import HAR 1.2").clicked() {
                     let cid = app
                         .state
                         .collections
@@ -150,7 +150,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
                         }
                     }
                 }
-                if swaggen_ui_kit::secondary_button(ui, true, "Import .http file (IM10)").clicked() {
+                if swaggen_ui_kit::secondary_button(ui, true, "Import .http file").clicked() {
                     let cid = app
                         .state
                         .collections
@@ -186,9 +186,9 @@ pub fn show(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
         });
         ui.add_space(8.0);
 
-        // 3. Sanitized Open Project bundle preview (IM01, IM04, IM08).
+        // 3. Sanitized Open Project bundle preview.
         swaggen_ui_kit::surface_card(ui, |ui| {
-            ui.heading("3. Sanitized Open Project & OpenAPI Export Preview (IM01 / IM04 / IM08)");
+            swaggen_ui_kit::card_header(ui, "Sanitized Open Project & OpenAPI Export Preview");
             if let Ok(bundle) =
                 export_open_project_bundle(&app.state, &app.specs, &RedactionPolicy::default())
             {
@@ -213,9 +213,9 @@ pub fn show(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
         });
         ui.add_space(8.0);
 
-        // 4. Shared attachment bundler & deterministic Git export (IM07, IM09).
+        // 4. Shared attachment bundler & Git export.
         swaggen_ui_kit::surface_card(ui, |ui| {
-            ui.heading("4. Shared Attachments (IM07) & Git Project Export (IM09)");
+            swaggen_ui_kit::card_header(ui, "Shared Attachments & Git Project Export");
             ui.horizontal(|ui| {
                 ui.label("Files (CSV):");
                 ui.add(

@@ -101,7 +101,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
 
 fn show_outbox_and_publish(app: &mut App, ui: &mut egui::Ui, profile_id: &str, wid: &str) {
     swaggen_ui_kit::surface_card(ui, |ui| {
-        ui.strong("Stage active request / edit for Team Publish (CO02 / C05)");
+        ui.strong("Stage active request / edit for Team Publish");
         ui.horizontal_wrapped(|ui| {
             ui.label("Publish note:");
             ui.add(
@@ -134,7 +134,7 @@ fn show_outbox_and_publish(app: &mut App, ui: &mut egui::Ui, profile_id: &str, w
 
     ui.add_space(6.0);
     swaggen_ui_kit::surface_card(ui, |ui| {
-        ui.strong("Durable Outbox Queue (SY01 / SY02 / C07)");
+        ui.strong("Durable Outbox Queue");
         if app.sync_state.outbox.is_empty() {
             ui.label(
                 egui::RichText::new("Outbox is empty.")
@@ -175,7 +175,7 @@ fn show_outbox_and_publish(app: &mut App, ui: &mut egui::Ui, profile_id: &str, w
                         swaggen_ui_kit::notice_banner(
                             ui,
                             NoticeKind::Danger,
-                            "Permission revoked (Y05 / SY09)",
+                            "Permission revoked",
                             &format!("{reason}. Your local draft stays preserved for personal export."),
                         );
                     }
@@ -318,7 +318,7 @@ fn show_conflicts(app: &mut App, ui: &mut egui::Ui, profile_id: &str, wid: &str)
                     swaggen_ui_kit::notice_banner(
                         ui,
                         NoticeKind::Danger,
-                        "Deleted while offline (Y04 / SY07)",
+                        "Deleted while offline",
                         &format!("{reason} (rev {server_revision}). Tombstone prevents silent resurrection."),
                     );
                     if swaggen_ui_kit::secondary_button(
@@ -346,7 +346,7 @@ fn show_history(app: &mut App, ui: &mut egui::Ui, profile_id: &str, wid: &str) {
     ui.horizontal(|ui| {
         ui.label("Entity ID:");
         ui.add(egui::TextEdit::singleline(&mut app.history_entity_id_input).desired_width(220.0));
-        if swaggen_ui_kit::secondary_button(ui, !app.pending, "Load revisions (C10)").clicked() {
+        if swaggen_ui_kit::secondary_button(ui, !app.pending, "Load revisions").clicked() {
             app.submit(Command::LoadEntityRevisions {
                 profile_id: profile_id.to_owned(),
                 workspace_id: wid.to_owned(),
@@ -365,7 +365,7 @@ fn show_history(app: &mut App, ui: &mut egui::Ui, profile_id: &str, wid: &str) {
         ui.horizontal_wrapped(|ui| {
             ui.strong(format!("r{}", r.revision));
             ui.label(format!("{} · {} · {}", r.actor_email, r.name, r.note));
-            if ui.small_button("Restore as new version (C11)").clicked() {
+            if ui.small_button("Restore as new version").clicked() {
                 restore_target = Some((r.entity_id.clone(), r.revision));
             }
         });

@@ -96,6 +96,7 @@ pub struct App {
     pub allow_close: bool,
     pub close_after_save: bool,
     pub firebase_auth_pending: bool,
+    pub request_config_collapsed: bool,
 
     // Search & tree UI state
     pub search_query: String,
@@ -245,7 +246,6 @@ pub struct App {
     // P09 UX B, Governance, Command Palette, Theme/Locale & Deep Link / Update Verification
     pub show_command_palette: bool,
     pub command_palette_query: String,
-    pub theme: swaggen_ui_kit::UiTheme,
     pub locale: swaggen_ui_kit::UiLocale,
     pub deep_link_input: String,
     pub update_feed_url: String,
@@ -309,6 +309,7 @@ impl App {
             allow_close: false,
             close_after_save: false,
             firebase_auth_pending: false,
+            request_config_collapsed: false,
             search_query: String::new(),
             filter_method: None,
             filter_tag: String::new(),
@@ -438,7 +439,6 @@ impl App {
             dev_util_output: String::new(),
             show_command_palette: false,
             command_palette_query: String::new(),
-            theme: swaggen_ui_kit::UiTheme::Light,
             locale: swaggen_ui_kit::UiLocale::En,
             deep_link_input: "swaggen://workspace/personal/mode/runner".into(),
             update_feed_url: crate::updater::DEFAULT_UPDATE_FEED_URL.into(),
@@ -474,6 +474,72 @@ impl App {
         if self.revealed.take().is_some() {
             self.status = "Secret value hidden".into();
         }
+    }
+
+    pub fn navigate_to(&mut self, mode: MainMode) {
+        self.hide_secret();
+        self.show_workspace_modal = false;
+        self.show_command_palette = false;
+        self.show_production_confirm = false;
+        self.mode = mode;
+        if mode == MainMode::Workbench
+            && self.active_request_id().is_none()
+            && let Some(first_id) = self.state.requests.first().map(|r| r.id.clone())
+        {
+            self.state.open_or_focus_tab(&first_id);
+        }
+    }
+
+    pub fn open_request_in_workbench(&mut self, req_id: &str) {
+        self.hide_secret();
+        self.show_workspace_modal = false;
+        self.show_command_palette = false;
+        self.show_production_confirm = false;
+        self.state.open_or_focus_tab(req_id);
+        self.mode = MainMode::Workbench;
+    }
+
+    pub fn slugify_workspace_id(raw_name: &str) -> Option<LocalId> {
+        let mut slug = String::with_capacity(64);
+        let mut prev_dash = false;
+        for ch in raw_name.trim().chars() {
+            let mapped = match ch {
+                'a'..='z' | '0'..='9' => Some(ch),
+                'A'..='Z' => Some(ch.to_ascii_lowercase()),
+                'à' | 'á' | 'ạ' | 'ả' | 'ã' | 'â' | 'ầ' | 'ấ' | 'ậ' | 'ẩ' | 'ẫ' | 'ă' | 'ằ'
+                | 'ắ' | 'ặ' | 'ẳ' | 'ẵ' | 'À' | 'Á' | 'Ạ' | 'Ả' | 'Ã' | 'Â' | 'Ầ' | 'Ấ' | 'Ậ'
+                | 'Ẩ' | 'Ẫ' | 'Ă' | 'Ằ' | 'Ắ' | 'Ặ' | 'Ẳ' | 'Ẵ' => Some('a'),
+                'è' | 'é' | 'ẹ' | 'ẻ' | 'ẽ' | 'ê' | 'ề' | 'ế' | 'ệ' | 'ể' | 'ễ' | 'È' | 'É'
+                | 'Ẹ' | 'Ẻ' | 'Ẽ' | 'Ê' | 'Ề' | 'Ế' | 'Ệ' | 'Ể' | 'Ễ' => Some('e'),
+                'ì' | 'í' | 'ị' | 'ỉ' | 'ĩ' | 'Ì' | 'Í' | 'Ị' | 'Ỉ' | 'Ĩ' => Some('i'),
+                'ò' | 'ó' | 'ọ' | 'ỏ' | 'õ' | 'ô' | 'ồ' | 'ố' | 'ộ' | 'ổ' | 'ỗ' | 'ơ' | 'ờ'
+                | 'ớ' | 'ợ' | 'ở' | 'ỡ' | 'Ò' | 'Ó' | 'Ọ' | 'Ỏ' | 'Õ' | 'Ô' | 'Ồ' | 'Ố' | 'Ộ'
+                | 'Ổ' | 'Ỗ' | 'Ơ' | 'Ờ' | 'Ớ' | 'Ợ' | 'Ở' | 'Ỡ' => Some('o'),
+                'ù' | 'ú' | 'ụ' | 'ủ' | 'ũ' | 'ư' | 'ừ' | 'ứ' | 'ự' | 'ử' | 'ữ' | 'Ù' | 'Ú'
+                | 'Ụ' | 'Ủ' | 'Ũ' | 'Ư' | 'Ừ' | 'Ứ' | 'Ự' | 'Ử' | 'Ữ' => Some('u'),
+                'ỳ' | 'ý' | 'ỵ' | 'ỷ' | 'ỹ' | 'Ỳ' | 'Ý' | 'Ỵ' | 'Ỷ' | 'Ỹ' => Some('y'),
+                'đ' | 'Đ' => Some('d'),
+                '-' | '_' | ' ' | '/' | '.' => None,
+                _ => None,
+            };
+            if let Some(c) = mapped {
+                slug.push(c);
+                prev_dash = false;
+            } else if !slug.is_empty() && !prev_dash {
+                slug.push('-');
+                prev_dash = true;
+            }
+            if slug.len() >= 56 {
+                break;
+            }
+        }
+        let trimmed = slug.trim_matches('-').to_owned();
+        if trimmed.is_empty() {
+            return None;
+        }
+        LocalId::parse(trimmed.clone())
+            .ok()
+            .or_else(|| LocalId::parse(format!("ws-{trimmed}")).ok())
     }
 
     pub fn active_request_id(&self) -> Option<String> {
@@ -633,10 +699,15 @@ impl App {
                     self.history = history;
                     self.secret_names = secret_names;
                     self.storage_stats = storage_stats;
-                    if server_profiles.active().is_some_and(|p| !p.session_id.is_empty()) {
-                        self.show_welcome = false;
+                    if let Some(active) = server_profiles.active()
+                        && !active.session_id.is_empty()
+                    {
+                        let pid = active.id.clone();
+                        self.server_profiles = server_profiles;
+                        self.submit(Command::RefreshTeamWorkspaces { profile_id: pid });
+                    } else {
+                        self.server_profiles = server_profiles;
                     }
-                    self.server_profiles = server_profiles;
                     self.generation = 0;
                     self.saved_generation = 0;
                     self.loaded = true;
@@ -662,10 +733,15 @@ impl App {
                     self.history = history;
                     self.secret_names = secret_names;
                     self.storage_stats = storage_stats;
-                    if server_profiles.active().is_some_and(|p| !p.session_id.is_empty()) {
-                        self.show_welcome = false;
+                    if let Some(active) = server_profiles.active()
+                        && !active.session_id.is_empty()
+                    {
+                        let pid = active.id.clone();
+                        self.server_profiles = server_profiles;
+                        self.submit(Command::RefreshTeamWorkspaces { profile_id: pid });
+                    } else {
+                        self.server_profiles = server_profiles;
                     }
-                    self.server_profiles = server_profiles;
                     self.loaded = true;
                     self.recovery_needed = false;
                     self.confirm_quarantine = false;
@@ -673,10 +749,17 @@ impl App {
                 }
                 Event::ServerProfilesUpdated { store, message } => {
                     self.firebase_auth_pending = false;
-                    if store.active().is_some_and(|p| !p.session_id.is_empty()) {
-                        self.show_welcome = false;
-                    }
+                    let signed_in_id = store
+                        .active()
+                        .filter(|p| !p.session_id.is_empty())
+                        .map(|p| p.id.clone());
                     self.server_profiles = store;
+                    if signed_in_id.is_none() {
+                        self.team_workspaces.clear();
+                        self.selected_team_workspace_id = None;
+                    } else if let Some(pid) = signed_in_id {
+                        self.submit(Command::RefreshTeamWorkspaces { profile_id: pid });
+                    }
                     self.status = message;
                 }
                 Event::FirebaseLoginCancelled => {
@@ -1367,21 +1450,36 @@ impl eframe::App for App {
                                     | MainMode::Cookies
                                     | MainMode::History
                             ),
-                            _ => self.mode == mode,
+                            _ => self.mode == mode && !self.show_workspace_modal,
                         };
                         if swaggen_ui_kit::rail_icon_button(ui, active, icon, tip).clicked() {
-                            self.hide_secret();
-                            self.mode = mode;
+                            self.navigate_to(mode);
                         }
-                        ui.add_space(8.0);
+                        ui.add_space(6.0);
+                    }
+                    let bell_active = self.mode == MainMode::TeamSync
+                        && self.sync_subtab == 4
+                        && !self.show_workspace_modal;
+                    if swaggen_ui_kit::rail_icon_button(
+                        ui,
+                        bell_active,
+                        IconKind::Bell,
+                        "Activity & Notifications",
+                    )
+                    .clicked()
+                    {
+                        self.sync_subtab = 4;
+                        self.navigate_to(MainMode::TeamSync);
                     }
                     ui.with_layout(egui::Layout::bottom_up(egui::Align::Center), |ui| {
                         let initials = self.user_initials();
                         if swaggen_ui_kit::avatar_circle(ui, &initials, AvatarTone::Cream)
-                            .on_hover_text("Firebase account & sessions")
+                            .on_hover_text("Workspace switcher & account")
                             .clicked()
                         {
                             self.hide_secret();
+                            self.show_workspace_modal = false;
+                            self.show_command_palette = false;
                             if self
                                 .server_profiles
                                 .active()
@@ -1389,7 +1487,7 @@ impl eframe::App for App {
                             {
                                 self.show_welcome = true;
                             } else {
-                                self.mode = MainMode::Server;
+                                self.navigate_to(MainMode::Server);
                             }
                         }
                     });
@@ -1440,14 +1538,21 @@ impl eframe::App for App {
                     }
 
                     ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                        if self.selected_team_workspace_id.is_some()
+                            && swaggen_ui_kit::secondary_button(ui, !self.pending, "Publish changes")
+                                .clicked()
+                        {
+                            self.sync_subtab = 0;
+                            self.navigate_to(MainMode::TeamSync);
+                        }
                         if signed_in {
                             let initials = self.user_initials();
                             if swaggen_ui_kit::avatar_circle(ui, &initials, AvatarTone::Salmon)
                                 .on_hover_text("Account & sessions")
                                 .clicked()
                             {
-                                self.mode = MainMode::Server;
                                 self.server_subtab = 3;
+                                self.navigate_to(MainMode::Server);
                             }
                         } else if swaggen_ui_kit::primary_button(ui, true, "Sign in").clicked() {
                             self.show_welcome = true;
@@ -1461,7 +1566,7 @@ impl eframe::App for App {
                             )
                             .clicked()
                         {
-                            self.mode = MainMode::Privacy;
+                            self.navigate_to(MainMode::Privacy);
                         }
                         if self.dirty()
                             && self.mode != MainMode::Workbench
@@ -1475,12 +1580,15 @@ impl eframe::App for App {
                             self.save_workspace();
                         }
                         let (sync_color, sync_label) = match self.server_profiles.active() {
+                            _ if self.selected_team_workspace_id.is_none() => {
+                                (Tokens::STATUS_SUCCESS, "Local only")
+                            }
                             Some(p) if !p.session_id.is_empty() && p.mongo_ready => {
                                 (Tokens::STATUS_SUCCESS, "Synced")
                             }
                             Some(p) if p.mongo_ready => (Tokens::STATUS_SUCCESS, "Server OK"),
                             Some(_) => (Tokens::STATUS_INFO, "Configured"),
-                            None => (swaggen_ui_kit::text_secondary(ui), "Local"),
+                            None => (Tokens::TEXT_SECONDARY, "Local"),
                         };
                         if ui
                             .add(
@@ -1497,10 +1605,18 @@ impl eframe::App for App {
                                 ))
                                 .corner_radius(6),
                             )
-                            .on_hover_text("Open team sync & server status")
+                            .on_hover_text(if self.selected_team_workspace_id.is_some() {
+                                "Open team sync & collaboration"
+                            } else {
+                                "Switch workspace or collaboration mode"
+                            })
                             .clicked()
                         {
-                            self.mode = MainMode::TeamSync;
+                            if self.selected_team_workspace_id.is_some() {
+                                self.navigate_to(MainMode::TeamSync);
+                            } else {
+                                self.show_workspace_modal = true;
+                            }
                         }
                         let env_label = self
                             .state
@@ -1524,7 +1640,7 @@ impl eframe::App for App {
                             .on_hover_text("Manage environments & variables")
                             .clicked()
                         {
-                            self.mode = MainMode::Environments;
+                            self.navigate_to(MainMode::Environments);
                         }
                     });
                 });
@@ -1558,18 +1674,14 @@ impl eframe::App for App {
             return;
         }
 
-        // 5. Main Central Workspace Canvas.
+        // 5. Main Central Workspace Canvas (no nested outer ScrollArea trap in Workbench).
         egui::CentralPanel::default()
             .frame(main_frame)
             .show(ui, |ui| match self.mode {
                 MainMode::Workbench => {
-                    egui::ScrollArea::vertical()
-                        .id_salt("workbench-scroll")
-                        .show(ui, |ui| {
-                            views::request_pane::show(self, ui);
-                            ui.add_space(14.0);
-                            views::response_pane::show(self, ui, &ctx);
-                        });
+                    views::request_pane::show(self, ui);
+                    ui.add_space(12.0);
+                    views::response_pane::show(self, ui, &ctx);
                 }
                 MainMode::Runner => views::runner::show(self, ui, &ctx),
                 MainMode::Server => views::server::show(self, ui),
@@ -1585,5 +1697,237 @@ impl eframe::App for App {
                 MainMode::Privacy => views::panels::show_privacy(self, ui, &ctx),
                 MainMode::Shortcuts => views::panels::show_shortcuts(self, ui),
             });
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn slugify_workspace_id_normalizes_vietnamese_and_punctuation() {
+        assert_eq!(
+            App::slugify_workspace_id("Dự án API cá nhân").unwrap().as_str(),
+            "du-an-api-ca-nhan"
+        );
+        assert_eq!(
+            App::slugify_workspace_id("  Team Backend / v2  ").unwrap().as_str(),
+            "team-backend-v2"
+        );
+        assert!(App::slugify_workspace_id("   ").is_none());
+    }
+
+    #[test]
+    fn navigation_helpers_clear_modals_and_preserve_clean_dirty_state() {
+        let root = std::env::temp_dir().join(format!(
+            "swaggen-nav-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        let worker = Worker::start(root.clone(), LocalId::parse("personal").unwrap(), || {});
+        let ws = match worker.events.recv_timeout(std::time::Duration::from_secs(5)).unwrap() {
+            Event::Loaded { workspace, .. } => workspace,
+            _ => panic!("expected Loaded"),
+        };
+        let req_id = ws.requests[0].id.clone();
+        let mut app = App {
+            worker,
+            root: root.clone(),
+            workspace_id: LocalId::parse("personal").unwrap(),
+            available_workspaces: vec![LocalId::parse("personal").unwrap()],
+            state: ws,
+            legacy_snapshot: Snapshot {
+                version: 1,
+                workspace: LocalId::parse("personal").unwrap(),
+                revision: 0,
+                draft: String::new(),
+            },
+            history: Vec::new(),
+            secret_names: Vec::new(),
+            storage_stats: StorageStats {
+                workspace_bytes: 0,
+                history_bytes: 0,
+                secrets_bytes: 0,
+                downloads_bytes: 0,
+            },
+            policy: DesktopPolicy::default(),
+            mode: MainMode::Workbench,
+            request_subtab: RequestSubTab::Params,
+            response_subtab: ResponseSubTab::Body,
+            response_format: ResponseBodyFormat::PrettyJson,
+            loaded: true,
+            pending: false,
+            generation: 0,
+            saved_generation: 0,
+            status: String::new(),
+            error: false,
+            recovery_needed: false,
+            confirm_quarantine: false,
+            close_dialog: false,
+            allow_close: false,
+            close_after_save: false,
+            firebase_auth_pending: false,
+            request_config_collapsed: false,
+            search_query: String::new(),
+            filter_method: None,
+            filter_tag: String::new(),
+            focus_search: false,
+            show_sidebar_filters: false,
+            show_new_collection_input: false,
+            new_collection_name: String::new(),
+            new_workspace_id: String::new(),
+            new_workspace_name: String::new(),
+            show_workspace_modal: true,
+            show_production_confirm: true,
+            move_target_collection: String::new(),
+            move_target_folder: String::new(),
+            next_execution_id: 1,
+            inflight_execution_id: None,
+            inflight_request_id: None,
+            responses: HashMap::new(),
+            response_search: String::new(),
+            save_response_path: String::new(),
+            example_name_input: String::new(),
+            example_extra_fields: String::new(),
+            selected_env_idx: 0,
+            new_env_name: String::new(),
+            new_env_prod: false,
+            inspect_var_key: String::new(),
+            cookie_domain: String::new(),
+            cookie_path: String::new(),
+            cookie_name: String::new(),
+            cookie_value: String::new(),
+            history_filter: String::new(),
+            export_workspace_path: String::new(),
+            migrate_root_path: String::new(),
+            secret_name: String::new(),
+            secret_input: String::new(),
+            revealed: None,
+            sanitizer_input: String::new(),
+            sanitizer_extra_fields: String::new(),
+            untrusted_input: String::new(),
+            last_diag_export: None,
+            collapsed_json_paths: Default::default(),
+            specs: Vec::new(),
+            selected_spec_idx: 0,
+            spec_editor_text: String::new(),
+            spec_import_url: String::new(),
+            spec_find: String::new(),
+            spec_replace: String::new(),
+            spec_doc_search: String::new(),
+            spec_new_method: HttpMethod::Get,
+            spec_new_path: String::new(),
+            spec_new_op_id: String::new(),
+            spec_diffs: Vec::new(),
+            curl_input: String::new(),
+            postman_input: String::new(),
+            last_import_summary: String::new(),
+            show_welcome: false,
+            firebase_create_account: false,
+            server_subtab: 0,
+            server_profiles: Default::default(),
+            server_name_input: String::new(),
+            server_url_input: String::new(),
+            server_allow_self_signed: false,
+            auth_email: String::new(),
+            auth_display_name: String::new(),
+            auth_password: String::new(),
+            auth_bootstrap_token: String::new(),
+            invite_token_input: String::new(),
+            team_workspaces: Vec::new(),
+            selected_team_workspace_id: None,
+            team_ws_slug: String::new(),
+            team_ws_name: String::new(),
+            team_member_details: None,
+            team_audit_events: Vec::new(),
+            invite_email_input: String::new(),
+            invite_role: swaggen_api_contract::Role::Editor,
+            last_created_invite_token: String::new(),
+            server_sessions: Vec::new(),
+            pw_current_input: String::new(),
+            pw_new_input: String::new(),
+            pw_revoke_others: false,
+            sync_subtab: 0,
+            sync_state: Default::default(),
+            publish_note_input: String::new(),
+            history_entity_id_input: String::new(),
+            team_revisions: Vec::new(),
+            team_comments: Vec::new(),
+            comment_body_input: String::new(),
+            team_notifications: Vec::new(),
+            team_unread_notifications: 0,
+            transfer_progress: None,
+            previous_responses: HashMap::new(),
+            diff_ignore_paths: String::new(),
+            oauth_auth_url: String::new(),
+            oauth_token_url: String::new(),
+            oauth_client_id: String::new(),
+            oauth_scope: String::new(),
+            oauth_authorize_url: String::new(),
+            spec_bundle_dir: String::new(),
+            spec_lint_issues: Vec::new(),
+            spec_contract_report: None,
+            spec_drift_items: Vec::new(),
+            spec_schema_tree: None,
+            git_export_dir: String::new(),
+            attach_files_csv: String::new(),
+            attach_shared_dir: String::new(),
+            p07_export_preview: String::new(),
+            snippet_target: swaggen_runner::protocols_and_tools::SnippetTarget::Curl,
+            runner_subtab: 0,
+            runner_iterations: 1,
+            runner_delay_ms: 0,
+            runner_stop_on_fail: false,
+            runner_validate_contract: false,
+            runner_dataset_text: String::new(),
+            runner_running: false,
+            last_run_report: None,
+            mock_seed: 42,
+            local_mock_url: None,
+            local_mock_logs: Vec::new(),
+            gql_endpoint: String::new(),
+            gql_query: String::new(),
+            gql_vars: String::new(),
+            gql_result: None,
+            sse_url: String::new(),
+            sse_max_events: 200,
+            sse_running: false,
+            sse_events: Vec::new(),
+            dev_util_input: String::new(),
+            dev_util_output: String::new(),
+            show_command_palette: true,
+            command_palette_query: String::new(),
+            locale: swaggen_ui_kit::UiLocale::En,
+            deep_link_input: String::new(),
+            update_feed_url: String::new(),
+            update_check: None,
+            local_update_path: String::new(),
+            local_update_sha256: String::new(),
+            update_silent_install: true,
+            update_manifest_json: String::new(),
+            update_signing_key: String::new(),
+            update_payload_text: String::new(),
+            sandbox_script_text: String::new(),
+            sandbox_report: None,
+            extensions: Vec::new(),
+        };
+
+        app.navigate_to(MainMode::Environments);
+        assert_eq!(app.mode, MainMode::Environments);
+        assert!(!app.show_workspace_modal);
+        assert!(!app.show_command_palette);
+        assert!(!app.show_production_confirm);
+
+        app.show_workspace_modal = true;
+        app.open_request_in_workbench(&req_id);
+        assert_eq!(app.mode, MainMode::Workbench);
+        assert!(!app.show_workspace_modal);
+        assert!(!app.dirty(), "opening a request must not mark workspace dirty");
+
+        drop(app);
+        let _ = std::fs::remove_dir_all(root);
     }
 }

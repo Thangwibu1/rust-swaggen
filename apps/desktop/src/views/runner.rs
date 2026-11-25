@@ -56,13 +56,13 @@ fn show_collection_runner(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context)
         ui.add(egui::DragValue::new(&mut app.runner_iterations).range(1..=100));
         ui.label("Delay (ms):");
         ui.add(egui::DragValue::new(&mut app.runner_delay_ms).range(0..=10_000));
-        ui.checkbox(&mut app.runner_stop_on_fail, "Stop on fail-fast (TS03)");
+        ui.checkbox(&mut app.runner_stop_on_fail, "Stop on first failure");
         ui.checkbox(
             &mut app.runner_validate_contract,
-            "Validate OpenAPI contract (TS06)",
+            "Validate OpenAPI contract",
         );
     });
-    ui.label("Optional CSV or JSON dataset (TS04):");
+    ui.label("Optional CSV or JSON dataset:");
     ui.add(
         egui::TextEdit::multiline(&mut app.runner_dataset_text)
             .desired_width(ui.available_width())
@@ -115,7 +115,7 @@ fn show_collection_runner(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context)
             });
         }
         if let Some(rep) = &app.last_run_report {
-            if swaggen_ui_kit::secondary_button(ui, true, "Copy JUnit XML (TS05/MK06)").clicked() {
+            if swaggen_ui_kit::secondary_button(ui, true, "Copy JUnit XML").clicked() {
                 ctx.copy_text(rep.to_junit_xml());
                 app.status = "Copied sanitized JUnit XML report".into();
             }
@@ -201,7 +201,7 @@ fn show_collection_runner(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context)
 
 fn show_mock_server(app: &mut App, ui: &mut egui::Ui) {
     ui.horizontal_wrapped(|ui| {
-        ui.label("Deterministic seed (MK02):");
+        ui.label("Deterministic seed:");
         ui.add(egui::DragValue::new(&mut app.mock_seed));
         if app.local_mock_url.is_none() {
             if swaggen_ui_kit::primary_button(ui, true, "Start Local Mock Server").clicked() {
@@ -313,7 +313,7 @@ fn show_graphql_sse(app: &mut App, ui: &mut egui::Ui) {
     });
 
     ui.separator();
-    ui.heading("Bounded SSE Client (PR04)");
+    ui.heading("SSE Stream Client");
     ui.horizontal_wrapped(|ui| {
         ui.label("Stream URL:");
         ui.add(egui::TextEdit::singleline(&mut app.sse_url).desired_width(280.0));
@@ -340,7 +340,7 @@ fn show_graphql_sse(app: &mut App, ui: &mut egui::Ui) {
 }
 
 fn show_dev_utils(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
-    ui.heading("Offline Dev Utilities (PR09)");
+    ui.heading("Offline Developer Utilities");
     ui.add(
         egui::TextEdit::multiline(&mut app.dev_util_input)
             .desired_width(ui.available_width())
@@ -386,7 +386,7 @@ fn show_dev_utils(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
 }
 
 fn show_sandbox_and_extensions(app: &mut App, ui: &mut egui::Ui) {
-    ui.heading("Isolated Pre/Test Script Sandbox & Postman Analyzer (TS07 / TS08)");
+    ui.heading("Pre/Test Script Sandbox & Postman Analyzer");
     ui.label("Runs purely in-memory with strict instruction step (20k), duration (250ms), and memory (512KiB) caps; zero filesystem/shell/network access.");
     ui.add(
         egui::TextEdit::multiline(&mut app.sandbox_script_text)
@@ -432,7 +432,7 @@ fn show_sandbox_and_extensions(app: &mut App, ui: &mut egui::Ui) {
     }
 
     ui.separator();
-    ui.heading("Capability-Gated Extensions (PR10 · Off by Default)");
+    ui.heading("Capability-Gated Extensions (Off by Default)");
     for ext in &mut app.extensions {
         swaggen_ui_kit::surface_card(ui, |ui| {
             ui.horizontal_wrapped(|ui| {
@@ -456,7 +456,7 @@ fn show_sandbox_and_extensions(app: &mut App, ui: &mut egui::Ui) {
     }
 
     ui.separator();
-    ui.heading("Auth Scheme Matrix (AU10) & HTTP Protocol Policy (PR06)");
+    ui.heading("Auth Scheme Matrix & HTTP Protocol Policy");
     for row in swaggen_runner::advanced_protocols::auth_scheme_matrix() {
         ui.monospace(format!(
             "[{}] {} — {}",
