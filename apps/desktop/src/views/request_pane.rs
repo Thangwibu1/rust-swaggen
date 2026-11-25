@@ -7,7 +7,8 @@ use eframe::egui;
 use swaggen_domain::workspace::{
     ApiKeyPlacement, AssertionRule, AssertionTarget, AuthConfig, HttpMethod, KeyValueRow,
     MultipartField, MultipartValueKind, RequestBody, RequestItem, VariableContext, folder_chain,
-    new_uid, resolve_effective_auth, resolve_request_preview,
+    new_uid, remove_url_path_param_key, rename_url_path_param_key, resolve_effective_auth,
+    resolve_request_preview, split_url_parts,
 };
 use swaggen_ui_kit::{IconKind, NoticeKind, Tokens};
 
@@ -179,7 +180,11 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
             if swaggen_ui_kit::secondary_button(
                 ui,
                 app.loaded && !app.pending && !app.recovery_needed,
-                if app.dirty() { "Save draft*" } else { "Save draft" },
+                if app.dirty() {
+                    "Save draft*"
+                } else {
+                    "Save draft"
+                },
             )
             .clicked()
             {
@@ -234,12 +239,13 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
         if swaggen_ui_kit::text_input(
             ui,
             &mut app.state.requests[req_idx].url,
-            "https://api.example.test/v1/tasks",
+            "https://api.example.test/v1/users/:id?page=1&limit=20",
             url_w,
             false,
         )
         .changed()
         {
+            app.state.requests[req_idx].sync_params_from_url();
             changed = true;
         }
 
@@ -297,6 +303,9 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
             app.send_active_request(false);
         }
     });
+
+    // Auto-hydrate query & path parameters if an older saved request has inline URL params.
+    app.state.requests[req_idx].reconcile_missing_params_from_url();
 
     // Compute live resolved preview using masked secret placeholders.
     let masked_secrets = app.masked_secret_placeholders();
@@ -366,7 +375,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
     ui.add_space(6.0);
 
     let mut pending_oauth_cmd: Option<crate::worker::Command> = None;
-    let config_max_h = (ui.available_height() * 0.34).clamp(115.0, 210.0);
+    let config_max_h = (ui.available_height() * 0.42).clamp(145.0, 270.0);
 
     swaggen_ui_kit::surface_card(ui, |ui| {
         swaggen_ui_kit::collapsible_card_header(
@@ -382,42 +391,151 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
             .max_height(config_max_h)
             .show(ui, |ui| match app.request_subtab {
                 RequestSubTab::Params => {
-                    let has_path_tokens = req_clone.url.contains('{')
-                        || req_clone.url.contains(':')
-                            && req_clone
-                                .url
-                                .split('/')
-                                .skip(3)
-                                .any(|seg| seg.starts_with(':'))
-                        || !app.state.requests[req_idx].path_params.is_empty();
-                    if has_path_tokens {
+                    ui.horizontal(|ui| {
                         ui.label(swaggen_ui_kit::bold_text(
-                            "Path parameters",
+                            "Query parameters",
                             12.0,
                             Tokens::TEXT_PRIMARY,
                         ));
-                        if edit_kv_table(
-                            ui,
-                            "path-params",
-                            "path variable",
-                            &mut app.state.requests[req_idx].path_params,
-                        ) {
-                            changed = true;
-                        }
-                        ui.add_space(6.0);
-                    }
-                    ui.label(swaggen_ui_kit::bold_text(
-                        "Query parameters",
-                        12.0,
-                        Tokens::TEXT_PRIMARY,
-                    ));
+                        ui.label(
+                            egui::RichText::new("— synced live with ?key=value in the URL bar")
+                                .size(11.5)
+                                .color(Tokens::TEXT_SECONDARY),
+                        );
+                    });
                     if edit_kv_table(
                         ui,
                         "query-params",
                         "query param",
                         &mut app.state.requests[req_idx].query_params,
                     ) {
+                        app.state.requests[req_idx].sync_url_from_query_params();
                         changed = true;
+                    }
+
+                    ui.add_space(8.0);
+                    ui.horizontal(|ui| {
+                        ui.label(swaggen_ui_kit::bold_text(
+                            "Path parameters",
+                            12.0,
+                            Tokens::TEXT_PRIMARY,
+                        ));
+                        ui.label(
+                            egui::RichText::new("— auto-detected from :param or {param} in URL path")
+                                .size(11.5)
+                                .color(Tokens::TEXT_SECONDARY),
+                        );
+                    });
+                    if app.state.requests[req_idx].path_params.is_empty() {
+                        ui.horizontal_wrapped(|ui| {
+                            ui.label(
+                                egui::RichText::new(
+                                    "No path variables in URL yet. Type :id or {id} in the URL (e.g. /users/:id), or:",
+                                )
+                                .size(11.5)
+                                .color(Tokens::TEXT_SECONDARY),
+                            );
+                            if swaggen_ui_kit::secondary_button(ui, true, "+ Add :id to URL")
+                                .clicked()
+                            {
+                                let req = &mut app.state.requests[req_idx];
+                                let (base, query, frag) = split_url_parts(&req.url);
+                                let mut next_name = "id".to_owned();
+                                let mut idx = 2usize;
+                                while req.path_params.iter().any(|p| p.key == next_name) {
+                                    next_name = format!("id_{idx}");
+                                    idx += 1;
+                                }
+                                let sep = if base.ends_with('/') { "" } else { "/" };
+                                let mut new_url = format!("{base}{sep}:{next_name}");
+                                if let Some(q) = query {
+                                    new_url.push('?');
+                                    new_url.push_str(q);
+                                }
+                                if let Some(f) = frag {
+                                    new_url.push('#');
+                                    new_url.push_str(f);
+                                }
+                                req.url = new_url;
+                                req.sync_params_from_url();
+                                changed = true;
+                            }
+                        });
+                    } else {
+                        let prev_keys: Vec<String> = app.state.requests[req_idx]
+                            .path_params
+                            .iter()
+                            .map(|p| p.key.clone())
+                            .collect();
+                        let prev_len = prev_keys.len();
+                        if edit_kv_table(
+                            ui,
+                            "path-params",
+                            "path variable",
+                            &mut app.state.requests[req_idx].path_params,
+                        ) {
+                            let req = &mut app.state.requests[req_idx];
+                            if req.path_params.len() == prev_len {
+                                for (old_k, row) in prev_keys.iter().zip(req.path_params.iter()) {
+                                    if old_k != &row.key && !row.key.trim().is_empty() {
+                                        req.url = rename_url_path_param_key(
+                                            &req.url,
+                                            old_k,
+                                            row.key.trim(),
+                                        );
+                                    }
+                                }
+                            } else if req.path_params.len() > prev_len {
+                                // User clicked "+ Add row" inside Path parameters: append `/:param` to URL!
+                                if let Some(last) = req.path_params.last_mut()
+                                    && last.key.is_empty()
+                                {
+                                    let mut next_name = "param".to_owned();
+                                    let mut n = 2usize;
+                                    while prev_keys.iter().any(|k| k == &next_name) {
+                                        next_name = format!("param_{n}");
+                                        n += 1;
+                                    }
+                                    last.key = next_name.clone();
+                                    let (base, query, frag) = split_url_parts(&req.url);
+                                    let sep = if base.ends_with('/') { "" } else { "/" };
+                                    let mut new_url = format!("{base}{sep}:{next_name}");
+                                    if let Some(q) = query {
+                                        new_url.push('?');
+                                        new_url.push_str(q);
+                                    }
+                                    if let Some(f) = frag {
+                                        new_url.push('#');
+                                        new_url.push_str(f);
+                                    }
+                                    req.url = new_url;
+                                }
+                            } else if req.path_params.len() < prev_len {
+                                // User deleted a row in Path parameters: strip `:key` / `{key}` from URL too!
+                                for old_k in &prev_keys {
+                                    if !req.path_params.iter().any(|p| &p.key == old_k) {
+                                        req.url = remove_url_path_param_key(&req.url, old_k);
+                                    }
+                                }
+                            }
+                            changed = true;
+                        }
+                    }
+
+                    if resolved.masked_url != req_clone.url {
+                        ui.add_space(6.0);
+                        ui.horizontal_wrapped(|ui| {
+                            ui.label(
+                                egui::RichText::new("Effective URL:")
+                                    .size(11.5)
+                                    .color(Tokens::TEXT_SECONDARY),
+                            );
+                            ui.monospace(
+                                egui::RichText::new(&resolved.masked_url)
+                                    .size(11.5)
+                                    .color(Tokens::STATUS_INFO),
+                            );
+                        });
                     }
                 }
                 RequestSubTab::Headers => {

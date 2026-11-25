@@ -239,10 +239,23 @@ fn walk_postman_items(
                 .and_then(Value::as_str)
                 .and_then(HttpMethod::parse)
                 .unwrap_or(HttpMethod::Get);
-            let (url_str, query_params) = parse_postman_url(req_obj.get("url"));
+            let (url_str, query_params, path_params) = parse_postman_url(req_obj.get("url"));
             let mut req = RequestItem::new(col_id, name, method, url_str);
             req.folder_id = parent_folder_id.map(ToOwned::to_owned);
-            req.query_params = query_params;
+            if !query_params.is_empty() {
+                req.query_params = query_params;
+                req.sync_url_from_query_params();
+            }
+            if !path_params.is_empty() {
+                for p in path_params {
+                    if let Some(existing) = req.path_params.iter_mut().find(|e| e.key == p.key) {
+                        existing.value = p.value;
+                        existing.enabled = p.enabled;
+                    } else {
+                        req.path_params.push(p);
+                    }
+                }
+            }
             if let Some(hdrs) = req_obj.get("header").and_then(Value::as_array) {
                 for h in hdrs {
                     if let Some(k) = h.get("key").and_then(Value::as_str) {
@@ -261,19 +274,18 @@ fn walk_postman_items(
     }
 }
 
-fn parse_postman_url(val: Option<&Value>) -> (String, Vec<KeyValueRow>) {
+fn parse_postman_url(val: Option<&Value>) -> (String, Vec<KeyValueRow>, Vec<KeyValueRow>) {
     let Some(val) = val else {
-        return (String::new(), Vec::new());
+        return (String::new(), Vec::new(), Vec::new());
     };
     if let Some(s) = val.as_str() {
-        return (s.to_owned(), Vec::new());
+        return (s.to_owned(), Vec::new(), Vec::new());
     }
     let raw = val
         .get("raw")
         .and_then(Value::as_str)
         .unwrap_or_default()
         .to_owned();
-    let base = raw.split('?').next().unwrap_or(&raw).to_owned();
     let mut query = Vec::new();
     if let Some(arr) = val.get("query").and_then(Value::as_array) {
         for q in arr {
@@ -286,7 +298,19 @@ fn parse_postman_url(val: Option<&Value>) -> (String, Vec<KeyValueRow>) {
             }
         }
     }
-    (base, query)
+    let mut path_vars = Vec::new();
+    if let Some(arr) = val.get("variable").and_then(Value::as_array) {
+        for pv in arr {
+            if let Some(k) = pv.get("key").and_then(Value::as_str) {
+                let v = pv.get("value").and_then(Value::as_str).unwrap_or_default();
+                let disabled = pv.get("disabled").and_then(Value::as_bool).unwrap_or(false);
+                let mut row = KeyValueRow::new(k, v);
+                row.enabled = !disabled;
+                path_vars.push(row);
+            }
+        }
+    }
+    (raw, query, path_vars)
 }
 
 fn parse_postman_body(val: Option<&Value>) -> RequestBody {

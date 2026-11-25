@@ -286,7 +286,7 @@ impl RequestItem {
         method: HttpMethod,
         url: impl Into<String>,
     ) -> Self {
-        Self {
+        let mut item = Self {
             id: new_uid(),
             collection_id: collection_id.into(),
             folder_id: None,
@@ -308,7 +308,116 @@ impl RequestItem {
             shared_revision: 0,
             dirty_vs_shared: false,
             order_key: 0,
+        };
+        item.sync_params_from_url();
+        item
+    }
+
+    /// Parses the current `url` and synchronizes `query_params` and `path_params` live,
+    /// preserving disabled query rows and existing path parameter values/descriptions.
+    pub fn sync_params_from_url(&mut self) {
+        // 1. Sync query parameters from URL `?query` string.
+        let parsed_query = extract_url_query_rows(&self.url);
+        let mut old_enabled: Vec<KeyValueRow> = self
+            .query_params
+            .iter()
+            .filter(|r| r.enabled)
+            .cloned()
+            .collect();
+        let disabled_rows: Vec<KeyValueRow> = self
+            .query_params
+            .iter()
+            .filter(|r| !r.enabled)
+            .cloned()
+            .collect();
+
+        let mut next_query = Vec::with_capacity(parsed_query.len() + disabled_rows.len());
+        for mut row in parsed_query {
+            if let Some(pos) = old_enabled.iter().position(|old| old.key == row.key) {
+                let prev = old_enabled.remove(pos);
+                row.description = prev.description;
+            }
+            next_query.push(row);
         }
+        next_query.extend(disabled_rows);
+        self.query_params = next_query;
+
+        // 2. Sync path parameters (`:param` and `{param}`, excluding `{{env_var}}` and `:port`).
+        let param_names = extract_url_path_param_names(&self.url);
+        let old_paths = std::mem::take(&mut self.path_params);
+        let same_arity = old_paths.len() == param_names.len();
+        let mut used_old = vec![false; old_paths.len()];
+        let mut next_paths = Vec::with_capacity(param_names.len());
+
+        for (idx, name) in param_names.iter().enumerate() {
+            if let Some(old_idx) = old_paths
+                .iter()
+                .enumerate()
+                .position(|(i, r)| !used_old[i] && r.key == *name)
+            {
+                used_old[old_idx] = true;
+                next_paths.push(old_paths[old_idx].clone());
+            } else if same_arity && !used_old[idx] && !param_names.contains(&old_paths[idx].key) {
+                // User is actively renaming `:id` -> `:userId` in-place in the URL bar: keep value!
+                used_old[idx] = true;
+                let mut preserved = old_paths[idx].clone();
+                preserved.key = name.clone();
+                next_paths.push(preserved);
+            } else {
+                next_paths.push(KeyValueRow::new(name.clone(), ""));
+            }
+        }
+        self.path_params = next_paths;
+    }
+
+    /// Rebuilds the `?query` portion of `url` from `query_params` while keeping `{{vars}}`,
+    /// `:path_params`, `{path_params}`, and `#fragment` intact.
+    pub fn sync_url_from_query_params(&mut self) {
+        let (base, _old_query, fragment) = split_url_parts(&self.url);
+        let base_owned = base.to_owned();
+        let frag_owned = fragment.map(ToOwned::to_owned);
+
+        let mut encoded_pairs = Vec::new();
+        for row in &self.query_params {
+            if !row.enabled || (row.key.is_empty() && row.value.is_empty()) {
+                continue;
+            }
+            let ek = encode_query_component_preserving_templates(&row.key);
+            let ev = encode_query_component_preserving_templates(&row.value);
+            encoded_pairs.push(format!("{ek}={ev}"));
+        }
+
+        let mut next_url = base_owned;
+        if !encoded_pairs.is_empty() {
+            next_url.push('?');
+            next_url.push_str(&encoded_pairs.join("&"));
+        }
+        if let Some(frag) = frag_owned {
+            next_url.push('#');
+            next_url.push_str(&frag);
+        }
+        self.url = next_url;
+    }
+
+    /// Hydrates `query_params` / `path_params` for legacy saved requests whose `url`
+    /// already contains inline `?query` or `:param`/`{param}` tokens not yet in the tables.
+    pub fn reconcile_missing_params_from_url(&mut self) -> bool {
+        let mut hydrated = false;
+        if self.query_params.is_empty() {
+            let parsed_q = extract_url_query_rows(&self.url);
+            if !parsed_q.is_empty() {
+                self.query_params = parsed_q;
+                hydrated = true;
+            }
+        }
+        let detected_paths = extract_url_path_param_names(&self.url);
+        for name in detected_paths {
+            if !self.path_params.iter().any(|p| p.key == name) {
+                self.path_params.push(KeyValueRow::new(name, ""));
+                hydrated = true;
+            }
+        }
+        hydrated
     }
 }
 
@@ -754,16 +863,27 @@ pub fn resolve_request_preview(
     let mut blocking_errors = Vec::new();
 
     // 1. Substitute URL & path params.
-    let mut raw_url = match vars.substitute(&request.url, false) {
+    // When `request.query_params` has rows, strip the inline `?query` mirror from `request.url`
+    // so synced URLs never double-append query parameters on send/preview.
+    let (url_base_part, url_inline_query, url_fragment) = split_url_parts(&request.url);
+    let effective_url_template = if !request.query_params.is_empty() {
+        url_base_part.to_owned()
+    } else if let Some(inline_q) = url_inline_query {
+        format!("{url_base_part}?{inline_q}")
+    } else {
+        url_base_part.to_owned()
+    };
+
+    let mut raw_url = match vars.substitute(&effective_url_template, false) {
         Ok(u) => u,
         Err(err) => {
             blocking_errors.push(err.to_string());
-            request.url.clone()
+            effective_url_template.clone()
         }
     };
-    let mut masked_url_base = match vars.substitute(&request.url, true) {
+    let mut masked_url_base = match vars.substitute(&effective_url_template, true) {
         Ok(u) => u,
-        Err(_) => request.url.clone(),
+        Err(_) => effective_url_template,
     };
     for p in request
         .path_params
@@ -780,13 +900,10 @@ pub fn resolve_request_preview(
         let masked_val = vars
             .substitute(&p.value, true)
             .unwrap_or_else(|_| p.value.clone());
-        let encoded = url::form_urlencoded::byte_serialize(val.as_bytes()).collect::<String>();
-        let encoded_masked =
-            url::form_urlencoded::byte_serialize(masked_val.as_bytes()).collect::<String>();
-        for pattern in [format!(":{}", p.key), format!("{{{}}}", p.key)] {
-            raw_url = raw_url.replace(&pattern, &encoded);
-            masked_url_base = masked_url_base.replace(&pattern, &encoded_masked);
-        }
+        let encoded = encode_path_segment_value(&val);
+        let encoded_masked = encode_path_segment_value(&masked_val);
+        raw_url = replace_path_param_tokens(&raw_url, &p.key, &encoded);
+        masked_url_base = replace_path_param_tokens(&masked_url_base, &p.key, &encoded_masked);
     }
 
     // 2. Append ordered query params (preserving duplicates, encoding cleanly).
@@ -890,8 +1007,18 @@ pub fn resolve_request_preview(
         }
     }
 
-    let final_url = append_query_pairs(&raw_url, &query_pairs);
-    let final_masked_url = append_query_pairs(&masked_url_base, &masked_query_pairs);
+    let mut final_url = append_query_pairs(&raw_url, &query_pairs);
+    let mut final_masked_url = append_query_pairs(&masked_url_base, &masked_query_pairs);
+    if let Some(frag) = url_fragment {
+        if let Ok(rf) = vars.substitute(frag, false) {
+            final_url.push('#');
+            final_url.push_str(&rf);
+        }
+        if let Ok(mf) = vars.substitute(frag, true) {
+            final_masked_url.push('#');
+            final_masked_url.push_str(&mf);
+        }
+    }
 
     if let Err(err) = url::Url::parse(&final_url) {
         blocking_errors.push(format!("Invalid URL: {err}"));
@@ -1118,6 +1245,459 @@ fn append_query_pairs(base: &str, pairs: &[(String, String)]) -> String {
     }
     let sep = if base.contains('?') { '&' } else { '?' };
     format!("{base}{sep}{}", encoded.join("&"))
+}
+
+/// Splits a raw or templated URL into `(base_without_query_or_fragment, query, fragment)`,
+/// ignoring `?` and `#` characters inside `{{...}}` template tokens.
+pub fn split_url_parts(url: &str) -> (&str, Option<&str>, Option<&str>) {
+    let bytes = url.as_bytes();
+    let mut template_depth = 0usize;
+    let mut query_pos = None;
+    let mut frag_pos = None;
+    let mut i = 0usize;
+    while i < bytes.len() {
+        if i + 1 < bytes.len() && bytes[i] == b'{' && bytes[i + 1] == b'{' {
+            template_depth += 1;
+            i += 2;
+            continue;
+        }
+        if i + 1 < bytes.len() && bytes[i] == b'}' && bytes[i + 1] == b'}' {
+            template_depth = template_depth.saturating_sub(1);
+            i += 2;
+            continue;
+        }
+        if template_depth == 0 {
+            if bytes[i] == b'#' {
+                frag_pos = Some(i);
+                break;
+            }
+            if bytes[i] == b'?' && query_pos.is_none() {
+                query_pos = Some(i);
+            }
+        }
+        i += 1;
+    }
+
+    match (query_pos, frag_pos) {
+        (Some(q), Some(f)) => (&url[..q], Some(&url[q + 1..f]), Some(&url[f + 1..])),
+        (Some(q), None) => (&url[..q], Some(&url[q + 1..]), None),
+        (None, Some(f)) => (&url[..f], None, Some(&url[f + 1..])),
+        (None, None) => (url, None, None),
+    }
+}
+
+/// Extracts ordered `KeyValueRow` query parameters from a URL's `?query` section.
+pub fn extract_url_query_rows(url: &str) -> Vec<KeyValueRow> {
+    let (_, Some(query), _) = split_url_parts(url) else {
+        return Vec::new();
+    };
+    if query.is_empty() {
+        return Vec::new();
+    }
+    let mut rows = Vec::new();
+    for segment in split_outside_templates(query, b'&') {
+        if segment.is_empty() {
+            continue;
+        }
+        let (raw_k, raw_v) = split_once_outside_templates(segment, b'=').unwrap_or((segment, ""));
+        let key = decode_query_component_preserving_templates(raw_k);
+        let val = decode_query_component_preserving_templates(raw_v);
+        if !key.is_empty() || !val.is_empty() {
+            rows.push(KeyValueRow::new(key, val));
+        }
+    }
+    rows
+}
+
+/// Extracts ordered unique path parameter names (`:param` and `{param}`) from a URL,
+/// skipping `{{env_var}}` double-brace templates, URL schemes (`https:`), and host `:port`.
+pub fn extract_url_path_param_names(url: &str) -> Vec<String> {
+    let (base, _, _) = split_url_parts(url);
+    if base.is_empty() {
+        return Vec::new();
+    }
+    let (authority_prefix, path_part) = split_authority_and_path(base);
+    let mut out = Vec::new();
+
+    // Allow single-brace `{tenant}` in authority if used, while never matching `{{var}}` or `:port`.
+    collect_single_brace_params(authority_prefix, &mut out);
+
+    // Scan path segments left-to-right so `:id` and `{orderId}` appear in exact URL order.
+    for seg in path_part.split('/') {
+        if seg.is_empty() {
+            continue;
+        }
+        if let Some(after_colon) = seg.strip_prefix(':') {
+            let ident: String = after_colon
+                .chars()
+                .take_while(|c| is_param_ident_char(*c))
+                .collect();
+            if is_valid_colon_param_name(&ident) && !out.contains(&ident) {
+                out.push(ident);
+            }
+        }
+        collect_single_brace_params(seg, &mut out);
+    }
+    out
+}
+
+/// Replaces `:old_key` or `{old_key}` with `:new_key` / `{new_key}` inside `url` when a user
+/// renames a path parameter key in the Path parameters table.
+pub fn rename_url_path_param_key(url: &str, old_key: &str, new_key: &str) -> String {
+    if old_key.is_empty() || new_key.is_empty() || old_key == new_key {
+        return url.to_owned();
+    }
+    let (base, query, frag) = split_url_parts(url);
+    let (authority, path_part) = split_authority_and_path(base);
+    let new_auth = replace_single_brace_token(authority, old_key, &format!("{{{new_key}}}"));
+    let new_path = replace_colon_and_brace_tokens(
+        path_part,
+        old_key,
+        &format!(":{new_key}"),
+        &format!("{{{new_key}}}"),
+    );
+    let mut rebuilt = format!("{new_auth}{new_path}");
+    if let Some(q) = query {
+        rebuilt.push('?');
+        rebuilt.push_str(q);
+    }
+    if let Some(f) = frag {
+        rebuilt.push('#');
+        rebuilt.push_str(f);
+    }
+    rebuilt
+}
+
+/// Removes `:removed_key` or `{removed_key}` from `url` when a user deletes a row
+/// in the Path parameters table.
+pub fn remove_url_path_param_key(url: &str, removed_key: &str) -> String {
+    if removed_key.is_empty() {
+        return url.to_owned();
+    }
+    let (base, query, frag) = split_url_parts(url);
+    let (authority, path_part) = split_authority_and_path(base);
+    let new_auth = replace_single_brace_token(authority, removed_key, "");
+    let mut kept_segments = Vec::new();
+    for (idx, seg) in path_part.split('/').enumerate() {
+        if idx == 0 && seg.is_empty() {
+            kept_segments.push(String::new());
+            continue;
+        }
+        if let Some(after_colon) = seg.strip_prefix(':') {
+            let ident_len = after_colon
+                .chars()
+                .take_while(|c| is_param_ident_char(*c))
+                .map(char::len_utf8)
+                .sum::<usize>();
+            if &after_colon[..ident_len] == removed_key && ident_len == after_colon.len() {
+                continue;
+            }
+        }
+        if seg == format!("{{{removed_key}}}") {
+            continue;
+        }
+        let cleaned = replace_colon_and_brace_tokens(seg, removed_key, "", "");
+        kept_segments.push(cleaned);
+    }
+    let new_path = kept_segments.join("/");
+    let mut rebuilt = format!("{new_auth}{new_path}");
+    if let Some(q) = query {
+        rebuilt.push('?');
+        rebuilt.push_str(q);
+    }
+    if let Some(f) = frag {
+        rebuilt.push('#');
+        rebuilt.push_str(f);
+    }
+    rebuilt
+}
+
+fn split_authority_and_path(base: &str) -> (&str, &str) {
+    if let Some(scheme_sep) = base.find("://") {
+        let after_scheme = &base[scheme_sep + 3..];
+        if let Some(slash_offset) = after_scheme.find('/') {
+            let split_at = scheme_sep + 3 + slash_offset;
+            (&base[..split_at], &base[split_at..])
+        } else {
+            (base, "")
+        }
+    } else if base.starts_with('/') {
+        ("", base)
+    } else if let Some(slash_at) = base.find('/') {
+        (&base[..slash_at], &base[slash_at..])
+    } else {
+        (base, "")
+    }
+}
+
+fn is_param_ident_char(c: char) -> bool {
+    c.is_ascii_alphanumeric() || c == '_' || c == '-'
+}
+
+fn is_valid_colon_param_name(name: &str) -> bool {
+    let Some(first) = name.chars().next() else {
+        return false;
+    };
+    (first.is_ascii_alphabetic() || first == '_') && name.chars().all(is_param_ident_char)
+}
+
+fn collect_single_brace_params(input: &str, out: &mut Vec<String>) {
+    let bytes = input.as_bytes();
+    let mut i = 0usize;
+    while i < bytes.len() {
+        if bytes[i] == b'{' {
+            if i + 1 < bytes.len() && bytes[i + 1] == b'{' {
+                // Skip `{{...}}` environment/collection variable template completely.
+                i += 2;
+                while i + 1 < bytes.len() && !(bytes[i] == b'}' && bytes[i + 1] == b'}') {
+                    i += 1;
+                }
+                i = (i + 2).min(bytes.len());
+                continue;
+            }
+            let start = i + 1;
+            let mut end = start;
+            while end < bytes.len() && bytes[end] != b'}' && bytes[end] != b'{' {
+                end += 1;
+            }
+            if end < bytes.len()
+                && bytes[end] == b'}'
+                && !(end + 1 < bytes.len() && bytes[end + 1] == b'}')
+            {
+                let candidate = input[start..end].trim();
+                if !candidate.is_empty()
+                    && candidate.chars().all(is_param_ident_char)
+                    && !out.iter().any(|existing| existing == candidate)
+                {
+                    out.push(candidate.to_owned());
+                }
+                i = end + 1;
+                continue;
+            }
+        }
+        i += 1;
+    }
+}
+
+fn encode_path_segment_value(val: &str) -> String {
+    let mut out = String::with_capacity(val.len());
+    for b in val.bytes() {
+        if b.is_ascii_alphanumeric() || matches!(b, b'-' | b'_' | b'.' | b'~') {
+            out.push(b as char);
+        } else {
+            out.push_str(&format!("%{b:02X}"));
+        }
+    }
+    out
+}
+
+fn replace_path_param_tokens(url: &str, key: &str, encoded_val: &str) -> String {
+    let (base, query, frag) = split_url_parts(url);
+    let (authority, path_part) = split_authority_and_path(base);
+    let new_auth = replace_single_brace_token(authority, key, encoded_val);
+    let new_path = replace_colon_and_brace_tokens(path_part, key, encoded_val, encoded_val);
+    let mut out = format!("{new_auth}{new_path}");
+    if let Some(q) = query {
+        out.push('?');
+        out.push_str(q);
+    }
+    if let Some(f) = frag {
+        out.push('#');
+        out.push_str(f);
+    }
+    out
+}
+
+fn replace_single_brace_token(input: &str, key: &str, replacement: &str) -> String {
+    let bytes = input.as_bytes();
+    let mut out = String::with_capacity(input.len());
+    let mut last = 0usize;
+    let mut i = 0usize;
+    while i < bytes.len() {
+        if bytes[i] == b'{' {
+            if i + 1 < bytes.len() && bytes[i + 1] == b'{' {
+                i += 2;
+                while i + 1 < bytes.len() && !(bytes[i] == b'}' && bytes[i + 1] == b'}') {
+                    i += 1;
+                }
+                i = (i + 2).min(bytes.len());
+                continue;
+            }
+            let start = i + 1;
+            let mut end = start;
+            while end < bytes.len() && bytes[end] != b'}' && bytes[end] != b'{' {
+                end += 1;
+            }
+            if end < bytes.len()
+                && bytes[end] == b'}'
+                && !(end + 1 < bytes.len() && bytes[end + 1] == b'}')
+            {
+                if input[start..end].trim() == key {
+                    out.push_str(&input[last..i]);
+                    out.push_str(replacement);
+                    last = end + 1;
+                }
+                i = end + 1;
+                continue;
+            }
+        }
+        i += 1;
+    }
+    out.push_str(&input[last..]);
+    out
+}
+
+fn replace_colon_and_brace_tokens(
+    path_part: &str,
+    key: &str,
+    colon_replacement: &str,
+    brace_replacement: &str,
+) -> String {
+    let with_braces = replace_single_brace_token(path_part, key, brace_replacement);
+    if path_part.is_empty() {
+        return with_braces;
+    }
+    let mut seg_out = Vec::new();
+    for seg in with_braces.split('/') {
+        if let Some(after_colon) = seg.strip_prefix(':') {
+            let ident_len = after_colon
+                .chars()
+                .take_while(|c| is_param_ident_char(*c))
+                .map(char::len_utf8)
+                .sum::<usize>();
+            if &after_colon[..ident_len] == key {
+                seg_out.push(format!("{colon_replacement}{}", &after_colon[ident_len..]));
+                continue;
+            }
+        }
+        seg_out.push(seg.to_owned());
+    }
+    seg_out.join("/")
+}
+
+fn split_outside_templates(input: &str, sep: u8) -> Vec<&str> {
+    let bytes = input.as_bytes();
+    let mut parts = Vec::new();
+    let mut depth = 0usize;
+    let mut start = 0usize;
+    let mut i = 0usize;
+    while i < bytes.len() {
+        if i + 1 < bytes.len() && bytes[i] == b'{' && bytes[i + 1] == b'{' {
+            depth += 1;
+            i += 2;
+            continue;
+        }
+        if i + 1 < bytes.len() && bytes[i] == b'}' && bytes[i + 1] == b'}' {
+            depth = depth.saturating_sub(1);
+            i += 2;
+            continue;
+        }
+        if depth == 0 && bytes[i] == sep {
+            parts.push(&input[start..i]);
+            start = i + 1;
+        }
+        i += 1;
+    }
+    parts.push(&input[start..]);
+    parts
+}
+
+fn split_once_outside_templates(input: &str, sep: u8) -> Option<(&str, &str)> {
+    let bytes = input.as_bytes();
+    let mut depth = 0usize;
+    let mut i = 0usize;
+    while i < bytes.len() {
+        if i + 1 < bytes.len() && bytes[i] == b'{' && bytes[i + 1] == b'{' {
+            depth += 1;
+            i += 2;
+            continue;
+        }
+        if i + 1 < bytes.len() && bytes[i] == b'}' && bytes[i + 1] == b'}' {
+            depth = depth.saturating_sub(1);
+            i += 2;
+            continue;
+        }
+        if depth == 0 && bytes[i] == sep {
+            return Some((&input[..i], &input[i + 1..]));
+        }
+        i += 1;
+    }
+    None
+}
+
+fn decode_query_component_preserving_templates(raw: &str) -> String {
+    let mut out = String::with_capacity(raw.len());
+    let mut rest = raw;
+    while let Some(start) = rest.find("{{") {
+        out.push_str(&percent_decode_component(&rest[..start]));
+        let after = &rest[start..];
+        if let Some(end) = after.find("}}") {
+            out.push_str(&after[..end + 2]);
+            rest = &after[end + 2..];
+        } else {
+            out.push_str(after);
+            return out;
+        }
+    }
+    if !rest.is_empty() {
+        out.push_str(&percent_decode_component(rest));
+    }
+    out
+}
+
+fn percent_decode_component(raw: &str) -> String {
+    let bytes = raw.as_bytes();
+    let mut decoded = Vec::with_capacity(bytes.len());
+    let mut i = 0usize;
+    while i < bytes.len() {
+        if bytes[i] == b'+' {
+            decoded.push(b' ');
+            i += 1;
+        } else if bytes[i] == b'%'
+            && i + 2 < bytes.len()
+            && let Ok(hex) = std::str::from_utf8(&bytes[i + 1..i + 3])
+            && let Ok(val) = u8::from_str_radix(hex, 16)
+        {
+            decoded.push(val);
+            i += 3;
+        } else {
+            decoded.push(bytes[i]);
+            i += 1;
+        }
+    }
+    String::from_utf8_lossy(&decoded).into_owned()
+}
+
+fn encode_query_component_preserving_templates(raw: &str) -> String {
+    let mut out = String::with_capacity(raw.len());
+    let mut rest = raw;
+    while let Some(start) = rest.find("{{") {
+        encode_plain_query_slice(&rest[..start], &mut out);
+        let after = &rest[start..];
+        if let Some(end) = after.find("}}") {
+            out.push_str(&after[..end + 2]);
+            rest = &after[end + 2..];
+        } else {
+            encode_plain_query_slice(after, &mut out);
+            return out;
+        }
+    }
+    encode_plain_query_slice(rest, &mut out);
+    out
+}
+
+fn encode_plain_query_slice(slice: &str, out: &mut String) {
+    for b in slice.bytes() {
+        if b.is_ascii_alphanumeric()
+            || matches!(b, b'-' | b'_' | b'.' | b'~' | b':' | b'/' | b'@' | b',')
+        {
+            out.push(b as char);
+        } else if b == b' ' {
+            out.push_str("%20");
+        } else {
+            out.push_str(&format!("%{b:02X}"));
+        }
+    }
 }
 
 fn is_valid_header_name(name: &str) -> bool {
@@ -1646,5 +2226,63 @@ mod tests {
             .unwrap();
         assert!(!exported.contains("raw-secret"));
         assert!(!exported.contains("secret-cookie"));
+    }
+
+    #[test]
+    fn url_query_and_path_params_bidirectional_sync_works() {
+        let mut req = RequestItem::new(
+            "c1",
+            "Get order",
+            HttpMethod::Get,
+            "{{base_url}}:8080/v1/users/:userId/orders/{order_id}?page=1&limit=20&q={{search_term}}",
+        );
+        // 1. Auto-detected on creation without confusing `{{base_url}}`, `:8080`, or `{{search_term}}`
+        assert_eq!(req.path_params.len(), 2);
+        assert_eq!(req.path_params[0].key, "userId");
+        assert_eq!(req.path_params[1].key, "order_id");
+        assert_eq!(req.query_params.len(), 3);
+        assert_eq!(req.query_params[0].key, "page");
+        assert_eq!(req.query_params[0].value, "1");
+        assert_eq!(req.query_params[1].key, "limit");
+        assert_eq!(req.query_params[1].value, "20");
+        assert_eq!(req.query_params[2].key, "q");
+        assert_eq!(req.query_params[2].value, "{{search_term}}");
+
+        // 2. Fill path param values, rename `:userId` -> `:memberId` in URL preserving value!
+        req.path_params[0].value = "u-99".into();
+        req.path_params[1].value = "ord-7".into();
+        req.url =
+            "{{base_url}}:8080/v1/users/:memberId/orders/{order_id}?page=2&limit=20&q={{search_term}}"
+                .into();
+        req.sync_params_from_url();
+        assert_eq!(req.path_params[0].key, "memberId");
+        assert_eq!(req.path_params[0].value, "u-99");
+        assert_eq!(req.query_params[0].value, "2");
+
+        // 3. Disable `limit` in query table -> removed from URL bar while kept in table; no duplicate query on resolve!
+        req.query_params[1].enabled = false;
+        req.sync_url_from_query_params();
+        assert_eq!(
+            req.url,
+            "{{base_url}}:8080/v1/users/:memberId/orders/{order_id}?page=2&q={{search_term}}"
+        );
+        assert_eq!(req.query_params.len(), 3);
+
+        let ws_vars = vec![
+            VariableEntry::public("base_url", "https://api.example.test"),
+            VariableEntry::public("search_term", "shoes"),
+        ];
+        let ctx = VariableContext {
+            workspace_vars: &ws_vars,
+            collection_vars: &[],
+            environment: None,
+            request_vars: &[],
+            local_secrets: &BTreeMap::new(),
+        };
+        let resolved = resolve_request_preview(&req, None, &[], &ctx, &[], 1000);
+        assert_eq!(
+            resolved.url,
+            "https://api.example.test:8080/v1/users/u-99/orders/ord-7?page=2&q=shoes"
+        );
     }
 }

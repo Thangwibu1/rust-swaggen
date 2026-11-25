@@ -193,6 +193,46 @@ pub fn show(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
                     });
                     ui.add_space(6.0);
 
+                    if app.response_subtab == ResponseSubTab::Body {
+                        ui.horizontal_wrapped(|ui| {
+                            for (fmt, label) in [
+                                (ResponseBodyFormat::PrettyJson, "Pretty"),
+                                (ResponseBodyFormat::Raw, "Raw"),
+                                (ResponseBodyFormat::Xml, "XML"),
+                                (ResponseBodyFormat::Binary, "Binary"),
+                            ] {
+                                if swaggen_ui_kit::underline_tab(
+                                    ui,
+                                    app.response_format == fmt,
+                                    label,
+                                )
+                                .clicked()
+                                {
+                                    app.response_format = fmt;
+                                }
+                            }
+                            ui.add_space(8.0);
+                            ui.add(
+                                egui::TextEdit::singleline(&mut app.response_search)
+                                    .hint_text("Search preview…")
+                                    .desired_width(180.0),
+                            );
+                            if !app.response_search.trim().is_empty() {
+                                let q = app.response_search.trim().to_ascii_lowercase();
+                                let count = formatted_text
+                                    .to_ascii_lowercase()
+                                    .matches(&q)
+                                    .count();
+                                ui.label(
+                                    egui::RichText::new(format!("{count} match(es)"))
+                                        .size(11.5)
+                                        .color(Tokens::STATUS_INFO),
+                                );
+                            }
+                        });
+                        ui.add_space(4.0);
+                    }
+
                     // Dedicated non-nested ScrollArea filling remaining card height cleanly!
                     let scroll_h = ui.available_height().max(110.0);
                     egui::ScrollArea::vertical()
@@ -202,44 +242,6 @@ pub fn show(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
                         .auto_shrink([false, false])
                         .show(ui, |ui| match app.response_subtab {
                             ResponseSubTab::Body => {
-                                ui.horizontal_wrapped(|ui| {
-                                    for (fmt, label) in [
-                                        (ResponseBodyFormat::PrettyJson, "Pretty"),
-                                        (ResponseBodyFormat::Raw, "Raw"),
-                                        (ResponseBodyFormat::Xml, "XML"),
-                                        (ResponseBodyFormat::Binary, "Binary"),
-                                    ] {
-                                        if swaggen_ui_kit::underline_tab(
-                                            ui,
-                                            app.response_format == fmt,
-                                            label,
-                                        )
-                                        .clicked()
-                                        {
-                                            app.response_format = fmt;
-                                        }
-                                    }
-                                    ui.add_space(8.0);
-                                    ui.add(
-                                        egui::TextEdit::singleline(&mut app.response_search)
-                                            .hint_text("Search preview…")
-                                            .desired_width(180.0),
-                                    );
-                                    if !app.response_search.trim().is_empty() {
-                                        let q = app.response_search.trim().to_ascii_lowercase();
-                                        let count = formatted_text
-                                            .to_ascii_lowercase()
-                                            .matches(&q)
-                                            .count();
-                                        ui.label(
-                                            egui::RichText::new(format!("{count} match(es)"))
-                                                .size(11.5)
-                                                .color(Tokens::STATUS_INFO),
-                                        );
-                                    }
-                                });
-                                ui.add_space(6.0);
-
                                 match app.response_format {
                                     ResponseBodyFormat::PrettyJson => {
                                         let display_text = if !app.response_search.trim().is_empty()
