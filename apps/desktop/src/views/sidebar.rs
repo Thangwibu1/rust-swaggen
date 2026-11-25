@@ -18,11 +18,22 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
     } else {
         "Local"
     };
-    ui.label(
-        egui::RichText::new(format!("{} / {kind_label}", app.state.meta.name))
-            .size(12.0)
-            .color(swaggen_ui_kit::text_secondary(ui)),
-    );
+    if ui
+        .add(
+            egui::Button::new(
+                egui::RichText::new(format!("{} / {kind_label} ▾", app.state.meta.name))
+                    .size(12.0)
+                    .color(swaggen_ui_kit::text_secondary(ui)),
+            )
+            .fill(egui::Color32::TRANSPARENT)
+            .stroke(egui::Stroke::NONE)
+            .frame(false),
+        )
+        .on_hover_text("Switch or manage workspaces")
+        .clicked()
+    {
+        app.show_workspace_modal = true;
+    }
     ui.add_space(10.0);
 
     // 2. Search APIs Ctrl+K (40px Figma Input) + collapsible Filter toggle.

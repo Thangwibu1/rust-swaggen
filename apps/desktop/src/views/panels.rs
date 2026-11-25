@@ -80,8 +80,8 @@ fn show_env_group_tabs(app: &mut App, ui: &mut egui::Ui) {
 fn show_settings_group_tabs(app: &mut App, ui: &mut egui::Ui) {
     ui.horizontal_wrapped(|ui| {
         for (mode, label) in [
+            (MainMode::Privacy, "General & updates"),
             (MainMode::Storage, "Storage & retention"),
-            (MainMode::Privacy, "Privacy & updates"),
             (MainMode::Sanitizer, "Secret sanitizer"),
             (MainMode::Shortcuts, "Keyboard shortcuts"),
         ] {
@@ -873,13 +873,81 @@ pub fn show_storage(app: &mut App, ui: &mut egui::Ui) {
 pub fn show_privacy(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
     swaggen_ui_kit::page_header(
         ui,
-        "Updates, privacy & diagnostics",
-        "Check for Swaggen updates from GitHub Releases, apply downloaded update packages in-place, and review local privacy diagnostics.",
+        "Settings & updates",
+        "Manage appearance, language, workspaces, software updates, and local privacy diagnostics.",
         Some(&format!("v{}", crate::updater::APP_VERSION)),
         false,
     );
     show_settings_group_tabs(app, ui);
     egui::ScrollArea::vertical().show(ui, |ui| {
+        // 0. General Preferences (Appearance, Language & Workspaces) — kept in Settings instead of cluttering the top header.
+        swaggen_ui_kit::surface_card(ui, |ui| {
+            swaggen_ui_kit::card_header(ui, "General Preferences");
+            swaggen_ui_kit::config_field_row(
+                ui,
+                "Appearance",
+                "Switch between Light and Dark theme",
+                |ui| {
+                    ui.horizontal(|ui| {
+                        let is_light = app.theme == swaggen_ui_kit::UiTheme::Light;
+                        if ui
+                            .selectable_label(is_light, "Light")
+                            .clicked()
+                            && !is_light
+                        {
+                            app.theme = swaggen_ui_kit::UiTheme::Light;
+                            swaggen_ui_kit::install_with_theme(ctx, app.theme);
+                        }
+                        if ui
+                            .selectable_label(!is_light, "Dark")
+                            .clicked()
+                            && is_light
+                        {
+                            app.theme = swaggen_ui_kit::UiTheme::Dark;
+                            swaggen_ui_kit::install_with_theme(ctx, app.theme);
+                        }
+                    });
+                },
+            );
+            swaggen_ui_kit::config_field_row(
+                ui,
+                "Language",
+                "Choose interface display language",
+                |ui| {
+                    ui.horizontal(|ui| {
+                        let is_en = app.locale == swaggen_ui_kit::UiLocale::En;
+                        if ui.selectable_label(is_en, "English").clicked() {
+                            app.locale = swaggen_ui_kit::UiLocale::En;
+                        }
+                        if ui.selectable_label(!is_en, "Tiếng Việt").clicked() {
+                            app.locale = swaggen_ui_kit::UiLocale::Vi;
+                        }
+                    });
+                },
+            );
+            swaggen_ui_kit::config_field_row(
+                ui,
+                "Workspaces",
+                &format!("Active workspace: {}", app.state.meta.name),
+                |ui| {
+                    if swaggen_ui_kit::secondary_button(
+                        ui,
+                        true,
+                        swaggen_ui_kit::tr(
+                            app.locale,
+                            "Switch or manage workspaces…",
+                            "Chuyển hoặc quản lý không gian…",
+                        ),
+                    )
+                    .clicked()
+                    {
+                        app.show_workspace_modal = true;
+                    }
+                },
+            );
+        });
+        ui.add_space(10.0);
+
         // 1. In-App Auto-Updater (Option 1: GitHub Releases) & Local Package Updater (Option 2: .exe/.msi/.zip)
         swaggen_ui_kit::surface_card(ui, |ui| {
             ui.horizontal(|ui| {
@@ -1267,7 +1335,7 @@ pub fn show_command_palette(app: &mut App, ui: &mut egui::Ui) {
     });
 }
 
-pub fn show_shortcuts(ui: &mut egui::Ui) {
+pub fn show_shortcuts(app: &mut App, ui: &mut egui::Ui) {
     swaggen_ui_kit::page_header(
         ui,
         "Keyboard shortcuts",
@@ -1275,6 +1343,7 @@ pub fn show_shortcuts(ui: &mut egui::Ui) {
         None,
         false,
     );
+    show_settings_group_tabs(app, ui);
     swaggen_ui_kit::surface_card(ui, |ui| {
         swaggen_ui_kit::table_header(ui, &[("SHORTCUT", 180.0), ("ACTION", 420.0)]);
         for (keys, action) in [

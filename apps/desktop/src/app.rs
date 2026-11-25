@@ -1347,16 +1347,16 @@ impl eframe::App for App {
                             "Import, Export & Developer Tools",
                         ),
                         (
-                            MainMode::Storage,
+                            MainMode::Privacy,
                             IconKind::Settings,
-                            "Settings, Privacy & Shortcuts",
+                            "Settings, Updates & Privacy",
                         ),
                     ] {
                         let active = match mode {
-                            MainMode::Storage => matches!(
+                            MainMode::Privacy => matches!(
                                 self.mode,
-                                MainMode::Storage
-                                    | MainMode::Privacy
+                                MainMode::Privacy
+                                    | MainMode::Storage
                                     | MainMode::Shortcuts
                                     | MainMode::Sanitizer
                             ),
@@ -1443,7 +1443,7 @@ impl eframe::App for App {
                         if signed_in {
                             let initials = self.user_initials();
                             if swaggen_ui_kit::avatar_circle(ui, &initials, AvatarTone::Salmon)
-                                .on_hover_text("Signed-in Firebase account")
+                                .on_hover_text("Account & sessions")
                                 .clicked()
                             {
                                 self.mode = MainMode::Server;
@@ -1452,86 +1452,27 @@ impl eframe::App for App {
                         } else if swaggen_ui_kit::primary_button(ui, true, "Sign in").clicked() {
                             self.show_welcome = true;
                         }
-                        if swaggen_ui_kit::secondary_button(
-                            ui,
-                            self.loaded && !self.pending && !self.recovery_needed,
-                            if self.dirty() {
-                                "Save*"
-                            } else {
-                                "Save"
-                            },
-                        )
-                        .clicked()
-                        {
-                            self.save_workspace();
-                        }
-                        if swaggen_ui_kit::secondary_button(
-                            ui,
-                            true,
-                            swaggen_ui_kit::tr(self.locale, "Workspaces", "Không gian"),
-                        )
-                        .clicked()
-                        {
-                            self.show_workspace_modal = !self.show_workspace_modal;
-                        }
                         if let Some(ref uc) = self.update_check
                             && uc.update_available
-                        {
-                            if swaggen_ui_kit::primary_button(
+                            && swaggen_ui_kit::primary_button(
                                 ui,
                                 !self.pending,
                                 &format!("Update v{}", uc.latest.version),
                             )
                             .clicked()
-                            {
-                                self.mode = MainMode::Privacy;
-                            }
-                        } else if swaggen_ui_kit::secondary_button(
-                            ui,
-                            !self.pending,
-                            swaggen_ui_kit::tr(self.locale, "Updates", "Cập nhật"),
-                        )
-                        .clicked()
                         {
                             self.mode = MainMode::Privacy;
-                            self.submit(Command::CheckForUpdates {
-                                feed_url: self.update_feed_url.clone(),
-                            });
                         }
-                        if swaggen_ui_kit::secondary_button(
-                            ui,
-                            true,
-                            if self.locale == swaggen_ui_kit::UiLocale::En {
-                                "VI"
-                            } else {
-                                "EN"
-                            },
-                        )
-                        .clicked()
+                        if self.dirty()
+                            && self.mode != MainMode::Workbench
+                            && swaggen_ui_kit::secondary_button(
+                                ui,
+                                self.loaded && !self.pending && !self.recovery_needed,
+                                "Save*",
+                            )
+                            .clicked()
                         {
-                            self.locale = if self.locale == swaggen_ui_kit::UiLocale::En {
-                                swaggen_ui_kit::UiLocale::Vi
-                            } else {
-                                swaggen_ui_kit::UiLocale::En
-                            };
-                        }
-                        if swaggen_ui_kit::secondary_button(
-                            ui,
-                            true,
-                            if self.theme == swaggen_ui_kit::UiTheme::Light {
-                                "Dark"
-                            } else {
-                                "Light"
-                            },
-                        )
-                        .clicked()
-                        {
-                            self.theme = if self.theme == swaggen_ui_kit::UiTheme::Light {
-                                swaggen_ui_kit::UiTheme::Dark
-                            } else {
-                                swaggen_ui_kit::UiTheme::Light
-                            };
-                            swaggen_ui_kit::install_with_theme(&ctx, self.theme);
+                            self.save_workspace();
                         }
                         let (sync_color, sync_label) = match self.server_profiles.active() {
                             Some(p) if !p.session_id.is_empty() && p.mongo_ready => {
@@ -1541,17 +1482,50 @@ impl eframe::App for App {
                             Some(_) => (Tokens::STATUS_INFO, "Configured"),
                             None => (swaggen_ui_kit::text_secondary(ui), "Local"),
                         };
-                        swaggen_ui_kit::pill_badge(ui, sync_color, sync_label);
+                        if ui
+                            .add(
+                                egui::Button::new(
+                                    egui::RichText::new(sync_label)
+                                        .size(11.5)
+                                        .color(sync_color)
+                                        .strong(),
+                                )
+                                .fill(swaggen_ui_kit::surface_bg(ui))
+                                .stroke(egui::Stroke::new(
+                                    1.0,
+                                    swaggen_ui_kit::border_color(ui),
+                                ))
+                                .corner_radius(6),
+                            )
+                            .on_hover_text("Open team sync & server status")
+                            .clicked()
+                        {
+                            self.mode = MainMode::TeamSync;
+                        }
                         let env_label = self
                             .state
                             .active_environment()
                             .map(|e| e.name.as_str())
                             .unwrap_or("No env");
-                        swaggen_ui_kit::pill_badge(
-                            ui,
-                            swaggen_ui_kit::text_primary(ui),
-                            env_label,
-                        );
+                        if ui
+                            .add(
+                                egui::Button::new(
+                                    egui::RichText::new(env_label)
+                                        .size(11.5)
+                                        .color(swaggen_ui_kit::text_primary(ui)),
+                                )
+                                .fill(swaggen_ui_kit::surface_bg(ui))
+                                .stroke(egui::Stroke::new(
+                                    1.0,
+                                    swaggen_ui_kit::border_color(ui),
+                                ))
+                                .corner_radius(6),
+                            )
+                            .on_hover_text("Manage environments & variables")
+                            .clicked()
+                        {
+                            self.mode = MainMode::Environments;
+                        }
                     });
                 });
             });
@@ -1609,7 +1583,7 @@ impl eframe::App for App {
                 MainMode::Sanitizer => views::panels::show_sanitizer(self, ui),
                 MainMode::Storage => views::panels::show_storage(self, ui),
                 MainMode::Privacy => views::panels::show_privacy(self, ui, &ctx),
-                MainMode::Shortcuts => views::panels::show_shortcuts(ui),
+                MainMode::Shortcuts => views::panels::show_shortcuts(self, ui),
             });
     }
 }
