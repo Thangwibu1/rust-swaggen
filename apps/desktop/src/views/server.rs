@@ -239,7 +239,15 @@ fn show_auth_and_bootstrap(app: &mut App, ui: &mut egui::Ui) {
 
     ui.columns(2, |cols| {
         swaggen_ui_kit::surface_card(&mut cols[0], |ui| {
-            swaggen_ui_kit::card_header(ui, "Firebase Sign In (Google & Email)");
+            swaggen_ui_kit::card_header(ui, "Sign In with Google");
+            ui.label(
+                egui::RichText::new(
+                    "Sign in or automatically create your Swaggen account via Google (Firebase Auth).",
+                )
+                .size(12.0)
+                .color(swaggen_ui_kit::text_secondary(ui)),
+            );
+            ui.add_space(10.0);
             if app.firebase_auth_pending {
                 swaggen_ui_kit::notice_banner(
                     ui,
@@ -256,7 +264,7 @@ fn show_auth_and_bootstrap(app: &mut App, ui: &mut egui::Ui) {
             if swaggen_ui_kit::google_button(
                 ui,
                 !app.pending && !app.firebase_auth_pending,
-                "Continue with Google (Browser)",
+                "Continue with Google",
             )
             .clicked()
             {
@@ -267,72 +275,9 @@ fn show_auth_and_bootstrap(app: &mut App, ui: &mut egui::Ui) {
                 );
             }
             ui.add_space(12.0);
-            ui.label(
-                egui::RichText::new("Or authenticate with Firebase Email & Password:")
-                    .size(12.0)
-                    .color(swaggen_ui_kit::text_secondary(ui)),
-            );
-            ui.add_space(8.0);
-            let field_w = ui.available_width();
-            swaggen_ui_kit::text_input(ui, &mut app.auth_email, "Email address", field_w, false);
-            ui.add_space(8.0);
-            swaggen_ui_kit::text_input(ui, &mut app.auth_password, "Password", field_w, true);
-            if app.firebase_create_account {
-                ui.add_space(8.0);
-                swaggen_ui_kit::text_input(
-                    ui,
-                    &mut app.auth_display_name,
-                    "Display name",
-                    field_w,
-                    false,
-                );
+            if swaggen_ui_kit::secondary_button(ui, true, "Open Welcome Sign-In").clicked() {
+                app.show_welcome = true;
             }
-            if active.bootstrap_required {
-                ui.add_space(8.0);
-                swaggen_ui_kit::text_input(
-                    ui,
-                    &mut app.auth_bootstrap_token,
-                    "Optional server bootstrap token",
-                    field_w,
-                    true,
-                );
-            }
-            ui.add_space(8.0);
-            ui.checkbox(
-                &mut app.firebase_create_account,
-                "Create new Firebase account",
-            );
-            ui.add_space(8.0);
-            ui.horizontal_wrapped(|ui| {
-                let can_fb = !app.pending
-                    && !app.auth_email.trim().is_empty()
-                    && !app.auth_password.is_empty();
-                if swaggen_ui_kit::primary_button(
-                    ui,
-                    can_fb,
-                    if app.firebase_create_account {
-                        "Create Firebase account"
-                    } else {
-                        "Sign in with Firebase"
-                    },
-                )
-                .clicked()
-                {
-                    let pw = std::mem::take(&mut app.auth_password);
-                    let bt = app.auth_bootstrap_token.trim().to_owned();
-                    app.submit(Command::FirebaseEmailAuth {
-                        profile_id: active.id.clone(),
-                        email: app.auth_email.trim().to_owned(),
-                        password: pw,
-                        display_name: app.auth_display_name.trim().to_owned(),
-                        create_account: app.firebase_create_account,
-                        bootstrap_token: if bt.is_empty() { None } else { Some(bt) },
-                    });
-                }
-                if swaggen_ui_kit::secondary_button(ui, true, "Open A01 Welcome").clicked() {
-                    app.show_welcome = true;
-                }
-            });
         });
 
         swaggen_ui_kit::surface_card(&mut cols[1], |ui| {

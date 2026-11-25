@@ -1,8 +1,5 @@
-//! Figma A01 / Welcome to Swaggen & A02 / Continue in your browser (Firebase Google + Email Auth).
-use crate::{
-    app::{App, MainMode},
-    worker::Command,
-};
+//! Figma A01 / Welcome to Swaggen & A02 / Continue in your browser (Google Sign-In via Firebase Auth).
+use crate::app::{App, MainMode};
 use eframe::egui;
 use swaggen_ui_kit::{Edge, IconKind, NoticeKind, Tokens};
 
@@ -155,7 +152,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                                         ui.add_space(12.0);
                                     }
 
-                                    // Google / Firebase browser handoff button (A01/A02).
+                                    // Google / Firebase browser handoff button (A01/A02 — Google-only).
                                     if swaggen_ui_kit::google_button(
                                         ui,
                                         !app.pending && !app.firebase_auth_pending,
@@ -168,93 +165,6 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                                             prof_id.clone(),
                                             if bt.is_empty() { None } else { Some(bt) },
                                         );
-                                    }
-
-                                    ui.add_space(14.0);
-                                    ui.horizontal(|ui| {
-                                        ui.label(
-                                            egui::RichText::new("or sign in with Firebase Email & Password")
-                                                .size(11.0)
-                                                .color(swaggen_ui_kit::text_secondary(ui)),
-                                        );
-                                    });
-                                    ui.add_space(8.0);
-
-                                    let input_w = ui.available_width();
-                                    swaggen_ui_kit::text_input(
-                                        ui,
-                                        &mut app.auth_email,
-                                        "Email address",
-                                        input_w,
-                                        false,
-                                    );
-                                    ui.add_space(8.0);
-                                    swaggen_ui_kit::text_input(
-                                        ui,
-                                        &mut app.auth_password,
-                                        "Password",
-                                        input_w,
-                                        true,
-                                    );
-                                    if app.firebase_create_account {
-                                        ui.add_space(8.0);
-                                        swaggen_ui_kit::text_input(
-                                            ui,
-                                            &mut app.auth_display_name,
-                                            "Display name",
-                                            input_w,
-                                            false,
-                                        );
-                                    }
-                                    ui.add_space(8.0);
-                                    ui.horizontal(|ui| {
-                                        ui.checkbox(
-                                            &mut app.firebase_create_account,
-                                            "Create new Firebase account",
-                                        );
-                                    });
-                                    ui.add_space(10.0);
-
-                                    let can_submit = !app.pending
-                                        && !app.auth_email.trim().is_empty()
-                                        && !app.auth_password.is_empty();
-                                    if ui
-                                        .add_enabled(
-                                            can_submit,
-                                            egui::Button::new(
-                                                egui::RichText::new(if app.firebase_create_account {
-                                                    "Create account with Firebase"
-                                                } else {
-                                                    "Sign in with Firebase"
-                                                })
-                                                .size(13.0)
-                                                .color(if can_submit {
-                                                    Tokens::STATUS_INFO
-                                                } else {
-                                                    swaggen_ui_kit::text_secondary(ui)
-                                                })
-                                                .strong(),
-                                            )
-                                            .fill(swaggen_ui_kit::surface_bg(ui))
-                                            .stroke(egui::Stroke::new(
-                                                1.0,
-                                                swaggen_ui_kit::border_color(ui),
-                                            ))
-                                            .min_size(egui::vec2(input_w, 40.0))
-                                            .corner_radius(6),
-                                        )
-                                        .clicked()
-                                    {
-                                        let pw = std::mem::take(&mut app.auth_password);
-                                        let bt = app.auth_bootstrap_token.trim().to_owned();
-                                        app.submit(Command::FirebaseEmailAuth {
-                                            profile_id: prof_id.clone(),
-                                            email: app.auth_email.trim().to_owned(),
-                                            password: pw,
-                                            display_name: app.auth_display_name.trim().to_owned(),
-                                            create_account: app.firebase_create_account,
-                                            bootstrap_token: if bt.is_empty() { None } else { Some(bt) },
-                                        });
                                     }
 
                                     if app.error && !app.status.is_empty() {

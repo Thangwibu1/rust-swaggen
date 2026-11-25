@@ -426,11 +426,7 @@ pub fn render_browser_signin_html(
   h1 {{ font-size: 21px; margin: 0 0 8px 0; }}
   p {{ font-size: 12px; color: #65686f; line-height: 1.6; margin: 0 0 20px 0; }}
   .btn {{ width: 100%; height: 44px; border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; color: #202124; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 10px; }}
-  .btn-primary {{ color: #1d4ed8; }}
   .btn:hover {{ border-color: #202124; background: #f8fafc; }}
-  input {{ width: 100%; height: 40px; border: 1px solid #e5e7eb; border-radius: 6px; padding: 0 12px; box-sizing: border-box; font-family: inherit; font-size: 12px; margin-bottom: 10px; }}
-  .sep {{ border-top: 1px solid #e5e7eb; margin: 18px 0; }}
-  .hint {{ font-size: 11px; color: #65686f; margin-bottom: 12px; }}
   .status {{ font-size: 12px; margin-top: 12px; color: #15803d; line-height: 1.5; }}
   .err {{ color: #b91c1c; }}
 </style>
@@ -449,11 +445,6 @@ pub fn render_browser_signin_html(
       <img src="/v1/assets/google-g.png" alt="Google" width="18" height="18" />
       <span>Continue with Google</span>
     </button>
-    <div class="sep"></div>
-    <div class="hint">Or sign in / create account with Email &amp; Password:</div>
-    <input id="email" type="email" placeholder="Email address" />
-    <input id="password" type="password" placeholder="Password" />
-    <button id="emailBtn" class="btn btn-primary">Sign in / Register with Email</button>
     <div id="msg" class="status"></div>
   </div>
 <script>
@@ -485,28 +476,11 @@ pub fn render_browser_signin_html(
       await finish(res.user);
     }} catch (e) {{
       msg.className = "status err";
-      msg.textContent = (e && e.message) ? e.message : String(e);
-    }}
-  }};
-
-  document.getElementById("emailBtn").onclick = async () => {{
-    try {{
-      const em = document.getElementById("email").value.trim();
-      const pw = document.getElementById("password").value;
-      try {{
-        const res = await auth.signInWithEmailAndPassword(em, pw);
-        await finish(res.user);
-      }} catch (err) {{
-        if (err && (err.code === "auth/user-not-found" || err.code === "auth/invalid-credential")) {{
-          const created = await auth.createUserWithEmailAndPassword(em, pw);
-          await finish(created.user);
-        }} else {{
-          throw err;
-        }}
+      if (e && e.code === "auth/unauthorized-domain") {{
+        msg.textContent = "Domain '" + window.location.hostname + "' is not in Firebase Authorized domains. Add it in Firebase Console -> Authentication -> Settings -> Authorized domains.";
+      }} else {{
+        msg.textContent = (e && e.message) ? e.message : String(e);
       }}
-    }} catch (e) {{
-      msg.className = "status err";
-      msg.textContent = (e && e.message) ? e.message : String(e);
     }}
   }};
 </script>
