@@ -238,6 +238,19 @@ pub struct InvitationSummary {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
+pub struct PendingInvitationsResponse {
+    pub api_version: u32,
+    pub invitations: Vec<InvitationSummary>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct AcceptDirectInvitationRequest {
+    pub device_name: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct CreateInvitationResponse {
     pub api_version: u32,
     pub invitation: InvitationSummary,

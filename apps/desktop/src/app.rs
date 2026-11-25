@@ -180,6 +180,7 @@ pub struct App {
     pub auth_password: String,
     pub auth_bootstrap_token: String,
     pub invite_token_input: String,
+    pub pending_invitations: Vec<swaggen_api_contract::InvitationSummary>,
     pub team_workspaces: Vec<swaggen_api_contract::TeamWorkspaceSummary>,
     pub selected_team_workspace_id: Option<String>,
     pub team_ws_slug: String,
@@ -420,6 +421,7 @@ impl App {
             auth_password: String::new(),
             auth_bootstrap_token: String::new(),
             invite_token_input: String::new(),
+            pending_invitations: Vec::new(),
             team_workspaces: Vec::new(),
             selected_team_workspace_id: None,
             team_ws_slug: "team-api".into(),
@@ -818,7 +820,10 @@ impl App {
                     {
                         let pid = active.id.clone();
                         self.server_profiles = server_profiles;
-                        self.submit(Command::RefreshTeamWorkspaces { profile_id: pid });
+                        self.submit(Command::RefreshTeamWorkspaces {
+                            profile_id: pid.clone(),
+                        });
+                        self.submit(Command::RefreshPendingInvitations { profile_id: pid });
                     } else {
                         self.server_profiles = server_profiles;
                     }
@@ -852,7 +857,10 @@ impl App {
                     {
                         let pid = active.id.clone();
                         self.server_profiles = server_profiles;
-                        self.submit(Command::RefreshTeamWorkspaces { profile_id: pid });
+                        self.submit(Command::RefreshTeamWorkspaces {
+                            profile_id: pid.clone(),
+                        });
+                        self.submit(Command::RefreshPendingInvitations { profile_id: pid });
                     } else {
                         self.server_profiles = server_profiles;
                     }
@@ -870,9 +878,13 @@ impl App {
                     self.server_profiles = store;
                     if signed_in_id.is_none() {
                         self.team_workspaces.clear();
+                        self.pending_invitations.clear();
                         self.selected_team_workspace_id = None;
                     } else if let Some(pid) = signed_in_id {
-                        self.submit(Command::RefreshTeamWorkspaces { profile_id: pid });
+                        self.submit(Command::RefreshTeamWorkspaces {
+                            profile_id: pid.clone(),
+                        });
+                        self.submit(Command::RefreshPendingInvitations { profile_id: pid });
                     }
                     self.status = message;
                 }
@@ -895,8 +907,42 @@ impl App {
                 }
                 Event::InvitationCreated(inv) => {
                     self.last_created_invite_token = inv.invite_token;
-                    self.status =
-                        format!("Created one-time invitation for {}", inv.invitation.email);
+                    self.status = format!(
+                        "Sent in-app workspace invitation to {}",
+                        inv.invitation.email
+                    );
+                }
+                Event::PendingInvitationsLoaded(invs) => {
+                    self.pending_invitations = invs;
+                    if !self.pending_invitations.is_empty() {
+                        self.status = format!(
+                            "You have {} pending in-app workspace invitation(s)",
+                            self.pending_invitations.len()
+                        );
+                    }
+                }
+                Event::InAppInvitationAccepted(joined) => {
+                    self.pending_invitations
+                        .retain(|i| i.workspace_id != joined.workspace.workspace_id);
+                    if !self
+                        .team_workspaces
+                        .iter()
+                        .any(|w| w.workspace_id == joined.workspace.workspace_id)
+                    {
+                        self.team_workspaces.push(joined.workspace.clone());
+                    }
+                    self.selected_team_workspace_id = Some(joined.workspace.workspace_id.clone());
+                    self.status = format!(
+                        "Joined team workspace '{}' as {}",
+                        joined.workspace.name,
+                        joined.workspace.role.as_str()
+                    );
+                    if let Some(pid) = self.server_profiles.active().map(|p| p.id.clone()) {
+                        self.submit(Command::RefreshTeamWorkspaces {
+                            profile_id: pid.clone(),
+                        });
+                        self.submit(Command::RefreshPendingInvitations { profile_id: pid });
+                    }
                 }
                 Event::SyncStateUpdated { state, message } => {
                     self.sync_state = *state;
@@ -1470,9 +1516,32 @@ impl eframe::App for App {
             }
         }
         if ctx.input_mut(|i| i.consume_key(egui::Modifiers::CTRL, egui::Key::S)) {
+            if self.mode == MainMode::Specs
+                && let Some(cur_spec) = self.specs.get(self.selected_spec_idx)
+            {
+                let updated = swaggen_spec_engine::openapi::parse_and_validate(
+                    cur_spec.id.clone(),
+                    cur_spec.name.clone(),
+                    &self.spec_editor_text,
+                    &[],
+                );
+                self.specs[self.selected_spec_idx] = updated;
+                self.submit(Command::SaveSpecs {
+                    specs: self.specs.clone(),
+                });
+            }
             self.save_workspace();
         }
         if ctx.input_mut(|i| i.consume_key(egui::Modifiers::CTRL, egui::Key::Enter)) {
+            self.send_active_request(false);
+        }
+        if self.mode == MainMode::Workbench
+            && !self.show_command_palette
+            && !self.show_workspace_modal
+            && !self.show_production_confirm
+            && !ctx.egui_wants_keyboard_input()
+            && ctx.input_mut(|i| i.consume_key(egui::Modifiers::NONE, egui::Key::Enter))
+        {
             self.send_active_request(false);
         }
         if ctx.input_mut(|i| i.consume_key(egui::Modifiers::CTRL, egui::Key::B)) {
@@ -1498,6 +1567,7 @@ impl eframe::App for App {
             .stroke(egui::Stroke::NONE)
             .inner_margin(egui::Margin::symmetric(14, 4));
         let status_resp = egui::Panel::bottom("status")
+            .show_separator_line(false)
             .frame(status_bar_frame)
             .show(ui, |ui| {
                 ui.horizontal(|ui| {
@@ -1603,6 +1673,7 @@ impl eframe::App for App {
         let rail_resp = egui::Panel::left("activity_rail")
             .exact_size(rail_w)
             .resizable(false)
+            .show_separator_line(false)
             .frame(rail_frame)
             .show(ui, |ui| {
                 ui.vertical_centered(|ui| {
@@ -1721,6 +1792,7 @@ impl eframe::App for App {
                 .inner_margin(egui::Margin::symmetric(8, 8));
             egui::Panel::left("sidebar")
                 .resizable(false)
+                .show_separator_line(false)
                 .exact_size(cur_sidebar_w)
                 .frame(sidebar_frame)
                 .show(ui, |ui| {
@@ -1728,17 +1800,19 @@ impl eframe::App for App {
                 });
 
             let resizer_frame = egui::Frame::new()
-                .fill(swaggen_ui_kit::surface_bg(ui))
+                .fill(swaggen_ui_kit::border_color(ui))
                 .stroke(egui::Stroke::NONE)
                 .inner_margin(egui::Margin::ZERO);
             egui::Panel::left("sidebar_resizer")
                 .resizable(false)
-                .exact_size(4.0)
+                .show_separator_line(false)
+                .exact_size(1.0)
                 .frame(resizer_frame)
                 .show(ui, |ui| {
                     let full_rect = ui.max_rect();
+                    let hit_rect = full_rect.expand2(egui::vec2(3.0, 0.0));
                     let id = egui::Id::unique("swaggen_sidebar_edge_drag");
-                    let resp = ui.interact(full_rect, id, egui::Sense::click_and_drag());
+                    let resp = ui.interact(hit_rect, id, egui::Sense::click_and_drag());
                     let active = resp.hovered() || resp.dragged();
                     if active {
                         ctx.set_cursor_icon(egui::CursorIcon::ResizeHorizontal);
@@ -1756,21 +1830,16 @@ impl eframe::App for App {
                     {
                         self.state.layout.sidebar_width = 248.0;
                     }
-                    let lx = full_rect.center().x;
-                    ui.painter().line_segment(
-                        [
-                            egui::pos2(lx, full_rect.top()),
-                            egui::pos2(lx, full_rect.bottom()),
-                        ],
-                        egui::Stroke::new(
-                            if active { 1.5 } else { 1.0 },
-                            if active {
-                                Tokens::STATUS_INFO
-                            } else {
-                                swaggen_ui_kit::border_color(ui)
-                            },
-                        ),
-                    );
+                    if active {
+                        let lx = full_rect.center().x;
+                        ui.painter().line_segment(
+                            [
+                                egui::pos2(lx, full_rect.top()),
+                                egui::pos2(lx, full_rect.bottom()),
+                            ],
+                            egui::Stroke::new(2.0, Tokens::STATUS_INFO),
+                        );
+                    }
                 });
         }
 
@@ -1784,6 +1853,7 @@ impl eframe::App for App {
             .active()
             .is_some_and(|p| !p.session_id.is_empty());
         let header_resp = egui::Panel::top("workspace_header")
+            .show_separator_line(false)
             .frame(header_frame)
             .show(ui, |ui| {
                 ui.horizontal(|ui| {
@@ -2349,6 +2419,7 @@ mod tests {
             auth_password: String::new(),
             auth_bootstrap_token: String::new(),
             invite_token_input: String::new(),
+            pending_invitations: Vec::new(),
             team_workspaces: Vec::new(),
             selected_team_workspace_id: None,
             team_ws_slug: String::new(),

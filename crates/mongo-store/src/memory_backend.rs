@@ -945,6 +945,142 @@ impl WorkspaceRepository for InMemoryStore {
         })
     }
 
+    async fn list_my_pending_invitations(
+        &self,
+        auth: &AuthContext,
+        now: i64,
+    ) -> Result<Vec<InvitationSummary>, StoreError> {
+        let target_email = normalize_email(&auth.email)?;
+        let guard = self.state.lock().map_err(|_| StoreError::InternalSafe)?;
+        let mut out: Vec<InvitationSummary> = guard
+            .invitations_by_id
+            .values()
+            .filter(|inv| {
+                inv.email_normalized == target_email
+                    && inv.used_at_unix.is_none()
+                    && inv.revoked_at_unix.is_none()
+                    && inv.expires_at_unix > now
+            })
+            .filter_map(|inv| {
+                let ws = guard.workspaces_by_id.get(&inv.workspace_id)?;
+                Some(InvitationSummary {
+                    invitation_id: inv.invitation_id.clone(),
+                    workspace_id: inv.workspace_id.clone(),
+                    workspace_name: ws.name.clone(),
+                    email: inv.email_normalized.clone(),
+                    role: inv.role,
+                    created_at_unix: inv.created_at_unix,
+                    expires_at_unix: inv.expires_at_unix,
+                    used_at_unix: inv.used_at_unix,
+                    revoked_at_unix: inv.revoked_at_unix,
+                })
+            })
+            .collect();
+        out.sort_by_key(|a| std::cmp::Reverse(a.created_at_unix));
+        Ok(out)
+    }
+
+    async fn accept_invitation_by_id(
+        &self,
+        auth: &AuthContext,
+        invitation_id: &str,
+        _device_name: &str,
+        now: i64,
+    ) -> Result<AcceptInvitationResponse, StoreError> {
+        let caller_email = normalize_email(&auth.email)?;
+        let mut guard = self.state.lock().map_err(|_| StoreError::InternalSafe)?;
+        let inv = guard
+            .invitations_by_id
+            .get(invitation_id)
+            .cloned()
+            .ok_or_else(|| StoreError::NotFound("Invitation not found".into()))?;
+        if inv.revoked_at_unix.is_some() {
+            return Err(StoreError::InvitationRevoked);
+        }
+        if inv.used_at_unix.is_some() {
+            return Err(StoreError::InvitationAlreadyUsed);
+        }
+        if inv.expires_at_unix <= now {
+            return Err(StoreError::InvitationExpired);
+        }
+        if inv.email_normalized != caller_email {
+            return Err(StoreError::InvitationAccountMismatch);
+        }
+        let user = guard
+            .users_by_id
+            .get(&auth.user_id)
+            .cloned()
+            .ok_or(StoreError::Unauthorized("Account not found".into()))?;
+        if let Some(inv_mut) = guard.invitations_by_id.get_mut(invitation_id) {
+            inv_mut.used_at_unix = Some(now);
+        }
+        guard
+            .memberships
+            .entry((inv.workspace_id.clone(), user.user_id.clone()))
+            .or_insert(MembershipRec {
+                role: inv.role,
+                joined_at_unix: now,
+            });
+        let ws = guard
+            .workspaces_by_id
+            .get_mut(&inv.workspace_id)
+            .ok_or_else(|| StoreError::NotFound("Workspace not found".into()))?;
+        ws.membership_revision += 1;
+        let ws_clone = ws.clone();
+        Self::record_audit(
+            &mut guard,
+            Some(&inv.workspace_id),
+            &user.user_id,
+            &user.email_normalized,
+            "workspace.invitation_accepted",
+            invitation_id,
+            &format!("Accepted in-app invitation as {}", inv.role.as_str()),
+            now,
+        );
+        let workspace = Self::workspace_summary(&guard, &ws_clone, inv.role);
+        Ok(AcceptInvitationResponse {
+            api_version: API_VERSION,
+            workspace,
+            user: Self::user_profile(&user),
+            session_id: auth.session_id.clone(),
+            session_token: String::new(),
+            expires_at_unix: now + SESSION_TTL_SECS,
+        })
+    }
+
+    async fn decline_invitation(
+        &self,
+        auth: &AuthContext,
+        invitation_id: &str,
+        now: i64,
+    ) -> Result<(), StoreError> {
+        let caller_email = normalize_email(&auth.email)?;
+        let mut guard = self.state.lock().map_err(|_| StoreError::InternalSafe)?;
+        let inv = guard
+            .invitations_by_id
+            .get_mut(invitation_id)
+            .ok_or_else(|| StoreError::NotFound("Invitation not found".into()))?;
+        if inv.email_normalized != caller_email {
+            return Err(StoreError::InvitationAccountMismatch);
+        }
+        if inv.used_at_unix.is_some() {
+            return Err(StoreError::InvitationAlreadyUsed);
+        }
+        let ws_id = inv.workspace_id.clone();
+        inv.revoked_at_unix = Some(now);
+        Self::record_audit(
+            &mut guard,
+            Some(&ws_id),
+            &auth.user_id,
+            &auth.email,
+            "workspace.invitation_declined",
+            invitation_id,
+            "Invited user declined in-app",
+            now,
+        );
+        Ok(())
+    }
+
     async fn update_member_role(
         &self,
         auth: &AuthContext,

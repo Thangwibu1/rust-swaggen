@@ -4,11 +4,11 @@ use swaggen_api_contract::{
     AcceptInvitationRequest, AcceptInvitationResponse, AuditEventRecord, AuthResponse,
     BootstrapOwnerRequest, ChangePasswordRequest, ChangesFeedResponse, CommentThreadRecord,
     CreateCommentRequest, CreateInvitationRequest, CreateInvitationResponse,
-    CreateWorkspaceRequest, EntityRevisionRecord, LoginRequest, MemberListResponse, MemberSummary,
-    NotificationListResponse, NotificationRecord, PublishBatchRequest, PublishBatchResponse,
-    ReplyCommentRequest, ResolveCommentRequest, RestoreRevisionRequest, SessionSummary,
-    SnapshotResponse, TeamWorkspaceSummary, UpdateMemberRoleRequest, UpsertEntityRequest,
-    WorkspaceEntityRecord,
+    CreateWorkspaceRequest, EntityRevisionRecord, InvitationSummary, LoginRequest,
+    MemberListResponse, MemberSummary, NotificationListResponse, NotificationRecord,
+    PublishBatchRequest, PublishBatchResponse, ReplyCommentRequest, ResolveCommentRequest,
+    RestoreRevisionRequest, SessionSummary, SnapshotResponse, TeamWorkspaceSummary,
+    UpdateMemberRoleRequest, UpsertEntityRequest, WorkspaceEntityRecord,
 };
 
 #[derive(Debug, Clone)]
@@ -120,6 +120,27 @@ pub trait WorkspaceRepository: Send + Sync {
         req: AcceptInvitationRequest,
         now: i64,
     ) -> Result<AcceptInvitationResponse, StoreError>;
+
+    async fn list_my_pending_invitations(
+        &self,
+        auth: &AuthContext,
+        now: i64,
+    ) -> Result<Vec<InvitationSummary>, StoreError>;
+
+    async fn accept_invitation_by_id(
+        &self,
+        auth: &AuthContext,
+        invitation_id: &str,
+        device_name: &str,
+        now: i64,
+    ) -> Result<AcceptInvitationResponse, StoreError>;
+
+    async fn decline_invitation(
+        &self,
+        auth: &AuthContext,
+        invitation_id: &str,
+        now: i64,
+    ) -> Result<(), StoreError>;
 
     async fn update_member_role(
         &self,

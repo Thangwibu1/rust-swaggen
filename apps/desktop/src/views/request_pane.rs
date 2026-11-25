@@ -296,139 +296,145 @@ pub fn show_top_bar(app: &mut App, ui: &mut egui::Ui) -> Option<usize> {
     let cur_col_id = app.state.requests[req_idx].collection_id.clone();
     let is_inflight = app.inflight_request_id.as_deref() == Some(req_id.as_str());
 
-    // 2. Unified Postman URL Bar: `[ Method ▾ | URL input ]  [ Send ]  [ ⋯ ]` (F3)
+    // 2. Unified Postman URL Bar: `[ Method ▾ | URL input ]  [ Send ]  [ ⋯ ]` (F3, vertically centered text)
     ui.horizontal(|ui| {
         ui.spacing_mut().item_spacing.x = 6.0;
-        let bar_w = (ui.available_width() - 118.0).max(160.0);
+        let bar_w = (ui.available_width() - 122.0).max(160.0);
         egui::Frame::new()
             .fill(swaggen_ui_kit::surface_bg(ui))
             .stroke(egui::Stroke::new(1.0, swaggen_ui_kit::border_color(ui)))
             .corner_radius(6)
-            .inner_margin(egui::Margin::symmetric(6, 3))
+            .inner_margin(egui::Margin::symmetric(6, 0))
             .show(ui, |ui| {
-                ui.set_min_width((bar_w - 12.0).max(120.0));
-                ui.set_max_width((bar_w - 12.0).max(120.0));
-                ui.horizontal(|ui| {
-                    ui.spacing_mut().item_spacing.x = 6.0;
-                    let is_gql = app.state.requests[req_idx].is_graphql();
-                    let cur_method = app.state.requests[req_idx].method;
-                    let method_display = if is_gql {
-                        "GRAPHQL"
-                    } else {
-                        cur_method.as_str()
-                    };
-                    let method_col = swaggen_ui_kit::method_color(method_display);
+                ui.set_min_size(egui::vec2((bar_w - 12.0).max(120.0), 34.0));
+                ui.set_max_size(egui::vec2((bar_w - 12.0).max(120.0), 34.0));
+                ui.allocate_ui_with_layout(
+                    egui::vec2((bar_w - 12.0).max(120.0), 34.0),
+                    egui::Layout::left_to_right(egui::Align::Center),
+                    |ui| {
+                        ui.spacing_mut().item_spacing.x = 6.0;
+                        let is_gql = app.state.requests[req_idx].is_graphql();
+                        let cur_method = app.state.requests[req_idx].method;
+                        let method_display = if is_gql {
+                            "GRAPHQL"
+                        } else {
+                            cur_method.as_str()
+                        };
+                        let method_col = swaggen_ui_kit::method_color(method_display);
 
-                    let method_btn = ui
-                        .add(
-                            egui::Button::new(
-                                egui::RichText::new(format!("{method_display} ▾"))
-                                    .monospace()
-                                    .size(11.5)
-                                    .color(method_col)
-                                    .strong(),
+                        let method_btn = ui
+                            .add(
+                                egui::Button::new(
+                                    egui::RichText::new(format!("{method_display} ▾"))
+                                        .monospace()
+                                        .size(11.5)
+                                        .color(method_col)
+                                        .strong(),
+                                )
+                                .fill(egui::Color32::TRANSPARENT)
+                                .stroke(egui::Stroke::NONE)
+                                .min_size(egui::vec2(74.0, 28.0)),
                             )
-                            .fill(egui::Color32::TRANSPARENT)
-                            .stroke(egui::Stroke::NONE)
-                            .min_size(egui::vec2(74.0, 22.0)),
-                        )
-                        .on_hover_text("Select HTTP Method or switch to GraphQL");
+                            .on_hover_text("Select HTTP Method or switch to GraphQL");
 
-                    egui::Popup::menu(&method_btn)
-                        .id(egui::Id::unique(("req_method_popup", &req_id)))
-                        .close_behavior(egui::PopupCloseBehavior::CloseOnClickOutside)
-                        .show(|ui| {
-                            ui.set_min_width(120.0);
-                            for m in HttpMethod::ALL {
-                                let sel = !is_gql && cur_method == m;
+                        egui::Popup::menu(&method_btn)
+                            .id(egui::Id::unique(("req_method_popup", &req_id)))
+                            .close_behavior(egui::PopupCloseBehavior::CloseOnClickOutside)
+                            .show(|ui| {
+                                ui.set_min_width(120.0);
+                                for m in HttpMethod::ALL {
+                                    let sel = !is_gql && cur_method == m;
+                                    if ui
+                                        .selectable_label(
+                                            sel,
+                                            egui::RichText::new(m.as_str())
+                                                .monospace()
+                                                .color(swaggen_ui_kit::method_color(m.as_str()))
+                                                .strong(),
+                                        )
+                                        .clicked()
+                                    {
+                                        app.state.requests[req_idx].method = m;
+                                        if is_gql {
+                                            app.state.requests[req_idx].body = if matches!(
+                                                m,
+                                                HttpMethod::Get | HttpMethod::Head
+                                            ) {
+                                                RequestBody::None
+                                            } else {
+                                                RequestBody::Json("{\n  \n}".into())
+                                            };
+                                            app.request_subtab = RequestSubTab::Params;
+                                        } else if matches!(m, HttpMethod::Get | HttpMethod::Head)
+                                            && app.request_subtab == RequestSubTab::Body
+                                        {
+                                            app.request_subtab = RequestSubTab::Params;
+                                        }
+                                        changed = true;
+                                        ui.close();
+                                    }
+                                }
+                                ui.separator();
                                 if ui
                                     .selectable_label(
-                                        sel,
-                                        egui::RichText::new(m.as_str())
+                                        is_gql,
+                                        egui::RichText::new("GRAPHQL")
                                             .monospace()
-                                            .color(swaggen_ui_kit::method_color(m.as_str()))
+                                            .color(swaggen_ui_kit::method_color("GQL"))
                                             .strong(),
                                     )
                                     .clicked()
                                 {
-                                    app.state.requests[req_idx].method = m;
-                                    if is_gql {
-                                        app.state.requests[req_idx].body = if matches!(
-                                            m,
-                                            HttpMethod::Get | HttpMethod::Head
-                                        ) {
-                                            RequestBody::None
-                                        } else {
-                                            RequestBody::Json("{\n  \n}".into())
+                                    if !is_gql {
+                                        app.state.requests[req_idx].method = HttpMethod::Post;
+                                        app.state.requests[req_idx].body = RequestBody::GraphQl {
+                                            query: "query ExampleQuery {\n  __typename\n}".into(),
+                                            variables: "{\n  \n}".into(),
+                                            operation_name: None,
                                         };
-                                        app.request_subtab = RequestSubTab::Params;
-                                    } else if matches!(m, HttpMethod::Get | HttpMethod::Head)
-                                        && app.request_subtab == RequestSubTab::Body
-                                    {
-                                        app.request_subtab = RequestSubTab::Params;
                                     }
+                                    app.request_subtab = RequestSubTab::GraphQl;
                                     changed = true;
                                     ui.close();
                                 }
-                            }
-                            ui.separator();
-                            if ui
-                                .selectable_label(
-                                    is_gql,
-                                    egui::RichText::new("GRAPHQL")
-                                        .monospace()
-                                        .color(swaggen_ui_kit::method_color("GQL"))
-                                        .strong(),
-                                )
-                                .clicked()
-                            {
-                                if !is_gql {
-                                    app.state.requests[req_idx].method = HttpMethod::Post;
-                                    app.state.requests[req_idx].body = RequestBody::GraphQl {
-                                        query: "query ExampleQuery {\n  __typename\n}".into(),
-                                        variables: "{\n  \n}".into(),
-                                        operation_name: None,
-                                    };
-                                }
-                                app.request_subtab = RequestSubTab::GraphQl;
-                                changed = true;
-                                ui.close();
-                            }
-                        });
+                            });
 
-                    let sep_r = method_btn.rect;
-                    ui.painter().line_segment(
-                        [
-                            egui::pos2(sep_r.right() + 2.0, sep_r.top() + 2.0),
-                            egui::pos2(sep_r.right() + 2.0, sep_r.bottom() - 2.0),
-                        ],
-                        egui::Stroke::new(1.0, swaggen_ui_kit::border_color(ui)),
-                    );
-
-                    let url_input_w = ui.available_width().max(60.0);
-                    let url_hint = if is_gql {
-                        "Enter URL or {{base_url}}/graphql"
-                    } else {
-                        "Enter URL or {{base_url}}/endpoint"
-                    };
-                    let url_resp = ui
-                        .add(
-                            egui::TextEdit::singleline(&mut app.state.requests[req_idx].url)
-                                .hint_text(url_hint)
-                                .frame(egui::Frame::NONE)
-                                .desired_width(url_input_w),
-                        )
-                        .on_hover_text(
-                            "Enter URL — supports {{variables}}, :pathParams, and ?query=values (Enter / Ctrl+Enter to Send)",
+                        let sep_r = method_btn.rect;
+                        ui.painter().line_segment(
+                            [
+                                egui::pos2(sep_r.right() + 2.0, sep_r.top() + 5.0),
+                                egui::pos2(sep_r.right() + 2.0, sep_r.bottom() - 5.0),
+                            ],
+                            egui::Stroke::new(1.0, swaggen_ui_kit::border_color(ui)),
                         );
-                    if url_resp.changed() {
-                        app.state.requests[req_idx].sync_params_from_url();
-                        changed = true;
-                    }
-                    if url_resp.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter)) {
-                        app.send_active_request(false);
-                    }
-                });
+
+                        let url_input_w = ui.available_width().max(60.0);
+                        let url_hint = if is_gql {
+                            "Enter URL or {{base_url}}/graphql"
+                        } else {
+                            "Enter URL or {{base_url}}/endpoint"
+                        };
+                        let url_resp = ui
+                            .add(
+                                egui::TextEdit::singleline(&mut app.state.requests[req_idx].url)
+                                    .hint_text(url_hint)
+                                    .align(egui::Align2::LEFT_CENTER)
+                                    .margin(egui::Margin::symmetric(4, 0))
+                                    .frame(egui::Frame::NONE)
+                                    .desired_width(url_input_w),
+                            )
+                            .on_hover_text(
+                                "Enter URL — supports {{variables}}, :pathParams, and ?query=values (Enter / Ctrl+Enter to Send)",
+                            );
+                        if url_resp.changed() {
+                            app.state.requests[req_idx].sync_params_from_url();
+                            changed = true;
+                        }
+                        if url_resp.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter)) {
+                            app.send_active_request(false);
+                        }
+                    },
+                );
             });
 
         if is_inflight {
@@ -444,10 +450,10 @@ pub fn show_top_bar(app: &mut App, ui: &mut egui::Ui) -> Option<usize> {
                 ))
                 .fill(Tokens::STATUS_INFO)
                 .stroke(egui::Stroke::new(1.0, Tokens::STATUS_INFO))
-                .min_size(egui::vec2(72.0, 30.0))
+                .min_size(egui::vec2(74.0, 34.0))
                 .corner_radius(6),
             )
-            .on_hover_text("Send request directly from this PC (Ctrl+Enter)")
+            .on_hover_text("Send request directly from this PC (Enter / Ctrl+Enter)")
             .clicked()
         {
             app.send_active_request(false);
@@ -469,10 +475,10 @@ pub fn show_top_bar(app: &mut App, ui: &mut egui::Ui) -> Option<usize> {
                     )
                     .fill(swaggen_ui_kit::surface_bg(ui))
                     .stroke(egui::Stroke::new(1.0, swaggen_ui_kit::border_color(ui)))
-                    .min_size(egui::vec2(30.0, 30.0))
+                    .min_size(egui::vec2(32.0, 34.0))
                     .corner_radius(6),
                 )
-                .on_hover_text("Request actions: Rename, Save, Duplicate, Move, Copy cURL, Delete");
+                .on_hover_text("Request actions: Rename, Save (Ctrl+S), Duplicate, Move, Copy cURL, Delete");
             egui::Popup::menu(&dots_btn)
                 .align(egui::RectAlign::BOTTOM_END)
                 .close_behavior(egui::PopupCloseBehavior::CloseOnClickOutside)
@@ -959,29 +965,11 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
             RequestSubTab::Params => {
                 ui.horizontal_wrapped(|ui| {
                     ui.label(
-                        egui::RichText::new("Query Parameters")
+                        egui::RichText::new("Query Params")
                             .size(11.5)
                             .color(swaggen_ui_kit::text_secondary(ui))
                             .strong(),
                     );
-                    if p_count == 0 && ui.small_button("+ Add :id Path Param").clicked() {
-                        let req = &mut app.state.requests[req_idx];
-                        let (base, query, frag) = split_url_parts(&req.url);
-                        let sep = if base.ends_with('/') { "" } else { "/" };
-                        let mut new_url = format!("{base}{sep}:id");
-                        if let Some(q) = query {
-                            new_url.push('?');
-                            new_url.push_str(q);
-                        }
-                        if let Some(f) = frag {
-                            new_url.push('#');
-                            new_url.push_str(f);
-                        }
-                        req.url = new_url;
-                        req.sync_params_from_url();
-                        app.request_subtab = RequestSubTab::PathParams;
-                        changed = true;
-                    }
                     for (sk, sv) in suggestions.iter().take(6) {
                         let already = app.state.requests[req_idx]
                             .query_params
@@ -991,9 +979,9 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
                             continue;
                         }
                         let chip = if sv.is_empty() {
-                            format!("+ {sk}")
+                            sk.clone()
                         } else {
-                            format!("+ {sk}={sv}")
+                            format!("{sk}={sv}")
                         };
                         if ui
                             .small_button(
@@ -1002,7 +990,7 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
                                     .size(10.0)
                                     .color(Tokens::STATUS_INFO),
                             )
-                            .on_hover_text("Add detected query filter")
+                            .on_hover_text("Click to insert detected query parameter")
                             .clicked()
                         {
                             app.state.requests[req_idx]
@@ -1044,14 +1032,32 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
                 if edit_postman_kv_grid(
                     ui,
                     "path-params",
-                    "Path variable",
+                    "Path variable (e.g. id)",
                     "Value",
                     &mut app.state.requests[req_idx].path_params,
                     &mut kv_ratio,
-                    false,
+                    true,
                 ) {
                     let req = &mut app.state.requests[req_idx];
-                    if req.path_params.len() == prev_len {
+                    if req.path_params.len() > prev_len {
+                        for added in &req.path_params[prev_len..] {
+                            let seg = added.key.trim();
+                            if !seg.is_empty() {
+                                let (base, query, frag) = split_url_parts(&req.url);
+                                let sep = if base.ends_with('/') { "" } else { "/" };
+                                let mut new_url = format!("{base}{sep}:{seg}");
+                                if let Some(q) = query {
+                                    new_url.push('?');
+                                    new_url.push_str(q);
+                                }
+                                if let Some(f) = frag {
+                                    new_url.push('#');
+                                    new_url.push_str(f);
+                                }
+                                req.url = new_url;
+                            }
+                        }
+                    } else if req.path_params.len() == prev_len {
                         for (old_k, row) in prev_keys.iter().zip(req.path_params.iter()) {
                             if old_k != &row.key && !row.key.trim().is_empty() {
                                 req.url =
@@ -1065,30 +1071,6 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
                             }
                         }
                     }
-                    changed = true;
-                }
-                ui.add_space(4.0);
-                if swaggen_ui_kit::secondary_button(ui, true, "+ Add :param segment").clicked() {
-                    let req = &mut app.state.requests[req_idx];
-                    let mut next_name = "id".to_owned();
-                    let mut n = 2usize;
-                    while req.path_params.iter().any(|p| p.key == next_name) {
-                        next_name = format!("id_{n}");
-                        n += 1;
-                    }
-                    let (base, query, frag) = split_url_parts(&req.url);
-                    let sep = if base.ends_with('/') { "" } else { "/" };
-                    let mut new_url = format!("{base}{sep}:{next_name}");
-                    if let Some(q) = query {
-                        new_url.push('?');
-                        new_url.push_str(q);
-                    }
-                    if let Some(f) = frag {
-                        new_url.push('#');
-                        new_url.push_str(f);
-                    }
-                    req.url = new_url;
-                    req.sync_params_from_url();
                     changed = true;
                 }
             }
@@ -1682,18 +1664,39 @@ fn show_body_editor(
                 fields.remove(i);
                 *changed = true;
             }
-            ui.horizontal(|ui| {
-                if swaggen_ui_kit::secondary_button(ui, true, "+ Text field").clicked() {
+            let mut gk = String::new();
+            let mut gv = String::new();
+            let mut mk_c = false;
+            let mut mv_c = false;
+            ui.horizontal_wrapped(|ui| {
+                ui.add_space(26.0);
+                mk_c = ui
+                    .add(
+                        egui::TextEdit::singleline(&mut gk)
+                            .id(egui::Id::unique(("mp_ghost_k", fields.len())))
+                            .hint_text("field")
+                            .desired_width(120.0),
+                    )
+                    .changed();
+                mv_c = ui
+                    .add(
+                        egui::TextEdit::singleline(&mut gv)
+                            .id(egui::Id::unique(("mp_ghost_v", fields.len())))
+                            .hint_text("value")
+                            .desired_width(220.0),
+                    )
+                    .changed();
+                if ui
+                    .small_button("📎 File")
+                    .on_hover_text("Attach a local file field")
+                    .clicked()
+                {
                     fields.push(MultipartField {
-                        name: String::new(),
-                        value: MultipartValueKind::Text(String::new()),
-                        enabled: true,
-                    });
-                    *changed = true;
-                }
-                if swaggen_ui_kit::secondary_button(ui, true, "+ File field").clicked() {
-                    fields.push(MultipartField {
-                        name: "file".into(),
+                        name: if gk.trim().is_empty() {
+                            "file".into()
+                        } else {
+                            gk.clone()
+                        },
                         value: MultipartValueKind::File {
                             local_path: String::new(),
                             file_name: "upload.bin".into(),
@@ -1704,6 +1707,14 @@ fn show_body_editor(
                     *changed = true;
                 }
             });
+            if (mk_c || mv_c) && (!gk.is_empty() || !gv.is_empty()) {
+                fields.push(MultipartField {
+                    name: gk,
+                    value: MultipartValueKind::Text(gv),
+                    enabled: true,
+                });
+                *changed = true;
+            }
         }
         RequestBody::Binary {
             local_path,
@@ -3031,7 +3042,7 @@ fn setting_row(
     }
 }
 
-/// Clean Flat Border-Collapsed Postman Key-Value Grid (F3 — zero nested boxes!).
+/// Clean Flat Border-Collapsed Postman Key-Value Grid (F3 — zero nested boxes, pixel-aligned headers!).
 pub fn edit_postman_kv_grid(
     ui: &mut egui::Ui,
     id_salt: &str,
@@ -3048,113 +3059,90 @@ pub fn edit_postman_kv_grid(
     ui.push_id(id_salt, |ui| {
         let total_w = ui.available_width().max(260.0);
         let show_desc = total_w >= 540.0;
-        let chk_w = 28.0;
-        let act_w = 28.0;
-        let usable_w = (total_w - chk_w - act_w - 8.0).max(160.0);
-        let key_w = (usable_w * (*key_ratio).clamp(0.22, 0.56)).max(72.0);
+        let chk_w = 30.0_f32;
+        let act_w = 28.0_f32;
+        let usable_w = (total_w - chk_w - act_w).max(160.0);
+        let key_w = (usable_w * (*key_ratio).clamp(0.22, 0.56)).max(76.0);
         let (val_w, desc_w) = if show_desc {
             let rem = (usable_w - key_w).max(100.0);
             (rem * 0.62, rem * 0.38)
         } else {
-            ((usable_w - key_w).max(72.0), 0.0)
+            ((usable_w - key_w).max(76.0), 0.0)
         };
+        let row_h = 26.0_f32;
 
-        egui::Frame::new()
+        let table_resp = egui::Frame::new()
             .fill(swaggen_ui_kit::surface_bg(ui))
             .stroke(egui::Stroke::new(1.0, border_col))
             .corner_radius(4)
             .inner_margin(egui::Margin::ZERO)
             .show(ui, |ui| {
                 ui.spacing_mut().item_spacing = egui::Vec2::ZERO;
+                let table_left = ui.available_rect_before_wrap().left();
+                let x_chk_end = table_left + chk_w;
+                let x_key_end = x_chk_end + key_w;
+                let x_val_end = x_key_end + val_w;
+                let x_desc_end = x_val_end + desc_w;
 
-                // Header Row
-                let hdr_left = ui.available_rect_before_wrap().left();
+                // Header Row — fixed min+max cell sizes ensure exact alignment with body columns
                 let hdr = egui::Frame::new()
                     .fill(swaggen_ui_kit::subtle_bg(ui))
-                    .inner_margin(egui::Margin::symmetric(0, 4))
+                    .inner_margin(egui::Margin::ZERO)
                     .show(ui, |ui| {
                         ui.horizontal(|ui| {
                             ui.spacing_mut().item_spacing = egui::Vec2::ZERO;
-                            ui.allocate_exact_size(egui::vec2(chk_w, 18.0), egui::Sense::hover());
-                            paint_v_hairline(ui, border_col);
-                            ui.add_space(8.0);
-                            ui.allocate_ui_with_layout(
-                                egui::vec2((key_w - 8.0).max(40.0), 18.0),
-                                egui::Layout::left_to_right(egui::Align::Center),
-                                |ui| {
-                                    ui.label(
-                                        egui::RichText::new("KEY")
-                                            .size(10.0)
-                                            .color(swaggen_ui_kit::text_secondary(ui))
-                                            .strong(),
-                                    );
-                                },
-                            );
-
-                            // Draggable column divider between KEY and VALUE
-                            let (_, split_r) = ui.allocate_space(egui::vec2(6.0, 18.0));
-                            let split_id = egui::Id::unique(("postman_kv_col_drag", id_salt));
-                            let split_resp =
-                                ui.interact(split_r, split_id, egui::Sense::click_and_drag());
-                            let split_active = split_resp.hovered() || split_resp.dragged();
-                            if split_active {
-                                ui.ctx().set_cursor_icon(egui::CursorIcon::ResizeHorizontal);
-                            }
-                            if split_resp.dragged()
-                                && let Some(pos) = ui.ctx().pointer_interact_pos()
-                            {
-                                *key_ratio =
-                                    ((pos.x - hdr_left - chk_w) / usable_w).clamp(0.22, 0.56);
-                                ui.ctx().request_repaint();
-                            }
-                            ui.painter().line_segment(
-                                [
-                                    egui::pos2(split_r.center().x, split_r.top() - 4.0),
-                                    egui::pos2(split_r.center().x, split_r.bottom() + 4.0),
-                                ],
-                                egui::Stroke::new(
-                                    if split_active { 1.5 } else { 1.0 },
-                                    if split_active {
-                                        Tokens::STATUS_INFO
-                                    } else {
-                                        border_col
-                                    },
-                                ),
-                            );
-
-                            ui.add_space(6.0);
-                            ui.allocate_ui_with_layout(
-                                egui::vec2((val_w - 6.0).max(40.0), 18.0),
-                                egui::Layout::left_to_right(egui::Align::Center),
-                                |ui| {
-                                    ui.label(
-                                        egui::RichText::new("VALUE")
-                                            .size(10.0)
-                                            .color(swaggen_ui_kit::text_secondary(ui))
-                                            .strong(),
-                                    );
-                                },
-                            );
-                            if show_desc {
-                                paint_v_hairline(ui, border_col);
+                            kv_fixed_cell(ui, chk_w, 24.0, true, |_| {});
+                            kv_fixed_cell(ui, key_w, 24.0, false, |ui| {
                                 ui.add_space(8.0);
-                                ui.allocate_ui_with_layout(
-                                    egui::vec2((desc_w - 8.0).max(40.0), 18.0),
-                                    egui::Layout::left_to_right(egui::Align::Center),
-                                    |ui| {
-                                        ui.label(
-                                            egui::RichText::new("DESCRIPTION")
-                                                .size(10.0)
-                                                .color(swaggen_ui_kit::text_secondary(ui))
-                                                .strong(),
-                                        );
-                                    },
+                                ui.label(
+                                    egui::RichText::new("KEY")
+                                        .size(10.0)
+                                        .color(swaggen_ui_kit::text_secondary(ui))
+                                        .strong(),
                                 );
+                            });
+                            kv_fixed_cell(ui, val_w, 24.0, false, |ui| {
+                                ui.add_space(8.0);
+                                ui.label(
+                                    egui::RichText::new("VALUE")
+                                        .size(10.0)
+                                        .color(swaggen_ui_kit::text_secondary(ui))
+                                        .strong(),
+                                );
+                            });
+                            if show_desc {
+                                kv_fixed_cell(ui, desc_w, 24.0, false, |ui| {
+                                    ui.add_space(8.0);
+                                    ui.label(
+                                        egui::RichText::new("DESCRIPTION")
+                                            .size(10.0)
+                                            .color(swaggen_ui_kit::text_secondary(ui))
+                                            .strong(),
+                                    );
+                                });
                             }
-                            ui.allocate_exact_size(egui::vec2(act_w, 18.0), egui::Sense::hover());
+                            kv_fixed_cell(ui, act_w, 24.0, true, |_| {});
                         });
                     });
                 paint_h_hairline(ui, hdr.response.rect, border_col);
+
+                // Draggable column divider handle at x_key_end in header height
+                let split_hit = egui::Rect::from_center_size(
+                    egui::pos2(x_key_end, hdr.response.rect.center().y),
+                    egui::vec2(8.0, hdr.response.rect.height()),
+                );
+                let split_id = egui::Id::unique(("postman_kv_col_drag", id_salt));
+                let split_resp = ui.interact(split_hit, split_id, egui::Sense::click_and_drag());
+                let split_active = split_resp.hovered() || split_resp.dragged();
+                if split_active {
+                    ui.ctx().set_cursor_icon(egui::CursorIcon::ResizeHorizontal);
+                }
+                if split_resp.dragged()
+                    && let Some(pos) = ui.ctx().pointer_interact_pos()
+                {
+                    *key_ratio = ((pos.x - x_chk_end) / usable_w).clamp(0.22, 0.56);
+                    ui.ctx().request_repaint();
+                }
 
                 // Data Rows
                 for (i, row) in rows.iter_mut().enumerate() {
@@ -3165,96 +3153,90 @@ pub fn edit_postman_kv_grid(
                     };
                     let r_resp = egui::Frame::new()
                         .fill(swaggen_ui_kit::surface_bg(ui))
-                        .inner_margin(egui::Margin::symmetric(0, 3))
+                        .inner_margin(egui::Margin::ZERO)
                         .show(ui, |ui| {
                             ui.horizontal(|ui| {
                                 ui.spacing_mut().item_spacing = egui::Vec2::ZERO;
-                                ui.allocate_ui_with_layout(
-                                    egui::vec2(chk_w, 22.0),
-                                    egui::Layout::centered_and_justified(
-                                        egui::Direction::LeftToRight,
-                                    ),
-                                    |ui| {
-                                        if ui.checkbox(&mut row.enabled, "").changed() {
-                                            changed = true;
-                                        }
-                                    },
-                                );
-                                paint_v_hairline(ui, border_col);
-                                ui.add_space(8.0);
-                                if ui
-                                    .add(
-                                        egui::TextEdit::singleline(&mut row.key)
-                                            .id(egui::Id::unique((id_salt, "flat_k", i)))
-                                            .hint_text(key_hint)
-                                            .text_color(text_col)
-                                            .frame(egui::Frame::NONE)
-                                            .desired_width((key_w - 8.0).max(40.0)),
-                                    )
-                                    .changed()
-                                {
-                                    changed = true;
-                                }
-                                paint_v_hairline_padded(ui, border_col);
-                                ui.add_space(6.0);
-                                if ui
-                                    .add(
-                                        egui::TextEdit::singleline(&mut row.value)
-                                            .id(egui::Id::unique((id_salt, "flat_v", i)))
-                                            .hint_text(val_hint)
-                                            .text_color(text_col)
-                                            .frame(egui::Frame::NONE)
-                                            .desired_width((val_w - 6.0).max(40.0)),
-                                    )
-                                    .changed()
-                                {
-                                    changed = true;
-                                }
-                                if show_desc {
-                                    paint_v_hairline(ui, border_col);
-                                    ui.add_space(8.0);
+                                kv_fixed_cell(ui, chk_w, row_h, true, |ui| {
+                                    if ui.checkbox(&mut row.enabled, "").changed() {
+                                        changed = true;
+                                    }
+                                });
+                                kv_fixed_cell(ui, key_w, row_h, false, |ui| {
                                     if ui
                                         .add(
-                                            egui::TextEdit::singleline(&mut row.description)
-                                                .id(egui::Id::unique((id_salt, "flat_d", i)))
-                                                .hint_text("Description")
-                                                .text_color(swaggen_ui_kit::text_secondary(ui))
+                                            egui::TextEdit::singleline(&mut row.key)
+                                                .id(egui::Id::unique((id_salt, "flat_k", i)))
+                                                .hint_text(key_hint)
+                                                .text_color(text_col)
+                                                .align(egui::Align2::LEFT_CENTER)
+                                                .margin(egui::Margin::symmetric(8, 0))
                                                 .frame(egui::Frame::NONE)
-                                                .desired_width((desc_w - 8.0).max(40.0)),
+                                                .desired_width((key_w - 2.0).max(40.0)),
                                         )
                                         .changed()
                                     {
                                         changed = true;
                                     }
-                                }
-                                ui.allocate_ui_with_layout(
-                                    egui::vec2(act_w, 22.0),
-                                    egui::Layout::centered_and_justified(
-                                        egui::Direction::LeftToRight,
-                                    ),
-                                    |ui| {
+                                });
+                                kv_fixed_cell(ui, val_w, row_h, false, |ui| {
+                                    if ui
+                                        .add(
+                                            egui::TextEdit::singleline(&mut row.value)
+                                                .id(egui::Id::unique((id_salt, "flat_v", i)))
+                                                .hint_text(val_hint)
+                                                .text_color(text_col)
+                                                .align(egui::Align2::LEFT_CENTER)
+                                                .margin(egui::Margin::symmetric(8, 0))
+                                                .frame(egui::Frame::NONE)
+                                                .desired_width((val_w - 2.0).max(40.0)),
+                                        )
+                                        .changed()
+                                    {
+                                        changed = true;
+                                    }
+                                });
+                                if show_desc {
+                                    kv_fixed_cell(ui, desc_w, row_h, false, |ui| {
                                         if ui
                                             .add(
-                                                egui::Button::new(
-                                                    egui::RichText::new("×")
-                                                        .size(13.0)
-                                                        .color(swaggen_ui_kit::text_secondary(ui)),
-                                                )
-                                                .frame(false),
+                                                egui::TextEdit::singleline(&mut row.description)
+                                                    .id(egui::Id::unique((id_salt, "flat_d", i)))
+                                                    .hint_text("Description")
+                                                    .text_color(swaggen_ui_kit::text_secondary(ui))
+                                                    .align(egui::Align2::LEFT_CENTER)
+                                                    .margin(egui::Margin::symmetric(8, 0))
+                                                    .frame(egui::Frame::NONE)
+                                                    .desired_width((desc_w - 2.0).max(40.0)),
                                             )
-                                            .on_hover_text("Delete row")
-                                            .clicked()
+                                            .changed()
                                         {
-                                            remove_idx = Some(i);
+                                            changed = true;
                                         }
-                                    },
-                                );
+                                    });
+                                }
+                                kv_fixed_cell(ui, act_w, row_h, true, |ui| {
+                                    if ui
+                                        .add(
+                                            egui::Button::new(
+                                                egui::RichText::new("×")
+                                                    .size(13.0)
+                                                    .color(swaggen_ui_kit::text_secondary(ui)),
+                                            )
+                                            .frame(false),
+                                        )
+                                        .on_hover_text("Delete row")
+                                        .clicked()
+                                    {
+                                        remove_idx = Some(i);
+                                    }
+                                });
                             });
                         });
                     paint_h_hairline(ui, r_resp.response.rect, border_col);
                 }
 
-                // Inline Ghost Starter Row (borderless, zero extra click needed!)
+                // Inline Ghost Starter Row (borderless, type anywhere to create a row!)
                 let has_trailing_blank = rows
                     .last()
                     .is_some_and(|r| r.key.is_empty() && r.value.is_empty());
@@ -3263,56 +3245,60 @@ pub fn edit_postman_kv_grid(
                     let mut gk = String::new();
                     let mut gv = String::new();
                     let mut gd = String::new();
+                    let mut kc = false;
+                    let mut vc = false;
+                    let mut dc = false;
                     egui::Frame::new()
                         .fill(swaggen_ui_kit::surface_bg(ui))
-                        .inner_margin(egui::Margin::symmetric(0, 3))
+                        .inner_margin(egui::Margin::ZERO)
                         .show(ui, |ui| {
                             ui.horizontal(|ui| {
                                 ui.spacing_mut().item_spacing = egui::Vec2::ZERO;
-                                ui.allocate_exact_size(
-                                    egui::vec2(chk_w, 22.0),
-                                    egui::Sense::hover(),
-                                );
-                                paint_v_hairline(ui, border_col);
-                                ui.add_space(8.0);
-                                let kc = ui
-                                    .add(
-                                        egui::TextEdit::singleline(&mut gk)
-                                            .id(egui::Id::unique((id_salt, "flat_k", next_idx)))
-                                            .hint_text(key_hint)
-                                            .frame(egui::Frame::NONE)
-                                            .desired_width((key_w - 8.0).max(40.0)),
-                                    )
-                                    .changed();
-                                paint_v_hairline_padded(ui, border_col);
-                                ui.add_space(6.0);
-                                let vc = ui
-                                    .add(
-                                        egui::TextEdit::singleline(&mut gv)
-                                            .id(egui::Id::unique((id_salt, "flat_v", next_idx)))
-                                            .hint_text(val_hint)
-                                            .frame(egui::Frame::NONE)
-                                            .desired_width((val_w - 6.0).max(40.0)),
-                                    )
-                                    .changed();
-                                let mut dc = false;
-                                if show_desc {
-                                    paint_v_hairline(ui, border_col);
-                                    ui.add_space(8.0);
-                                    dc = ui
+                                kv_fixed_cell(ui, chk_w, row_h, true, |_| {});
+                                kv_fixed_cell(ui, key_w, row_h, false, |ui| {
+                                    kc = ui
                                         .add(
-                                            egui::TextEdit::singleline(&mut gd)
-                                                .id(egui::Id::unique((id_salt, "flat_d", next_idx)))
-                                                .hint_text("Description")
+                                            egui::TextEdit::singleline(&mut gk)
+                                                .id(egui::Id::unique((id_salt, "flat_k", next_idx)))
+                                                .hint_text(key_hint)
+                                                .align(egui::Align2::LEFT_CENTER)
+                                                .margin(egui::Margin::symmetric(8, 0))
                                                 .frame(egui::Frame::NONE)
-                                                .desired_width((desc_w - 8.0).max(40.0)),
+                                                .desired_width((key_w - 2.0).max(40.0)),
                                         )
                                         .changed();
+                                });
+                                kv_fixed_cell(ui, val_w, row_h, false, |ui| {
+                                    vc = ui
+                                        .add(
+                                            egui::TextEdit::singleline(&mut gv)
+                                                .id(egui::Id::unique((id_salt, "flat_v", next_idx)))
+                                                .hint_text(val_hint)
+                                                .align(egui::Align2::LEFT_CENTER)
+                                                .margin(egui::Margin::symmetric(8, 0))
+                                                .frame(egui::Frame::NONE)
+                                                .desired_width((val_w - 2.0).max(40.0)),
+                                        )
+                                        .changed();
+                                });
+                                if show_desc {
+                                    kv_fixed_cell(ui, desc_w, row_h, false, |ui| {
+                                        dc = ui
+                                            .add(
+                                                egui::TextEdit::singleline(&mut gd)
+                                                    .id(egui::Id::unique((
+                                                        id_salt, "flat_d", next_idx,
+                                                    )))
+                                                    .hint_text("Description")
+                                                    .align(egui::Align2::LEFT_CENTER)
+                                                    .margin(egui::Margin::symmetric(8, 0))
+                                                    .frame(egui::Frame::NONE)
+                                                    .desired_width((desc_w - 2.0).max(40.0)),
+                                            )
+                                            .changed();
+                                    });
                                 }
-                                ui.allocate_exact_size(
-                                    egui::vec2(act_w, 22.0),
-                                    egui::Sense::hover(),
-                                );
+                                kv_fixed_cell(ui, act_w, row_h, true, |_| {});
                                 if (kc || vc || dc)
                                     && (!gk.is_empty() || !gv.is_empty() || !gd.is_empty())
                                 {
@@ -3324,7 +3310,59 @@ pub fn edit_postman_kv_grid(
                             });
                         });
                 }
+
+                (x_chk_end, x_key_end, x_val_end, x_desc_end, split_active)
             });
+
+        // Paint crisp continuous 1px vertical column hairlines across the entire table height!
+        let (x_chk_end, x_key_end, x_val_end, x_desc_end, split_active) = table_resp.inner;
+        let t_rect = table_resp.response.rect;
+        let p = ui.painter();
+        p.line_segment(
+            [
+                egui::pos2(x_chk_end, t_rect.top()),
+                egui::pos2(x_chk_end, t_rect.bottom()),
+            ],
+            egui::Stroke::new(1.0, border_col),
+        );
+        p.line_segment(
+            [
+                egui::pos2(x_key_end, t_rect.top()),
+                egui::pos2(x_key_end, t_rect.bottom()),
+            ],
+            egui::Stroke::new(
+                if split_active { 1.5 } else { 1.0 },
+                if split_active {
+                    Tokens::STATUS_INFO
+                } else {
+                    border_col
+                },
+            ),
+        );
+        if show_desc {
+            p.line_segment(
+                [
+                    egui::pos2(x_val_end, t_rect.top()),
+                    egui::pos2(x_val_end, t_rect.bottom()),
+                ],
+                egui::Stroke::new(1.0, border_col),
+            );
+            p.line_segment(
+                [
+                    egui::pos2(x_desc_end, t_rect.top()),
+                    egui::pos2(x_desc_end, t_rect.bottom()),
+                ],
+                egui::Stroke::new(1.0, border_col),
+            );
+        } else {
+            p.line_segment(
+                [
+                    egui::pos2(x_val_end, t_rect.top()),
+                    egui::pos2(x_val_end, t_rect.bottom()),
+                ],
+                egui::Stroke::new(1.0, border_col),
+            );
+        }
 
         if let Some(i) = remove_idx {
             rows.remove(i);
@@ -3334,31 +3372,28 @@ pub fn edit_postman_kv_grid(
     changed
 }
 
+fn kv_fixed_cell(
+    ui: &mut egui::Ui,
+    width: f32,
+    height: f32,
+    centered: bool,
+    add_contents: impl FnOnce(&mut egui::Ui),
+) {
+    let layout = if centered {
+        egui::Layout::centered_and_justified(egui::Direction::LeftToRight)
+    } else {
+        egui::Layout::left_to_right(egui::Align::Center)
+    };
+    ui.allocate_ui_with_layout(egui::vec2(width, height), layout, |ui| {
+        ui.set_min_size(egui::vec2(width, height));
+        ui.set_max_size(egui::vec2(width, height));
+        add_contents(ui);
+    });
+}
+
 fn paint_h_hairline(ui: &egui::Ui, row_rect: egui::Rect, color: egui::Color32) {
     ui.painter().line_segment(
         [row_rect.left_bottom(), row_rect.right_bottom()],
-        egui::Stroke::new(1.0, color),
-    );
-}
-
-fn paint_v_hairline(ui: &mut egui::Ui, color: egui::Color32) {
-    let (_, r) = ui.allocate_space(egui::vec2(1.0, 22.0));
-    ui.painter().line_segment(
-        [
-            egui::pos2(r.center().x, r.top() - 4.0),
-            egui::pos2(r.center().x, r.bottom() + 4.0),
-        ],
-        egui::Stroke::new(1.0, color),
-    );
-}
-
-fn paint_v_hairline_padded(ui: &mut egui::Ui, color: egui::Color32) {
-    let (_, r) = ui.allocate_space(egui::vec2(6.0, 22.0));
-    ui.painter().line_segment(
-        [
-            egui::pos2(r.center().x, r.top() - 4.0),
-            egui::pos2(r.center().x, r.bottom() + 4.0),
-        ],
         egui::Stroke::new(1.0, color),
     );
 }

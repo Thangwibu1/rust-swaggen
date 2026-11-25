@@ -644,6 +644,62 @@ async fn accept_invitation(
     Ok(Json(resp))
 }
 
+async fn list_pending_invitations(
+    State(state): State<AppState>,
+    Extension(RequestCorrelationId(corr)): Extension<RequestCorrelationId>,
+    headers: axum::http::HeaderMap,
+) -> Result<Json<swaggen_api_contract::PendingInvitationsResponse>, (StatusCode, Json<ErrorEnvelope>)>
+{
+    let ctx = require_auth(&state, &headers)
+        .await
+        .map_err(|e| map_err(&corr, e))?;
+    let invitations = state
+        .store
+        .list_my_pending_invitations(&ctx, now_unix())
+        .await
+        .map_err(|e| map_err(&corr, e))?;
+    Ok(Json(swaggen_api_contract::PendingInvitationsResponse {
+        api_version: API_VERSION,
+        invitations,
+    }))
+}
+
+async fn accept_invitation_direct(
+    State(state): State<AppState>,
+    Extension(RequestCorrelationId(corr)): Extension<RequestCorrelationId>,
+    headers: axum::http::HeaderMap,
+    Path(invitation_id): Path<String>,
+    Json(req): Json<swaggen_api_contract::AcceptDirectInvitationRequest>,
+) -> Result<Json<swaggen_api_contract::AcceptInvitationResponse>, (StatusCode, Json<ErrorEnvelope>)>
+{
+    let ctx = require_auth(&state, &headers)
+        .await
+        .map_err(|e| map_err(&corr, e))?;
+    let resp = state
+        .store
+        .accept_invitation_by_id(&ctx, &invitation_id, &req.device_name, now_unix())
+        .await
+        .map_err(|e| map_err(&corr, e))?;
+    Ok(Json(resp))
+}
+
+async fn decline_invitation_handler(
+    State(state): State<AppState>,
+    Extension(RequestCorrelationId(corr)): Extension<RequestCorrelationId>,
+    headers: axum::http::HeaderMap,
+    Path(invitation_id): Path<String>,
+) -> Result<StatusCode, (StatusCode, Json<ErrorEnvelope>)> {
+    let ctx = require_auth(&state, &headers)
+        .await
+        .map_err(|e| map_err(&corr, e))?;
+    state
+        .store
+        .decline_invitation(&ctx, &invitation_id, now_unix())
+        .await
+        .map_err(|e| map_err(&corr, e))?;
+    Ok(StatusCode::NO_CONTENT)
+}
+
 async fn list_workspaces(
     State(state): State<AppState>,
     Extension(RequestCorrelationId(corr)): Extension<RequestCorrelationId>,
@@ -2129,6 +2185,18 @@ pub fn router(store: Arc<ServerStore>) -> Router {
         )
         .route("/v1/auth/invitations/accept", post(accept_invitation))
         .route(
+            "/v1/auth/invitations/pending",
+            get(list_pending_invitations),
+        )
+        .route(
+            "/v1/auth/invitations/{invitation_id}/accept",
+            post(accept_invitation_direct),
+        )
+        .route(
+            "/v1/auth/invitations/{invitation_id}/decline",
+            post(decline_invitation_handler),
+        )
+        .route(
             "/v1/workspaces",
             get(list_workspaces).post(create_workspace),
         )
@@ -2304,6 +2372,9 @@ pub fn build_server_openapi_json() -> serde_json::Value {
             "/v1/auth/sessions": { "get": { "summary": "List active user device sessions" } },
             "/v1/auth/sessions/{session_id}/revoke": { "post": { "summary": "Revoke a specific device session" } },
             "/v1/auth/invitations/accept": { "post": { "summary": "Accept single-use invitation (new or existing account)" } },
+            "/v1/auth/invitations/pending": { "get": { "summary": "List signed-in user's pending in-app workspace invitations" } },
+            "/v1/auth/invitations/{invitation_id}/accept": { "post": { "summary": "Accept an in-app workspace invitation by ID" } },
+            "/v1/auth/invitations/{invitation_id}/decline": { "post": { "summary": "Decline an in-app workspace invitation by ID" } },
             "/v1/workspaces": {
                 "get": { "summary": "List workspaces user belongs to" },
                 "post": { "summary": "Create a new team workspace as Owner" }
@@ -2514,6 +2585,52 @@ mod tests {
         .await;
         assert_eq!(st, 409);
 
+        // In-app direct invitation flow (no email / token copy-paste): invite Viewer into Team Secret -> Viewer lists pending -> accepts in-app by ID
+        let (st, inv2_body) = http_call(
+            &base,
+            Method::POST,
+            &format!("/v1/workspaces/{}/invitations", ws2.workspace_id),
+            Some(&owner_auth.session_token),
+            Some(json!({ "email": "viewer@swaggen.local", "role": "editor", "expires_in_hours": 12 })),
+        )
+        .await;
+        assert_eq!(st, 201);
+        let inv2: swaggen_api_contract::CreateInvitationResponse =
+            serde_json::from_str(&inv2_body).unwrap();
+
+        let (st, pending_body) = http_call(
+            &base,
+            Method::GET,
+            "/v1/auth/invitations/pending",
+            Some(&viewer_joined.session_token),
+            None,
+        )
+        .await;
+        assert_eq!(st, 200);
+        let pending_res: swaggen_api_contract::PendingInvitationsResponse =
+            serde_json::from_str(&pending_body).unwrap();
+        assert_eq!(pending_res.invitations.len(), 1);
+        assert_eq!(
+            pending_res.invitations[0].invitation_id,
+            inv2.invitation.invitation_id
+        );
+
+        let (st, acc2_body) = http_call(
+            &base,
+            Method::POST,
+            &format!(
+                "/v1/auth/invitations/{}/accept",
+                inv2.invitation.invitation_id
+            ),
+            Some(&viewer_joined.session_token),
+            Some(json!({ "device_name": "ViewerWin" })),
+        )
+        .await;
+        assert_eq!(st, 200);
+        let acc2: AcceptInvitationResponse = serde_json::from_str(&acc2_body).unwrap();
+        assert_eq!(acc2.workspace.workspace_id, ws2.workspace_id);
+        assert_eq!(acc2.workspace.role, swaggen_api_contract::Role::Editor);
+
         // Viewer write in Team One denied (403)
         let (st, _) = http_call(
             &base,
@@ -2533,11 +2650,21 @@ mod tests {
         .await;
         assert_eq!(st, 403);
 
-        // Viewer cross-workspace read in Team Secret denied (403)
+        // Viewer cross-workspace read in Team Three (uninvited) denied (403)
+        let (st, ws3_body) = http_call(
+            &base,
+            Method::POST,
+            "/v1/workspaces",
+            Some(&owner_auth.session_token),
+            Some(json!({ "slug": "team-private", "name": "Team Private" })),
+        )
+        .await;
+        assert_eq!(st, 201);
+        let ws3: TeamWorkspaceSummary = serde_json::from_str(&ws3_body).unwrap();
         let (st, _) = http_call(
             &base,
             Method::GET,
-            &format!("/v1/workspaces/{}/entities", ws2.workspace_id),
+            &format!("/v1/workspaces/{}/entities", ws3.workspace_id),
             Some(&viewer_joined.session_token),
             None,
         )

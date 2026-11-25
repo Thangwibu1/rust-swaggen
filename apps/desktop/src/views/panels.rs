@@ -11,10 +11,7 @@ use std::path::PathBuf;
 use swaggen_domain::{
     LocalId, Secret,
     security::{RedactionPolicy, sanitize_imported_markup, sanitize_text},
-    workspace::{
-        CookieRecord, Environment, PersonalVarOverride, VariableContext, VariableEntry,
-        WorkspaceKind,
-    },
+    workspace::{CookieRecord, Environment, PersonalVarOverride, VariableEntry, WorkspaceKind},
 };
 use swaggen_ui_kit::{NoticeKind, Tokens};
 
@@ -405,447 +402,433 @@ pub fn show_workspace_manager(app: &mut App, ui: &mut egui::Ui) {
 }
 
 pub fn show_environments(app: &mut App, ui: &mut egui::Ui) {
-    swaggen_ui_kit::page_header(
-        ui,
-        swaggen_ui_kit::tr(
-            app.locale,
-            "Environments & Variables",
-            "Môi trường & Biến (Variables)",
-        ),
-        swaggen_ui_kit::tr(
-            app.locale,
-            "Clear variable scopes: Request > Active Environment (My Local Override > Shared) > Collection > Global Workspace.",
-            "Thứ tự ưu tiên biến rõ ràng: Request > Môi trường đang bật (Cá nhân > Chung) > Collection > Toàn Workspace.",
-        ),
-        None,
-        false,
-    );
     show_env_group_tabs(app, ui);
 
     let mut changed = false;
+    if app.selected_env_idx >= app.state.environments.len() {
+        app.selected_env_idx = 0;
+    }
+    if app.selected_collection_var_idx >= app.state.collections.len() {
+        app.selected_collection_var_idx = 0;
+    }
 
-    // Visual Scope Hierarchy Selector (F8)
-    let active_env_summary = app
-        .state
-        .active_environment()
-        .map(|e| format!("● Active: {}", e.name))
-        .unwrap_or_else(|| "○ No Active Environment".into());
+    // Scope mapping in `app.env_scope_tab`: 0 = Deployment Environment, 1 = Collection, 2 = Global
+    let avail_w = ui.available_width();
+    let use_two_pane = avail_w >= 640.0;
 
-    ui.horizontal_wrapped(|ui| {
-        ui.spacing_mut().item_spacing.x = 6.0;
-        for (idx, lbl) in [
-            (
-                0usize,
-                format!(
-                    "1. Deployment Environments ({})",
-                    app.state.environments.len()
-                ),
-            ),
-            (
-                1,
-                format!("2. Collection Variables ({})", app.state.collections.len()),
-            ),
-            (
-                2,
-                format!(
-                    "3. Global Workspace Variables ({})",
-                    app.state.workspace_vars.len()
-                ),
-            ),
-        ] {
-            if ui
-                .selectable_label(
-                    app.env_scope_tab == idx,
-                    egui::RichText::new(lbl).size(12.0).strong(),
-                )
-                .clicked()
-            {
-                app.env_scope_tab = idx;
-            }
-        }
-        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-            swaggen_ui_kit::pill_badge(
-                ui,
-                if app.state.active_environment_id.is_some() {
-                    Tokens::STATUS_SUCCESS
-                } else {
-                    swaggen_ui_kit::text_secondary(ui)
+    if use_two_pane {
+        let total_h = ui.available_height().max(240.0);
+        let list_w = (avail_w * 0.24).clamp(178.0, 224.0);
+        let border_col = swaggen_ui_kit::border_color(ui);
+
+        ui.horizontal_top(|ui| {
+            ui.spacing_mut().item_spacing.x = 0.0;
+            ui.allocate_ui_with_layout(
+                egui::vec2(list_w, total_h),
+                egui::Layout::top_down(egui::Align::Min),
+                |ui| {
+                    ui.set_min_width(list_w);
+                    ui.set_max_width(list_w);
+                    egui::ScrollArea::vertical()
+                        .id_salt("env_scope_sidebar")
+                        .max_height(total_h)
+                        .show(ui, |ui| {
+                            show_env_scope_list(app, ui, &mut changed);
+                        });
                 },
-                &active_env_summary,
+            );
+
+            // Single clean 1px vertical separator between scope list & variable grid
+            let (_, div_r) = ui.allocate_space(egui::vec2(1.0, total_h));
+            ui.painter().line_segment(
+                [
+                    egui::pos2(div_r.center().x, div_r.top()),
+                    egui::pos2(div_r.center().x, div_r.bottom()),
+                ],
+                egui::Stroke::new(1.0, border_col),
+            );
+
+            ui.add_space(16.0);
+            let editor_w = (avail_w - list_w - 17.0).max(260.0);
+            ui.allocate_ui_with_layout(
+                egui::vec2(editor_w, total_h),
+                egui::Layout::top_down(egui::Align::Min),
+                |ui| {
+                    ui.set_min_width(editor_w);
+                    ui.set_max_width(editor_w);
+                    egui::ScrollArea::vertical()
+                        .id_salt("env_manager_scroll")
+                        .max_height(total_h)
+                        .show(ui, |ui| {
+                            show_env_active_editor(app, ui, &mut changed);
+                        });
+                },
             );
         });
-    });
-    ui.add_space(6.0);
-
-    egui::ScrollArea::vertical()
-        .id_salt("env_manager_scroll")
-        .show(ui, |ui| {
-            match app.env_scope_tab {
-                0 => {
-                    // Deployment Environments: Local / Development / Staging / Production
-                    swaggen_ui_kit::surface_card(ui, |ui| {
-                        ui.horizontal_wrapped(|ui| {
-                            ui.spacing_mut().item_spacing.x = 6.0;
-                            let mut activate_id: Option<String> = None;
-                            for (idx, env) in app.state.environments.iter().enumerate() {
-                                let is_selected = app.selected_env_idx == idx;
-                                let is_active = app.state.active_environment_id.as_deref()
-                                    == Some(env.id.as_str());
-                                let dot = if is_active { "●" } else { "○" };
-                                let tag = if env.is_production { " [PROD]" } else { "" };
-                                let col = if env.is_production {
-                                    Tokens::TEXT_DANGER
-                                } else if is_active {
-                                    Tokens::STATUS_SUCCESS
-                                } else {
-                                    swaggen_ui_kit::text_primary(ui)
-                                };
-                                let btn = ui
-                                    .add(
-                                        egui::Button::new(
-                                            egui::RichText::new(format!(
-                                                "{dot} {}{tag} ({})",
-                                                env.name,
-                                                env.variables.len()
-                                            ))
-                                            .size(12.0)
-                                            .color(col)
-                                            .strong(),
-                                        )
-                                        .fill(if is_selected {
-                                            swaggen_ui_kit::selected_bg(ui)
-                                        } else {
-                                            swaggen_ui_kit::surface_bg(ui)
-                                        })
-                                        .stroke(egui::Stroke::new(
-                                            if is_selected { 1.5 } else { 1.0 },
-                                            if is_selected {
-                                                Tokens::STATUS_INFO
-                                            } else {
-                                                swaggen_ui_kit::border_color(ui)
-                                            },
-                                        ))
-                                        .corner_radius(6),
-                                    )
-                                    .on_hover_text(
-                                        "Click to edit & activate this environment for {{variables}}",
-                                    );
-                                if btn.clicked() {
-                                    app.selected_env_idx = idx;
-                                    activate_id = Some(env.id.clone());
-                                }
-                            }
-                            if let Some(eid) = activate_id
-                                && app.state.active_environment_id.as_deref()
-                                    != Some(eid.as_str())
-                            {
-                                app.state.active_environment_id = Some(eid);
-                                changed = true;
-                            }
-
-                            ui.separator();
-                            swaggen_ui_kit::text_input(
-                                ui,
-                                &mut app.new_env_name,
-                                "New env (e.g. Local, QA)",
-                                155.0,
-                                false,
-                            );
-                            ui.checkbox(&mut app.new_env_prod, "Prod");
-                            if swaggen_ui_kit::secondary_button(
-                                ui,
-                                !app.new_env_name.trim().is_empty(),
-                                "+ Add Env",
-                            )
-                            .clicked()
-                            {
-                                let mut created =
-                                    Environment::new(app.new_env_name.trim(), app.new_env_prod);
-                                created.variables.push(VariableEntry::public(
-                                    "base_url",
-                                    "http://127.0.0.1:8080",
-                                ));
-                                let cid = created.id.clone();
-                                app.state.environments.push(created);
-                                app.new_env_name.clear();
-                                app.new_env_prod = false;
-                                app.selected_env_idx =
-                                    app.state.environments.len().saturating_sub(1);
-                                app.state.active_environment_id = Some(cid);
-                                changed = true;
-                            }
-                        });
-
-                        ui.add_space(10.0);
-                        let can_delete_env = app.state.environments.len() > 1;
-                        let mut delete_selected_env = false;
-                        let mut toggle_active_env: Option<Option<String>> = None;
-
-                        if app.selected_env_idx >= app.state.environments.len() {
-                            app.selected_env_idx = 0;
-                        }
-                        if let Some(env) = app.state.environments.get_mut(app.selected_env_idx) {
-                            let is_active = app.state.active_environment_id.as_deref()
-                                == Some(env.id.as_str());
-                            ui.horizontal_wrapped(|ui| {
-                                ui.label(swaggen_ui_kit::bold_text(
-                                    "Environment Name:",
-                                    12.0,
-                                    swaggen_ui_kit::text_primary(ui),
-                                ));
-                                if swaggen_ui_kit::text_input(
-                                    ui,
-                                    &mut env.name,
-                                    "Environment name",
-                                    170.0,
-                                    false,
-                                )
-                                .changed()
-                                {
-                                    changed = true;
-                                }
-                                let mut tier = env.effective_tier();
-                                egui::ComboBox::from_id_salt("env_tier_combo")
-                                    .selected_text(format!("Tier: {}", tier.label()))
-                                    .width(145.0)
-                                    .show_ui(ui, |ui| {
-                                        for t in [
-                                            swaggen_domain::workspace::EnvTier::Local,
-                                            swaggen_domain::workspace::EnvTier::Development,
-                                            swaggen_domain::workspace::EnvTier::Staging,
-                                            swaggen_domain::workspace::EnvTier::Production,
-                                            swaggen_domain::workspace::EnvTier::Custom,
-                                        ] {
-                                            if ui
-                                                .selectable_value(&mut tier, t, t.label())
-                                                .changed()
-                                            {
-                                                env.tier = Some(t);
-                                                env.is_production = t
-                                                    == swaggen_domain::workspace::EnvTier::Production;
-                                                changed = true;
-                                            }
-                                        }
-                                    });
-                                if ui
-                                    .checkbox(&mut env.is_production, "Production guard")
-                                    .on_hover_text(
-                                        "Prompts before sending POST/PUT/PATCH/DELETE or GraphQL Mutations",
-                                    )
-                                    .changed()
-                                {
-                                    changed = true;
-                                }
-                                if is_active {
-                                    swaggen_ui_kit::status_badge(
-                                        ui,
-                                        NoticeKind::Success,
-                                        "✓ Active Environment",
-                                    );
-                                    if ui.small_button("Deactivate").clicked() {
-                                        toggle_active_env = Some(None);
-                                    }
-                                } else if swaggen_ui_kit::primary_button(
-                                    ui,
-                                    true,
-                                    "Set as Active Environment",
-                                )
-                                .clicked()
-                                {
-                                    toggle_active_env = Some(Some(env.id.clone()));
-                                }
-                                if can_delete_env {
-                                    ui.with_layout(
-                                        egui::Layout::right_to_left(egui::Align::Center),
-                                        |ui| {
-                                            if swaggen_ui_kit::danger_button(
-                                                ui,
-                                                true,
-                                                "Delete Env",
-                                            )
-                                            .clicked()
-                                            {
-                                                delete_selected_env = true;
-                                            }
-                                        },
-                                    );
-                                }
-                            });
-
-                            ui.add_space(8.0);
-                            if edit_flat_variable_table(
-                                ui,
-                                "env_vars_grid",
-                                &mut env.variables,
-                                Some(&mut env.personal_overrides),
-                            ) {
-                                changed = true;
-                            }
-                        }
-
-                        if let Some(next_act) = toggle_active_env {
-                            app.state.active_environment_id = next_act;
-                            changed = true;
-                        }
-                        if delete_selected_env && app.state.environments.len() > 1 {
-                            let removed = app.state.environments.remove(app.selected_env_idx);
-                            if app.state.active_environment_id.as_deref()
-                                == Some(removed.id.as_str())
-                            {
-                                app.state.active_environment_id =
-                                    app.state.environments.first().map(|e| e.id.clone());
-                            }
-                            app.selected_env_idx = app
-                                .selected_env_idx
-                                .min(app.state.environments.len().saturating_sub(1));
-                            changed = true;
-                        }
-                    });
-                }
-                1 => {
-                    // Collection-Scoped Variables ("cho riêng collection nào đó")
-                    swaggen_ui_kit::surface_card(ui, |ui| {
-                        swaggen_ui_kit::card_header(
-                            ui,
-                            "Collection Variables (Scoped to a single Collection)",
-                        );
-                        ui.label(
-                            egui::RichText::new(
-                                "Variables defined here apply automatically to all requests inside the selected Collection (overridden by Active Environment if same name).",
-                            )
-                            .size(11.5)
-                            .color(swaggen_ui_kit::text_secondary(ui)),
-                        );
-                        ui.add_space(6.0);
-                        if app.selected_collection_var_idx >= app.state.collections.len() {
-                            app.selected_collection_var_idx = 0;
-                        }
-                        ui.horizontal_wrapped(|ui| {
-                            ui.label(swaggen_ui_kit::bold_text(
-                                "Select Collection:",
-                                12.0,
-                                swaggen_ui_kit::text_primary(ui),
-                            ));
-                            for (cidx, col) in app.state.collections.iter().enumerate() {
-                                if ui
-                                    .selectable_label(
-                                        app.selected_collection_var_idx == cidx,
-                                        format!("📁 {} ({})", col.name, col.variables.len()),
-                                    )
-                                    .clicked()
-                                {
-                                    app.selected_collection_var_idx = cidx;
-                                }
-                            }
-                        });
-                        ui.add_space(8.0);
-                        if let Some(col) = app
-                            .state
-                            .collections
-                            .get_mut(app.selected_collection_var_idx)
-                            && edit_flat_variable_table(
-                                ui,
-                                "col_vars_grid",
-                                &mut col.variables,
-                                None,
-                            )
-                        {
-                            changed = true;
-                        }
-                    });
-                }
-                _ => {
-                    // Global Workspace Variables
-                    swaggen_ui_kit::surface_card(ui, |ui| {
-                        swaggen_ui_kit::card_header(
-                            ui,
-                            "Global Workspace Variables (Shared fallback across all Collections & Environments)",
-                        );
-                        ui.label(
-                            egui::RichText::new(
-                                "Global variables resolve everywhere in this workspace whenever a variable is not overridden by the Collection or Active Environment.",
-                            )
-                            .size(11.5)
-                            .color(swaggen_ui_kit::text_secondary(ui)),
-                        );
-                        ui.add_space(8.0);
-                        if edit_flat_variable_table(
-                            ui,
-                            "global_vars_grid",
-                            &mut app.state.workspace_vars,
-                            None,
-                        ) {
-                            changed = true;
-                        }
-                    });
-                }
-            }
-
-            ui.add_space(10.0);
-            swaggen_ui_kit::surface_card(ui, |ui| {
-                swaggen_ui_kit::card_header(ui, "Live {{variable}} Precedence Inspector");
-                ui.horizontal_wrapped(|ui| {
-                    ui.label("Test variable name:");
-                    swaggen_ui_kit::text_input(
-                        ui,
-                        &mut app.inspect_var_key,
-                        "base_url",
-                        190.0,
-                        false,
-                    );
-                    let secrets = app.masked_secret_placeholders();
-                    let col_vars = app
-                        .active_request()
-                        .and_then(|r| {
-                            app.state
-                                .collections
-                                .iter()
-                                .find(|c| c.id == r.collection_id)
-                        })
-                        .or_else(|| app.state.collections.get(app.selected_collection_var_idx))
-                        .map(|c| c.variables.as_slice())
-                        .unwrap_or(&[]);
-                    let ctx = VariableContext {
-                        workspace_vars: &app.state.workspace_vars,
-                        collection_vars: col_vars,
-                        environment: app.state.active_environment(),
-                        request_vars: app
-                            .active_request()
-                            .map(|r| r.local_vars.as_slice())
-                            .unwrap_or(&[]),
-                        local_secrets: &secrets,
-                    };
-                    match ctx.inspect(app.inspect_var_key.trim()) {
-                        Some(eff) => {
-                            swaggen_ui_kit::status_badge(
-                                ui,
-                                NoticeKind::Success,
-                                &format!("Resolved from {}", eff.source),
-                            );
-                            ui.monospace(if eff.is_secret {
-                                "••••••••"
-                            } else {
-                                eff.value.as_str()
-                            });
-                        }
-                        None => {
-                            swaggen_ui_kit::status_badge(
-                                ui,
-                                NoticeKind::Warning,
-                                "Undefined in active scopes",
-                            );
-                        }
-                    }
-                });
+    } else {
+        egui::ScrollArea::vertical()
+            .id_salt("env_manager_scroll_narrow")
+            .show(ui, |ui| {
+                show_env_scope_list(app, ui, &mut changed);
+                ui.add_space(10.0);
+                ui.separator();
+                ui.add_space(8.0);
+                show_env_active_editor(app, ui, &mut changed);
             });
-        });
+    }
 
     if changed {
         app.mark_dirty();
     }
 }
 
-/// Flat Postman-style Variable Grid (`✓ | VARIABLE | TYPE | SHARED VALUE | MY LOCAL OVERRIDE | ×`).
+fn show_env_scope_list(app: &mut App, ui: &mut egui::Ui, changed: &mut bool) {
+    ui.add_space(4.0);
+    // 1. Globals
+    let g_sel = app.env_scope_tab == 2;
+    if env_sidebar_row(
+        ui,
+        "Globals",
+        Some(app.state.workspace_vars.len()),
+        g_sel,
+        None,
+    )
+    .clicked()
+    {
+        app.env_scope_tab = 2;
+    }
+
+    ui.add_space(12.0);
+    // 2. Environments header + quiet `+` icon button
+    ui.horizontal(|ui| {
+        ui.label(
+            egui::RichText::new("ENVIRONMENTS")
+                .size(10.0)
+                .color(swaggen_ui_kit::text_secondary(ui))
+                .strong(),
+        );
+        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+            if ui
+                .add(
+                    egui::Button::new(
+                        egui::RichText::new("+")
+                            .size(14.0)
+                            .color(swaggen_ui_kit::text_secondary(ui))
+                            .strong(),
+                    )
+                    .frame(false),
+                )
+                .on_hover_text("Create new environment")
+                .clicked()
+            {
+                let mut idx_n = app.state.environments.len() + 1;
+                let mut name = format!("Environment {idx_n}");
+                while app.state.environments.iter().any(|e| e.name == name) {
+                    idx_n += 1;
+                    name = format!("Environment {idx_n}");
+                }
+                let mut created = Environment::new(name, false);
+                created
+                    .variables
+                    .push(VariableEntry::public("base_url", "http://127.0.0.1:8080"));
+                let cid = created.id.clone();
+                app.state.environments.push(created);
+                app.env_scope_tab = 0;
+                app.selected_env_idx = app.state.environments.len().saturating_sub(1);
+                app.state.active_environment_id = Some(cid);
+                *changed = true;
+            }
+        });
+    });
+    ui.add_space(4.0);
+
+    let mut activate_id: Option<String> = None;
+    for (idx, env) in app.state.environments.iter().enumerate() {
+        let is_selected = app.env_scope_tab == 0 && app.selected_env_idx == idx;
+        let is_active = app.state.active_environment_id.as_deref() == Some(env.id.as_str());
+        let dot_color = if env.is_production {
+            Some(Tokens::TEXT_DANGER)
+        } else if is_active {
+            Some(Tokens::STATUS_SUCCESS)
+        } else {
+            None
+        };
+        let suffix = if env.is_production {
+            format!("{} [PROD]", env.name)
+        } else {
+            env.name.clone()
+        };
+        let resp = env_sidebar_row(
+            ui,
+            &suffix,
+            Some(env.variables.len()),
+            is_selected,
+            dot_color,
+        )
+        .on_hover_text("Click to edit and activate this environment");
+        if resp.clicked() {
+            app.env_scope_tab = 0;
+            app.selected_env_idx = idx;
+            activate_id = Some(env.id.clone());
+        }
+    }
+    if let Some(eid) = activate_id
+        && app.state.active_environment_id.as_deref() != Some(eid.as_str())
+    {
+        app.state.active_environment_id = Some(eid);
+        *changed = true;
+    }
+
+    if !app.state.collections.is_empty() {
+        ui.add_space(12.0);
+        ui.label(
+            egui::RichText::new("COLLECTION VARIABLES")
+                .size(10.0)
+                .color(swaggen_ui_kit::text_secondary(ui))
+                .strong(),
+        );
+        ui.add_space(4.0);
+        for (cidx, col) in app.state.collections.iter().enumerate() {
+            let is_sel = app.env_scope_tab == 1 && app.selected_collection_var_idx == cidx;
+            if env_sidebar_row(ui, &col.name, Some(col.variables.len()), is_sel, None).clicked() {
+                app.env_scope_tab = 1;
+                app.selected_collection_var_idx = cidx;
+            }
+        }
+    }
+}
+
+fn env_sidebar_row(
+    ui: &mut egui::Ui,
+    label: &str,
+    count: Option<usize>,
+    selected: bool,
+    dot_color: Option<egui::Color32>,
+) -> egui::Response {
+    let w = (ui.available_width() - 8.0).max(110.0);
+    let (rect, resp) = ui.allocate_exact_size(egui::vec2(w, 28.0), egui::Sense::click());
+    let bg = if selected {
+        swaggen_ui_kit::selected_bg(ui)
+    } else if resp.hovered() {
+        swaggen_ui_kit::subtle_bg(ui)
+    } else {
+        egui::Color32::TRANSPARENT
+    };
+    ui.painter().rect_filled(rect, 5.0, bg);
+
+    let mut text_x = rect.left() + 10.0;
+    if let Some(dc) = dot_color {
+        ui.painter()
+            .circle_filled(egui::pos2(rect.left() + 14.0, rect.center().y), 3.5, dc);
+        text_x = rect.left() + 24.0;
+    }
+
+    let font = if selected {
+        egui::FontId::new(12.0, egui::FontFamily::Name("bold".into()))
+    } else {
+        egui::FontId::new(12.0, egui::FontFamily::Proportional)
+    };
+    let fg = if selected {
+        Tokens::STATUS_INFO
+    } else {
+        swaggen_ui_kit::text_primary(ui)
+    };
+    let max_chars = ((w - (text_x - rect.left()) - 28.0) / 6.6).max(6.0) as usize;
+    let clipped: String = if label.chars().count() > max_chars {
+        let mut s: String = label.chars().take(max_chars.saturating_sub(1)).collect();
+        s.push('…');
+        s
+    } else {
+        label.to_owned()
+    };
+    ui.painter().text(
+        egui::pos2(text_x, rect.center().y),
+        egui::Align2::LEFT_CENTER,
+        clipped,
+        font,
+        fg,
+    );
+    if let Some(n) = count {
+        ui.painter().text(
+            egui::pos2(rect.right() - 8.0, rect.center().y),
+            egui::Align2::RIGHT_CENTER,
+            n.to_string(),
+            egui::FontId::new(10.5, egui::FontFamily::Monospace),
+            swaggen_ui_kit::text_secondary(ui),
+        );
+    }
+    resp
+}
+
+fn show_env_active_editor(app: &mut App, ui: &mut egui::Ui, changed: &mut bool) {
+    match app.env_scope_tab {
+        0 => {
+            let can_delete_env = app.state.environments.len() > 1;
+            let mut delete_selected_env = false;
+            let mut toggle_active_env: Option<Option<String>> = None;
+
+            if let Some(env) = app.state.environments.get_mut(app.selected_env_idx) {
+                let is_active = app.state.active_environment_id.as_deref() == Some(env.id.as_str());
+                ui.horizontal_wrapped(|ui| {
+                    if ui
+                        .add(
+                            egui::TextEdit::singleline(&mut env.name)
+                                .hint_text("Environment name")
+                                .font(egui::FontId::new(
+                                    17.0,
+                                    egui::FontFamily::Name("bold".into()),
+                                ))
+                                .frame(egui::Frame::NONE)
+                                .desired_width(210.0),
+                        )
+                        .changed()
+                    {
+                        *changed = true;
+                    }
+
+                    let mut tier = env.effective_tier();
+                    egui::ComboBox::from_id_salt("env_tier_combo")
+                        .selected_text(tier.label())
+                        .width(118.0)
+                        .show_ui(ui, |ui| {
+                            for t in [
+                                swaggen_domain::workspace::EnvTier::Local,
+                                swaggen_domain::workspace::EnvTier::Development,
+                                swaggen_domain::workspace::EnvTier::Staging,
+                                swaggen_domain::workspace::EnvTier::Production,
+                                swaggen_domain::workspace::EnvTier::Custom,
+                            ] {
+                                if ui.selectable_value(&mut tier, t, t.label()).changed() {
+                                    env.tier = Some(t);
+                                    env.is_production =
+                                        t == swaggen_domain::workspace::EnvTier::Production;
+                                    *changed = true;
+                                }
+                            }
+                        });
+
+                    if ui
+                        .checkbox(&mut env.is_production, "Production guard")
+                        .on_hover_text(
+                            "Ask confirmation before sending mutating calls in this environment",
+                        )
+                        .changed()
+                    {
+                        *changed = true;
+                    }
+
+                    ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                        if can_delete_env
+                            && swaggen_ui_kit::danger_button(ui, true, "Delete").clicked()
+                        {
+                            delete_selected_env = true;
+                        }
+                        if is_active {
+                            if swaggen_ui_kit::secondary_button(ui, true, "✓ Active")
+                                .on_hover_text("Click to deactivate")
+                                .clicked()
+                            {
+                                toggle_active_env = Some(None);
+                            }
+                        } else if swaggen_ui_kit::primary_button(ui, true, "Set Active").clicked() {
+                            toggle_active_env = Some(Some(env.id.clone()));
+                        }
+                    });
+                });
+
+                ui.add_space(8.0);
+                if edit_flat_variable_table(
+                    ui,
+                    "env_vars_grid",
+                    &mut env.variables,
+                    Some(&mut env.personal_overrides),
+                ) {
+                    *changed = true;
+                }
+            }
+
+            if let Some(next_act) = toggle_active_env {
+                app.state.active_environment_id = next_act;
+                *changed = true;
+            }
+            if delete_selected_env && app.state.environments.len() > 1 {
+                let removed = app.state.environments.remove(app.selected_env_idx);
+                if app.state.active_environment_id.as_deref() == Some(removed.id.as_str()) {
+                    app.state.active_environment_id =
+                        app.state.environments.first().map(|e| e.id.clone());
+                }
+                app.selected_env_idx = app
+                    .selected_env_idx
+                    .min(app.state.environments.len().saturating_sub(1));
+                *changed = true;
+            }
+        }
+        1 => {
+            if let Some(col) = app
+                .state
+                .collections
+                .get_mut(app.selected_collection_var_idx)
+            {
+                ui.label(swaggen_ui_kit::bold_text(
+                    &format!("Collection · {}", col.name),
+                    17.0,
+                    swaggen_ui_kit::text_primary(ui),
+                ));
+                ui.label(
+                    egui::RichText::new(
+                        "Variables scoped to requests in this collection (overridden by Active Environment).",
+                    )
+                    .size(11.5)
+                    .color(swaggen_ui_kit::text_secondary(ui)),
+                );
+                ui.add_space(8.0);
+                if edit_flat_variable_table(ui, "col_vars_grid", &mut col.variables, None) {
+                    *changed = true;
+                }
+            }
+        }
+        _ => {
+            ui.label(swaggen_ui_kit::bold_text(
+                "Global Variables",
+                17.0,
+                swaggen_ui_kit::text_primary(ui),
+            ));
+            ui.label(
+                egui::RichText::new(
+                    "Shared across the workspace whenever not overridden by Collection or Active Environment.",
+                )
+                .size(11.5)
+                .color(swaggen_ui_kit::text_secondary(ui)),
+            );
+            ui.add_space(8.0);
+            if edit_flat_variable_table(ui, "global_vars_grid", &mut app.state.workspace_vars, None)
+            {
+                *changed = true;
+            }
+        }
+    }
+}
+
+fn env_fixed_cell(
+    ui: &mut egui::Ui,
+    width: f32,
+    height: f32,
+    centered: bool,
+    add_contents: impl FnOnce(&mut egui::Ui),
+) {
+    let layout = if centered {
+        egui::Layout::centered_and_justified(egui::Direction::LeftToRight)
+    } else {
+        egui::Layout::left_to_right(egui::Align::Center)
+    };
+    ui.allocate_ui_with_layout(egui::vec2(width, height), layout, |ui| {
+        ui.set_min_size(egui::vec2(width, height));
+        ui.set_max_size(egui::vec2(width, height));
+        add_contents(ui);
+    });
+}
+
+/// Pixel-aligned Flat Postman Variable Grid (`✓ | VARIABLE | INITIAL VALUE | CURRENT VALUE | SECRET | ×`).
 fn edit_flat_variable_table(
     ui: &mut egui::Ui,
     id_salt: &str,
@@ -856,84 +839,83 @@ fn edit_flat_variable_table(
     let mut rm_idx = None;
     let border_col = swaggen_ui_kit::border_color(ui);
     let total_w = ui.available_width().max(260.0);
-    let has_override_col = personal_overrides.is_some() && total_w >= 560.0;
-    let chk_w = 28.0;
-    let type_w = 88.0;
-    let act_w = 28.0;
-    let rem_w = (total_w - chk_w - type_w - act_w - 16.0).max(150.0);
+    let has_override_col = personal_overrides.is_some() && total_w >= 540.0;
+    let chk_w = 30.0_f32;
+    let sec_w = 54.0_f32;
+    let act_w = 28.0_f32;
+    let rem_w = (total_w - chk_w - sec_w - act_w).max(150.0);
     let (key_w, val_w, ov_w) = if has_override_col {
-        (rem_w * 0.30, rem_w * 0.36, rem_w * 0.34)
+        (rem_w * 0.28, rem_w * 0.36, rem_w * 0.36)
     } else {
-        (rem_w * 0.38, rem_w * 0.62, 0.0)
+        (rem_w * 0.36, rem_w * 0.64, 0.0)
     };
+    let row_h = 26.0_f32;
 
     ui.push_id(id_salt, |ui| {
-        egui::Frame::new()
+        let table_resp = egui::Frame::new()
             .fill(swaggen_ui_kit::surface_bg(ui))
             .stroke(egui::Stroke::new(1.0, border_col))
             .corner_radius(4)
             .inner_margin(egui::Margin::ZERO)
             .show(ui, |ui| {
                 ui.spacing_mut().item_spacing = egui::Vec2::ZERO;
+                let left_x = ui.available_rect_before_wrap().left();
+                let x_chk_end = left_x + chk_w;
+                let x_key_end = x_chk_end + key_w;
+                let x_val_end = x_key_end + val_w;
+                let x_ov_end = x_val_end + ov_w;
+                let x_sec_end = x_ov_end + sec_w;
+
                 // Header
                 let hdr = egui::Frame::new()
                     .fill(swaggen_ui_kit::subtle_bg(ui))
-                    .inner_margin(egui::Margin::symmetric(0, 4))
+                    .inner_margin(egui::Margin::ZERO)
                     .show(ui, |ui| {
                         ui.horizontal(|ui| {
                             ui.spacing_mut().item_spacing = egui::Vec2::ZERO;
-                            ui.allocate_exact_size(egui::vec2(chk_w, 18.0), egui::Sense::hover());
-                            ui.add_space(8.0);
-                            ui.allocate_ui_with_layout(
-                                egui::vec2(key_w, 18.0),
-                                egui::Layout::left_to_right(egui::Align::Center),
-                                |ui| {
-                                    ui.label(
-                                        egui::RichText::new("VARIABLE")
-                                            .size(10.0)
-                                            .color(swaggen_ui_kit::text_secondary(ui))
-                                            .strong(),
-                                    );
-                                },
-                            );
-                            ui.allocate_ui_with_layout(
-                                egui::vec2(type_w, 18.0),
-                                egui::Layout::left_to_right(egui::Align::Center),
-                                |ui| {
-                                    ui.label(
-                                        egui::RichText::new("TYPE")
-                                            .size(10.0)
-                                            .color(swaggen_ui_kit::text_secondary(ui))
-                                            .strong(),
-                                    );
-                                },
-                            );
-                            ui.allocate_ui_with_layout(
-                                egui::vec2(val_w, 18.0),
-                                egui::Layout::left_to_right(egui::Align::Center),
-                                |ui| {
-                                    ui.label(
-                                        egui::RichText::new("INITIAL / SHARED VALUE")
-                                            .size(10.0)
-                                            .color(swaggen_ui_kit::text_secondary(ui))
-                                            .strong(),
-                                    );
-                                },
-                            );
-                            if has_override_col {
-                                ui.allocate_ui_with_layout(
-                                    egui::vec2(ov_w, 18.0),
-                                    egui::Layout::left_to_right(egui::Align::Center),
-                                    |ui| {
-                                        ui.label(
-                                            egui::RichText::new("CURRENT / MY LOCAL OVERRIDE")
-                                                .size(10.0)
-                                                .color(swaggen_ui_kit::text_secondary(ui))
-                                                .strong(),
-                                        );
-                                    },
+                            env_fixed_cell(ui, chk_w, 24.0, true, |_| {});
+                            env_fixed_cell(ui, key_w, 24.0, false, |ui| {
+                                ui.add_space(8.0);
+                                ui.label(
+                                    egui::RichText::new("VARIABLE")
+                                        .size(10.0)
+                                        .color(swaggen_ui_kit::text_secondary(ui))
+                                        .strong(),
                                 );
+                            });
+                            env_fixed_cell(ui, val_w, 24.0, false, |ui| {
+                                ui.add_space(8.0);
+                                ui.label(
+                                    egui::RichText::new(if has_override_col {
+                                        "INITIAL VALUE"
+                                    } else {
+                                        "VALUE"
+                                    })
+                                    .size(10.0)
+                                    .color(swaggen_ui_kit::text_secondary(ui))
+                                    .strong(),
+                                );
+                            });
+                            if has_override_col {
+                                env_fixed_cell(ui, ov_w, 24.0, false, |ui| {
+                                    ui.add_space(8.0);
+                                    ui.label(
+                                        egui::RichText::new("CURRENT (LOCAL)")
+                                            .size(10.0)
+                                            .color(swaggen_ui_kit::text_secondary(ui))
+                                            .strong(),
+                                    );
+                                });
                             }
+                            env_fixed_cell(ui, sec_w, 24.0, true, |ui| {
+                                ui.label(
+                                    egui::RichText::new("SECRET")
+                                        .size(10.0)
+                                        .color(swaggen_ui_kit::text_secondary(ui))
+                                        .strong(),
+                                );
+                            });
+                            env_fixed_cell(ui, act_w, 24.0, true, |_| {});
                         });
                     });
                 ui.painter().line_segment(
@@ -947,135 +929,149 @@ fn edit_flat_variable_table(
                 for (i, v) in vars.iter_mut().enumerate() {
                     let r = egui::Frame::new()
                         .fill(swaggen_ui_kit::surface_bg(ui))
-                        .inner_margin(egui::Margin::symmetric(0, 3))
+                        .inner_margin(egui::Margin::ZERO)
                         .show(ui, |ui| {
                             ui.horizontal(|ui| {
                                 ui.spacing_mut().item_spacing = egui::Vec2::ZERO;
-                                ui.allocate_ui_with_layout(
-                                    egui::vec2(chk_w, 22.0),
-                                    egui::Layout::centered_and_justified(
-                                        egui::Direction::LeftToRight,
-                                    ),
-                                    |ui| {
-                                        if ui.checkbox(&mut v.enabled, "").changed() {
-                                            changed = true;
-                                        }
-                                    },
-                                );
-                                ui.add_space(8.0);
-                                if ui
-                                    .add(
-                                        egui::TextEdit::singleline(&mut v.key)
-                                            .id(egui::Id::unique((id_salt, "vk", i)))
-                                            .hint_text("variable_name")
-                                            .frame(egui::Frame::NONE)
-                                            .desired_width((key_w - 6.0).max(40.0)),
-                                    )
-                                    .changed()
-                                {
-                                    changed = true;
-                                }
-                                ui.allocate_ui_with_layout(
-                                    egui::vec2(type_w, 22.0),
-                                    egui::Layout::left_to_right(egui::Align::Center),
-                                    |ui| {
-                                        let lbl = if v.is_secret {
-                                            "Secret 🔒"
-                                        } else {
-                                            "Default"
-                                        };
-                                        if ui.small_button(lbl).clicked() {
-                                            v.is_secret = !v.is_secret;
-                                            changed = true;
-                                        }
-                                    },
-                                );
-                                if v.is_secret {
-                                    let mut rname = v
-                                        .secret_ref
-                                        .as_ref()
-                                        .map(|id| id.as_str().to_owned())
-                                        .unwrap_or_default();
+                                env_fixed_cell(ui, chk_w, row_h, true, |ui| {
+                                    if ui.checkbox(&mut v.enabled, "").changed() {
+                                        changed = true;
+                                    }
+                                });
+                                env_fixed_cell(ui, key_w, row_h, false, |ui| {
                                     if ui
                                         .add(
-                                            egui::TextEdit::singleline(&mut rname)
-                                                .id(egui::Id::unique((id_salt, "vsec", i)))
-                                                .hint_text("DPAPI secret name (e.g. api-token)")
+                                            egui::TextEdit::singleline(&mut v.key)
+                                                .id(egui::Id::unique((id_salt, "vk", i)))
+                                                .hint_text("variable_name")
+                                                .align(egui::Align2::LEFT_CENTER)
+                                                .margin(egui::Margin::symmetric(8, 0))
                                                 .frame(egui::Frame::NONE)
-                                                .desired_width((val_w - 6.0).max(40.0)),
+                                                .desired_width((key_w - 2.0).max(40.0)),
                                         )
                                         .changed()
                                     {
-                                        v.secret_ref = LocalId::parse(rname.trim()).ok();
                                         changed = true;
                                     }
-                                } else if ui
-                                    .add(
-                                        egui::TextEdit::singleline(&mut v.shared_value)
-                                            .id(egui::Id::unique((id_salt, "vv", i)))
-                                            .hint_text("https://api.example.test")
-                                            .frame(egui::Frame::NONE)
-                                            .desired_width((val_w - 6.0).max(40.0)),
-                                    )
-                                    .changed()
-                                {
-                                    changed = true;
-                                }
-
-                                if has_override_col && let Some(ref mut ov_map) = personal_overrides
-                                {
-                                    let mut ov_val = ov_map
-                                        .get(&v.key)
-                                        .map(|o| o.value.clone())
-                                        .unwrap_or_default();
-                                    if ui
-                                        .add(
-                                            egui::TextEdit::singleline(&mut ov_val)
-                                                .id(egui::Id::unique((id_salt, "vov", i)))
-                                                .hint_text("(Same as shared)")
-                                                .frame(egui::Frame::NONE)
-                                                .desired_width((ov_w - 6.0).max(40.0)),
-                                        )
-                                        .changed()
-                                        && !v.key.trim().is_empty()
-                                    {
-                                        if ov_val.is_empty() {
-                                            ov_map.remove(&v.key);
-                                        } else {
-                                            ov_map.insert(
-                                                v.key.clone(),
-                                                PersonalVarOverride {
-                                                    value: ov_val,
-                                                    is_secret: false,
-                                                    secret_ref: None,
-                                                },
-                                            );
-                                        }
-                                        changed = true;
-                                    }
-                                }
-
-                                ui.allocate_ui_with_layout(
-                                    egui::vec2(act_w, 22.0),
-                                    egui::Layout::centered_and_justified(
-                                        egui::Direction::LeftToRight,
-                                    ),
-                                    |ui| {
+                                });
+                                env_fixed_cell(ui, val_w, row_h, false, |ui| {
+                                    if v.is_secret {
+                                        let mut rname = v
+                                            .secret_ref
+                                            .as_ref()
+                                            .map(|id| id.as_str().to_owned())
+                                            .unwrap_or_default();
                                         if ui
                                             .add(
-                                                egui::Button::new(
-                                                    egui::RichText::new("×")
-                                                        .size(13.0)
-                                                        .color(swaggen_ui_kit::text_secondary(ui)),
-                                                )
-                                                .frame(false),
+                                                egui::TextEdit::singleline(&mut rname)
+                                                    .id(egui::Id::unique((id_salt, "vsec", i)))
+                                                    .hint_text("DPAPI secret key (e.g. api-token)")
+                                                    .align(egui::Align2::LEFT_CENTER)
+                                                    .margin(egui::Margin::symmetric(8, 0))
+                                                    .frame(egui::Frame::NONE)
+                                                    .desired_width((val_w - 2.0).max(40.0)),
                                             )
-                                            .clicked()
+                                            .changed()
                                         {
-                                            rm_idx = Some(i);
+                                            v.secret_ref = LocalId::parse(rname.trim()).ok();
+                                            changed = true;
                                         }
-                                    },
-                                );
+                                    } else if ui
+                                        .add(
+                                            egui::TextEdit::singleline(&mut v.shared_value)
+                                                .id(egui::Id::unique((id_salt, "vv", i)))
+                                                .hint_text("https://api.example.test")
+                                                .align(egui::Align2::LEFT_CENTER)
+                                                .margin(egui::Margin::symmetric(8, 0))
+                                                .frame(egui::Frame::NONE)
+                                                .desired_width((val_w - 2.0).max(40.0)),
+                                        )
+                                        .changed()
+                                    {
+                                        changed = true;
+                                    }
+                                });
+
+                                if has_override_col
+                                    && let Some(ref mut ov_map) = personal_overrides
+                                {
+                                    env_fixed_cell(ui, ov_w, row_h, false, |ui| {
+                                        let mut ov_val = ov_map
+                                            .get(&v.key)
+                                            .map(|o| o.value.clone())
+                                            .unwrap_or_default();
+                                        if ui
+                                            .add(
+                                                egui::TextEdit::singleline(&mut ov_val)
+                                                    .id(egui::Id::unique((id_salt, "vov", i)))
+                                                    .hint_text("(Same as initial)")
+                                                    .align(egui::Align2::LEFT_CENTER)
+                                                    .margin(egui::Margin::symmetric(8, 0))
+                                                    .frame(egui::Frame::NONE)
+                                                    .desired_width((ov_w - 2.0).max(40.0)),
+                                            )
+                                            .changed()
+                                            && !v.key.trim().is_empty()
+                                        {
+                                            if ov_val.is_empty() {
+                                                ov_map.remove(&v.key);
+                                            } else {
+                                                ov_map.insert(
+                                                    v.key.clone(),
+                                                    PersonalVarOverride {
+                                                        value: ov_val,
+                                                        is_secret: false,
+                                                        secret_ref: None,
+                                                    },
+                                                );
+                                            }
+                                            changed = true;
+                                        }
+                                    });
+                                }
+
+                                env_fixed_cell(ui, sec_w, row_h, true, |ui| {
+                                    let lbl = if v.is_secret { "🔒" } else { "○" };
+                                    if ui
+                                        .add(
+                                            egui::Button::new(
+                                                egui::RichText::new(lbl).size(12.0).color(
+                                                    if v.is_secret {
+                                                        Tokens::STATUS_INFO
+                                                    } else {
+                                                        swaggen_ui_kit::text_secondary(ui)
+                                                    },
+                                                ),
+                                            )
+                                            .frame(false),
+                                        )
+                                        .on_hover_text(if v.is_secret {
+                                            "Secret (Windows DPAPI) — click to switch to normal variable"
+                                        } else {
+                                            "Click to bind this variable to Windows DPAPI Secrets Vault"
+                                        })
+                                        .clicked()
+                                    {
+                                        v.is_secret = !v.is_secret;
+                                        changed = true;
+                                    }
+                                });
+
+                                env_fixed_cell(ui, act_w, row_h, true, |ui| {
+                                    if ui
+                                        .add(
+                                            egui::Button::new(
+                                                egui::RichText::new("×")
+                                                    .size(13.0)
+                                                    .color(swaggen_ui_kit::text_secondary(ui)),
+                                            )
+                                            .frame(false),
+                                        )
+                                        .clicked()
+                                    {
+                                        rm_idx = Some(i);
+                                    }
+                                });
                             });
                         });
                     ui.painter().line_segment(
@@ -1095,39 +1091,46 @@ fn edit_flat_variable_table(
                     let next_i = vars.len();
                     let mut nk = String::new();
                     let mut nv = String::new();
+                    let mut kc = false;
+                    let mut vc = false;
                     egui::Frame::new()
                         .fill(swaggen_ui_kit::surface_bg(ui))
-                        .inner_margin(egui::Margin::symmetric(0, 3))
+                        .inner_margin(egui::Margin::ZERO)
                         .show(ui, |ui| {
                             ui.horizontal(|ui| {
                                 ui.spacing_mut().item_spacing = egui::Vec2::ZERO;
-                                ui.allocate_exact_size(
-                                    egui::vec2(chk_w, 22.0),
-                                    egui::Sense::hover(),
-                                );
-                                ui.add_space(8.0);
-                                let kc = ui
-                                    .add(
-                                        egui::TextEdit::singleline(&mut nk)
-                                            .id(egui::Id::unique((id_salt, "vk", next_i)))
-                                            .hint_text("Add new variable (e.g. base_url)")
-                                            .frame(egui::Frame::NONE)
-                                            .desired_width((key_w - 6.0).max(40.0)),
-                                    )
-                                    .changed();
-                                ui.allocate_exact_size(
-                                    egui::vec2(type_w, 22.0),
-                                    egui::Sense::hover(),
-                                );
-                                let vc = ui
-                                    .add(
-                                        egui::TextEdit::singleline(&mut nv)
-                                            .id(egui::Id::unique((id_salt, "vv", next_i)))
-                                            .hint_text("Value")
-                                            .frame(egui::Frame::NONE)
-                                            .desired_width((val_w - 6.0).max(40.0)),
-                                    )
-                                    .changed();
+                                env_fixed_cell(ui, chk_w, row_h, true, |_| {});
+                                env_fixed_cell(ui, key_w, row_h, false, |ui| {
+                                    kc = ui
+                                        .add(
+                                            egui::TextEdit::singleline(&mut nk)
+                                                .id(egui::Id::unique((id_salt, "vk", next_i)))
+                                                .hint_text("Add new variable")
+                                                .align(egui::Align2::LEFT_CENTER)
+                                                .margin(egui::Margin::symmetric(8, 0))
+                                                .frame(egui::Frame::NONE)
+                                                .desired_width((key_w - 2.0).max(40.0)),
+                                        )
+                                        .changed();
+                                });
+                                env_fixed_cell(ui, val_w, row_h, false, |ui| {
+                                    vc = ui
+                                        .add(
+                                            egui::TextEdit::singleline(&mut nv)
+                                                .id(egui::Id::unique((id_salt, "vv", next_i)))
+                                                .hint_text("Value")
+                                                .align(egui::Align2::LEFT_CENTER)
+                                                .margin(egui::Margin::symmetric(8, 0))
+                                                .frame(egui::Frame::NONE)
+                                                .desired_width((val_w - 2.0).max(40.0)),
+                                        )
+                                        .changed();
+                                });
+                                if has_override_col {
+                                    env_fixed_cell(ui, ov_w, row_h, false, |_| {});
+                                }
+                                env_fixed_cell(ui, sec_w, row_h, true, |_| {});
+                                env_fixed_cell(ui, act_w, row_h, true, |_| {});
                                 if (kc || vc) && (!nk.is_empty() || !nv.is_empty()) {
                                     vars.push(VariableEntry::public(nk, nv));
                                     changed = true;
@@ -1135,7 +1138,25 @@ fn edit_flat_variable_table(
                             });
                         });
                 }
+
+                (x_chk_end, x_key_end, x_val_end, x_ov_end, x_sec_end)
             });
+
+        let (x_chk_end, x_key_end, x_val_end, x_ov_end, x_sec_end) = table_resp.inner;
+        let t_rect = table_resp.response.rect;
+        let p = ui.painter();
+        let mut xs = vec![x_chk_end, x_key_end, x_val_end];
+        if has_override_col {
+            xs.push(x_ov_end);
+        }
+        xs.push(x_sec_end);
+        for x in xs {
+            p.line_segment(
+                [egui::pos2(x, t_rect.top()), egui::pos2(x, t_rect.bottom())],
+                egui::Stroke::new(1.0, border_col),
+            );
+        }
+
         if let Some(i) = rm_idx {
             vars.remove(i);
             changed = true;
@@ -2038,8 +2059,9 @@ pub fn show_shortcuts(app: &mut App, ui: &mut egui::Ui) {
         swaggen_ui_kit::table_header(ui, &[("SHORTCUT", 180.0), ("ACTION", 420.0)]);
         for (keys, action) in [
             ("Ctrl + K", "Toggle Command Palette"),
-            ("Ctrl + Enter", "Send active request"),
-            ("Ctrl + S", "Save local workspace"),
+            ("Ctrl + Enter", "Send active request (anywhere)"),
+            ("Enter", "Send active request (when outside text inputs)"),
+            ("Ctrl + S", "Save local workspace / OpenAPI spec"),
             ("Ctrl + P", "Focus quick search in sidebar"),
             ("Ctrl + W", "Close active unpinned tab"),
             ("Esc", "Close active modal or palette"),

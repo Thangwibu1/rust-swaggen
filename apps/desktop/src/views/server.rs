@@ -312,51 +312,142 @@ fn show_auth_and_bootstrap(app: &mut App, ui: &mut egui::Ui) {
         }
         let right_idx = 1 % cols.len();
         swaggen_ui_kit::surface_card(&mut cols[right_idx], |ui| {
-            swaggen_ui_kit::card_header(ui, "Accept Single-Use Team Invitation");
-            let field_w = ui.available_width();
-            swaggen_ui_kit::text_input(
-                ui,
-                &mut app.invite_token_input,
-                "One-time invitation token",
-                field_w,
-                true,
+            swaggen_ui_kit::card_header(ui, "In-App Workspace Invitations");
+            ui.label(
+                egui::RichText::new(
+                    "Invitations are delivered straight inside Swaggen (no email needed). Sign in above to see invitations sent to your account.",
+                )
+                .size(11.5)
+                .color(swaggen_ui_kit::text_secondary(ui)),
             );
             ui.add_space(8.0);
-            swaggen_ui_kit::text_input(ui, &mut app.auth_email, "Email address", field_w, false);
-            ui.add_space(8.0);
-            swaggen_ui_kit::text_input(
-                ui,
-                &mut app.auth_display_name,
-                "Display name",
-                field_w,
-                false,
-            );
-            ui.add_space(8.0);
-            swaggen_ui_kit::text_input(
-                ui,
-                &mut app.auth_password,
-                "Password (if creating internal fallback account)",
-                field_w,
-                true,
-            );
-            ui.add_space(10.0);
-            if swaggen_ui_kit::primary_button(
-                ui,
-                !app.pending && !app.invite_token_input.trim().is_empty(),
-                "Accept invitation & join workspace",
-            )
-            .clicked()
-            {
-                let pw = std::mem::take(&mut app.auth_password);
-                let tok = std::mem::take(&mut app.invite_token_input);
-                app.submit(Command::AcceptServerInvitation {
-                    profile_id: active.id.clone(),
-                    invite_token: tok,
-                    email: app.auth_email.clone(),
-                    display_name: app.auth_display_name.clone(),
-                    password: if pw.is_empty() { None } else { Some(pw) },
+            if !active.session_id.is_empty() {
+                ui.horizontal(|ui| {
+                    if swaggen_ui_kit::secondary_button(ui, !app.pending, "Check invitations")
+                        .clicked()
+                    {
+                        app.submit(Command::RefreshPendingInvitations {
+                            profile_id: active.id.clone(),
+                        });
+                    }
+                    ui.label(
+                        egui::RichText::new(format!("Account: {}", active.email))
+                            .size(11.0)
+                            .color(swaggen_ui_kit::text_secondary(ui)),
+                    );
                 });
+                ui.add_space(8.0);
+                if app.pending_invitations.is_empty() {
+                    ui.label(
+                        egui::RichText::new("No pending workspace invitations.")
+                            .size(12.0)
+                            .color(swaggen_ui_kit::text_secondary(ui)),
+                    );
+                } else {
+                    let invs = app.pending_invitations.clone();
+                    for inv in invs {
+                        swaggen_ui_kit::table_row_frame(ui, |ui| {
+                            ui.horizontal_wrapped(|ui| {
+                                ui.strong(&inv.workspace_name);
+                                swaggen_ui_kit::pill_badge(
+                                    ui,
+                                    Tokens::STATUS_INFO,
+                                    inv.role.as_str(),
+                                );
+                                ui.with_layout(
+                                    egui::Layout::right_to_left(egui::Align::Center),
+                                    |ui| {
+                                        if swaggen_ui_kit::secondary_button(
+                                            ui,
+                                            !app.pending,
+                                            "Decline",
+                                        )
+                                        .clicked()
+                                        {
+                                            app.submit(Command::DeclineInAppInvitation {
+                                                profile_id: active.id.clone(),
+                                                invitation_id: inv.invitation_id.clone(),
+                                            });
+                                        }
+                                        if swaggen_ui_kit::primary_button(
+                                            ui,
+                                            !app.pending,
+                                            "✓ Join",
+                                        )
+                                        .clicked()
+                                        {
+                                            app.submit(Command::AcceptInAppInvitation {
+                                                profile_id: active.id.clone(),
+                                                invitation_id: inv.invitation_id.clone(),
+                                            });
+                                        }
+                                    },
+                                );
+                            });
+                        });
+                    }
+                }
+                ui.add_space(8.0);
             }
+
+            egui::CollapsingHeader::new(
+                egui::RichText::new("Join with manual invite code (optional fallback)")
+                    .size(12.0)
+                    .color(swaggen_ui_kit::text_secondary(ui)),
+            )
+            .default_open(false)
+            .show(ui, |ui| {
+                let field_w = ui.available_width();
+                swaggen_ui_kit::text_input(
+                    ui,
+                    &mut app.invite_token_input,
+                    "In-app invite code",
+                    field_w,
+                    true,
+                );
+                ui.add_space(6.0);
+                swaggen_ui_kit::text_input(
+                    ui,
+                    &mut app.auth_email,
+                    "Invited account email",
+                    field_w,
+                    false,
+                );
+                ui.add_space(6.0);
+                swaggen_ui_kit::text_input(
+                    ui,
+                    &mut app.auth_display_name,
+                    "Display name",
+                    field_w,
+                    false,
+                );
+                ui.add_space(6.0);
+                swaggen_ui_kit::text_input(
+                    ui,
+                    &mut app.auth_password,
+                    "Password (if creating internal account)",
+                    field_w,
+                    true,
+                );
+                ui.add_space(8.0);
+                if swaggen_ui_kit::primary_button(
+                    ui,
+                    !app.pending && !app.invite_token_input.trim().is_empty(),
+                    "Accept code & join workspace",
+                )
+                .clicked()
+                {
+                    let pw = std::mem::take(&mut app.auth_password);
+                    let tok = std::mem::take(&mut app.invite_token_input);
+                    app.submit(Command::AcceptServerInvitation {
+                        profile_id: active.id.clone(),
+                        invite_token: tok,
+                        email: app.auth_email.clone(),
+                        display_name: app.auth_display_name.clone(),
+                        password: if pw.is_empty() { None } else { Some(pw) },
+                    });
+                }
+            });
         });
     });
 
@@ -443,6 +534,9 @@ fn show_team_workspaces(app: &mut App, ui: &mut egui::Ui) {
             app.submit(Command::RefreshTeamWorkspaces {
                 profile_id: active.id.clone(),
             });
+            app.submit(Command::RefreshPendingInvitations {
+                profile_id: active.id.clone(),
+            });
         }
         ui.label("Slug:");
         ui.add(egui::TextEdit::singleline(&mut app.team_ws_slug).desired_width(120.0));
@@ -456,6 +550,36 @@ fn show_team_workspaces(app: &mut App, ui: &mut egui::Ui) {
             });
         }
     });
+
+    if !app.pending_invitations.is_empty() {
+        ui.add_space(6.0);
+        swaggen_ui_kit::surface_card(ui, |ui| {
+            ui.strong(format!(
+                "Your Pending In-App Invitations ({})",
+                app.pending_invitations.len()
+            ));
+            let invs = app.pending_invitations.clone();
+            for inv in invs {
+                ui.horizontal_wrapped(|ui| {
+                    ui.strong(&inv.workspace_name);
+                    swaggen_ui_kit::pill_badge(ui, Tokens::STATUS_INFO, inv.role.as_str());
+                    if swaggen_ui_kit::primary_button(ui, !app.pending, "✓ Accept & Join").clicked()
+                    {
+                        app.submit(Command::AcceptInAppInvitation {
+                            profile_id: active.id.clone(),
+                            invitation_id: inv.invitation_id.clone(),
+                        });
+                    }
+                    if swaggen_ui_kit::secondary_button(ui, !app.pending, "Decline").clicked() {
+                        app.submit(Command::DeclineInAppInvitation {
+                            profile_id: active.id.clone(),
+                            invitation_id: inv.invitation_id.clone(),
+                        });
+                    }
+                });
+            }
+        });
+    }
     ui.separator();
 
     let mut select_ws: Option<String> = None;
@@ -501,11 +625,21 @@ fn show_team_workspaces(app: &mut App, ui: &mut egui::Ui) {
         ui.add_space(6.0);
         let wid = details.workspace_id.clone();
         swaggen_ui_kit::surface_card(ui, |ui| {
-            ui.strong("Invite teammates");
+            ui.strong("Invite teammate directly in-app (no email required)");
+            ui.label(
+                egui::RichText::new(
+                    "Sent invitations appear immediately inside your teammate's Swaggen app when signed in.",
+                )
+                .size(11.5)
+                .color(swaggen_ui_kit::text_secondary(ui)),
+            );
+            ui.add_space(4.0);
             ui.horizontal_wrapped(|ui| {
-                ui.label("Email:");
+                ui.label("User email:");
                 ui.add(
-                    egui::TextEdit::singleline(&mut app.invite_email_input).desired_width(200.0),
+                    egui::TextEdit::singleline(&mut app.invite_email_input)
+                        .hint_text("teammate@example.com")
+                        .desired_width(200.0),
                 );
                 egui::ComboBox::from_id_salt("invite-role")
                     .selected_text(app.invite_role.as_str())
@@ -514,8 +648,7 @@ fn show_team_workspaces(app: &mut App, ui: &mut egui::Ui) {
                         ui.selectable_value(&mut app.invite_role, Role::Editor, "editor");
                         ui.selectable_value(&mut app.invite_role, Role::Viewer, "viewer");
                     });
-                if swaggen_ui_kit::primary_button(ui, !app.pending, "Create 24h one-time invite")
-                    .clicked()
+                if swaggen_ui_kit::primary_button(ui, !app.pending, "Send in-app invite").clicked()
                 {
                     app.submit(Command::CreateServerInvitation {
                         profile_id: active.id.clone(),
@@ -528,7 +661,11 @@ fn show_team_workspaces(app: &mut App, ui: &mut egui::Ui) {
             });
             if !app.last_created_invite_token.is_empty() {
                 ui.horizontal_wrapped(|ui| {
-                    ui.strong("Created one-time token:");
+                    ui.label(
+                        egui::RichText::new("In-app invitation ready · Optional manual code:")
+                            .size(11.0)
+                            .color(swaggen_ui_kit::text_secondary(ui)),
+                    );
                     ui.monospace(&app.last_created_invite_token);
                     if ui.small_button("Copy").clicked() {
                         ui.ctx().copy_text(app.last_created_invite_token.clone());

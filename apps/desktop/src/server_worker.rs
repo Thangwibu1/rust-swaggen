@@ -8,11 +8,12 @@ use std::{
     sync::{Arc, mpsc::SyncSender},
 };
 use swaggen_api_contract::{
-    AcceptInvitationRequest, AcceptInvitationResponse, AuditEventRecord, AuditListResponse,
-    AuthResponse, BootstrapOwnerRequest, Capabilities, ChangePasswordRequest,
-    CreateInvitationRequest, CreateInvitationResponse, CreateWorkspaceRequest,
-    FirebaseLoginRequest, LoginRequest, MemberListResponse, SessionListResponse,
-    TeamWorkspaceSummary, UpdateMemberRoleRequest, WorkspaceListResponse,
+    AcceptDirectInvitationRequest, AcceptInvitationRequest, AcceptInvitationResponse,
+    AuditEventRecord, AuditListResponse, AuthResponse, BootstrapOwnerRequest, Capabilities,
+    ChangePasswordRequest, CreateInvitationRequest, CreateInvitationResponse,
+    CreateWorkspaceRequest, FirebaseLoginRequest, LoginRequest, MemberListResponse,
+    PendingInvitationsResponse, SessionListResponse, TeamWorkspaceSummary, UpdateMemberRoleRequest,
+    WorkspaceListResponse,
 };
 use swaggen_domain::{
     Error, LocalId, Secret, SecretRef,
@@ -532,7 +533,9 @@ pub fn handle_server_command(
             ));
             Ok(match res {
                 Ok((joined, _)) => {
-                    if let Err(e) = save_session_token(root, &prof, &joined.session_token) {
+                    if !joined.session_token.is_empty()
+                        && let Err(e) = save_session_token(root, &prof, &joined.session_token)
+                    {
                         return Ok(Event::ActionError(e));
                     }
                     prof.email = joined.user.email.clone();
@@ -555,6 +558,91 @@ pub fn handle_server_command(
                 }
                 Err(err) => Event::ActionError(err),
             })
+        }
+        Command::RefreshPendingInvitations { profile_id } => {
+            let (_, prof) = match get_profile(root, &profile_id) {
+                Ok(v) => v,
+                Err(m) => return Ok(Event::ActionError(m)),
+            };
+            let tok = match read_session_token(root, &prof) {
+                Ok(t) => t,
+                Err(m) => return Ok(Event::ActionError(m)),
+            };
+            Ok(
+                match runtime.block_on(server_call::<(), PendingInvitationsResponse>(
+                    &prof,
+                    HttpMethod::Get,
+                    "/v1/auth/invitations/pending",
+                    Some(&tok),
+                    None,
+                    downloads,
+                )) {
+                    Ok((resp, _)) => Event::PendingInvitationsLoaded(resp.invitations),
+                    Err(e) => Event::ActionError(e),
+                },
+            )
+        }
+        Command::AcceptInAppInvitation {
+            profile_id,
+            invitation_id,
+        } => {
+            let (_, prof) = match get_profile(root, &profile_id) {
+                Ok(v) => v,
+                Err(m) => return Ok(Event::ActionError(m)),
+            };
+            let tok = match read_session_token(root, &prof) {
+                Ok(t) => t,
+                Err(m) => return Ok(Event::ActionError(m)),
+            };
+            let path = format!("/v1/auth/invitations/{invitation_id}/accept");
+            let body = AcceptDirectInvitationRequest {
+                device_name: "Swaggen Desktop Windows".into(),
+            };
+            Ok(
+                match runtime.block_on(server_call::<
+                    AcceptDirectInvitationRequest,
+                    AcceptInvitationResponse,
+                >(
+                    &prof,
+                    HttpMethod::Post,
+                    &path,
+                    Some(&tok),
+                    Some(&body),
+                    downloads,
+                )) {
+                    Ok((joined, _)) => Event::InAppInvitationAccepted(joined),
+                    Err(e) => Event::ActionError(e),
+                },
+            )
+        }
+        Command::DeclineInAppInvitation {
+            profile_id,
+            invitation_id,
+        } => {
+            let (_, prof) = match get_profile(root, &profile_id) {
+                Ok(v) => v,
+                Err(m) => return Ok(Event::ActionError(m)),
+            };
+            let tok = match read_session_token(root, &prof) {
+                Ok(t) => t,
+                Err(m) => return Ok(Event::ActionError(m)),
+            };
+            let path = format!("/v1/auth/invitations/{invitation_id}/decline");
+            Ok(
+                match runtime.block_on(server_call_empty::<()>(
+                    &prof,
+                    HttpMethod::Post,
+                    &path,
+                    Some(&tok),
+                    None,
+                    downloads,
+                )) {
+                    Ok(()) => Event::FileSaved {
+                        message: "Declined workspace invitation".into(),
+                    },
+                    Err(e) => Event::ActionError(e),
+                },
+            )
         }
         Command::ServerLogout { profile_id } => {
             let (mut store, mut prof) = match get_profile(root, &profile_id) {

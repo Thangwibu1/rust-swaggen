@@ -153,7 +153,7 @@ Backend (`axum 0.8.9`) phục vụ đồng bộ đội nhóm, quản lý quyền
 
 ---
 
-## 6. Tổng hợp Toàn bộ Tính năng Đã Hoàn thiện (Tính đến `v0.1.16`)
+## 6. Tổng hợp Toàn bộ Tính năng Đã Hoàn thiện (Tính đến `v0.1.17`)
 
 ### A. API Workbench (Postman-Style Flat UI, REST & GraphQL)
 1. **Thực thi HTTP cục bộ trực tiếp từ PC**: Hỗ trợ `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `HEAD`, `OPTIONS` và `GRAPHQL` qua `swaggen-http-engine`, tuỳ chọn `HTTP Version` (`Auto / HTTP/1.1 / HTTP/2`), Local HTTP Proxy, Custom Root CA & mTLS Client Certificate, hiển thị tiến độ upload/download và `Cancel` tức thì.

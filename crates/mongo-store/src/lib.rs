@@ -14,10 +14,11 @@ use swaggen_api_contract::{
     AcceptInvitationRequest, AcceptInvitationResponse, AuditEventRecord, AuthResponse,
     BootstrapOwnerRequest, ChangePasswordRequest, ChangesFeedResponse, CommentThreadRecord,
     CreateCommentRequest, CreateInvitationRequest, CreateInvitationResponse,
-    CreateWorkspaceRequest, EntityRevisionRecord, LoginRequest, MemberListResponse, MemberSummary,
-    NotificationListResponse, PublishBatchRequest, PublishBatchResponse, ReplyCommentRequest,
-    ResolveCommentRequest, RestoreRevisionRequest, SessionSummary, SnapshotResponse,
-    TeamWorkspaceSummary, UpdateMemberRoleRequest, UpsertEntityRequest, WorkspaceEntityRecord,
+    CreateWorkspaceRequest, EntityRevisionRecord, InvitationSummary, LoginRequest,
+    MemberListResponse, MemberSummary, NotificationListResponse, PublishBatchRequest,
+    PublishBatchResponse, ReplyCommentRequest, ResolveCommentRequest, RestoreRevisionRequest,
+    SessionSummary, SnapshotResponse, TeamWorkspaceSummary, UpdateMemberRoleRequest,
+    UpsertEntityRequest, WorkspaceEntityRecord,
 };
 
 #[allow(clippy::large_enum_variant)]
@@ -227,6 +228,45 @@ impl WorkspaceRepository for ServerStore {
         match self {
             Self::Mongo(m) => m.accept_invitation(caller, req, now).await,
             Self::Memory(m) => m.accept_invitation(caller, req, now).await,
+        }
+    }
+    async fn list_my_pending_invitations(
+        &self,
+        auth: &AuthContext,
+        now: i64,
+    ) -> Result<Vec<InvitationSummary>, StoreError> {
+        match self {
+            Self::Mongo(m) => m.list_my_pending_invitations(auth, now).await,
+            Self::Memory(m) => m.list_my_pending_invitations(auth, now).await,
+        }
+    }
+    async fn accept_invitation_by_id(
+        &self,
+        auth: &AuthContext,
+        invitation_id: &str,
+        device_name: &str,
+        now: i64,
+    ) -> Result<AcceptInvitationResponse, StoreError> {
+        match self {
+            Self::Mongo(m) => {
+                m.accept_invitation_by_id(auth, invitation_id, device_name, now)
+                    .await
+            }
+            Self::Memory(m) => {
+                m.accept_invitation_by_id(auth, invitation_id, device_name, now)
+                    .await
+            }
+        }
+    }
+    async fn decline_invitation(
+        &self,
+        auth: &AuthContext,
+        invitation_id: &str,
+        now: i64,
+    ) -> Result<(), StoreError> {
+        match self {
+            Self::Mongo(m) => m.decline_invitation(auth, invitation_id, now).await,
+            Self::Memory(m) => m.decline_invitation(auth, invitation_id, now).await,
         }
     }
     async fn update_member_role(

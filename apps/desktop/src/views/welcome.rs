@@ -367,6 +367,9 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                                         app.submit(Command::RefreshTeamWorkspaces {
                                             profile_id: prof_id.clone(),
                                         });
+                                        app.submit(Command::RefreshPendingInvitations {
+                                            profile_id: prof_id.clone(),
+                                        });
                                     }
                                     if swaggen_ui_kit::danger_button(ui, !app.pending, "Sign out")
                                         .clicked()
@@ -376,6 +379,90 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                                         });
                                     }
                                 });
+
+                                if !app.pending_invitations.is_empty() {
+                                    ui.add_space(10.0);
+                                    swaggen_ui_kit::notice_banner(
+                                        ui,
+                                        NoticeKind::Info,
+                                        &format!(
+                                            "{} pending in-app workspace invitation(s)",
+                                            app.pending_invitations.len()
+                                        ),
+                                        "You were invited directly inside Swaggen. Accept below to join immediately.",
+                                    );
+                                    ui.add_space(6.0);
+                                    let inv_list = app.pending_invitations.clone();
+                                    for inv in inv_list {
+                                        egui::Frame::new()
+                                            .fill(swaggen_ui_kit::subtle_bg(ui))
+                                            .stroke(egui::Stroke::new(
+                                                1.0,
+                                                Tokens::STATUS_INFO,
+                                            ))
+                                            .corner_radius(8)
+                                            .inner_margin(egui::Margin::symmetric(12, 8))
+                                            .show(ui, |ui| {
+                                                ui.horizontal_wrapped(|ui| {
+                                                    ui.vertical(|ui| {
+                                                        ui.label(swaggen_ui_kit::bold_text(
+                                                            &inv.workspace_name,
+                                                            13.0,
+                                                            swaggen_ui_kit::text_primary(ui),
+                                                        ));
+                                                        ui.label(
+                                                            egui::RichText::new(format!(
+                                                                "Role: {} · In-app invite",
+                                                                inv.role.as_str()
+                                                            ))
+                                                            .size(11.0)
+                                                            .color(swaggen_ui_kit::text_secondary(ui)),
+                                                        );
+                                                    });
+                                                    ui.with_layout(
+                                                        egui::Layout::right_to_left(
+                                                            egui::Align::Center,
+                                                        ),
+                                                        |ui| {
+                                                            if swaggen_ui_kit::secondary_button(
+                                                                ui,
+                                                                !app.pending,
+                                                                "Decline",
+                                                            )
+                                                            .clicked()
+                                                            {
+                                                                app.submit(
+                                                                    Command::DeclineInAppInvitation {
+                                                                        profile_id: prof_id.clone(),
+                                                                        invitation_id: inv
+                                                                            .invitation_id
+                                                                            .clone(),
+                                                                    },
+                                                                );
+                                                            }
+                                                            if swaggen_ui_kit::primary_button(
+                                                                ui,
+                                                                !app.pending,
+                                                                "✓ Accept & Join",
+                                                            )
+                                                            .clicked()
+                                                            {
+                                                                app.submit(
+                                                                    Command::AcceptInAppInvitation {
+                                                                        profile_id: prof_id.clone(),
+                                                                        invitation_id: inv
+                                                                            .invitation_id
+                                                                            .clone(),
+                                                                    },
+                                                                );
+                                                            }
+                                                        },
+                                                    );
+                                                });
+                                            });
+                                        ui.add_space(4.0);
+                                    }
+                                }
                                 ui.add_space(10.0);
 
                                 if app.team_workspaces.is_empty() {

@@ -132,6 +132,17 @@ pub enum Command {
         display_name: String,
         password: Option<String>,
     },
+    RefreshPendingInvitations {
+        profile_id: String,
+    },
+    AcceptInAppInvitation {
+        profile_id: String,
+        invitation_id: String,
+    },
+    DeclineInAppInvitation {
+        profile_id: String,
+        invitation_id: String,
+    },
     ListServerSessions {
         profile_id: String,
     },
@@ -345,6 +356,8 @@ pub enum Event {
         audit: Vec<swaggen_api_contract::AuditEventRecord>,
     },
     InvitationCreated(swaggen_api_contract::CreateInvitationResponse),
+    PendingInvitationsLoaded(Vec<swaggen_api_contract::InvitationSummary>),
+    InAppInvitationAccepted(swaggen_api_contract::AcceptInvitationResponse),
     SyncStateUpdated {
         state: Box<swaggen_sync::TeamSyncState>,
         message: String,
@@ -2058,6 +2071,9 @@ impl Worker {
                     | Command::BootstrapServerOwner { .. }
                     | Command::ServerLogin { .. }
                     | Command::AcceptServerInvitation { .. }
+                    | Command::RefreshPendingInvitations { .. }
+                    | Command::AcceptInAppInvitation { .. }
+                    | Command::DeclineInAppInvitation { .. }
                     | Command::ListServerSessions { .. }
                     | Command::RevokeServerSession { .. }
                     | Command::ServerLogout { .. }

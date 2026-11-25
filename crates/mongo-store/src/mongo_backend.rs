@@ -1559,6 +1559,298 @@ impl WorkspaceRepository for MongoStore {
         })
     }
 
+    async fn list_my_pending_invitations(
+        &self,
+        auth: &AuthContext,
+        now: i64,
+    ) -> Result<Vec<InvitationSummary>, StoreError> {
+        let email = normalize_email(&auth.email)?;
+        let inv_col: Collection<Document> = self.db.collection("invitations");
+        let ws_col: Collection<Document> = self.db.collection("workspaces");
+        let mut cursor = inv_col
+            .find(doc! {
+                "email_normalized": &email,
+                "used_at_unix": bson::Bson::Null,
+                "revoked_at_unix": bson::Bson::Null,
+                "expires_at_unix": { "$gt": now },
+            })
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        let mut raw = Vec::new();
+        let mut ws_ids = Vec::new();
+        while cursor.advance().await.map_err(|e| map_mongo_err(&e))? {
+            let d = cursor
+                .deserialize_current()
+                .map_err(|e| map_mongo_err(&e))?;
+            let wid = d.get_str("workspace_id").unwrap_or("").to_owned();
+            if !wid.is_empty() && !ws_ids.contains(&wid) {
+                ws_ids.push(wid);
+            }
+            raw.push(d);
+        }
+        let mut ws_names: std::collections::HashMap<String, String> =
+            std::collections::HashMap::new();
+        if !ws_ids.is_empty() {
+            let mut wcur = ws_col
+                .find(doc! { "workspace_id": { "$in": &ws_ids } })
+                .await
+                .map_err(|e| map_mongo_err(&e))?;
+            while wcur.advance().await.map_err(|e| map_mongo_err(&e))? {
+                let w = wcur.deserialize_current().map_err(|e| map_mongo_err(&e))?;
+                if let (Ok(id), Ok(name)) = (w.get_str("workspace_id"), w.get_str("name")) {
+                    ws_names.insert(id.to_owned(), name.to_owned());
+                }
+            }
+        }
+        let mut out: Vec<InvitationSummary> = raw
+            .into_iter()
+            .filter_map(|d| {
+                let wid = d.get_str("workspace_id").ok()?.to_owned();
+                let wname = ws_names.get(&wid)?.clone();
+                Some(InvitationSummary {
+                    invitation_id: d.get_str("invitation_id").unwrap_or("").to_owned(),
+                    workspace_id: wid,
+                    workspace_name: wname,
+                    email: d.get_str("email_normalized").unwrap_or("").to_owned(),
+                    role: parse_role(d.get_str("role").unwrap_or("viewer")),
+                    created_at_unix: d.get_i64("created_at_unix").unwrap_or(0),
+                    expires_at_unix: d.get_i64("expires_at_unix").unwrap_or(0),
+                    used_at_unix: None,
+                    revoked_at_unix: None,
+                })
+            })
+            .collect();
+        out.sort_by_key(|a| std::cmp::Reverse(a.created_at_unix));
+        Ok(out)
+    }
+
+    async fn accept_invitation_by_id(
+        &self,
+        auth: &AuthContext,
+        invitation_id: &str,
+        _device_name: &str,
+        now: i64,
+    ) -> Result<AcceptInvitationResponse, StoreError> {
+        let email = normalize_email(&auth.email)?;
+        let mut session = self
+            .client
+            .start_session()
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        session
+            .start_transaction()
+            .read_concern(ReadConcern::snapshot())
+            .write_concern(WriteConcern::majority())
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+
+        let inv_col: Collection<Document> = self.db.collection("invitations");
+        let inv = inv_col
+            .find_one(doc! { "invitation_id": invitation_id })
+            .session(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?
+            .ok_or_else(|| StoreError::NotFound("Invitation not found".into()))?;
+        if !inv
+            .get("revoked_at_unix")
+            .is_some_and(|b| b.as_null().is_some())
+        {
+            let _ = session.abort_transaction().await;
+            return Err(StoreError::InvitationRevoked);
+        }
+        if !inv
+            .get("used_at_unix")
+            .is_some_and(|b| b.as_null().is_some())
+        {
+            let _ = session.abort_transaction().await;
+            return Err(StoreError::InvitationAlreadyUsed);
+        }
+        if inv.get_i64("expires_at_unix").unwrap_or(0) <= now {
+            let _ = session.abort_transaction().await;
+            return Err(StoreError::InvitationExpired);
+        }
+        let inv_email = inv.get_str("email_normalized").unwrap_or("");
+        if email != inv_email {
+            let _ = session.abort_transaction().await;
+            return Err(StoreError::InvitationAccountMismatch);
+        }
+
+        let workspace_id = inv.get_str("workspace_id").unwrap_or("").to_owned();
+        let role = parse_role(inv.get_str("role").unwrap_or("viewer"));
+
+        let res = inv_col
+            .update_one(
+                doc! {
+                    "invitation_id": invitation_id,
+                    "used_at_unix": bson::Bson::Null,
+                    "revoked_at_unix": bson::Bson::Null,
+                },
+                doc! { "$set": { "used_at_unix": now } },
+            )
+            .session(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        if res.matched_count != 1 {
+            let _ = session.abort_transaction().await;
+            return Err(StoreError::InvitationAlreadyUsed);
+        }
+
+        let mem_col: Collection<Document> = self.db.collection("memberships");
+        let existing_mem = mem_col
+            .find_one(doc! { "workspace_id": &workspace_id, "user_id": &auth.user_id })
+            .session(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        if existing_mem.is_none() {
+            mem_col
+                .insert_one(doc! {
+                    "workspace_id": &workspace_id,
+                    "user_id": &auth.user_id,
+                    "role": role.as_str(),
+                    "joined_at_unix": now,
+                })
+                .session(&mut session)
+                .await
+                .map_err(|e| map_mongo_err(&e))?;
+        }
+
+        let fences: Collection<Document> = self.db.collection("workspace_permission_fences");
+        fences
+            .update_one(
+                doc! { "workspace_id": &workspace_id },
+                doc! { "$inc": { "membership_revision": 1i64 } },
+            )
+            .session(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+
+        let ws_col: Collection<Document> = self.db.collection("workspaces");
+        let ws = ws_col
+            .find_one(doc! { "workspace_id": &workspace_id })
+            .session(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?
+            .ok_or_else(|| StoreError::NotFound("Workspace not found".into()))?;
+        let fence_doc = fences
+            .find_one(doc! { "workspace_id": &workspace_id })
+            .session(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        let mem_rev = fence_doc
+            .and_then(|d| d.get_i64("membership_revision").ok())
+            .unwrap_or(1);
+
+        let users: Collection<Document> = self.db.collection("users");
+        let created_at = users
+            .find_one(doc! { "user_id": &auth.user_id })
+            .session(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?
+            .and_then(|u| u.get_i64("created_at_unix").ok())
+            .unwrap_or(now);
+
+        self.record_audit_tx(
+            &mut session,
+            Some(&workspace_id),
+            &auth.user_id,
+            &email,
+            "workspace.invitation_accepted",
+            invitation_id,
+            &format!("Accepted in-app invitation as {}", role.as_str()),
+            now,
+        )
+        .await?;
+        commit_with_retry(&mut session).await?;
+        let member_count = mem_col
+            .count_documents(doc! { "workspace_id": &workspace_id })
+            .await
+            .unwrap_or(1) as usize;
+        Ok(AcceptInvitationResponse {
+            api_version: API_VERSION,
+            workspace: TeamWorkspaceSummary {
+                workspace_id,
+                slug: ws.get_str("slug").unwrap_or("").to_owned(),
+                name: ws.get_str("name").unwrap_or("").to_owned(),
+                description: ws.get_str("description").unwrap_or("").to_owned(),
+                role,
+                member_count,
+                current_revision: ws.get_i64("current_revision").unwrap_or(1),
+                membership_revision: mem_rev,
+                archived: ws.get_bool("archived").unwrap_or(false),
+            },
+            user: swaggen_api_contract::UserProfile {
+                user_id: auth.user_id.clone(),
+                email,
+                display_name: auth.display_name.clone(),
+                is_server_owner: auth.is_server_owner,
+                created_at_unix: created_at,
+            },
+            session_id: auth.session_id.clone(),
+            session_token: String::new(),
+            expires_at_unix: now + SESSION_TTL_SECS,
+        })
+    }
+
+    async fn decline_invitation(
+        &self,
+        auth: &AuthContext,
+        invitation_id: &str,
+        now: i64,
+    ) -> Result<(), StoreError> {
+        let email = normalize_email(&auth.email)?;
+        let mut session = self
+            .client
+            .start_session()
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        session
+            .start_transaction()
+            .read_concern(ReadConcern::snapshot())
+            .write_concern(WriteConcern::majority())
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        let inv_col: Collection<Document> = self.db.collection("invitations");
+        let inv = inv_col
+            .find_one(doc! { "invitation_id": invitation_id })
+            .session(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?
+            .ok_or_else(|| StoreError::NotFound("Invitation not found".into()))?;
+        if inv.get_str("email_normalized").unwrap_or("") != email {
+            let _ = session.abort_transaction().await;
+            return Err(StoreError::InvitationAccountMismatch);
+        }
+        if !inv
+            .get("used_at_unix")
+            .is_some_and(|b| b.as_null().is_some())
+        {
+            let _ = session.abort_transaction().await;
+            return Err(StoreError::InvitationAlreadyUsed);
+        }
+        let workspace_id = inv.get_str("workspace_id").unwrap_or("").to_owned();
+        inv_col
+            .update_one(
+                doc! { "invitation_id": invitation_id },
+                doc! { "$set": { "revoked_at_unix": now } },
+            )
+            .session(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        self.record_audit_tx(
+            &mut session,
+            Some(&workspace_id),
+            &auth.user_id,
+            &email,
+            "workspace.invitation_declined",
+            invitation_id,
+            "Invited user declined in-app",
+            now,
+        )
+        .await?;
+        commit_with_retry(&mut session).await?;
+        Ok(())
+    }
+
     async fn update_member_role(
         &self,
         auth: &AuthContext,
