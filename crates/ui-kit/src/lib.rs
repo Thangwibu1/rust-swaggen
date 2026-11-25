@@ -1122,6 +1122,21 @@ pub fn method_color(method: &str) -> egui::Color32 {
     }
 }
 
+/// Compact 3-4 character sidebar badge so wide HTTP methods (DELETE/OPTIONS) never touch labels.
+pub fn compact_method_badge(method: &str) -> &'static str {
+    match method.to_ascii_uppercase().as_str() {
+        "GET" => "GET",
+        "POST" => "POST",
+        "PUT" => "PUT",
+        "PATCH" => "PAT",
+        "DELETE" => "DEL",
+        "HEAD" => "HEAD",
+        "OPTIONS" => "OPT",
+        "GQL" | "GRAPHQL" => "GQL",
+        _ => "REQ",
+    }
+}
+
 pub fn method_badge(ui: &mut egui::Ui, method: &str) {
     let upper = method.to_ascii_uppercase();
     egui::Frame::new()
@@ -1257,17 +1272,25 @@ pub fn vertical_splitter(ui: &mut egui::Ui, id_salt: &str, height: f32) -> (egui
     (resp, delta_x)
 }
 
-/// Line-numbered monospace code surface matching Figma Code editor (6:2082 / 6:5869),
-/// with compact IDE-grade line spacing so large JSON/XML bodies fit cleanly on screen.
+/// Line-numbered monospace code surface with compact IDE-grade spacing & lightweight JSON syntax highlighting.
 pub fn code_surface_numbered(ui: &mut egui::Ui, text: &str) {
+    let mono_font = egui::FontId::new(12.0, egui::FontFamily::Monospace);
+    let color_key = egui::Color32::from_rgb(0x0F, 0x76, 0x6E);
+    let color_str = egui::Color32::from_rgb(0x15, 0x80, 0x3D);
+    let color_num = egui::Color32::from_rgb(0xB4, 0x53, 0x09);
+    let color_kw = egui::Color32::from_rgb(0x7C, 0x3A, 0xED);
+    let color_punct = Tokens::TEXT_SECONDARY;
+    let color_plain = text_primary(ui);
+
     egui::Frame::new()
         .fill(surface_bg(ui))
         .stroke(egui::Stroke::new(1.0, border_color(ui)))
         .corner_radius(6)
-        .inner_margin(egui::Margin::symmetric(12, 8))
+        .inner_margin(egui::Margin::symmetric(10, 8))
         .show(ui, |ui| {
             ui.set_min_width(ui.available_width());
-            ui.spacing_mut().item_spacing = egui::vec2(6.0, 1.5);
+            ui.spacing_mut().item_spacing = egui::vec2(6.0, 1.0);
+            ui.spacing_mut().interact_size.y = 15.0;
             let mut total_lines = 0usize;
             for (idx, line) in text.lines().enumerate() {
                 total_lines = idx + 1;
@@ -1275,28 +1298,30 @@ pub fn code_surface_numbered(ui: &mut egui::Ui, text: &str) {
                     continue;
                 }
                 ui.horizontal(|ui| {
+                    ui.spacing_mut().interact_size.y = 15.0;
                     ui.allocate_ui_with_layout(
-                        egui::vec2(34.0, 16.5),
-                        egui::Layout::left_to_right(egui::Align::Center),
+                        egui::vec2(30.0, 15.0),
+                        egui::Layout::right_to_left(egui::Align::Center),
                         |ui| {
                             ui.label(
                                 egui::RichText::new(format!("{:02}", idx + 1))
                                     .monospace()
-                                    .size(11.0)
+                                    .size(10.5)
                                     .color(text_secondary(ui)),
                             );
                         },
                     );
-                    ui.add(
-                        egui::Label::new(
-                            egui::RichText::new(line)
-                                .monospace()
-                                .size(12.0)
-                                .color(text_primary(ui)),
-                        )
-                        .extend()
-                        .selectable(true),
+                    let job = build_highlighted_line_job(
+                        line,
+                        &mono_font,
+                        color_key,
+                        color_str,
+                        color_num,
+                        color_kw,
+                        color_punct,
+                        color_plain,
                     );
+                    ui.add(egui::Label::new(job).extend().selectable(true));
                 });
             }
             if total_lines > 2000 {
@@ -1318,4 +1343,131 @@ pub fn code_surface_numbered(ui: &mut egui::Ui, text: &str) {
                 );
             }
         });
+}
+
+#[allow(clippy::too_many_arguments)]
+fn build_highlighted_line_job(
+    line: &str,
+    font: &egui::FontId,
+    color_key: egui::Color32,
+    color_str: egui::Color32,
+    color_num: egui::Color32,
+    color_kw: egui::Color32,
+    color_punct: egui::Color32,
+    color_plain: egui::Color32,
+) -> egui::text::LayoutJob {
+    let mut job = egui::text::LayoutJob::default();
+    let trimmed = line.trim_start();
+    let indent_len = line.len() - trimmed.len();
+    if indent_len > 0 {
+        job.append(
+            &line[..indent_len],
+            0.0,
+            egui::TextFormat::simple(font.clone(), color_plain),
+        );
+    }
+
+    // Fast path for JSON `"key": value` lines
+    if trimmed.starts_with('"')
+        && let Some(colon_pos) = find_json_key_colon(trimmed)
+    {
+        let key_part = &trimmed[..=colon_pos];
+        let after_colon = &trimmed[colon_pos + 1..];
+        let key_only = &key_part[..key_part.len() - 1];
+        job.append(
+            key_only,
+            0.0,
+            egui::TextFormat::simple(font.clone(), color_key),
+        );
+        job.append(
+            ":",
+            0.0,
+            egui::TextFormat::simple(font.clone(), color_punct),
+        );
+
+        let val_trim_start = after_colon.len() - after_colon.trim_start().len();
+        if val_trim_start > 0 {
+            job.append(
+                &after_colon[..val_trim_start],
+                0.0,
+                egui::TextFormat::simple(font.clone(), color_plain),
+            );
+        }
+        let rest = &after_colon[val_trim_start..];
+        let (core, trailing_comma) = if let Some(stripped) = rest.strip_suffix(',') {
+            (stripped, ",")
+        } else {
+            (rest, "")
+        };
+        let val_col = if core.starts_with('"') && core.ends_with('"') {
+            color_str
+        } else if matches!(core, "true" | "false" | "null") {
+            color_kw
+        } else if matches!(core, "{" | "}" | "[" | "]" | "{}" | "[]") {
+            color_punct
+        } else if !core.is_empty()
+            && core
+                .bytes()
+                .all(|b| b.is_ascii_digit() || matches!(b, b'-' | b'+' | b'.' | b'e' | b'E'))
+        {
+            color_num
+        } else {
+            color_plain
+        };
+        if !core.is_empty() {
+            job.append(core, 0.0, egui::TextFormat::simple(font.clone(), val_col));
+        }
+        if !trailing_comma.is_empty() {
+            job.append(
+                trailing_comma,
+                0.0,
+                egui::TextFormat::simple(font.clone(), color_punct),
+            );
+        }
+        return job;
+    }
+
+    let plain_col = if matches!(
+        trimmed,
+        "{" | "}" | "[" | "]" | "{," | "}," | "]," | "[," | "{}" | "[]"
+    ) {
+        color_punct
+    } else if trimmed.starts_with('"') {
+        color_str
+    } else {
+        color_plain
+    };
+    job.append(
+        trimmed,
+        0.0,
+        egui::TextFormat::simple(font.clone(), plain_col),
+    );
+    job
+}
+
+fn find_json_key_colon(trimmed: &str) -> Option<usize> {
+    let bytes = trimmed.as_bytes();
+    if bytes.first().copied() != Some(b'"') {
+        return None;
+    }
+    let mut i = 1usize;
+    let mut escaped = false;
+    while i < bytes.len() {
+        if escaped {
+            escaped = false;
+        } else if bytes[i] == b'\\' {
+            escaped = true;
+        } else if bytes[i] == b'"' {
+            let mut j = i + 1;
+            while j < bytes.len() && bytes[j].is_ascii_whitespace() {
+                j += 1;
+            }
+            if j < bytes.len() && bytes[j] == b':' {
+                return Some(j);
+            }
+            return None;
+        }
+        i += 1;
+    }
+    None
 }

@@ -69,7 +69,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
                         12.5,
                         Tokens::TEXT_PRIMARY,
                     ));
-                    swaggen_ui_kit::pill_badge(ui, Tokens::TEXT_SECONDARY, "Local PC engine");
+                    swaggen_ui_kit::pill_badge(ui, Tokens::STATUS_SUCCESS, "Direct from this PC");
                     if app.response_maximized {
                         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                             if swaggen_ui_kit::secondary_button(ui, true, "Restore").clicked() {
@@ -78,14 +78,36 @@ pub fn show(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
                         });
                     }
                 });
-                ui.add_space(4.0);
-                ui.label(
-                    egui::RichText::new(
-                        "Click 'Send' (or Ctrl+Enter) to execute directly from your computer and inspect the response here.",
-                    )
-                    .size(11.5)
-                    .color(Tokens::TEXT_SECONDARY),
-                );
+                ui.add_space(14.0);
+                let is_gql = app.active_request().is_some_and(|r| r.is_graphql());
+                ui.vertical_centered(|ui| {
+                    ui.label(swaggen_ui_kit::bold_text(
+                        if is_gql {
+                            "Ready to execute GraphQL directly from your PC"
+                        } else {
+                            "Ready to send HTTP request directly from your PC"
+                        },
+                        13.0,
+                        Tokens::TEXT_PRIMARY,
+                    ));
+                    ui.add_space(6.0);
+                    ui.horizontal_wrapped(|ui| {
+                        swaggen_ui_kit::pill_badge(ui, Tokens::STATUS_INFO, "Ctrl+Enter · Send");
+                        swaggen_ui_kit::pill_badge(ui, Tokens::TEXT_SECONDARY, "Ctrl+S · Save");
+                        swaggen_ui_kit::pill_badge(
+                            ui,
+                            Tokens::TEXT_SECONDARY,
+                            "Ctrl+K · Command Palette",
+                        );
+                        if is_gql {
+                            swaggen_ui_kit::pill_badge(
+                                ui,
+                                swaggen_ui_kit::method_color("GQL"),
+                                "Fetch Schema · Sync $Vars",
+                            );
+                        }
+                    });
+                });
                 return;
             };
 
@@ -207,7 +229,10 @@ pub fn show(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
                             {
                                 app.response_maximized = !app.response_maximized;
                             }
-                            if swaggen_ui_kit::secondary_button(ui, true, "Save").clicked() {
+                            if swaggen_ui_kit::secondary_button(ui, true, "Save")
+                                .on_hover_text(format!("Save raw response to: {}", app.save_response_path))
+                                .clicked()
+                            {
                                 app.submit(Command::SaveResponseFile {
                                     source: resp.raw_body_path.clone(),
                                     destination: PathBuf::from(app.save_response_path.trim()),
@@ -390,28 +415,71 @@ pub fn show(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
                                     11.5,
                                     Tokens::TEXT_PRIMARY,
                                 ));
+                                ui.add_space(3.0);
                                 for (k, v) in &resp.headers {
-                                    ui.monospace(format!("{k}: {v}"));
+                                    swaggen_ui_kit::table_row_frame(ui, |ui| {
+                                        ui.allocate_ui_with_layout(
+                                            egui::vec2(190.0, 18.0),
+                                            egui::Layout::left_to_right(egui::Align::Center),
+                                            |ui| {
+                                                ui.monospace(
+                                                    egui::RichText::new(k)
+                                                        .size(11.0)
+                                                        .color(Tokens::STATUS_INFO)
+                                                        .strong(),
+                                                );
+                                            },
+                                        );
+                                        ui.add(
+                                            egui::Label::new(
+                                                egui::RichText::new(v)
+                                                    .monospace()
+                                                    .size(11.0)
+                                                    .color(Tokens::TEXT_PRIMARY),
+                                            )
+                                            .selectable(true)
+                                            .wrap(),
+                                        );
+                                        ui.with_layout(
+                                            egui::Layout::right_to_left(egui::Align::Center),
+                                            |ui| {
+                                                if ui
+                                                    .small_button("Copy")
+                                                    .on_hover_text("Copy header value")
+                                                    .clicked()
+                                                {
+                                                    ctx.copy_text(v.clone());
+                                                    app.status = format!("Copied header '{k}'");
+                                                }
+                                            },
+                                        );
+                                    });
                                 }
-                                ui.add_space(4.0);
+                                ui.add_space(6.0);
                                 ui.label(swaggen_ui_kit::bold_text(
                                     "Captured cookies",
                                     11.5,
                                     Tokens::TEXT_PRIMARY,
                                 ));
                                 if resp.captured_cookies.is_empty() {
-                                    ui.label("No Set-Cookie headers returned.");
+                                    ui.label(
+                                        egui::RichText::new("No Set-Cookie headers returned.")
+                                            .size(11.5)
+                                            .color(Tokens::TEXT_SECONDARY),
+                                    );
                                 } else {
                                     for c in &resp.captured_cookies {
-                                        ui.monospace(format!(
-                                            "{}={} (domain={}, path={}, secure={}, httpOnly={})",
-                                            c.name,
-                                            c.value,
-                                            c.domain,
-                                            c.path,
-                                            c.secure,
-                                            c.http_only
-                                        ));
+                                        swaggen_ui_kit::table_row_frame(ui, |ui| {
+                                            ui.monospace(format!(
+                                                "{}={} (domain={}, path={}, secure={}, httpOnly={})",
+                                                c.name,
+                                                c.value,
+                                                c.domain,
+                                                c.path,
+                                                c.secure,
+                                                c.http_only
+                                            ));
+                                        });
                                     }
                                 }
                             }

@@ -21,82 +21,124 @@ use swaggen_domain::{
 use swaggen_ui_kit::{IconKind, NoticeKind, Tokens};
 
 pub fn show_top_bar(app: &mut App, ui: &mut egui::Ui) -> Option<usize> {
-    // 1. Compact open request tab strip + right-aligned Split layout toggle
+    // 1. Scrollable open request tab strip + fixed right controls (+, + GQL, Close unpinned, Layout icon)
     ui.horizontal(|ui| {
         ui.spacing_mut().item_spacing.x = 4.0;
         let mut switch_tab: Option<String> = None;
         let mut close_tab: Option<String> = None;
         let mut toggle_pin: Option<String> = None;
-        for tab in &app.state.open_tabs {
-            let (method, name) = app
-                .state
-                .requests
-                .iter()
-                .find(|r| r.id == tab.request_id)
-                .map(|r| {
-                    let badge = if r.is_graphql() {
-                        "GQL"
-                    } else {
-                        r.method.as_str()
-                    };
-                    (badge, r.name.clone())
-                })
-                .unwrap_or(("GET", "Missing".into()));
-            let active = app.state.active_tab_id.as_deref() == Some(tab.id.as_str());
-            let fill = if active {
-                Tokens::BG_SELECTED
-            } else {
-                Tokens::BG_SURFACE
-            };
-            egui::Frame::new()
-                .fill(fill)
-                .stroke(egui::Stroke::new(
-                    1.0,
-                    if active {
-                        Tokens::STATUS_INFO
-                    } else {
-                        Tokens::BORDER_DEFAULT
-                    },
-                ))
-                .corner_radius(5)
-                .inner_margin(egui::Margin::symmetric(7, 3))
-                .show(ui, |ui| {
-                    ui.spacing_mut().item_spacing.x = 4.0;
-                    ui.horizontal(|ui| {
-                        ui.label(
-                            egui::RichText::new(method)
-                                .monospace()
-                                .size(10.0)
-                                .color(swaggen_ui_kit::method_color(method)),
-                        );
-                        if ui
-                            .add(
-                                egui::Button::new(
-                                    egui::RichText::new(&name)
-                                        .size(11.5)
-                                        .color(Tokens::TEXT_PRIMARY),
-                                )
-                                .fill(egui::Color32::TRANSPARENT)
-                                .stroke(egui::Stroke::NONE)
-                                .frame(false),
-                            )
-                            .clicked()
-                        {
-                            switch_tab = Some(tab.id.clone());
-                        }
-                        if ui
-                            .small_button(if tab.pinned { "*" } else { "·" })
-                            .on_hover_text(if tab.pinned { "Unpin tab" } else { "Pin tab" })
-                            .clicked()
-                        {
-                            toggle_pin = Some(tab.id.clone());
-                        }
-                        if !tab.pinned && ui.small_button("×").clicked() {
-                            close_tab = Some(tab.id.clone());
-                        }
+
+        let close_unpinned_w = if app.state.open_tabs.len() > 1 {
+            94.0
+        } else {
+            0.0
+        };
+        let fixed_right_w = 24.0 + 44.0 + 26.0 + close_unpinned_w + 20.0;
+        let tabs_scroll_w = (ui.available_width() - fixed_right_w).max(90.0);
+
+        ui.allocate_ui_with_layout(
+            egui::vec2(tabs_scroll_w, 26.0),
+            egui::Layout::left_to_right(egui::Align::Center),
+            |ui| {
+                egui::ScrollArea::horizontal()
+                    .id_salt("open_tabs_scroll")
+                    .scroll_bar_visibility(egui::scroll_area::ScrollBarVisibility::VisibleWhenNeeded)
+                    .show(ui, |ui| {
+                        ui.horizontal(|ui| {
+                            ui.spacing_mut().item_spacing.x = 4.0;
+                            for tab in &app.state.open_tabs {
+                                let (raw_method, name, req_url) = app
+                                    .state
+                                    .requests
+                                    .iter()
+                                    .find(|r| r.id == tab.request_id)
+                                    .map(|r| {
+                                        let badge = if r.is_graphql() {
+                                            "GQL"
+                                        } else {
+                                            r.method.as_str()
+                                        };
+                                        (badge, r.name.clone(), r.url.clone())
+                                    })
+                                    .unwrap_or(("GET", "Missing".into(), String::new()));
+                                let method = swaggen_ui_kit::compact_method_badge(raw_method);
+                                let short_name: String = if name.chars().count() > 22 {
+                                    let mut s: String = name.chars().take(21).collect();
+                                    s.push('…');
+                                    s
+                                } else {
+                                    name.clone()
+                                };
+                                let active =
+                                    app.state.active_tab_id.as_deref() == Some(tab.id.as_str());
+                                let fill = if active {
+                                    Tokens::BG_SELECTED
+                                } else {
+                                    Tokens::BG_SURFACE
+                                };
+                                egui::Frame::new()
+                                    .fill(fill)
+                                    .stroke(egui::Stroke::new(
+                                        1.0,
+                                        if active {
+                                            Tokens::STATUS_INFO
+                                        } else {
+                                            Tokens::BORDER_DEFAULT
+                                        },
+                                    ))
+                                    .corner_radius(5)
+                                    .inner_margin(egui::Margin::symmetric(7, 3))
+                                    .show(ui, |ui| {
+                                        ui.spacing_mut().item_spacing.x = 4.0;
+                                        ui.horizontal(|ui| {
+                                            ui.label(
+                                                egui::RichText::new(method)
+                                                    .monospace()
+                                                    .size(10.0)
+                                                    .color(swaggen_ui_kit::method_color(raw_method)),
+                                            );
+                                            let title_resp = ui
+                                                .add(
+                                                    egui::Button::new(
+                                                        egui::RichText::new(&short_name)
+                                                            .size(11.5)
+                                                            .color(Tokens::TEXT_PRIMARY),
+                                                    )
+                                                    .fill(egui::Color32::TRANSPARENT)
+                                                    .stroke(egui::Stroke::NONE)
+                                                    .frame(false),
+                                                )
+                                                .on_hover_text(format!(
+                                                    "{raw_method} {name}\n{req_url}\n(Middle-click to close)"
+                                                ));
+                                            if title_resp.clicked() {
+                                                switch_tab = Some(tab.id.clone());
+                                            }
+                                            if !tab.pinned && title_resp.middle_clicked() {
+                                                close_tab = Some(tab.id.clone());
+                                            }
+                                            if ui
+                                                .small_button(if tab.pinned { "*" } else { "·" })
+                                                .on_hover_text(if tab.pinned {
+                                                    "Unpin tab"
+                                                } else {
+                                                    "Pin tab"
+                                                })
+                                                .clicked()
+                                            {
+                                                toggle_pin = Some(tab.id.clone());
+                                            }
+                                            if !tab.pinned && ui.small_button("×").clicked() {
+                                                close_tab = Some(tab.id.clone());
+                                            }
+                                        });
+                                    });
+                            }
+                        });
                     });
-                });
-        }
+            },
+        );
+
         let (add_rect, add_resp) =
             ui.allocate_exact_size(egui::vec2(22.0, 22.0), egui::Sense::click());
         if add_resp.hovered() {
@@ -316,7 +358,7 @@ pub fn show_top_bar(app: &mut App, ui: &mut egui::Ui) -> Option<usize> {
             app.request_subtab = RequestSubTab::Params;
         }
 
-        let url_w = (ui.available_width() - 236.0).max(120.0);
+        let url_w = (ui.available_width() - 232.0).max(110.0);
         let url_hint = if app.state.requests[req_idx].is_graphql() {
             "https://api.example.test/graphql"
         } else {
@@ -329,6 +371,7 @@ pub fn show_top_bar(app: &mut App, ui: &mut egui::Ui) -> Option<usize> {
             url_w,
             false,
         )
+        .on_hover_text("Target URL (supports {{variables}}, :pathParams, and ?query=values)")
         .changed()
         {
             app.state.requests[req_idx].sync_params_from_url();
@@ -984,48 +1027,58 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
                                             )
                                             .default_open(true)
                                             .show(ui, |ui| {
-                                                for (kind, list) in [
-                                                    (
-                                                        GraphQlOperationKind::Query,
-                                                        &schema.query_fields,
-                                                    ),
-                                                    (
-                                                        GraphQlOperationKind::Mutation,
-                                                        &schema.mutation_fields,
-                                                    ),
-                                                ] {
-                                                    for f in list {
-                                                        ui.horizontal_wrapped(|ui| {
-                                                            ui.spacing_mut().item_spacing.x = 4.0;
-                                                            if ui
-                                                                .small_button("Use")
-                                                                .on_hover_text(
-                                                                    "Generate GraphQL operation & variables template",
-                                                                )
-                                                                .clicked()
-                                                            {
-                                                                let (tpl_q, tpl_v) =
-                                                                    build_operation_template(
-                                                                        kind, f, schema,
+                                                let explorer_h = (ui.available_height() - 6.0)
+                                                    .clamp(76.0, (pane_h * 0.52).max(96.0));
+                                                egui::ScrollArea::vertical()
+                                                    .id_salt("gql_schema_explorer_scroll")
+                                                    .max_height(explorer_h)
+                                                    .show(ui, |ui| {
+                                                        for (kind, list) in [
+                                                            (
+                                                                GraphQlOperationKind::Query,
+                                                                &schema.query_fields,
+                                                            ),
+                                                            (
+                                                                GraphQlOperationKind::Mutation,
+                                                                &schema.mutation_fields,
+                                                            ),
+                                                        ] {
+                                                            for f in list {
+                                                                ui.horizontal_wrapped(|ui| {
+                                                                    ui.spacing_mut().item_spacing.x =
+                                                                        4.0;
+                                                                    if ui
+                                                                        .small_button("Use")
+                                                                        .on_hover_text(
+                                                                            "Generate GraphQL operation & variables template",
+                                                                        )
+                                                                        .clicked()
+                                                                    {
+                                                                        let (tpl_q, tpl_v) =
+                                                                            build_operation_template(
+                                                                                kind, f, schema,
+                                                                            );
+                                                                        *query = tpl_q;
+                                                                        *variables = tpl_v;
+                                                                        *operation_name = None;
+                                                                        changed = true;
+                                                                    }
+                                                                    ui.monospace(
+                                                                        egui::RichText::new(
+                                                                            format!(
+                                                                                "{} {}: {}",
+                                                                                kind.as_str(),
+                                                                                f.name,
+                                                                                f.return_type
+                                                                            ),
+                                                                        )
+                                                                        .size(10.5)
+                                                                        .color(Tokens::TEXT_PRIMARY),
                                                                     );
-                                                                *query = tpl_q;
-                                                                *variables = tpl_v;
-                                                                *operation_name = None;
-                                                                changed = true;
+                                                                });
                                                             }
-                                                            ui.monospace(
-                                                                egui::RichText::new(format!(
-                                                                    "{} {}: {}",
-                                                                    kind.as_str(),
-                                                                    f.name,
-                                                                    f.return_type
-                                                                ))
-                                                                .size(10.5)
-                                                                .color(Tokens::TEXT_PRIMARY),
-                                                            );
-                                                        });
-                                                    }
-                                                }
+                                                        }
+                                                    });
                                             });
                                         }
                                     },
@@ -1308,6 +1361,8 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
                                 );
                             }
                             RequestBody::Json(text) => {
+                                let body_rows =
+                                    ((inner_scroll_h - 54.0) / 17.5).clamp(4.0, 26.0) as usize;
                                 ui.horizontal(|ui| {
                                     if ui.small_button("Format JSON").clicked()
                                         && let Ok(val) =
@@ -1332,7 +1387,7 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
                                     .add(
                                         egui::TextEdit::multiline(text)
                                             .desired_width(ui.available_width())
-                                            .desired_rows(4)
+                                            .desired_rows(body_rows)
                                             .code_editor(),
                                     )
                                     .changed()
@@ -1341,11 +1396,13 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
                                 }
                             }
                             RequestBody::Text(text) | RequestBody::Xml(text) => {
+                                let body_rows =
+                                    ((inner_scroll_h - 38.0) / 17.5).clamp(4.0, 26.0) as usize;
                                 if ui
                                     .add(
                                         egui::TextEdit::multiline(text)
                                             .desired_width(ui.available_width())
-                                            .desired_rows(4)
+                                            .desired_rows(body_rows)
                                             .code_editor(),
                                     )
                                     .changed()
@@ -2090,7 +2147,7 @@ fn edit_kv_table_with_ghost(
         ui.push_id(id_salt, |ui| {
             let total_w = ui.available_width().max(300.0);
             let key_w = (total_w * *key_ratio).clamp(90.0, (total_w - 180.0).max(90.0));
-            let val_w = (total_w - key_w - 135.0).clamp(90.0, 560.0);
+            let val_w = (total_w - key_w - 120.0).max(90.0);
             swaggen_ui_kit::table_row_frame(ui, |ui| {
                 let mut dummy_on = true;
                 ui.add_enabled(false, egui::Checkbox::new(&mut dummy_on, ""));
@@ -2145,7 +2202,7 @@ fn edit_kv_table_inner(
         let header_left = ui.available_rect_before_wrap().left();
         let total_w = ui.available_width().max(300.0);
         let key_w = (total_w * *key_ratio).clamp(90.0, (total_w - 180.0).max(90.0));
-        let val_w = (total_w - key_w - 135.0).clamp(90.0, 560.0);
+        let val_w = (total_w - key_w - 120.0).max(90.0);
 
         ui.horizontal(|ui| {
             ui.add_space(6.0);
@@ -2174,6 +2231,12 @@ fn edit_kv_table_inner(
                 *key_ratio = ((pos.x - header_left - 24.0) / total_w).clamp(0.18, 0.68);
                 ui.ctx().request_repaint();
             }
+            let col_resp = col_resp.on_hover_text(
+                "Drag left/right to resize Key vs Value columns · Double-click to reset",
+            );
+            if col_resp.double_clicked() {
+                *key_ratio = 0.36;
+            }
             ui.painter().line_segment(
                 [
                     egui::pos2(col_rect.center().x, col_rect.top() + 2.0),
@@ -2188,7 +2251,6 @@ fn edit_kv_table_inner(
                     },
                 ),
             );
-            let _ = col_resp.on_hover_text("Drag left/right to resize Key vs Value columns");
             ui.allocate_ui_with_layout(
                 egui::vec2(val_w, 18.0),
                 egui::Layout::left_to_right(egui::Align::Center),

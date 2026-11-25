@@ -315,6 +315,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
     let issue_count = doc_clone.issues.len();
 
     ui.columns(2, |cols| {
+        let col_h = cols[0].available_height().max(260.0);
         // Left Column: openapi.yaml editor card
         swaggen_ui_kit::surface_card(&mut cols[0], |ui| {
             ui.horizontal(|ui| {
@@ -344,9 +345,11 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                 });
             });
             ui.add_space(8.0);
+            let editor_h = (col_h - 68.0).max(200.0);
             egui::ScrollArea::vertical()
                 .id_salt("d01-spec-editor")
-                .max_height(460.0)
+                .max_height(editor_h)
+                .auto_shrink([false, false])
                 .show(ui, |ui| {
                     ui.add(
                         egui::TextEdit::multiline(&mut app.spec_editor_text)
@@ -438,9 +441,11 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
             ui.add_space(10.0);
 
             let (ops, schemas) = doc_clone.search(&app.spec_doc_search);
+            let docs_h = ui.available_height().max(200.0);
             egui::ScrollArea::vertical()
                 .id_salt("d01-live-docs")
-                .max_height(410.0)
+                .max_height(docs_h)
+                .auto_shrink([false, false])
                 .show(ui, |ui| {
                     for op in ops {
                         swaggen_ui_kit::surface_card(ui, |ui| {

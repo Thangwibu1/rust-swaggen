@@ -14,6 +14,8 @@ struct SidebarActions {
     add_req_target: Option<(String, Option<String>)>,
     add_gql_target: Option<(String, Option<String>)>,
     add_folder_target: Option<(String, Option<String>)>,
+    rename_folder: Option<(String, String)>,
+    del_folder_id: Option<String>,
     dup_req_id: Option<String>,
     del_req_id: Option<String>,
     move_req_to: Option<(String, String, Option<String>)>,
@@ -215,11 +217,11 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
         .or_else(|| ui.ctx().pointer_interact_pos());
     let pointer_released = !ui.ctx().input(|i| i.pointer.any_down());
 
-    // Exact height calculation with `.auto_shrink([false, false])` so `PERSONAL` stays anchored at bottom!
+    // Exact height calculation with `.auto_shrink([false, false])` so `PERSONAL` stays anchored without clipping!
     let footer_reserved = if app.state.layout.sidebar_personal_collapsed {
         44.0
     } else {
-        app.state.layout.sidebar_footer_height.clamp(112.0, 220.0)
+        app.state.layout.sidebar_footer_height.clamp(126.0, 230.0)
     };
     let tree_height = (ui.available_height() - footer_reserved - 10.0).max(68.0);
     let show_endpoint_selection = app.mode == MainMode::Workbench && !app.show_workspace_modal;
@@ -379,7 +381,10 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                             Tokens::TEXT_SECONDARY
                         },
                     );
-                    if add_resp.on_hover_text("Add request").clicked() {
+                    if add_resp
+                        .on_hover_text("Add REST request (open ⋯ for GraphQL / Folder)")
+                        .clicked()
+                    {
                         acts.add_req_target = Some((col.id.clone(), None));
                     }
 
@@ -596,6 +601,35 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
         c.name = new_name;
         app.mark_dirty();
     }
+    if let Some((fid, new_name)) = acts.rename_folder
+        && let Some(f) = app.state.folders.iter_mut().find(|f| f.id == fid)
+    {
+        f.name = new_name;
+        app.mark_dirty();
+    }
+    if let Some(fid) = acts.del_folder_id {
+        let mut to_remove = vec![fid.clone()];
+        let mut idx = 0usize;
+        while idx < to_remove.len() {
+            let parent = to_remove[idx].clone();
+            for child in &app.state.folders {
+                if child.parent_folder_id.as_deref() == Some(parent.as_str()) {
+                    to_remove.push(child.id.clone());
+                }
+            }
+            idx += 1;
+        }
+        for req in &mut app.state.requests {
+            if let Some(ref rfid) = req.folder_id
+                && to_remove.contains(rfid)
+            {
+                req.folder_id = None;
+            }
+        }
+        app.state.folders.retain(|f| !to_remove.contains(&f.id));
+        app.mark_dirty();
+        app.status = "Deleted folder (requests moved to collection root)".into();
+    }
     if let Some(cid) = acts.fork_col_id
         && app.state.fork_collection(&cid).is_some()
     {
@@ -614,13 +648,13 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
             && let Some(pos) = ui.ctx().pointer_interact_pos()
         {
             app.state.layout.sidebar_footer_height =
-                (sidebar_full_rect.bottom() - pos.y).clamp(112.0, 220.0);
+                (sidebar_full_rect.bottom() - pos.y).clamp(126.0, 230.0);
         }
         if split_resp
             .on_hover_text("Drag up/down to resize Collections vs Personal · Double-click to reset")
             .double_clicked()
         {
-            app.state.layout.sidebar_footer_height = 136.0;
+            app.state.layout.sidebar_footer_height = 138.0;
         }
     } else {
         ui.add_space(4.0);
@@ -740,20 +774,51 @@ fn show_folder_children(
                     Some((drag_id, collection_id.to_owned(), Some(folder.id.clone())));
             }
         }
-        hdr.header_response.context_menu(|ui| {
+        let mut folder_name_buf = folder.name.clone();
+        let folder_id_clone = folder.id.clone();
+        let col_id_clone = collection_id.to_owned();
+        let render_folder_menu = |ui: &mut egui::Ui,
+                                  acts: &mut SidebarActions,
+                                  folder_name_buf: &mut String| {
+            ui.set_min_width(172.0);
+            ui.label(
+                egui::RichText::new("Folder name")
+                    .size(10.5)
+                    .color(Tokens::TEXT_SECONDARY),
+            );
+            let name_resp = ui.text_edit_singleline(folder_name_buf);
+            if name_resp.changed() && !folder_name_buf.trim().is_empty() {
+                acts.rename_folder =
+                    Some((folder_id_clone.clone(), folder_name_buf.trim().to_owned()));
+            }
+            if name_resp.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter)) {
+                ui.close();
+            }
+            ui.separator();
             if ui.button("+ New request").clicked() {
-                acts.add_req_target = Some((collection_id.to_owned(), Some(folder.id.clone())));
+                acts.add_req_target = Some((col_id_clone.clone(), Some(folder_id_clone.clone())));
                 ui.close();
             }
             if ui.button("+ New GraphQL request").clicked() {
-                acts.add_gql_target = Some((collection_id.to_owned(), Some(folder.id.clone())));
+                acts.add_gql_target = Some((col_id_clone.clone(), Some(folder_id_clone.clone())));
                 ui.close();
             }
             if ui.button("+ New subfolder").clicked() {
-                acts.add_folder_target = Some((collection_id.to_owned(), Some(folder.id.clone())));
+                acts.add_folder_target =
+                    Some((col_id_clone.clone(), Some(folder_id_clone.clone())));
                 ui.close();
             }
-        });
+            ui.separator();
+            if ui
+                .button(egui::RichText::new("Delete folder").color(Tokens::TEXT_DANGER))
+                .clicked()
+            {
+                acts.del_folder_id = Some(folder_id_clone.clone());
+                ui.close();
+            }
+        };
+        hdr.header_response
+            .context_menu(|ui| render_folder_menu(ui, acts, &mut folder_name_buf));
     }
 
     for req in requests
@@ -814,17 +879,18 @@ fn render_request_row(
     ui.painter()
         .rect(rect, 5.0, bg, stroke, egui::StrokeKind::Middle);
 
-    let m = if req.is_graphql() {
+    let raw_m = if req.is_graphql() {
         "GQL"
     } else {
         req.method.as_str()
     };
+    let short_m = swaggen_ui_kit::compact_method_badge(raw_m);
     ui.painter().text(
         rect.min + egui::vec2(7.0, rect.height() * 0.5),
         egui::Align2::LEFT_CENTER,
-        m,
+        short_m,
         egui::FontId::new(9.5, egui::FontFamily::Monospace),
-        swaggen_ui_kit::method_color(m),
+        swaggen_ui_kit::method_color(raw_m),
     );
     let max_chars = ((w - 64.0) / 6.5).max(6.0) as usize;
     let clipped: String = if req.name.chars().count() > max_chars {
@@ -835,7 +901,7 @@ fn render_request_row(
         req.name.clone()
     };
     ui.painter().text(
-        rect.min + egui::vec2(42.0, rect.height() * 0.5),
+        rect.min + egui::vec2(41.0, rect.height() * 0.5),
         egui::Align2::LEFT_CENTER,
         clipped,
         egui::FontId::new(11.5, egui::FontFamily::Proportional),
@@ -861,6 +927,7 @@ fn render_request_row(
         );
     }
 
+    let main_resp = main_resp.on_hover_text(format!("{raw_m} {}\n{}", req.name, req.url));
     if main_resp.clicked() {
         acts.open_request_id = Some(req.id.clone());
     }

@@ -1580,13 +1580,13 @@ impl eframe::App for App {
             });
         swaggen_ui_kit::paint_edge_divider(ui, rail_resp.response.rect, Edge::Right);
 
-        // 3. Left Project Sidebar + Dedicated Pointer-Locked Outer Resizer Strip (168px..520px).
+        // 3. Left Project Sidebar + Dedicated Pointer-Locked Outer Resizer Strip (192px..520px).
         if !self.state.layout.sidebar_collapsed {
-            let cur_sidebar_w = self.state.layout.sidebar_width.clamp(168.0, 520.0);
+            let cur_sidebar_w = self.state.layout.sidebar_width.clamp(192.0, 520.0);
             let sidebar_frame = egui::Frame::new()
                 .fill(swaggen_ui_kit::surface_bg(ui))
                 .stroke(egui::Stroke::NONE)
-                .inner_margin(egui::Margin::symmetric(10, 10));
+                .inner_margin(egui::Margin::symmetric(8, 10));
             egui::Panel::left("sidebar")
                 .resizable(false)
                 .exact_size(cur_sidebar_w)
@@ -1614,14 +1614,14 @@ impl eframe::App for App {
                     if resp.dragged()
                         && let Some(pos) = ctx.pointer_interact_pos()
                     {
-                        self.state.layout.sidebar_width = (pos.x - rail_w).clamp(168.0, 520.0);
+                        self.state.layout.sidebar_width = (pos.x - rail_w).clamp(192.0, 520.0);
                         ctx.request_repaint();
                     }
                     if resp
                         .on_hover_text("Drag left/right to resize Sidebar · Double-click to reset")
                         .double_clicked()
                     {
-                        self.state.layout.sidebar_width = 228.0;
+                        self.state.layout.sidebar_width = 250.0;
                     }
                     let lx = full_rect.center().x;
                     ui.painter().line_segment(
@@ -1778,26 +1778,48 @@ impl eframe::App for App {
                                 self.show_workspace_modal = true;
                             }
                         }
-                        let env_label = self
-                            .state
-                            .active_environment()
-                            .map(|e| e.name.as_str())
-                            .unwrap_or("No env");
+                        if self.mode != MainMode::Workbench {
+                            let env_label = self
+                                .state
+                                .active_environment()
+                                .map(|e| e.name.as_str())
+                                .unwrap_or("No env");
+                            if ui
+                                .add(
+                                    egui::Button::new(
+                                        egui::RichText::new(env_label)
+                                            .size(11.5)
+                                            .color(swaggen_ui_kit::text_primary(ui)),
+                                    )
+                                    .fill(swaggen_ui_kit::surface_bg(ui))
+                                    .stroke(egui::Stroke::new(
+                                        1.0,
+                                        swaggen_ui_kit::border_color(ui),
+                                    ))
+                                    .corner_radius(6),
+                                )
+                                .on_hover_text("Manage environments & variables")
+                                .clicked()
+                            {
+                                self.navigate_to(MainMode::Environments);
+                            }
+                        }
                         if ui
                             .add(
                                 egui::Button::new(
-                                    egui::RichText::new(env_label)
-                                        .size(11.5)
-                                        .color(swaggen_ui_kit::text_primary(ui)),
+                                    egui::RichText::new("Search / Commands  Ctrl+K")
+                                        .size(11.0)
+                                        .color(Tokens::TEXT_SECONDARY),
                                 )
-                                .fill(swaggen_ui_kit::surface_bg(ui))
-                                .stroke(egui::Stroke::new(1.0, swaggen_ui_kit::border_color(ui)))
+                                .fill(Tokens::BG_SUBTLE)
+                                .stroke(egui::Stroke::new(1.0, Tokens::BORDER_DEFAULT))
                                 .corner_radius(6),
                             )
-                            .on_hover_text("Manage environments & variables")
+                            .on_hover_text("Open Quick Command Palette (Ctrl+K)")
                             .clicked()
                         {
-                            self.navigate_to(MainMode::Environments);
+                            self.show_command_palette = true;
+                            self.command_palette_query.clear();
                         }
                     });
                 });
@@ -1807,36 +1829,6 @@ impl eframe::App for App {
         let main_frame = egui::Frame::new()
             .fill(swaggen_ui_kit::page_bg(ui))
             .inner_margin(egui::Margin::symmetric(14, 10));
-
-        // Production request confirmation modal (R16 / EV07).
-        if self.show_production_confirm {
-            egui::CentralPanel::default()
-                .frame(main_frame)
-                .show(ui, |ui| {
-                    views::panels::show_production_confirm(self, ui);
-                });
-            return;
-        }
-
-        // Command Palette modal (UX04 / M03).
-        if self.show_command_palette {
-            egui::CentralPanel::default()
-                .frame(main_frame)
-                .show(ui, |ui| {
-                    views::panels::show_command_palette(self, ui);
-                });
-            return;
-        }
-
-        // Workspace management modal (WS01 / A08 / A09).
-        if self.show_workspace_modal {
-            egui::CentralPanel::default()
-                .frame(main_frame)
-                .show(ui, |ui| {
-                    views::panels::show_workspace_manager(self, ui);
-                });
-            return;
-        }
 
         // 5. Main Central Workspace Canvas with 1:1 Pointer-Locked Request <-> Response Splitters.
         egui::CentralPanel::default()
@@ -1953,6 +1945,61 @@ impl eframe::App for App {
                 MainMode::Privacy => views::panels::show_privacy(self, ui, &ctx),
                 MainMode::Shortcuts => views::panels::show_shortcuts(self, ui),
             });
+
+        // 6. Context-Preserving Floating Modal Overlays (backdrop + centered card, Esc/click-outside dismiss).
+        if self.show_production_confirm || self.show_command_palette || self.show_workspace_modal {
+            let screen = ctx.content_rect();
+            let backdrop_resp = egui::Area::new(egui::Id::unique("swaggen_modal_backdrop"))
+                .order(egui::Order::Middle)
+                .fixed_pos(screen.min)
+                .show(&ctx, |ui| {
+                    let (_, resp) = ui.allocate_exact_size(screen.size(), egui::Sense::click());
+                    ui.painter().rect_filled(
+                        screen,
+                        0.0,
+                        egui::Color32::from_rgba_unmultiplied(15, 23, 42, 72),
+                    );
+                    resp
+                });
+            if backdrop_resp.inner.clicked() {
+                self.show_production_confirm = false;
+                self.show_command_palette = false;
+                self.show_workspace_modal = false;
+            }
+            let modal_max_w = if self.show_workspace_modal {
+                (screen.width() - 80.0).clamp(480.0, 920.0)
+            } else {
+                (screen.width() - 60.0).clamp(400.0, 580.0)
+            };
+            let modal_max_h = (screen.height() - 72.0).max(260.0);
+            egui::Area::new(egui::Id::unique("swaggen_modal_card"))
+                .order(egui::Order::Foreground)
+                .anchor(egui::Align2::CENTER_CENTER, egui::Vec2::ZERO)
+                .show(&ctx, |ui| {
+                    ui.set_max_width(modal_max_w);
+                    ui.set_max_height(modal_max_h);
+                    egui::Frame::new()
+                        .fill(Tokens::BG_SURFACE)
+                        .stroke(egui::Stroke::new(1.0, Tokens::BORDER_DEFAULT))
+                        .corner_radius(12)
+                        .inner_margin(egui::Margin::same(18))
+                        .shadow(egui::epaint::Shadow {
+                            offset: [0, 8],
+                            blur: 24,
+                            spread: 0,
+                            color: egui::Color32::from_rgba_unmultiplied(15, 23, 42, 36),
+                        })
+                        .show(ui, |ui| {
+                            if self.show_production_confirm {
+                                views::panels::show_production_confirm(self, ui);
+                            } else if self.show_command_palette {
+                                views::panels::show_command_palette(self, ui);
+                            } else if self.show_workspace_modal {
+                                views::panels::show_workspace_manager(self, ui);
+                            }
+                        });
+                });
+        }
     }
 }
 

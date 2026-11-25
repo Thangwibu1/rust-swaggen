@@ -19,43 +19,37 @@ use swaggen_domain::{
 use swaggen_ui_kit::{NoticeKind, Tokens};
 
 pub fn show_production_confirm(app: &mut App, ui: &mut egui::Ui) {
-    ui.add_space(40.0);
-    ui.vertical_centered(|ui| {
-        ui.set_max_width(520.0);
-        swaggen_ui_kit::surface_card(ui, |ui| {
-            ui.with_layout(egui::Layout::top_down(egui::Align::Min), |ui| {
-                ui.label(swaggen_ui_kit::bold_text(
-                    "Confirm production request",
-                    20.0,
-                    swaggen_ui_kit::text_primary(ui),
-                ));
-                ui.add_space(6.0);
-                ui.label(
-                    egui::RichText::new(
-                        "You are sending a data-mutating request to an environment marked Production.",
-                    )
-                    .size(12.5)
-                    .color(swaggen_ui_kit::text_secondary(ui)),
-                );
-                ui.add_space(12.0);
-                if let Some(req) = app.active_request() {
-                    swaggen_ui_kit::notice_banner(
-                        ui,
-                        NoticeKind::Danger,
-                        req.method.as_str(),
-                        &format!("Target URL: {}", req.url),
-                    );
-                }
-                ui.add_space(14.0);
-                ui.horizontal(|ui| {
-                    if swaggen_ui_kit::danger_button(ui, true, "Send to Production").clicked() {
-                        app.send_active_request(true);
-                    }
-                    if swaggen_ui_kit::secondary_button(ui, true, "Cancel").clicked() {
-                        app.show_production_confirm = false;
-                    }
-                });
-            });
+    ui.with_layout(egui::Layout::top_down(egui::Align::Min), |ui| {
+        ui.label(swaggen_ui_kit::bold_text(
+            "Confirm production request",
+            18.0,
+            swaggen_ui_kit::text_primary(ui),
+        ));
+        ui.add_space(4.0);
+        ui.label(
+            egui::RichText::new(
+                "You are sending a data-mutating request to an environment marked Production.",
+            )
+            .size(12.5)
+            .color(swaggen_ui_kit::text_secondary(ui)),
+        );
+        ui.add_space(10.0);
+        if let Some(req) = app.active_request() {
+            swaggen_ui_kit::notice_banner(
+                ui,
+                NoticeKind::Danger,
+                req.method.as_str(),
+                &format!("Target URL: {}", req.url),
+            );
+        }
+        ui.add_space(12.0);
+        ui.horizontal(|ui| {
+            if swaggen_ui_kit::danger_button(ui, true, "Send to Production").clicked() {
+                app.send_active_request(true);
+            }
+            if swaggen_ui_kit::secondary_button(ui, true, "Cancel").clicked() {
+                app.show_production_confirm = false;
+            }
         });
     });
 }
@@ -95,11 +89,11 @@ fn show_settings_group_tabs(app: &mut App, ui: &mut egui::Ui) {
 }
 
 pub fn show_workspace_manager(app: &mut App, ui: &mut egui::Ui) {
-    if swaggen_ui_kit::page_header(
+    if swaggen_ui_kit::page_header_secondary(
         ui,
         "Your workspaces",
         &format!(
-            "{} / Switch between Individual (local-only) & Team workspaces",
+            "{} · Switch between Individual (local-only) & Team workspaces",
             app.state.meta.name
         ),
         Some("Close"),
@@ -107,281 +101,302 @@ pub fn show_workspace_manager(app: &mut App, ui: &mut egui::Ui) {
     ) {
         app.show_workspace_modal = false;
     }
-    egui::ScrollArea::vertical().show(ui, |ui| {
-        ui.label(swaggen_ui_kit::bold_text(
-            "Individual Workspaces (Personal · Local only)",
-            14.0,
-            Tokens::TEXT_PRIMARY,
-        ));
-        ui.add_space(6.0);
-        let workspaces = app.available_workspaces.clone();
-        ui.columns(3.min(workspaces.len().max(1)), |cols| {
-            for (idx, ws_id) in workspaces.iter().enumerate() {
-                let col_idx = idx % cols.len();
-                let active = *ws_id == app.workspace_id && app.selected_team_workspace_id.is_none();
-                swaggen_ui_kit::surface_card(&mut cols[col_idx], |ui| {
-                    ui.horizontal(|ui| {
-                        ui.label(
-                            egui::RichText::new(ws_id.as_str())
-                                .size(14.5)
-                                .strong()
-                                .color(Tokens::TEXT_PRIMARY),
-                        );
-                        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                            if active {
-                                swaggen_ui_kit::pill_badge(ui, Tokens::STATUS_SUCCESS, "Active");
-                            } else {
-                                swaggen_ui_kit::pill_badge(ui, Tokens::STATUS_SUCCESS, "Personal");
-                            }
+    let scroll_h = ui.available_height().clamp(220.0, 560.0);
+    egui::ScrollArea::vertical()
+        .id_salt("ws_manager_modal_scroll")
+        .max_height(scroll_h)
+        .show(ui, |ui| {
+            ui.label(swaggen_ui_kit::bold_text(
+                "Individual Workspaces (Personal · Local only)",
+                14.0,
+                Tokens::TEXT_PRIMARY,
+            ));
+            ui.add_space(6.0);
+            let workspaces = app.available_workspaces.clone();
+            ui.columns(3.min(workspaces.len().max(1)), |cols| {
+                for (idx, ws_id) in workspaces.iter().enumerate() {
+                    let col_idx = idx % cols.len();
+                    let active =
+                        *ws_id == app.workspace_id && app.selected_team_workspace_id.is_none();
+                    swaggen_ui_kit::surface_card(&mut cols[col_idx], |ui| {
+                        ui.horizontal(|ui| {
+                            ui.label(
+                                egui::RichText::new(ws_id.as_str())
+                                    .size(14.5)
+                                    .strong()
+                                    .color(Tokens::TEXT_PRIMARY),
+                            );
+                            ui.with_layout(
+                                egui::Layout::right_to_left(egui::Align::Center),
+                                |ui| {
+                                    if active {
+                                        swaggen_ui_kit::pill_badge(
+                                            ui,
+                                            Tokens::STATUS_SUCCESS,
+                                            "Active",
+                                        );
+                                    } else {
+                                        swaggen_ui_kit::pill_badge(
+                                            ui,
+                                            Tokens::STATUS_SUCCESS,
+                                            "Personal",
+                                        );
+                                    }
+                                },
+                            );
                         });
-                    });
-                    ui.add_space(6.0);
-                    if *ws_id == app.workspace_id {
-                        ui.label(
-                            egui::RichText::new(format!(
-                                "{} requests · {} collections",
-                                app.state.requests.len(),
-                                app.state.collections.len()
-                            ))
-                            .size(12.0)
-                            .color(Tokens::TEXT_SECONDARY),
-                        );
-                    } else {
-                        ui.label(
-                            egui::RichText::new("Local personal workspace")
+                        ui.add_space(6.0);
+                        if *ws_id == app.workspace_id {
+                            ui.label(
+                                egui::RichText::new(format!(
+                                    "{} requests · {} collections",
+                                    app.state.requests.len(),
+                                    app.state.collections.len()
+                                ))
                                 .size(12.0)
                                 .color(Tokens::TEXT_SECONDARY),
-                        );
-                    }
-                    ui.add_space(8.0);
-                    if swaggen_ui_kit::secondary_button(
-                        ui,
-                        !active,
-                        if active {
-                            "Current workspace"
+                            );
                         } else {
-                            "Open individual"
-                        },
+                            ui.label(
+                                egui::RichText::new("Local personal workspace")
+                                    .size(12.0)
+                                    .color(Tokens::TEXT_SECONDARY),
+                            );
+                        }
+                        ui.add_space(8.0);
+                        if swaggen_ui_kit::secondary_button(
+                            ui,
+                            !active,
+                            if active {
+                                "Current workspace"
+                            } else {
+                                "Open individual"
+                            },
+                        )
+                        .clicked()
+                        {
+                            if *ws_id != app.workspace_id {
+                                app.submit(Command::SwitchWorkspace { id: ws_id.clone() });
+                            }
+                            app.selected_team_workspace_id = None;
+                            app.show_workspace_modal = false;
+                            app.navigate_to(MainMode::Workbench);
+                        }
+                    });
+                    cols[col_idx].add_space(8.0);
+                }
+            });
+
+            ui.add_space(10.0);
+            swaggen_ui_kit::surface_card(ui, |ui| {
+                swaggen_ui_kit::card_header(ui, "Create individual workspace");
+                ui.horizontal(|ui| {
+                    ui.add(
+                        egui::TextEdit::singleline(&mut app.new_workspace_name)
+                            .hint_text("Workspace name (e.g. My Local API)")
+                            .desired_width(280.0),
+                    );
+                    let parsed = App::slugify_workspace_id(&app.new_workspace_name);
+                    if swaggen_ui_kit::primary_button(
+                        ui,
+                        parsed.is_some() && !app.new_workspace_name.trim().is_empty(),
+                        "Create & open",
                     )
                     .clicked()
+                        && let Some(id) = parsed
                     {
-                        if *ws_id != app.workspace_id {
-                            app.submit(Command::SwitchWorkspace { id: ws_id.clone() });
-                        }
+                        let display_name = std::mem::take(&mut app.new_workspace_name)
+                            .trim()
+                            .to_owned();
+                        app.new_workspace_id.clear();
+                        app.submit(Command::CreateWorkspace {
+                            id,
+                            name: display_name,
+                            kind: WorkspaceKind::Personal,
+                        });
                         app.selected_team_workspace_id = None;
                         app.show_workspace_modal = false;
                         app.navigate_to(MainMode::Workbench);
                     }
                 });
-                cols[col_idx].add_space(8.0);
-            }
-        });
+            });
 
-        ui.add_space(10.0);
-        swaggen_ui_kit::surface_card(ui, |ui| {
-            swaggen_ui_kit::card_header(ui, "Create individual workspace");
-            ui.horizontal(|ui| {
-                ui.add(
-                    egui::TextEdit::singleline(&mut app.new_workspace_name)
-                        .hint_text("Workspace name (e.g. My Local API)")
-                        .desired_width(280.0),
-                );
-                let parsed = App::slugify_workspace_id(&app.new_workspace_name);
-                if swaggen_ui_kit::primary_button(
-                    ui,
-                    parsed.is_some() && !app.new_workspace_name.trim().is_empty(),
-                    "Create & open",
-                )
-                .clicked()
-                    && let Some(id) = parsed
-                {
-                    let display_name = std::mem::take(&mut app.new_workspace_name)
-                        .trim()
-                        .to_owned();
-                    app.new_workspace_id.clear();
-                    app.submit(Command::CreateWorkspace {
-                        id,
-                        name: display_name,
-                        kind: WorkspaceKind::Personal,
+            if !app.team_workspaces.is_empty() {
+                ui.add_space(12.0);
+                ui.label(swaggen_ui_kit::bold_text(
+                    "Team Workspaces (Collaborate & Sync)",
+                    14.0,
+                    Tokens::TEXT_PRIMARY,
+                ));
+                ui.add_space(6.0);
+                let prof_id = app
+                    .server_profiles
+                    .active()
+                    .map(|p| p.id.clone())
+                    .unwrap_or_else(|| "production".into());
+                let mut open_team: Option<String> = None;
+                let teams = app.team_workspaces.clone();
+                ui.columns(3.min(teams.len().max(1)), |cols| {
+                    for (idx, tw) in teams.iter().enumerate() {
+                        let col_idx = idx % cols.len();
+                        let active = app.selected_team_workspace_id.as_deref()
+                            == Some(tw.workspace_id.as_str());
+                        swaggen_ui_kit::surface_card(&mut cols[col_idx], |ui| {
+                            ui.horizontal(|ui| {
+                                ui.label(swaggen_ui_kit::bold_text(
+                                    &tw.name,
+                                    14.0,
+                                    Tokens::TEXT_PRIMARY,
+                                ));
+                                ui.with_layout(
+                                    egui::Layout::right_to_left(egui::Align::Center),
+                                    |ui| {
+                                        swaggen_ui_kit::pill_badge(ui, Tokens::STATUS_INFO, "Team");
+                                    },
+                                );
+                            });
+                            ui.add_space(4.0);
+                            ui.label(
+                                egui::RichText::new(format!(
+                                    "{} · {} members",
+                                    tw.role.as_str(),
+                                    tw.member_count
+                                ))
+                                .size(12.0)
+                                .color(Tokens::TEXT_SECONDARY),
+                            );
+                            ui.add_space(8.0);
+                            if swaggen_ui_kit::primary_button(
+                                ui,
+                                !active,
+                                if active { "Current team" } else { "Open team" },
+                            )
+                            .clicked()
+                            {
+                                open_team = Some(tw.workspace_id.clone());
+                            }
+                        });
+                    }
+                });
+                if let Some(wid) = open_team {
+                    app.selected_team_workspace_id = Some(wid.clone());
+                    app.submit(Command::SyncNow {
+                        profile_id: prof_id.clone(),
+                        workspace_id: wid.clone(),
                     });
-                    app.selected_team_workspace_id = None;
+                    app.submit(Command::LoadCollabData {
+                        profile_id: prof_id,
+                        workspace_id: wid,
+                    });
                     app.show_workspace_modal = false;
                     app.navigate_to(MainMode::Workbench);
                 }
-            });
-        });
-
-        if !app.team_workspaces.is_empty() {
-            ui.add_space(12.0);
-            ui.label(swaggen_ui_kit::bold_text(
-                "Team Workspaces (Collaborate & Sync)",
-                14.0,
-                Tokens::TEXT_PRIMARY,
-            ));
-            ui.add_space(6.0);
-            let prof_id = app
-                .server_profiles
-                .active()
-                .map(|p| p.id.clone())
-                .unwrap_or_else(|| "production".into());
-            let mut open_team: Option<String> = None;
-            let teams = app.team_workspaces.clone();
-            ui.columns(3.min(teams.len().max(1)), |cols| {
-                for (idx, tw) in teams.iter().enumerate() {
-                    let col_idx = idx % cols.len();
-                    let active =
-                        app.selected_team_workspace_id.as_deref() == Some(tw.workspace_id.as_str());
-                    swaggen_ui_kit::surface_card(&mut cols[col_idx], |ui| {
-                        ui.horizontal(|ui| {
-                            ui.label(swaggen_ui_kit::bold_text(
-                                &tw.name,
-                                14.0,
-                                Tokens::TEXT_PRIMARY,
-                            ));
-                            ui.with_layout(
-                                egui::Layout::right_to_left(egui::Align::Center),
-                                |ui| {
-                                    swaggen_ui_kit::pill_badge(ui, Tokens::STATUS_INFO, "Team");
-                                },
-                            );
-                        });
-                        ui.add_space(4.0);
-                        ui.label(
-                            egui::RichText::new(format!(
-                                "{} · {} members",
-                                tw.role.as_str(),
-                                tw.member_count
-                            ))
-                            .size(12.0)
-                            .color(Tokens::TEXT_SECONDARY),
-                        );
-                        ui.add_space(8.0);
-                        if swaggen_ui_kit::primary_button(
-                            ui,
-                            !active,
-                            if active { "Current team" } else { "Open team" },
-                        )
-                        .clicked()
-                        {
-                            open_team = Some(tw.workspace_id.clone());
-                        }
-                    });
-                }
-            });
-            if let Some(wid) = open_team {
-                app.selected_team_workspace_id = Some(wid.clone());
-                app.submit(Command::SyncNow {
-                    profile_id: prof_id.clone(),
-                    workspace_id: wid.clone(),
-                });
-                app.submit(Command::LoadCollabData {
-                    profile_id: prof_id,
-                    workspace_id: wid,
-                });
-                app.show_workspace_modal = false;
-                app.navigate_to(MainMode::Workbench);
             }
-        }
 
-        ui.add_space(10.0);
-        swaggen_ui_kit::surface_card(ui, |ui| {
-            swaggen_ui_kit::card_header(ui, "Workspace settings");
-            let mut changed = false;
-            swaggen_ui_kit::config_field_row(
-                ui,
-                "Workspace name",
-                "Shown in sidebar and headers",
-                |ui| {
-                    ui.horizontal(|ui| {
+            ui.add_space(10.0);
+            swaggen_ui_kit::surface_card(ui, |ui| {
+                swaggen_ui_kit::card_header(ui, "Workspace settings");
+                let mut changed = false;
+                swaggen_ui_kit::config_field_row(
+                    ui,
+                    "Workspace name",
+                    "Shown in sidebar and headers",
+                    |ui| {
+                        ui.horizontal(|ui| {
+                            if ui
+                                .add(
+                                    egui::TextEdit::singleline(&mut app.state.meta.name)
+                                        .desired_width(260.0),
+                                )
+                                .changed()
+                            {
+                                changed = true;
+                            }
+                            if ui
+                                .checkbox(&mut app.state.meta.archived, "Archived")
+                                .changed()
+                            {
+                                changed = true;
+                            }
+                        });
+                    },
+                );
+                swaggen_ui_kit::config_field_row(
+                    ui,
+                    "Description",
+                    "Team or project summary",
+                    |ui| {
                         if ui
                             .add(
-                                egui::TextEdit::singleline(&mut app.state.meta.name)
-                                    .desired_width(260.0),
+                                egui::TextEdit::singleline(&mut app.state.meta.description)
+                                    .desired_width(360.0),
                             )
                             .changed()
                         {
                             changed = true;
                         }
+                    },
+                );
+                swaggen_ui_kit::config_field_row(
+                    ui,
+                    "Default API Base URL",
+                    "Workspace fallback {{base_url}}",
+                    |ui| {
                         if ui
-                            .checkbox(&mut app.state.meta.archived, "Archived")
+                            .add(
+                                egui::TextEdit::singleline(
+                                    &mut app.state.meta.defaults.default_base_url,
+                                )
+                                .desired_width(360.0),
+                            )
                             .changed()
                         {
                             changed = true;
                         }
-                    });
-                },
-            );
-            swaggen_ui_kit::config_field_row(ui, "Description", "Team or project summary", |ui| {
-                if ui
-                    .add(
-                        egui::TextEdit::singleline(&mut app.state.meta.description)
-                            .desired_width(360.0),
-                    )
-                    .changed()
-                {
-                    changed = true;
+                    },
+                );
+                swaggen_ui_kit::config_field_row(
+                    ui,
+                    "Naming convention",
+                    "Endpoint & schema lint guideline",
+                    |ui| {
+                        if ui
+                            .add(
+                                egui::TextEdit::singleline(
+                                    &mut app.state.meta.defaults.naming_convention,
+                                )
+                                .desired_width(360.0),
+                            )
+                            .changed()
+                        {
+                            changed = true;
+                        }
+                    },
+                );
+                swaggen_ui_kit::config_field_row(
+                    ui,
+                    "Onboarding guide",
+                    "Notes shown to teammates",
+                    |ui| {
+                        if ui
+                            .add(
+                                egui::TextEdit::multiline(
+                                    &mut app.state.meta.defaults.onboarding_guide,
+                                )
+                                .desired_width(360.0)
+                                .desired_rows(2),
+                            )
+                            .changed()
+                        {
+                            changed = true;
+                        }
+                    },
+                );
+                if changed {
+                    app.mark_dirty();
                 }
             });
-            swaggen_ui_kit::config_field_row(
-                ui,
-                "Default API Base URL",
-                "Workspace fallback {{base_url}}",
-                |ui| {
-                    if ui
-                        .add(
-                            egui::TextEdit::singleline(
-                                &mut app.state.meta.defaults.default_base_url,
-                            )
-                            .desired_width(360.0),
-                        )
-                        .changed()
-                    {
-                        changed = true;
-                    }
-                },
-            );
-            swaggen_ui_kit::config_field_row(
-                ui,
-                "Naming convention",
-                "Endpoint & schema lint guideline",
-                |ui| {
-                    if ui
-                        .add(
-                            egui::TextEdit::singleline(
-                                &mut app.state.meta.defaults.naming_convention,
-                            )
-                            .desired_width(360.0),
-                        )
-                        .changed()
-                    {
-                        changed = true;
-                    }
-                },
-            );
-            swaggen_ui_kit::config_field_row(
-                ui,
-                "Onboarding guide",
-                "Notes shown to teammates",
-                |ui| {
-                    if ui
-                        .add(
-                            egui::TextEdit::multiline(
-                                &mut app.state.meta.defaults.onboarding_guide,
-                            )
-                            .desired_width(360.0)
-                            .desired_rows(2),
-                        )
-                        .changed()
-                    {
-                        changed = true;
-                    }
-                },
-            );
-            if changed {
-                app.mark_dirty();
-            }
         });
-    });
 }
 
 pub fn show_environments(app: &mut App, ui: &mut egui::Ui) {
@@ -1341,109 +1356,111 @@ pub fn show_privacy(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
 }
 
 pub fn show_command_palette(app: &mut App, ui: &mut egui::Ui) {
-    ui.add_space(28.0);
-    ui.vertical_centered(|ui| {
-        ui.set_max_width(560.0);
-        swaggen_ui_kit::surface_card(ui, |ui| {
-            ui.with_layout(egui::Layout::top_down(egui::Align::Min), |ui| {
-                ui.horizontal(|ui| {
-                    ui.label(swaggen_ui_kit::bold_text(
-                        swaggen_ui_kit::tr(app.locale, "Command palette", "Bảng lệnh nhanh"),
-                        20.0,
-                        swaggen_ui_kit::text_primary(ui),
-                    ));
-                    ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                        if swaggen_ui_kit::secondary_button(ui, true, "Esc").clicked() {
-                            app.show_command_palette = false;
-                        }
-                    });
-                });
-                ui.add_space(10.0);
-                let q_resp = swaggen_ui_kit::text_input(
-                    ui,
-                    &mut app.command_palette_query,
-                    "Type a command, screen, or request…",
-                    ui.available_width(),
-                    false,
-                );
-                q_resp.request_focus();
-                ui.add_space(10.0);
-                let q = app.command_palette_query.trim().to_ascii_lowercase();
-                egui::ScrollArea::vertical()
-                    .max_height(380.0)
-                    .show(ui, |ui| {
-                        if q.is_empty() || "sign in firebase google welcome".contains(&q) {
-                            swaggen_ui_kit::table_row_frame(ui, |ui| {
-                                if ui
-                                    .add(
-                                        egui::Button::new(
-                                            egui::RichText::new("Sign in with Google / Firebase")
-                                                .size(13.0)
-                                                .color(Tokens::STATUS_INFO),
-                                        )
-                                        .fill(egui::Color32::TRANSPARENT)
-                                        .stroke(egui::Stroke::NONE),
-                                    )
-                                    .clicked()
-                                {
-                                    app.show_command_palette = false;
-                                    app.show_welcome = true;
-                                }
-                            });
-                        }
-                        for (mode, label) in [
-                            (MainMode::Workbench, "Open API Workbench"),
-                            (MainMode::Specs, "Open API documentation & OpenAPI"),
-                            (MainMode::Runner, "Run collection, Mocks & Protocols"),
-                            (
-                                MainMode::TeamSync,
-                                "Open Sync queue, Conflicts & Discussion",
-                            ),
-                            (MainMode::Server, "Connect Team Server & Accounts"),
-                            (MainMode::Environments, "Manage Environments & Variables"),
-                            (MainMode::Secrets, "Personal Secrets Vault (DPAPI)"),
-                            (MainMode::ImportExport, "Import APIs, Postman & cURL"),
-                            (MainMode::Privacy, "Settings, Updates & Privacy"),
-                            (MainMode::Shortcuts, "Keyboard Shortcuts"),
-                        ] {
-                            if q.is_empty() || label.to_ascii_lowercase().contains(&q) {
-                                swaggen_ui_kit::table_row_frame(ui, |ui| {
-                                    if ui
-                                        .add(
-                                            egui::Button::new(
-                                                egui::RichText::new(label)
-                                                    .size(13.0)
-                                                    .color(swaggen_ui_kit::text_primary(ui)),
-                                            )
-                                            .fill(egui::Color32::TRANSPARENT)
-                                            .stroke(egui::Stroke::NONE),
-                                        )
-                                        .clicked()
-                                    {
-                                        app.navigate_to(mode);
-                                    }
-                                });
-                            }
-                        }
-                        let reqs: Vec<(String, String, String)> = app
-                            .state
-                            .requests
-                            .iter()
-                            .filter(|r| {
-                                q.is_empty()
-                                    || r.name.to_ascii_lowercase().contains(&q)
-                                    || r.url.to_ascii_lowercase().contains(&q)
-                            })
-                            .map(|r| (r.id.clone(), r.method.as_str().to_owned(), r.name.clone()))
-                            .collect();
-                        for (rid, m, name) in reqs {
-                            if swaggen_ui_kit::endpoint_row(ui, &m, &name, false).clicked() {
-                                app.open_request_in_workbench(&rid);
-                            }
-                        }
-                    });
+    ui.with_layout(egui::Layout::top_down(egui::Align::Min), |ui| {
+        ui.horizontal(|ui| {
+            ui.label(swaggen_ui_kit::bold_text(
+                swaggen_ui_kit::tr(app.locale, "Command palette", "Bảng lệnh nhanh"),
+                17.5,
+                swaggen_ui_kit::text_primary(ui),
+            ));
+            ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                if swaggen_ui_kit::secondary_button(ui, true, "Esc").clicked() {
+                    app.show_command_palette = false;
+                }
             });
         });
+        ui.add_space(8.0);
+        let q_resp = swaggen_ui_kit::text_input(
+            ui,
+            &mut app.command_palette_query,
+            "Type a command, screen, or request…",
+            ui.available_width(),
+            false,
+        );
+        q_resp.request_focus();
+        ui.add_space(8.0);
+        let q = app.command_palette_query.trim().to_ascii_lowercase();
+        egui::ScrollArea::vertical()
+            .id_salt("cmd_palette_scroll")
+            .max_height(360.0)
+            .show(ui, |ui| {
+                if q.is_empty() || "sign in firebase google welcome".contains(&q) {
+                    swaggen_ui_kit::table_row_frame(ui, |ui| {
+                        if ui
+                            .add(
+                                egui::Button::new(
+                                    egui::RichText::new("Sign in with Google / Firebase")
+                                        .size(13.0)
+                                        .color(Tokens::STATUS_INFO),
+                                )
+                                .fill(egui::Color32::TRANSPARENT)
+                                .stroke(egui::Stroke::NONE),
+                            )
+                            .clicked()
+                        {
+                            app.show_command_palette = false;
+                            app.show_welcome = true;
+                        }
+                    });
+                }
+                for (mode, label) in [
+                    (MainMode::Workbench, "Open API Workbench"),
+                    (MainMode::Specs, "Open API documentation & OpenAPI"),
+                    (MainMode::Runner, "Run collection, Mocks & Protocols"),
+                    (
+                        MainMode::TeamSync,
+                        "Open Sync queue, Conflicts & Discussion",
+                    ),
+                    (MainMode::Server, "Connect Team Server & Accounts"),
+                    (MainMode::Environments, "Manage Environments & Variables"),
+                    (MainMode::Secrets, "Personal Secrets Vault (DPAPI)"),
+                    (MainMode::ImportExport, "Import APIs, Postman & cURL"),
+                    (MainMode::Privacy, "Settings, Updates & Privacy"),
+                    (MainMode::Shortcuts, "Keyboard Shortcuts"),
+                ] {
+                    if q.is_empty() || label.to_ascii_lowercase().contains(&q) {
+                        swaggen_ui_kit::table_row_frame(ui, |ui| {
+                            if ui
+                                .add(
+                                    egui::Button::new(
+                                        egui::RichText::new(label)
+                                            .size(13.0)
+                                            .color(swaggen_ui_kit::text_primary(ui)),
+                                    )
+                                    .fill(egui::Color32::TRANSPARENT)
+                                    .stroke(egui::Stroke::NONE),
+                                )
+                                .clicked()
+                            {
+                                app.navigate_to(mode);
+                            }
+                        });
+                    }
+                }
+                let reqs: Vec<(String, String, String)> = app
+                    .state
+                    .requests
+                    .iter()
+                    .filter(|r| {
+                        q.is_empty()
+                            || r.name.to_ascii_lowercase().contains(&q)
+                            || r.url.to_ascii_lowercase().contains(&q)
+                    })
+                    .map(|r| {
+                        let m = if r.is_graphql() {
+                            "GQL".to_owned()
+                        } else {
+                            r.method.as_str().to_owned()
+                        };
+                        (r.id.clone(), m, r.name.clone())
+                    })
+                    .collect();
+                for (rid, m, name) in reqs {
+                    if swaggen_ui_kit::endpoint_row(ui, &m, &name, false).clicked() {
+                        app.open_request_in_workbench(&rid);
+                    }
+                }
+            });
     });
 }
 
