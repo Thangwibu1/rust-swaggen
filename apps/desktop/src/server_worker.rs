@@ -3,7 +3,10 @@ use crate::{
     server_client::{server_call, server_call_empty},
     worker::{Command, Event},
 };
-use std::path::Path;
+use std::{
+    path::{Path, PathBuf},
+    sync::{Arc, mpsc::SyncSender},
+};
 use swaggen_api_contract::{
     AcceptInvitationRequest, AcceptInvitationResponse, AuditEventRecord, AuditListResponse,
     AuthResponse, BootstrapOwnerRequest, Capabilities, ChangePasswordRequest,
@@ -100,6 +103,122 @@ fn get_profile(root: &Path, profile_id: &str) -> Result<(ServerProfileStore, Ser
     Ok((store, prof))
 }
 
+#[allow(clippy::too_many_arguments)]
+pub fn spawn_firebase_browser_login(
+    runtime: &tokio::runtime::Runtime,
+    root: PathBuf,
+    downloads: PathBuf,
+    profile_id: String,
+    bootstrap_token: Option<String>,
+    cancel: CancellationToken,
+    outgoing: SyncSender<Event>,
+    wake: Arc<dyn Fn() + Send + Sync>,
+) {
+    runtime.spawn(async move {
+        let (mut store, mut prof) = match get_profile(&root, &profile_id) {
+            Ok(v) => v,
+            Err(m) => {
+                let _ = outgoing.send(Event::ActionError(m));
+                wake();
+                return;
+            }
+        };
+        let result: Result<(AuthResponse, Capabilities), String> = async {
+            let (caps, _) = server_call::<(), Capabilities>(
+                &prof,
+                HttpMethod::Get,
+                "/v1/capabilities",
+                None,
+                None,
+                &downloads,
+            )
+            .await?;
+            if cancel.is_cancelled() {
+                return Err("__CANCELLED__".into());
+            }
+            if caps.firebase_project_id.is_none() || caps.firebase_web_api_key.is_none() {
+                return Err(
+                    "Server does not have SWAGGEN_FIREBASE_PROJECT_ID and SWAGGEN_FIREBASE_WEB_API_KEY configured."
+                        .into(),
+                );
+            }
+            let listener = tokio::net::TcpListener::bind("127.0.0.1:0")
+                .await
+                .map_err(|e| format!("Failed to bind local auth callback: {e}"))?;
+            let port = listener
+                .local_addr()
+                .map_err(|e| e.to_string())?
+                .port();
+            let state_token = uuid::Uuid::new_v4().simple().to_string();
+            let base = prof.base_url.trim_end_matches('/');
+            let browser_url = format!(
+                "{base}/v1/auth/firebase/browser?port={port}&state={state_token}"
+            );
+            open_system_browser(&browser_url)?;
+
+            let (id_token, browser_display_name) =
+                await_firebase_loopback_callback(listener, &state_token, &cancel).await?;
+
+            if cancel.is_cancelled() {
+                return Err("__CANCELLED__".into());
+            }
+
+            let req = FirebaseLoginRequest {
+                id_token,
+                display_name: browser_display_name.filter(|s| !s.trim().is_empty()),
+                device_name: "Swaggen Desktop (Windows · Firebase)".into(),
+                bootstrap_token,
+            };
+            let (auth, _) = server_call::<FirebaseLoginRequest, AuthResponse>(
+                &prof,
+                HttpMethod::Post,
+                "/v1/auth/firebase",
+                None,
+                Some(&req),
+                &downloads,
+            )
+            .await?;
+            Ok((auth, caps))
+        }
+        .await;
+
+        let ev = match result {
+            Ok((auth, caps)) => {
+                if let Err(e) = save_session_token(&root, &prof, &auth.session_token) {
+                    Event::ActionError(e)
+                } else {
+                    prof.email = auth.user.email.clone();
+                    prof.user_id = auth.user.user_id.clone();
+                    prof.display_name = auth.user.display_name.clone();
+                    prof.session_id = auth.session_id.clone();
+                    prof.session_expires_unix = auth.expires_at_unix;
+                    prof.bootstrap_required = false;
+                    prof.mongo_ready = caps.mongo_ready;
+                    prof.last_server_version = caps.server_version;
+                    prof.firebase_project_id = caps.firebase_project_id;
+                    prof.firebase_web_api_key = caps.firebase_web_api_key;
+                    prof.firebase_auth_domain = caps.firebase_auth_domain;
+                    prof.last_error.clear();
+                    store.upsert(prof);
+                    match save_profiles(&root, store) {
+                        Ok(saved) => Event::ServerProfilesUpdated {
+                            store: saved,
+                            message: format!("Signed in via Firebase as {}", auth.user.email),
+                        },
+                        Err(e) => Event::ActionError(e),
+                    }
+                }
+            }
+            Err(msg) if msg == "__CANCELLED__" || cancel.is_cancelled() => {
+                return;
+            }
+            Err(msg) => Event::ActionError(msg),
+        };
+        let _ = outgoing.send(ev);
+        wake();
+    });
+}
+
 #[allow(clippy::result_large_err)]
 pub fn handle_server_command(
     runtime: &tokio::runtime::Runtime,
@@ -181,93 +300,6 @@ pub fn handle_server_command(
                 },
                 Err(e) => Event::ActionError(e),
             })
-        }
-        Command::FirebaseBrowserLogin {
-            profile_id,
-            bootstrap_token,
-        } => {
-            let (mut store, mut prof) = match get_profile(root, &profile_id) {
-                Ok(v) => v,
-                Err(m) => return Ok(Event::ActionError(m)),
-            };
-            let result: Result<(AuthResponse, Capabilities), String> = runtime.block_on(async {
-                let (caps, _) = server_call::<(), Capabilities>(
-                    &prof,
-                    HttpMethod::Get,
-                    "/v1/capabilities",
-                    None,
-                    None,
-                    downloads,
-                )
-                .await?;
-                if caps.firebase_project_id.is_none() || caps.firebase_web_api_key.is_none() {
-                    return Err(
-                        "Server does not have SWAGGEN_FIREBASE_PROJECT_ID and SWAGGEN_FIREBASE_WEB_API_KEY configured."
-                            .into(),
-                    );
-                }
-                let listener = tokio::net::TcpListener::bind("127.0.0.1:0")
-                    .await
-                    .map_err(|e| format!("Failed to bind local auth callback: {e}"))?;
-                let port = listener
-                    .local_addr()
-                    .map_err(|e| e.to_string())?
-                    .port();
-                let state_token = uuid::Uuid::new_v4().simple().to_string();
-                let base = prof.base_url.trim_end_matches('/');
-                let browser_url = format!(
-                    "{base}/v1/auth/firebase/browser?port={port}&state={state_token}"
-                );
-                open_system_browser(&browser_url)?;
-
-                let (id_token, browser_display_name) =
-                    await_firebase_loopback_callback(listener, &state_token).await?;
-
-                let req = FirebaseLoginRequest {
-                    id_token,
-                    display_name: browser_display_name.filter(|s| !s.trim().is_empty()),
-                    device_name: "Swaggen Desktop (Windows · Firebase)".into(),
-                    bootstrap_token,
-                };
-                let (auth, _) = server_call::<FirebaseLoginRequest, AuthResponse>(
-                    &prof,
-                    HttpMethod::Post,
-                    "/v1/auth/firebase",
-                    None,
-                    Some(&req),
-                    downloads,
-                )
-                .await?;
-                Ok((auth, caps))
-            });
-            match result {
-                Ok((auth, caps)) => {
-                    if let Err(e) = save_session_token(root, &prof, &auth.session_token) {
-                        return Ok(Event::ActionError(e));
-                    }
-                    prof.email = auth.user.email.clone();
-                    prof.user_id = auth.user.user_id.clone();
-                    prof.display_name = auth.user.display_name.clone();
-                    prof.session_id = auth.session_id.clone();
-                    prof.session_expires_unix = auth.expires_at_unix;
-                    prof.bootstrap_required = false;
-                    prof.mongo_ready = caps.mongo_ready;
-                    prof.last_server_version = caps.server_version;
-                    prof.firebase_project_id = caps.firebase_project_id;
-                    prof.firebase_web_api_key = caps.firebase_web_api_key;
-                    prof.firebase_auth_domain = caps.firebase_auth_domain;
-                    prof.last_error.clear();
-                    store.upsert(prof);
-                    Ok(match save_profiles(root, store) {
-                        Ok(saved) => Event::ServerProfilesUpdated {
-                            store: saved,
-                            message: format!("Signed in via Firebase as {}", auth.user.email),
-                        },
-                        Err(e) => Event::ActionError(e),
-                    })
-                }
-                Err(msg) => Ok(Event::ActionError(msg)),
-            }
         }
         Command::FirebaseEmailAuth {
             profile_id,
@@ -864,9 +896,13 @@ struct FirebaseCallbackPayload {
 async fn await_firebase_loopback_callback(
     listener: tokio::net::TcpListener,
     expected_state: &str,
+    cancel: &CancellationToken,
 ) -> Result<(String, Option<String>), String> {
     let deadline = tokio::time::Instant::now() + std::time::Duration::from_secs(180);
     loop {
+        if cancel.is_cancelled() {
+            return Err("__CANCELLED__".into());
+        }
         let remaining = deadline.saturating_duration_since(tokio::time::Instant::now());
         if remaining.is_zero() {
             return Err(
@@ -874,12 +910,15 @@ async fn await_firebase_loopback_callback(
                     .into(),
             );
         }
-        let accept_res = tokio::time::timeout(remaining, listener.accept())
-            .await
-            .map_err(|_| {
-                "Timed out waiting for Firebase sign-in in browser (180s). Please try again."
-                    .to_owned()
-            })?;
+        let accept_res = tokio::select! {
+            _ = cancel.cancelled() => return Err("__CANCELLED__".into()),
+            res = tokio::time::timeout(remaining, listener.accept()) => {
+                res.map_err(|_| {
+                    "Timed out waiting for Firebase sign-in in browser (180s). Please try again."
+                        .to_owned()
+                })?
+            }
+        };
         let (mut sock, _) = accept_res.map_err(|e| format!("Loopback callback error: {e}"))?;
 
         let mut buf = Vec::with_capacity(4096);
@@ -1196,7 +1235,8 @@ mod tests {
                 let n2 = s2.read(&mut r2).await.unwrap();
                 assert!(String::from_utf8_lossy(&r2[..n2]).contains("200 OK"));
             });
-            let (tok, name) = await_firebase_loopback_callback(listener, "state-ok")
+            let cancel = CancellationToken::new();
+            let (tok, name) = await_firebase_loopback_callback(listener, "state-ok", &cancel)
                 .await
                 .unwrap();
             assert_eq!(tok, "fb.jwt.token");
@@ -1218,11 +1258,34 @@ mod tests {
                 let n = s.read(&mut r).await.unwrap();
                 assert!(String::from_utf8_lossy(&r[..n]).contains("400 Bad Request"));
             });
-            let err = await_firebase_loopback_callback(listener2, "expected-state")
+            let err = await_firebase_loopback_callback(listener2, "expected-state", &cancel)
                 .await
                 .unwrap_err();
             assert!(err.contains("invalid state"));
             client2.await.unwrap();
+        });
+    }
+
+    #[test]
+    fn firebase_loopback_callback_cancels_immediately() {
+        let rt = tokio::runtime::Runtime::new().unwrap();
+        rt.block_on(async {
+            let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+            let cancel = CancellationToken::new();
+            let cancel_clone = cancel.clone();
+            let started = std::time::Instant::now();
+            tokio::spawn(async move {
+                tokio::time::sleep(Duration::from_millis(30)).await;
+                cancel_clone.cancel();
+            });
+            let err = await_firebase_loopback_callback(listener, "any-state", &cancel)
+                .await
+                .unwrap_err();
+            assert_eq!(err, "__CANCELLED__");
+            assert!(
+                started.elapsed() < Duration::from_secs(2),
+                "loopback callback must cancel immediately instead of waiting 180s"
+            );
         });
     }
 }

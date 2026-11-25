@@ -240,14 +240,31 @@ fn show_auth_and_bootstrap(app: &mut App, ui: &mut egui::Ui) {
     ui.columns(2, |cols| {
         swaggen_ui_kit::surface_card(&mut cols[0], |ui| {
             swaggen_ui_kit::card_header(ui, "Firebase Sign In (Google & Email)");
-            if swaggen_ui_kit::google_button(ui, !app.pending, "Continue with Google (Browser)")
-                .clicked()
+            if app.firebase_auth_pending {
+                swaggen_ui_kit::notice_banner(
+                    ui,
+                    NoticeKind::Info,
+                    "Waiting for browser sign-in",
+                    "Complete Google sign-in in your browser, or cancel below.",
+                );
+                ui.add_space(6.0);
+                if swaggen_ui_kit::secondary_button(ui, true, "Cancel Google sign-in").clicked() {
+                    app.cancel_firebase_browser_login();
+                }
+                ui.add_space(8.0);
+            }
+            if swaggen_ui_kit::google_button(
+                ui,
+                !app.pending && !app.firebase_auth_pending,
+                "Continue with Google (Browser)",
+            )
+            .clicked()
             {
                 let bt = app.auth_bootstrap_token.trim().to_owned();
-                app.submit(Command::FirebaseBrowserLogin {
-                    profile_id: active.id.clone(),
-                    bootstrap_token: if bt.is_empty() { None } else { Some(bt) },
-                });
+                app.start_firebase_browser_login(
+                    active.id.clone(),
+                    if bt.is_empty() { None } else { Some(bt) },
+                );
             }
             ui.add_space(12.0);
             ui.label(

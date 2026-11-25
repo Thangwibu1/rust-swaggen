@@ -116,6 +116,7 @@ pub enum Command {
         profile_id: String,
         bootstrap_token: Option<String>,
     },
+    CancelFirebaseLogin,
     FirebaseEmailAuth {
         profile_id: String,
         email: String,
@@ -310,6 +311,7 @@ pub enum Event {
         store: swaggen_domain::server_profiles::ServerProfileStore,
         message: String,
     },
+    FirebaseLoginCancelled,
     ServerSessionsLoaded(Vec<swaggen_api_contract::SessionSummary>),
     TeamWorkspacesLoaded(Vec<swaggen_api_contract::TeamWorkspaceSummary>),
     TeamWorkspaceDetailsLoaded {
@@ -485,6 +487,7 @@ impl Worker {
             let mut local_mock_handle: Option<swaggen_runner::local_mock::LocalMockHandle> = None;
             let mut runner_cancel: Option<CancellationToken> = None;
             let mut sse_cancel: Option<CancellationToken> = None;
+            let mut firebase_auth_cancel: Option<CancellationToken> = None;
             let runtime = tokio::runtime::Builder::new_multi_thread()
                 .worker_threads(2)
                 .enable_all()
@@ -516,7 +519,57 @@ impl Worker {
             while let Ok(command) = incoming.recv() {
                 match command {
                     Command::Shutdown => {
+                        if let Ok(mut map) = cancels.lock() {
+                            for (_, tok) in map.drain() {
+                                tok.cancel();
+                            }
+                        }
+                        if let Some(tok) = runner_cancel.take() {
+                            tok.cancel();
+                        }
+                        if let Some(tok) = sse_cancel.take() {
+                            tok.cancel();
+                        }
+                        if let Some(tok) = firebase_auth_cancel.take() {
+                            tok.cancel();
+                        }
+                        drop(local_mock_handle.take());
                         break;
+                    }
+                    Command::CancelFirebaseLogin => {
+                        if let Some(tok) = firebase_auth_cancel.take() {
+                            tok.cancel();
+                        }
+                        if outgoing.send(Event::FirebaseLoginCancelled).is_err() {
+                            break;
+                        }
+                        wake();
+                        continue;
+                    }
+                    Command::FirebaseBrowserLogin {
+                        profile_id,
+                        bootstrap_token,
+                    } => {
+                        if let Some(prev) = firebase_auth_cancel.take() {
+                            prev.cancel();
+                        }
+                        let tok = CancellationToken::new();
+                        firebase_auth_cancel = Some(tok.clone());
+                        let dl_dir = session
+                            .as_ref()
+                            .map(|s| s.ws_store.downloads_dir())
+                            .unwrap_or_else(|_| current_root.join("_server_downloads"));
+                        crate::server_worker::spawn_firebase_browser_login(
+                            &runtime,
+                            current_root.clone(),
+                            dl_dir,
+                            profile_id,
+                            bootstrap_token,
+                            tok,
+                            outgoing.clone(),
+                            wake.clone(),
+                        );
+                        continue;
                     }
                     Command::CancelHttp { execution_id } => {
                         if let Ok(mut map) = cancels.lock()
@@ -1465,6 +1518,7 @@ impl Worker {
                     | Command::SaveServerProfiles { .. }
                     | Command::TestServerConnection { .. }
                     | Command::FirebaseBrowserLogin { .. }
+                    | Command::CancelFirebaseLogin
                     | Command::FirebaseEmailAuth { .. }
                     | Command::BootstrapServerOwner { .. }
                     | Command::ServerLogin { .. }
@@ -1494,6 +1548,7 @@ impl Worker {
                     | Command::Shutdown => unreachable!(),
                 }
             }
+            runtime.shutdown_background();
         });
 
         Self { commands, events }

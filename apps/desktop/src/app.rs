@@ -94,6 +94,8 @@ pub struct App {
     pub confirm_quarantine: bool,
     pub close_dialog: bool,
     pub allow_close: bool,
+    pub close_after_save: bool,
+    pub firebase_auth_pending: bool,
 
     // Search & tree UI state
     pub search_query: String,
@@ -305,6 +307,8 @@ impl App {
             confirm_quarantine: false,
             close_dialog: false,
             allow_close: false,
+            close_after_save: false,
+            firebase_auth_pending: false,
             search_query: String::new(),
             filter_method: None,
             filter_tag: String::new(),
@@ -558,6 +562,49 @@ impl App {
         }
     }
 
+    pub fn start_firebase_browser_login(
+        &mut self,
+        profile_id: String,
+        bootstrap_token: Option<String>,
+    ) {
+        match self.worker.commands.try_send(Command::FirebaseBrowserLogin {
+            profile_id,
+            bootstrap_token,
+        }) {
+            Ok(()) => {
+                self.firebase_auth_pending = true;
+                self.error = false;
+                self.status = "Waiting for Google sign-in in your browser…".into();
+            }
+            Err(_) => {
+                self.error = true;
+                self.status = "Worker busy; please try signing in again.".into();
+            }
+        }
+    }
+
+    pub fn cancel_firebase_browser_login(&mut self) {
+        if self.firebase_auth_pending {
+            self.firebase_auth_pending = false;
+            let _ = self.worker.commands.try_send(Command::CancelFirebaseLogin);
+            self.error = false;
+            self.status = "Google sign-in cancelled".into();
+        }
+    }
+
+    fn shutdown_and_close(&mut self, ctx: &egui::Context) {
+        self.cancel_inflight();
+        if self.firebase_auth_pending {
+            self.firebase_auth_pending = false;
+            let _ = self.worker.commands.try_send(Command::CancelFirebaseLogin);
+        }
+        let _ = self.worker.commands.try_send(Command::Shutdown);
+        self.close_dialog = false;
+        self.close_after_save = false;
+        self.allow_close = true;
+        ctx.send_viewport_cmd(egui::ViewportCommand::Close);
+    }
+
     pub fn events(&mut self) {
         while let Ok(event) = self.worker.events.try_recv() {
             self.pending = false;
@@ -625,11 +672,16 @@ impl App {
                     self.status = "Durable data reopened".into();
                 }
                 Event::ServerProfilesUpdated { store, message } => {
+                    self.firebase_auth_pending = false;
                     if store.active().is_some_and(|p| !p.session_id.is_empty()) {
                         self.show_welcome = false;
                     }
                     self.server_profiles = store;
                     self.status = message;
+                }
+                Event::FirebaseLoginCancelled => {
+                    self.firebase_auth_pending = false;
+                    self.status = "Google sign-in cancelled".into();
                 }
                 Event::ServerSessionsLoaded(sessions) => {
                     self.server_sessions = sessions;
@@ -923,12 +975,16 @@ impl App {
                     self.recovery_needed = matches!(error, Error::Storage | Error::Recovery);
                 }
                 Event::Failed(error) => {
+                    self.firebase_auth_pending = false;
+                    self.close_after_save = false;
                     self.error = true;
                     self.status = error.to_string();
                     self.recovery_needed = !self.loaded
                         || matches!(error, Error::Storage | Error::Recovery | Error::Version);
                 }
                 Event::ActionError(msg) => {
+                    self.firebase_auth_pending = false;
+                    self.close_after_save = false;
                     self.error = true;
                     self.status = msg;
                 }
@@ -1011,14 +1067,27 @@ impl eframe::App for App {
         let ctx = ui.ctx().clone();
         self.events();
 
-        if ctx.input(|i| i.viewport().close_requested())
-            && !self.allow_close
-            && (self.dirty() || self.pending || !self.secret_input.is_empty())
-        {
-            ctx.send_viewport_cmd(egui::ViewportCommand::CancelClose);
-            self.close_dialog = true;
+        if self.close_after_save && !self.dirty() && !self.pending {
+            self.shutdown_and_close(&ctx);
+            return;
+        }
+
+        if ctx.input(|i| i.viewport().close_requested()) && !self.allow_close {
+            let has_unsaved = self.dirty() || !self.secret_input.is_empty();
+            if has_unsaved {
+                ctx.send_viewport_cmd(egui::ViewportCommand::CancelClose);
+                self.close_dialog = true;
+            } else {
+                self.shutdown_and_close(&ctx);
+                return;
+            }
         }
         if self.close_dialog {
+            if ctx.input_mut(|i| i.consume_key(egui::Modifiers::NONE, egui::Key::Escape)) {
+                self.close_dialog = false;
+                self.close_after_save = false;
+                return;
+            }
             egui::CentralPanel::default()
                 .frame(
                     egui::Frame::new()
@@ -1034,21 +1103,40 @@ impl eframe::App for App {
                                 "Keep your unsaved changes?",
                                 "Return to the workspace and save before closing, or discard unsaved edits.",
                             );
-                            ui.horizontal(|ui| {
-                                if swaggen_ui_kit::primary_button(ui, true, "Return to workspace")
-                                    .clicked()
+                            ui.horizontal_wrapped(|ui| {
+                                if swaggen_ui_kit::secondary_button(
+                                    ui,
+                                    true,
+                                    "Return to workspace",
+                                )
+                                .clicked()
                                 {
                                     self.close_dialog = false;
+                                    self.close_after_save = false;
+                                }
+                                if self.dirty() && self.loaded && !self.recovery_needed
+                                    && swaggen_ui_kit::primary_button(
+                                        ui,
+                                        !self.pending,
+                                        if self.close_after_save {
+                                            "Saving…"
+                                        } else {
+                                            "Save & close"
+                                        },
+                                    )
+                                    .clicked()
+                                {
+                                    self.close_after_save = true;
+                                    self.save_workspace();
                                 }
                                 if swaggen_ui_kit::danger_button(
                                     ui,
-                                    !self.pending,
+                                    true,
                                     "Close without saving",
                                 )
                                 .clicked()
                                 {
-                                    self.allow_close = true;
-                                    ctx.send_viewport_cmd(egui::ViewportCommand::Close);
+                                    self.shutdown_and_close(&ctx);
                                 }
                             });
                         });

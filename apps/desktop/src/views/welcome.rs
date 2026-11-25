@@ -135,29 +135,39 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                                         .map(|p| p.id.clone())
                                         .unwrap_or_else(|| "production".into());
 
-                                    if app.pending {
+                                    if app.firebase_auth_pending {
                                         swaggen_ui_kit::notice_banner(
                                             ui,
                                             NoticeKind::Info,
                                             "Continue in your browser",
-                                            "Finish signing in with Firebase in your system browser. Swaggen will receive your session automatically.",
+                                            "Finish signing in with Google in your system browser. Swaggen will receive your session automatically.",
                                         );
+                                        ui.add_space(8.0);
+                                        if swaggen_ui_kit::secondary_button(
+                                            ui,
+                                            true,
+                                            "Cancel Google sign-in",
+                                        )
+                                        .clicked()
+                                        {
+                                            app.cancel_firebase_browser_login();
+                                        }
                                         ui.add_space(12.0);
                                     }
 
                                     // Google / Firebase browser handoff button (A01/A02).
                                     if swaggen_ui_kit::google_button(
                                         ui,
-                                        !app.pending,
+                                        !app.pending && !app.firebase_auth_pending,
                                         "Continue with Google",
                                     )
                                     .clicked()
                                     {
                                         let bt = app.auth_bootstrap_token.trim().to_owned();
-                                        app.submit(Command::FirebaseBrowserLogin {
-                                            profile_id: prof_id.clone(),
-                                            bootstrap_token: if bt.is_empty() { None } else { Some(bt) },
-                                        });
+                                        app.start_firebase_browser_login(
+                                            prof_id.clone(),
+                                            if bt.is_empty() { None } else { Some(bt) },
+                                        );
                                     }
 
                                     ui.add_space(14.0);
