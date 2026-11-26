@@ -212,6 +212,9 @@ pub struct App {
     pub team_unread_notifications: usize,
     pub publish_history: Vec<swaggen_api_contract::ChangeEventRecord>,
     pub preview_history_cursor: Option<i64>,
+    pub expanded_history_cursors: std::collections::BTreeSet<i64>,
+    pub cherry_pick_selections:
+        HashMap<i64, std::collections::BTreeSet<swaggen_domain::workspace::RequestCherryPickHunk>>,
 
     // P07 Version B core UI state
     pub transfer_progress: Option<(u64, &'static str, u64, Option<u64>)>,
@@ -277,7 +280,6 @@ pub struct App {
     pub sandbox_script_text: String,
     pub sandbox_report: Option<swaggen_runner::sandbox::SandboxExecutionReport>,
     pub extensions: Vec<swaggen_domain::extensions::ExtensionManifest>,
-    pub dark_mode: bool,
     pub script_subtab_post: bool,
     pub script_reports: HashMap<
         String,
@@ -464,6 +466,8 @@ impl App {
             team_unread_notifications: 0,
             publish_history: Vec::new(),
             preview_history_cursor: None,
+            expanded_history_cursors: std::collections::BTreeSet::new(),
+            cherry_pick_selections: HashMap::new(),
             transfer_progress: None,
             previous_responses: HashMap::new(),
             diff_ignore_paths: "timestamp, request_id".into(),
@@ -528,7 +532,6 @@ impl App {
                     .into_iter()
                     .collect(),
             )],
-            dark_mode: false,
             script_subtab_post: true,
             script_reports: HashMap::new(),
             env_scope_tab: 0,
@@ -755,6 +758,80 @@ impl App {
             self.error = true;
             self.status = format!("Unsupported cherry-pick kind '{}'", ev.entity_kind);
         }
+    }
+
+    pub fn cherry_pick_request_hunks(
+        &mut self,
+        ev: &swaggen_api_contract::ChangeEventRecord,
+        hunks: &[swaggen_domain::workspace::RequestCherryPickHunk],
+    ) {
+        if hunks.is_empty() {
+            self.error = true;
+            self.status = "Select at least one changed section to cherry-pick.".into();
+            return;
+        }
+        let Some(raw) = ev.payload_json.as_deref() else {
+            self.error = true;
+            self.status = format!("Event #{} has no payload to cherry-pick.", ev.cursor);
+            return;
+        };
+        let source = match serde_json::from_str::<RequestItem>(raw) {
+            Ok(req) => req,
+            Err(e) => {
+                self.error = true;
+                self.status = format!("Failed to parse request from #{}: {e}", ev.cursor);
+                return;
+            }
+        };
+
+        let target_idx =
+            if let Some(pos) = self.state.requests.iter().position(|r| r.id == source.id) {
+                pos
+            } else {
+                let mut new_req = RequestItem::new(
+                    self.state
+                        .collections
+                        .iter()
+                        .find(|c| c.id == source.collection_id)
+                        .map(|c| c.id.clone())
+                        .or_else(|| self.state.collections.first().map(|c| c.id.clone()))
+                        .unwrap_or_else(|| "default".into()),
+                    source.name.clone(),
+                    swaggen_domain::workspace::HttpMethod::Get,
+                    "",
+                );
+                new_req.id = source.id.clone();
+                self.state.requests.push(new_req);
+                self.state.requests.len() - 1
+            };
+
+        let applied_labels = swaggen_domain::workspace::apply_request_cherry_pick_hunks(
+            &mut self.state.requests[target_idx],
+            &source,
+            hunks,
+        );
+        let target_req = self.state.requests[target_idx].clone();
+        self.open_request_in_workbench(&target_req.id);
+        self.mark_dirty();
+        self.save_workspace_local_only();
+
+        let summary = applied_labels.join(", ");
+        if let Some((profile_id, workspace_id)) = self.active_team_target() {
+            self.submit(Command::PublishSequentialEvent {
+                profile_id,
+                workspace_id,
+                entity_id: target_req.id.clone(),
+                kind: "request".into(),
+                name: format!("{} {}", target_req.method.as_str(), target_req.name),
+                payload_json: serde_json::to_string(&target_req).unwrap_or_else(|_| "{}".into()),
+                note: format!("Cherry-pick #{} ({summary})", ev.cursor),
+            });
+        }
+        self.error = false;
+        self.status = format!(
+            "Cherry-picked [{summary}] from #{} into Workbench",
+            ev.cursor
+        );
     }
 
     pub fn open_request_in_workbench(&mut self, req_id: &str) {
@@ -1092,6 +1169,8 @@ impl App {
                         self.team_unread_notifications = 0;
                         self.publish_history.clear();
                         self.preview_history_cursor = None;
+                        self.expanded_history_cursors.clear();
+                        self.cherry_pick_selections.clear();
                         self.selected_team_workspace_id = None;
                     }
                     if signed_in_id.is_none()
@@ -1206,6 +1285,9 @@ impl App {
                     state,
                     message,
                 } => {
+                    if let Some(newest) = events.first().map(|e| e.cursor) {
+                        self.expanded_history_cursors.insert(newest);
+                    }
                     self.publish_history = events;
                     if let Some(st) = state {
                         self.sync_state = *st;
@@ -2953,6 +3035,8 @@ mod tests {
             team_unread_notifications: 0,
             publish_history: Vec::new(),
             preview_history_cursor: None,
+            expanded_history_cursors: std::collections::BTreeSet::new(),
+            cherry_pick_selections: HashMap::new(),
             transfer_progress: None,
             previous_responses: HashMap::new(),
             diff_ignore_paths: String::new(),
@@ -3010,7 +3094,6 @@ mod tests {
             sandbox_script_text: String::new(),
             sandbox_report: None,
             extensions: Vec::new(),
-            dark_mode: false,
             script_subtab_post: true,
             script_reports: HashMap::new(),
             env_scope_tab: 0,

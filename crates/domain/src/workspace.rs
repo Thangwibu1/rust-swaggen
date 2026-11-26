@@ -3494,6 +3494,525 @@ pub fn apply_brace_var_completion(
     (out, new_cursor)
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum RequestCherryPickHunk {
+    NameAndDescription,
+    MethodAndUrl,
+    QueryParams,
+    PathParams,
+    Headers,
+    Body,
+    Auth,
+    Scripts,
+    Assertions,
+    Settings,
+}
+
+impl RequestCherryPickHunk {
+    pub fn label(self) -> &'static str {
+        match self {
+            Self::NameAndDescription => "Name & Description",
+            Self::MethodAndUrl => "Method & URL",
+            Self::QueryParams => "Query Params",
+            Self::PathParams => "Path Variables",
+            Self::Headers => "Headers",
+            Self::Body => "Body",
+            Self::Auth => "Auth",
+            Self::Scripts => "Scripts",
+            Self::Assertions => "Assertions & Extractors",
+            Self::Settings => "Settings",
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct RequestFieldDiff {
+    pub hunk: RequestCherryPickHunk,
+    pub label: &'static str,
+    pub before_lines: Vec<String>,
+    pub after_lines: Vec<String>,
+}
+
+fn summarize_kv_rows(rows: &[KeyValueRow]) -> Vec<String> {
+    rows.iter()
+        .filter(|r| !r.key.trim().is_empty() || !r.value.trim().is_empty())
+        .map(|r| {
+            let prefix = if r.enabled { "" } else { "[disabled] " };
+            if r.description.trim().is_empty() {
+                format!("{prefix}{} = {}", r.key, r.value)
+            } else {
+                format!("{prefix}{} = {} ({})", r.key, r.value, r.description.trim())
+            }
+        })
+        .collect()
+}
+
+fn diff_kv_lists(before: &[KeyValueRow], after: &[KeyValueRow]) -> (Vec<String>, Vec<String>) {
+    let b_lines = summarize_kv_rows(before);
+    let a_lines = summarize_kv_rows(after);
+    let mut removed = Vec::new();
+    let mut added = Vec::new();
+    for line in &b_lines {
+        if !a_lines.contains(line) {
+            removed.push(line.clone());
+        }
+    }
+    for line in &a_lines {
+        if !b_lines.contains(line) {
+            added.push(line.clone());
+        }
+    }
+    if removed.is_empty() && added.is_empty() {
+        return (b_lines, a_lines);
+    }
+    (removed, added)
+}
+
+fn summarize_body_lines(body: &RequestBody) -> Vec<String> {
+    let preview_lines = |raw: &str| -> Vec<String> {
+        let mut lines: Vec<String> = raw
+            .lines()
+            .take(8)
+            .map(|l| {
+                if l.chars().count() > 110 {
+                    let s: String = l.chars().take(109).collect();
+                    format!("{s}…")
+                } else {
+                    l.to_owned()
+                }
+            })
+            .collect();
+        let total = raw.lines().count();
+        if total > 8 {
+            lines.push(format!("… (+{} more lines)", total - 8));
+        }
+        lines
+    };
+    match body {
+        RequestBody::None => vec!["(none)".into()],
+        RequestBody::Json(s) => {
+            let mut v = vec!["[JSON]".to_owned()];
+            v.extend(preview_lines(s));
+            v
+        }
+        RequestBody::Text(s) => {
+            let mut v = vec!["[Raw text]".to_owned()];
+            v.extend(preview_lines(s));
+            v
+        }
+        RequestBody::Xml(s) => {
+            let mut v = vec!["[XML]".to_owned()];
+            v.extend(preview_lines(s));
+            v
+        }
+        RequestBody::GraphQl {
+            query,
+            variables,
+            operation_name,
+        } => {
+            let mut v = vec![format!(
+                "[GraphQL{}]",
+                operation_name
+                    .as_deref()
+                    .filter(|s| !s.is_empty())
+                    .map(|op| format!(" · {op}"))
+                    .unwrap_or_default()
+            )];
+            v.extend(preview_lines(query));
+            if !variables.trim().is_empty() && variables.trim() != "{}" {
+                v.push("Variables:".into());
+                v.extend(preview_lines(variables));
+            }
+            v
+        }
+        RequestBody::FormUrlEncoded(rows) => {
+            let mut v = vec!["[x-www-form-urlencoded]".to_owned()];
+            v.extend(summarize_kv_rows(rows));
+            v
+        }
+        RequestBody::Multipart(fields) => {
+            let mut v = vec!["[multipart/form-data]".to_owned()];
+            for f in fields {
+                let kind_desc = match &f.value {
+                    MultipartValueKind::Text(t) => t.clone(),
+                    MultipartValueKind::File { file_name, .. } => format!("<file: {file_name}>"),
+                };
+                v.push(format!("{} = {}", f.name, kind_desc));
+            }
+            v
+        }
+        RequestBody::Binary {
+            local_path,
+            content_type,
+        } => vec![format!(
+            "[Binary · {content_type}] {}",
+            local_path.as_deref().unwrap_or("(no file)")
+        )],
+    }
+}
+
+fn summarize_auth_lines(auth: &AuthConfig) -> Vec<String> {
+    let s = match auth {
+        AuthConfig::Inherit => "Inherit from parent".to_owned(),
+        AuthConfig::NoAuth => "No Auth".to_owned(),
+        AuthConfig::Bearer { token } => {
+            if token.trim().is_empty() {
+                "Bearer (empty)".to_owned()
+            } else {
+                format!("Bearer: {token}")
+            }
+        }
+        AuthConfig::Basic { username, .. } => format!("Basic Auth (user: {username})"),
+        AuthConfig::ApiKey {
+            key,
+            value,
+            placement,
+        } => format!("API Key ({key} = {value}, in {:?})", placement),
+        AuthConfig::OAuth2 {
+            grant_type,
+            token_url,
+            ..
+        } => format!("OAuth 2.0 ({grant_type:?} · {token_url})"),
+        AuthConfig::AwsSigV4 {
+            region, service, ..
+        } => format!("AWS SigV4 ({region}/{service})"),
+        AuthConfig::Digest {
+            username, realm, ..
+        } => format!("Digest Auth ({username} @ {realm})"),
+    };
+    vec![s]
+}
+
+fn summarize_script_lines(pre: &str, post: &str) -> Vec<String> {
+    let mut lines = Vec::new();
+    if !pre.trim().is_empty() {
+        lines.push(format!("Pre-request ({} line(s)):", pre.lines().count()));
+        lines.extend(pre.lines().take(4).map(|l| format!("  {l}")));
+    }
+    if !post.trim().is_empty() {
+        lines.push(format!("Post-response ({} line(s)):", post.lines().count()));
+        lines.extend(post.lines().take(4).map(|l| format!("  {l}")));
+    }
+    if lines.is_empty() {
+        lines.push("(no scripts)".into());
+    }
+    lines
+}
+
+/// Computes a structured field-by-field diff between two saved snapshots of a `RequestItem`
+/// (or shows all populated sections if `before` is `None` for the initial creation commit).
+pub fn diff_request_snapshots(
+    before: Option<&RequestItem>,
+    after: &RequestItem,
+) -> Vec<RequestFieldDiff> {
+    let mut diffs = Vec::new();
+    let Some(prev) = before else {
+        diffs.push(RequestFieldDiff {
+            hunk: RequestCherryPickHunk::MethodAndUrl,
+            label: RequestCherryPickHunk::MethodAndUrl.label(),
+            before_lines: Vec::new(),
+            after_lines: vec![format!("{} {}", after.method.as_str(), after.url)],
+        });
+        if !after.name.trim().is_empty()
+            || !after.description.trim().is_empty()
+            || !after.tags.is_empty()
+        {
+            let mut a = vec![format!("Name: {}", after.name)];
+            if !after.description.trim().is_empty() {
+                a.push(format!("Description: {}", after.description.trim()));
+            }
+            if !after.tags.is_empty() {
+                a.push(format!("Tags: {}", after.tags.join(", ")));
+            }
+            diffs.push(RequestFieldDiff {
+                hunk: RequestCherryPickHunk::NameAndDescription,
+                label: RequestCherryPickHunk::NameAndDescription.label(),
+                before_lines: Vec::new(),
+                after_lines: a,
+            });
+        }
+        let qp = summarize_kv_rows(&after.query_params);
+        if !qp.is_empty() {
+            diffs.push(RequestFieldDiff {
+                hunk: RequestCherryPickHunk::QueryParams,
+                label: RequestCherryPickHunk::QueryParams.label(),
+                before_lines: Vec::new(),
+                after_lines: qp,
+            });
+        }
+        let pp = summarize_kv_rows(&after.path_params);
+        if !pp.is_empty() {
+            diffs.push(RequestFieldDiff {
+                hunk: RequestCherryPickHunk::PathParams,
+                label: RequestCherryPickHunk::PathParams.label(),
+                before_lines: Vec::new(),
+                after_lines: pp,
+            });
+        }
+        let hdrs = summarize_kv_rows(&after.headers);
+        if !hdrs.is_empty() {
+            diffs.push(RequestFieldDiff {
+                hunk: RequestCherryPickHunk::Headers,
+                label: RequestCherryPickHunk::Headers.label(),
+                before_lines: Vec::new(),
+                after_lines: hdrs,
+            });
+        }
+        if !matches!(after.body, RequestBody::None) {
+            diffs.push(RequestFieldDiff {
+                hunk: RequestCherryPickHunk::Body,
+                label: RequestCherryPickHunk::Body.label(),
+                before_lines: Vec::new(),
+                after_lines: summarize_body_lines(&after.body),
+            });
+        }
+        if !matches!(after.auth, AuthConfig::Inherit | AuthConfig::NoAuth) {
+            diffs.push(RequestFieldDiff {
+                hunk: RequestCherryPickHunk::Auth,
+                label: RequestCherryPickHunk::Auth.label(),
+                before_lines: Vec::new(),
+                after_lines: summarize_auth_lines(&after.auth),
+            });
+        }
+        if !after.pre_request_script.trim().is_empty()
+            || !after.post_response_script.trim().is_empty()
+        {
+            diffs.push(RequestFieldDiff {
+                hunk: RequestCherryPickHunk::Scripts,
+                label: RequestCherryPickHunk::Scripts.label(),
+                before_lines: Vec::new(),
+                after_lines: summarize_script_lines(
+                    &after.pre_request_script,
+                    &after.post_response_script,
+                ),
+            });
+        }
+        if !after.assertions.is_empty() || !after.extractors.is_empty() {
+            let mut a: Vec<String> = after
+                .assertions
+                .iter()
+                .map(|r| format!("{}: {:?}", r.label, r.expected))
+                .collect();
+            for ex in &after.extractors {
+                a.push(format!(
+                    "Extract {{{{{}}}}} <- {}",
+                    ex.target_var, ex.expression
+                ));
+            }
+            diffs.push(RequestFieldDiff {
+                hunk: RequestCherryPickHunk::Assertions,
+                label: RequestCherryPickHunk::Assertions.label(),
+                before_lines: Vec::new(),
+                after_lines: a,
+            });
+        }
+        return diffs;
+    };
+
+    if prev.method != after.method || prev.url != after.url {
+        diffs.push(RequestFieldDiff {
+            hunk: RequestCherryPickHunk::MethodAndUrl,
+            label: RequestCherryPickHunk::MethodAndUrl.label(),
+            before_lines: vec![format!("{} {}", prev.method.as_str(), prev.url)],
+            after_lines: vec![format!("{} {}", after.method.as_str(), after.url)],
+        });
+    }
+    if prev.name != after.name || prev.description != after.description || prev.tags != after.tags {
+        let fmt_meta = |r: &RequestItem| {
+            let mut v = vec![format!("Name: {}", r.name)];
+            if !r.description.trim().is_empty() {
+                v.push(format!("Description: {}", r.description.trim()));
+            }
+            if !r.tags.is_empty() {
+                v.push(format!("Tags: {}", r.tags.join(", ")));
+            }
+            v
+        };
+        diffs.push(RequestFieldDiff {
+            hunk: RequestCherryPickHunk::NameAndDescription,
+            label: RequestCherryPickHunk::NameAndDescription.label(),
+            before_lines: fmt_meta(prev),
+            after_lines: fmt_meta(after),
+        });
+    }
+    if prev.query_params != after.query_params {
+        let (b, a) = diff_kv_lists(&prev.query_params, &after.query_params);
+        diffs.push(RequestFieldDiff {
+            hunk: RequestCherryPickHunk::QueryParams,
+            label: RequestCherryPickHunk::QueryParams.label(),
+            before_lines: b,
+            after_lines: a,
+        });
+    }
+    if prev.path_params != after.path_params {
+        let (b, a) = diff_kv_lists(&prev.path_params, &after.path_params);
+        diffs.push(RequestFieldDiff {
+            hunk: RequestCherryPickHunk::PathParams,
+            label: RequestCherryPickHunk::PathParams.label(),
+            before_lines: b,
+            after_lines: a,
+        });
+    }
+    if prev.headers != after.headers {
+        let (b, a) = diff_kv_lists(&prev.headers, &after.headers);
+        diffs.push(RequestFieldDiff {
+            hunk: RequestCherryPickHunk::Headers,
+            label: RequestCherryPickHunk::Headers.label(),
+            before_lines: b,
+            after_lines: a,
+        });
+    }
+    if prev.body != after.body {
+        diffs.push(RequestFieldDiff {
+            hunk: RequestCherryPickHunk::Body,
+            label: RequestCherryPickHunk::Body.label(),
+            before_lines: summarize_body_lines(&prev.body),
+            after_lines: summarize_body_lines(&after.body),
+        });
+    }
+    if prev.auth != after.auth {
+        diffs.push(RequestFieldDiff {
+            hunk: RequestCherryPickHunk::Auth,
+            label: RequestCherryPickHunk::Auth.label(),
+            before_lines: summarize_auth_lines(&prev.auth),
+            after_lines: summarize_auth_lines(&after.auth),
+        });
+    }
+    if prev.pre_request_script != after.pre_request_script
+        || prev.post_response_script != after.post_response_script
+    {
+        diffs.push(RequestFieldDiff {
+            hunk: RequestCherryPickHunk::Scripts,
+            label: RequestCherryPickHunk::Scripts.label(),
+            before_lines: summarize_script_lines(
+                &prev.pre_request_script,
+                &prev.post_response_script,
+            ),
+            after_lines: summarize_script_lines(
+                &after.pre_request_script,
+                &after.post_response_script,
+            ),
+        });
+    }
+    if prev.assertions != after.assertions || prev.extractors != after.extractors {
+        let fmt_asserts = |r: &RequestItem| {
+            let mut v: Vec<String> = r
+                .assertions
+                .iter()
+                .map(|a| format!("{}: {}", a.label, a.expected))
+                .collect();
+            for ex in &r.extractors {
+                v.push(format!(
+                    "Extract {{{{{}}}}} <- {}",
+                    ex.target_var, ex.expression
+                ));
+            }
+            if v.is_empty() {
+                v.push("(none)".into());
+            }
+            v
+        };
+        diffs.push(RequestFieldDiff {
+            hunk: RequestCherryPickHunk::Assertions,
+            label: RequestCherryPickHunk::Assertions.label(),
+            before_lines: fmt_asserts(prev),
+            after_lines: fmt_asserts(after),
+        });
+    }
+    if prev.connection != after.connection
+        || prev.idempotency_mode != after.idempotency_mode
+        || prev.custom_idempotency_key != after.custom_idempotency_key
+    {
+        let fmt_cfg = |r: &RequestItem| {
+            vec![format!(
+                "timeout={}ms · redirects={} · idempotency={:?}",
+                r.connection.timeout_ms, r.connection.follow_redirects, r.idempotency_mode
+            )]
+        };
+        diffs.push(RequestFieldDiff {
+            hunk: RequestCherryPickHunk::Settings,
+            label: RequestCherryPickHunk::Settings.label(),
+            before_lines: fmt_cfg(prev),
+            after_lines: fmt_cfg(after),
+        });
+    }
+    diffs
+}
+
+/// Applies only the selected `hunks` from `source` onto `target` (Git-style partial cherry-pick),
+/// keeping all unselected fields on `target` untouched.
+pub fn apply_request_cherry_pick_hunks(
+    target: &mut RequestItem,
+    source: &RequestItem,
+    hunks: &[RequestCherryPickHunk],
+) -> Vec<&'static str> {
+    let mut applied = Vec::new();
+    let has_query_hunk = hunks.contains(&RequestCherryPickHunk::QueryParams);
+    let has_url_hunk = hunks.contains(&RequestCherryPickHunk::MethodAndUrl);
+    for &hunk in hunks {
+        applied.push(hunk.label());
+        match hunk {
+            RequestCherryPickHunk::NameAndDescription => {
+                target.name = source.name.clone();
+                target.description = source.description.clone();
+                target.tags = source.tags.clone();
+            }
+            RequestCherryPickHunk::MethodAndUrl => {
+                target.method = source.method;
+                if has_query_hunk {
+                    target.url = source.url.clone();
+                } else {
+                    let (src_base, _, src_frag) = split_url_parts(&source.url);
+                    let (_, cur_query, _) = split_url_parts(&target.url);
+                    let mut next = src_base.to_owned();
+                    if let Some(q) = cur_query {
+                        next.push('?');
+                        next.push_str(q);
+                    }
+                    if let Some(f) = src_frag {
+                        next.push('#');
+                        next.push_str(f);
+                    }
+                    target.url = next;
+                }
+            }
+            RequestCherryPickHunk::QueryParams => {
+                target.query_params = source.query_params.clone();
+                if !has_url_hunk {
+                    target.sync_url_from_query_params();
+                }
+            }
+            RequestCherryPickHunk::PathParams => {
+                target.path_params = source.path_params.clone();
+            }
+            RequestCherryPickHunk::Headers => {
+                target.headers = source.headers.clone();
+            }
+            RequestCherryPickHunk::Body => {
+                target.body = source.body.clone();
+            }
+            RequestCherryPickHunk::Auth => {
+                target.auth = source.auth.clone();
+            }
+            RequestCherryPickHunk::Scripts => {
+                target.pre_request_script = source.pre_request_script.clone();
+                target.post_response_script = source.post_response_script.clone();
+            }
+            RequestCherryPickHunk::Assertions => {
+                target.assertions = source.assertions.clone();
+                target.extractors = source.extractors.clone();
+            }
+            RequestCherryPickHunk::Settings => {
+                target.connection = source.connection.clone();
+                target.idempotency_mode = source.idempotency_mode;
+                target.custom_idempotency_key = source.custom_idempotency_key.clone();
+            }
+        }
+    }
+    target.dirty_vs_shared = true;
+    applied
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -3964,5 +4483,53 @@ mod tests {
         let (done2, new_cur2) = apply_brace_var_completion("{{ba}}/users", 0, 4, "base_url");
         assert_eq!(done2, "{{base_url}}/users");
         assert_eq!(new_cur2, 12);
+    }
+
+    #[test]
+    fn request_diff_and_partial_cherry_pick_hunks_work() {
+        let mut r1 = RequestItem::new(
+            "col-1",
+            "List Users",
+            HttpMethod::Get,
+            "https://api.example.test/users?page=1",
+        );
+        r1.headers
+            .push(KeyValueRow::new("Accept", "application/json"));
+
+        let mut r2 = r1.clone();
+        r2.method = HttpMethod::Post;
+        r2.url = "https://api.example.test/v2/users?page=2".into();
+        r2.sync_params_from_url();
+        r2.headers.push(KeyValueRow::new("X-Trace", "abc"));
+        r2.body = RequestBody::Json("{\"role\":\"admin\"}".into());
+
+        let diffs = diff_request_snapshots(Some(&r1), &r2);
+        assert!(
+            diffs
+                .iter()
+                .any(|d| d.hunk == RequestCherryPickHunk::MethodAndUrl)
+        );
+        assert!(
+            diffs
+                .iter()
+                .any(|d| d.hunk == RequestCherryPickHunk::QueryParams)
+        );
+        assert!(
+            diffs
+                .iter()
+                .any(|d| d.hunk == RequestCherryPickHunk::Headers)
+        );
+        assert!(diffs.iter().any(|d| d.hunk == RequestCherryPickHunk::Body));
+        assert!(!diffs.iter().any(|d| d.hunk == RequestCherryPickHunk::Auth));
+
+        // Partial cherry-pick ONLY Body from r2 onto r1 (leaving r1's GET URL & headers intact!)
+        let mut cur = r1.clone();
+        let applied =
+            apply_request_cherry_pick_hunks(&mut cur, &r2, &[RequestCherryPickHunk::Body]);
+        assert_eq!(applied, vec!["Body"]);
+        assert_eq!(cur.method, HttpMethod::Get);
+        assert_eq!(cur.url, r1.url);
+        assert_eq!(cur.headers, r1.headers);
+        assert_eq!(cur.body, r2.body);
     }
 }

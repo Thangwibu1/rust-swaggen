@@ -1,4 +1,4 @@
-# Swaggen — Tài liệu Kiến trúc Hệ thống & Tổng hợp Tính năng (`v0.1.21`)
+# Swaggen — Tài liệu Kiến trúc Hệ thống & Tổng hợp Tính năng (`v0.1.22`)
 
 > **Swaggen** là nền tảng kiểm thử, thiết kế và cộng tác API (REST, GraphQL, SSE, OpenAPI) viết hoàn toàn bằng **Rust** (`edition = "2024"`, MSRV `1.100`) theo kiến trúc **Windows Native Desktop + Cloud Collaboration Backend**.
 >
@@ -26,14 +26,14 @@ Dự án được tổ chức theo mô hình **Rust Cargo Workspace** gồm **3 
 
 ```text
 d:\code\potmen\
-├── Cargo.toml                  # Cấu hình Workspace, version (0.1.21) và pin dependency tập trung
+├── Cargo.toml                  # Cấu hình Workspace, version (0.1.22) và pin dependency tập trung
 ├── Dockerfile                  # Build image production cho swaggen-server
 ├── docker-compose.yml          # Triển khai Server + MongoDB Replica Set
 ├── 07-operations/              # Hướng dẫn triển khai Coolify VPS & Windows Installer
 ├── assets/                     # Icon ứng dụng (.ico, .png) và bộ icon Figma (assets/icons/)
 ├── tools/                      # Script kiểm tra P00-P01, bundle-result.ps1, build-installer.ps1
 ├── docs/                       # Tài liệu tổng hợp kiến trúc & tính năng
-├── result/                     # Output build release theo từng phiên bản (gitignored), vd: result/v0.1.21/
+├── result/                     # Output build release theo từng phiên bản (gitignored), vd: result/v0.1.22/
 │
 ├── apps/                       # === CÁC ỨNG DỤNG CHÍNH (BINARIES) ===
 │   ├── desktop/                # [FRONTEND] Ứng dụng Windows Desktop (swaggen-desktop.exe)
@@ -189,6 +189,6 @@ Backend (`axum 0.8.9`) phục vụ đồng bộ đội nhóm, quản lý quyền
 
 ### C. Cộng tác Đội nhóm, Xoá mềm DB, Typography JetBrains Mono & Đóng gói
 11. **Workspace Collaboration tinh gọn & Xoá mềm trên MongoDB (`v0.1.19`)**: Tập trung hoàn toàn vào cộng tác Workspace (Google Sign-In qua Firebase, lời mời in-app `Accept / Decline`, **Public Expiring Invite Link** `swaggen://join/...`, đổi vai trò và **Owner xoá thành viên trực tiếp**); mọi thao tác xoá trên MongoDB & InMemoryStore đều ghi dấu xoá mềm (`deleted_at_unix` / `released_at_unix`) thay vì xoá cứng.
-12. **Publish tuần tự bằng `Ctrl+S` & Lịch sử Cherry-Pick (`v0.1.21`)**: Mỗi thao tác `Ctrl+S` trong Team Workspace tự động gửi 1 event tuần tự lên server (có tự động cập nhật revision mới nhất nếu đồng đội vừa lưu trước đó, không làm rối bằng merge xung đột); tab `Publish History` lưu toàn bộ dòng thời gian kèm xem trước JSON và nút **`Cherry-pick & Restore`** để khôi phục bất kỳ phiên bản nào về Workbench ngay lập tức.
+12. **Publish tuần tự bằng `Ctrl+S`, Diff từng phần & Cherry-Pick kiểu Git (`v0.1.22`)**: Mỗi thao tác `Ctrl+S` trong Team Workspace tự động gửi 1 event tuần tự lên server; tab `Publish History & Cherry-Pick` hiển thị chi tiết diff `-`/`+` theo từng phần (`Method & URL`, `Query Params`, `Path Variables`, `Headers`, `Body`, `Auth`, `Scripts`, `Assertions`, `Settings`) và cho phép tick chọn từng phần thay đổi để **`Cherry-pick selected`** về Workbench như Git.
 13. **End-to-End Idempotency**: Chống double-click trên UI, tự động sinh `Idempotency-Key` SHA-256 cho `POST`/`PATCH`/GraphQL `mutation`, nút `Rotate Key`, và middleware Server replay `2xx` / chặn `409 Conflict`.
-14. **Bảo mật, Typography `JetBrains Mono` đồng nhất & Đóng gói Windows**: Áp dụng **`JetBrains Mono`** thống nhất trên toàn bộ giao diện, lưới KV & Environment có clipping + padding từng ô chống tràn chữ, lưu secret bằng **Windows DPAPI**, **SSRF Guard**, Production Environment confirmation dialog, Light/Dark theme + `English / Tiếng Việt`, đóng gói Portable `.zip`, Inno Setup `.exe`, `.msi`, `SHA256SUMS.txt` và cập nhật ký số (`latest.json`).
+14. **Bảo mật, Typography `JetBrains Mono` đồng nhất, Giao diện Light/English & Đóng gói Windows**: Áp dụng **`JetBrains Mono`** thống nhất trên toàn bộ giao diện, cố định Light theme + English gọn sạch (bỏ tuỳ chọn đổi theme/ngôn ngữ), lưu secret bằng **Windows DPAPI**, **SSRF Guard**, Production Environment confirmation dialog, đóng gói Portable `.zip`, Inno Setup `.exe`, `.msi`, `SHA256SUMS.txt` và cập nhật ký số (`latest.json`).

@@ -11,3 +11,4 @@
 *.secret
 *.dmp
 __pycache__/
+/test-api/

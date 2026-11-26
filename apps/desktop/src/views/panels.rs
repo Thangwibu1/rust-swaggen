@@ -1599,56 +1599,15 @@ pub fn show_privacy(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
     swaggen_ui_kit::page_header(
         ui,
         "Settings & updates",
-        "Manage language, workspaces, software updates, and local privacy diagnostics.",
+        "Manage workspaces, software updates, and local privacy diagnostics.",
         Some(&format!("v{}", crate::updater::APP_VERSION)),
         false,
     );
     show_settings_group_tabs(app, ui);
     egui::ScrollArea::vertical().show(ui, |ui| {
-        // 0. General Preferences (Language & Workspaces) — light white surface only.
+        // 0. General Preferences (English + Pure White light surface only).
         swaggen_ui_kit::surface_card(ui, |ui| {
             swaggen_ui_kit::card_header(ui, "General Preferences");
-            swaggen_ui_kit::config_field_row(
-                ui,
-                "Theme",
-                "Pure White Figma surface (default) or Dark Slate theme (UX06)",
-                |ui| {
-                    ui.horizontal(|ui| {
-                        if ui
-                            .selectable_label(!app.dark_mode, "Light (Pure White)")
-                            .clicked()
-                            && app.dark_mode
-                        {
-                            app.dark_mode = false;
-                            swaggen_ui_kit::apply_theme(ctx, false);
-                        }
-                        if ui
-                            .selectable_label(app.dark_mode, "Dark (Slate)")
-                            .clicked()
-                            && !app.dark_mode
-                        {
-                            app.dark_mode = true;
-                            swaggen_ui_kit::apply_theme(ctx, true);
-                        }
-                    });
-                },
-            );
-            swaggen_ui_kit::config_field_row(
-                ui,
-                "Language",
-                "Choose interface display language",
-                |ui| {
-                    ui.horizontal(|ui| {
-                        let is_en = app.locale == swaggen_ui_kit::UiLocale::En;
-                        if ui.selectable_label(is_en, "English").clicked() {
-                            app.locale = swaggen_ui_kit::UiLocale::En;
-                        }
-                        if ui.selectable_label(!is_en, "Tiếng Việt").clicked() {
-                            app.locale = swaggen_ui_kit::UiLocale::Vi;
-                        }
-                    });
-                },
-            );
             swaggen_ui_kit::config_field_row(
                 ui,
                 "Workspaces",
@@ -1666,11 +1625,7 @@ pub fn show_privacy(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
                         if swaggen_ui_kit::secondary_button(
                             ui,
                             true,
-                            swaggen_ui_kit::tr(
-                                app.locale,
-                                "Switch or manage workspaces…",
-                                "Chuyển hoặc quản lý không gian…",
-                            ),
+                            "Switch or manage workspaces…",
                         )
                         .clicked()
                         {
