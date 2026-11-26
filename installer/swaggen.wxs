@@ -1,17 +1,21 @@
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
      xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+  <?ifndef DisplayVersion ?>
+    <?define DisplayVersion = "$(var.AppVersion)" ?>
+  <?endif?>
   <Package
     Name="Swaggen"
     Manufacturer="Swaggen"
     Version="$(var.AppVersion)"
     UpgradeCode="94E4F862-C312-4F55-9713-34AB62C1E77F"
     Scope="perUser">
-    <MajorUpgrade DowngradeErrorMessage="A newer version of Swaggen is already installed." />
+    <MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="A newer version of Swaggen is already installed." />
     <MediaTemplate EmbedCab="yes" />
 
     <!-- Brand Logo & Full Step-by-Step Interactive Wizard (Welcome -> License -> Choose Folder -> Install -> Finish) -->
     <Icon Id="SwaggenIcon.ico" SourceFile="assets\swaggen.ico" />
     <Property Id="ARPPRODUCTICON" Value="SwaggenIcon.ico" />
+    <Property Id="ARPCOMMENTS" Value="Swaggen v$(var.DisplayVersion)" />
     <Property Id="ARPHELPLINK" Value="https://github.com/Thangwibu1/rust-swaggen/releases" />
     <WixVariable Id="WixUILicenseRtf" Value="installer\LICENSE.rtf" />
     <WixVariable Id="WixUIBannerBmp" Value="installer\assets\msi-banner.bmp" />

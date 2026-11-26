@@ -96,8 +96,9 @@ if ($Iscc) {
 $Wix = Get-Command "wix" -ErrorAction SilentlyContinue
 if ($Wix) {
     $MsiOut = Join-Path $InstallerOutDir "Swaggen-$Version-x64.msi"
+    $CoreVer = ($Version -split '[-+]')[0]
     Write-Host "wix.exe detected - building MSI installer..."
-    & $Wix.Source build -arch x64 -d "AppVersion=$Version.0" -d "BundleDir=$BundleDir" -o $MsiOut (Join-Path $RepoRoot "installer\swaggen.wxs")
+    & $Wix.Source build -arch x64 -ext WixToolset.UI.wixext -d "AppVersion=$CoreVer.0" -d "DisplayVersion=$Version" -d "BundleDir=$BundleDir" -o $MsiOut (Join-Path $RepoRoot "installer\swaggen.wxs")
 }
 
 # 4. Generate latest.json update manifest for GitHub Releases & in-app auto-updater
