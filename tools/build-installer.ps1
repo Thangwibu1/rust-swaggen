@@ -58,8 +58,8 @@ TargetName=$SetupExe
 FriendlyName=Swaggen Setup v$Version
 AppLaunched=powershell.exe -NoProfile -ExecutionPolicy Bypass -File install-swaggen.ps1 -Version $Version
 PostInstallCmd=<None>
-AdminQuietInstCmd=powershell.exe -NoProfile -ExecutionPolicy Bypass -File install-swaggen.ps1 -Version $Version -Silent
-UserQuietInstCmd=powershell.exe -NoProfile -ExecutionPolicy Bypass -File install-swaggen.ps1 -Version $Version -Silent
+AdminQuietInstCmd=powershell.exe -NoProfile -ExecutionPolicy Bypass -File install-swaggen.ps1 -Version $Version -Silent -Relaunch
+UserQuietInstCmd=powershell.exe -NoProfile -ExecutionPolicy Bypass -File install-swaggen.ps1 -Version $Version -Silent -Relaunch
 SourceFiles=SourceFiles
 [Strings]
 FILE0="swaggen-payload.zip"
@@ -100,7 +100,24 @@ if ($Wix) {
     & $Wix.Source build -arch x64 -d "AppVersion=$Version.0" -d "BundleDir=$BundleDir" -o $MsiOut (Join-Path $RepoRoot "installer\swaggen.wxs")
 }
 
-# 4. Write SHA256SUMS.txt for distribution verification
+# 4. Generate latest.json update manifest for GitHub Releases & in-app auto-updater
+$PortableZip = Join-Path $BundleDir "packages\Swaggen-$Version-win64-portable.zip"
+$PortableHash = if (Test-Path $PortableZip) { (Get-FileHash -Path $PortableZip -Algorithm SHA256).Hash.ToLowerInvariant() } else { "" }
+$GHReleaseBase = "https://github.com/Thangwibu1/rust-swaggen/releases/download/v$Version"
+$LatestManifest = [ordered]@{
+    version          = $Version
+    tag              = "v$Version"
+    published_at     = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+    installer_url    = "$GHReleaseBase/Swaggen-Setup-$Version-x64.exe"
+    installer_sha256 = $SetupHash.ToLowerInvariant()
+    portable_url     = if ($PortableHash) { "$GHReleaseBase/Swaggen-$Version-win64-portable.zip" } else { "" }
+    portable_sha256  = $PortableHash
+    notes            = "Swaggen v$Version Windows x64 release"
+    auto_install     = $false
+}
+$LatestManifest | ConvertTo-Json -Depth 4 | Set-Content -Path (Join-Path $InstallerOutDir "latest.json") -Encoding UTF8
+
+# 5. Write SHA256SUMS.txt for distribution verification
 $Sums = Get-ChildItem -Path $InstallerOutDir -File | Where-Object { $_.Name -ne "SHA256SUMS.txt" } | ForEach-Object {
     "$((Get-FileHash -Path $_.FullName -Algorithm SHA256).Hash)  $($_.Name)"
 }

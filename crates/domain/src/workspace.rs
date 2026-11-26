@@ -691,8 +691,34 @@ impl CookieRecord {
         let domain = self.domain.trim_start_matches('.').to_ascii_lowercase();
         let host_l = host.to_ascii_lowercase();
         let host_ok = host_l == domain || host_l.ends_with(&format!(".{domain}"));
-        let path_ok = req_path.starts_with(&self.path);
+        let req_p = if req_path.is_empty() { "/" } else { req_path };
+        let path_ok = if self.path == "/" {
+            req_p.starts_with('/')
+        } else {
+            req_p == self.path
+                || (req_p.starts_with(&self.path)
+                    && (self.path.ends_with('/')
+                        || req_p.as_bytes().get(self.path.len()) == Some(&b'/')))
+        };
         host_ok && path_ok
+    }
+
+    pub fn upsert_into_jar(jar: &mut Vec<Self>, incoming: Self, now_epoch_secs: i64) {
+        jar.retain(|c| {
+            let expired = c
+                .expires_epoch_secs
+                .is_some_and(|exp| exp <= now_epoch_secs);
+            let same = c.domain.eq_ignore_ascii_case(&incoming.domain)
+                && c.path == incoming.path
+                && c.name == incoming.name;
+            !expired && !same
+        });
+        if incoming
+            .expires_epoch_secs
+            .is_none_or(|exp| exp > now_epoch_secs)
+        {
+            jar.push(incoming);
+        }
     }
 
     pub fn parse_set_cookie(
@@ -706,11 +732,18 @@ impl CookieRecord {
         if name.is_empty() {
             return None;
         }
-        let mut domain = default_host.to_owned();
+        let clean_default_host = default_host
+            .split(':')
+            .next()
+            .unwrap_or(default_host)
+            .trim()
+            .to_ascii_lowercase();
+        let mut domain = clean_default_host.clone();
         let mut path = "/".to_owned();
         let mut secure = false;
         let mut http_only = false;
-        let mut expires_epoch_secs = None;
+        let mut max_age_secs: Option<i64> = None;
+        let mut parsed_expires_secs: Option<i64> = None;
         for attr in parts {
             let attr = attr.trim();
             if attr.eq_ignore_ascii_case("secure") {
@@ -721,16 +754,26 @@ impl CookieRecord {
                 let k = k.trim();
                 let v = v.trim();
                 if k.eq_ignore_ascii_case("domain") && !v.is_empty() {
-                    domain = v.trim_start_matches('.').to_owned();
+                    let cand = v.trim_start_matches('.').to_ascii_lowercase();
+                    if clean_default_host == cand
+                        || clean_default_host.ends_with(&format!(".{cand}"))
+                    {
+                        domain = cand;
+                    } else {
+                        return None;
+                    }
                 } else if k.eq_ignore_ascii_case("path") && v.starts_with('/') {
                     path = v.to_owned();
                 } else if k.eq_ignore_ascii_case("max-age")
                     && let Ok(secs) = v.parse::<i64>()
                 {
-                    expires_epoch_secs = Some(now_epoch_secs.saturating_add(secs));
+                    max_age_secs = Some(now_epoch_secs.saturating_add(secs));
+                } else if k.eq_ignore_ascii_case("expires") {
+                    parsed_expires_secs = parse_http_cookie_expires(v);
                 }
             }
         }
+        let expires_epoch_secs = max_age_secs.or(parsed_expires_secs);
         Some(Self {
             id: new_uid(),
             domain,
@@ -742,6 +785,32 @@ impl CookieRecord {
             http_only,
         })
     }
+}
+
+fn parse_http_cookie_expires(raw: &str) -> Option<i64> {
+    let trimmed = raw.trim();
+    if let Ok(dt) =
+        time::OffsetDateTime::parse(trimmed, &time::format_description::well_known::Rfc2822)
+    {
+        return Some(dt.unix_timestamp());
+    }
+    // Support dashed RFC 6265 cookie-date `Wed, 21-Oct-2028 07:28:00 GMT` by normalizing `-` in date token
+    let tokens: Vec<&str> = trimmed.split_whitespace().collect();
+    if tokens.len() >= 4 && tokens[1].contains('-') {
+        let expanded = format!(
+            "{} {} {} {}",
+            tokens[0],
+            tokens[1].replace('-', " "),
+            tokens[2],
+            tokens[3..].join(" ")
+        );
+        if let Ok(dt) =
+            time::OffsetDateTime::parse(&expanded, &time::format_description::well_known::Rfc2822)
+        {
+            return Some(dt.unix_timestamp());
+        }
+    }
+    None
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -1451,6 +1520,17 @@ pub fn resolve_request_preview(
             h.key.trim().to_ascii_lowercase().as_str(),
             "authorization" | "proxy-authorization" | "cookie" | "x-api-key"
         );
+        if is_sensitive
+            && h.key.trim().eq_ignore_ascii_case("cookie")
+            && let Some(existing_ck) = headers
+                .iter_mut()
+                .find(|eh| eh.name.eq_ignore_ascii_case("cookie"))
+        {
+            if !val.trim().is_empty() {
+                existing_ck.value = format!("{}; {}", existing_ck.value, val.trim());
+            }
+            continue;
+        }
         headers.push(ResolvedHeader {
             name: h.key.clone(),
             value: val,
@@ -4531,5 +4611,45 @@ mod tests {
         assert_eq!(cur.url, r1.url);
         assert_eq!(cur.headers, r1.headers);
         assert_eq!(cur.body, r2.body);
+    }
+
+    #[test]
+    fn cookie_jar_expires_deletion_and_path_matching_work() {
+        let now = 1_700_000_000i64;
+        let mut jar: Vec<CookieRecord> = Vec::new();
+
+        // 1. Parse HttpOnly Set-Cookie with Expires date in the future
+        let login_ck = CookieRecord::parse_set_cookie(
+            "sid=tok_abc123; Path=/api; Domain=.example.test; Expires=Wed, 21 Oct 2099 07:28:00 GMT; HttpOnly; Secure",
+            "api.example.test:8443",
+            now,
+        )
+        .expect("Set-Cookie should parse");
+        assert_eq!(login_ck.name, "sid");
+        assert_eq!(login_ck.value, "tok_abc123");
+        assert_eq!(login_ck.domain, "example.test");
+        assert_eq!(login_ck.path, "/api");
+        assert!(login_ck.http_only);
+        assert!(login_ck.secure);
+        assert!(login_ck.expires_epoch_secs.unwrap() > now);
+
+        CookieRecord::upsert_into_jar(&mut jar, login_ck, now);
+        assert_eq!(jar.len(), 1);
+
+        // RFC 6265 path boundary check: /api and /api/me match, /apiv2 does NOT match
+        assert!(jar[0].matches("api.example.test", "/api/me", true, now));
+        assert!(!jar[0].matches("api.example.test", "/apiv2/me", true, now));
+        // Secure cookie not sent over HTTP
+        assert!(!jar[0].matches("api.example.test", "/api/me", false, now));
+
+        // 2. Logout Set-Cookie with Max-Age=0 deletes existing cookie from jar
+        let logout_ck = CookieRecord::parse_set_cookie(
+            "sid=; Path=/api; Domain=example.test; Max-Age=0; HttpOnly",
+            "api.example.test",
+            now + 5,
+        )
+        .expect("Logout Set-Cookie should parse");
+        CookieRecord::upsert_into_jar(&mut jar, logout_ck, now + 5);
+        assert!(jar.is_empty(), "Max-Age=0 should remove cookie from jar");
     }
 }

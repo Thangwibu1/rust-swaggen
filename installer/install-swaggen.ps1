@@ -1,7 +1,8 @@
 param(
-    [string]$Version = "0.1.4",
+    [string]$Version = "0.1.23",
     [string]$InstallDir = (Join-Path $env:LOCALAPPDATA "Swaggen"),
-    [switch]$Silent
+    [switch]$Silent,
+    [switch]$Relaunch
 )
 
 $ErrorActionPreference = "Stop"
@@ -108,4 +109,6 @@ if (-not $Silent) {
     if ($res -eq [System.Windows.Forms.DialogResult]::Yes) {
         Start-Process -FilePath $DesktopExe -WorkingDirectory $InstallDir
     }
+} elseif ($Relaunch -and (Test-Path $DesktopExe)) {
+    Start-Process -FilePath $DesktopExe -WorkingDirectory $InstallDir
 }

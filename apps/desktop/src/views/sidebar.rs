@@ -128,7 +128,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
             if app.workspace_summaries.is_empty() {
                 app.available_workspaces
                     .iter()
-                    .filter(|w| !w.as_str().starts_with("team-"))
+                    .filter(|w| !w.as_str().starts_with("team-") && w.as_str() != "server-auth")
                     .map(|id| {
                         let label = if id.as_str() == "personal" {
                             "Personal".to_owned()
@@ -144,6 +144,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                     .filter(|w| {
                         w.kind == swaggen_domain::workspace::WorkspaceKind::Personal
                             && !w.id.as_str().starts_with("team-")
+                            && w.id.as_str() != "server-auth"
                     })
                     .map(|w| {
                         let label = if w.id.as_str() == "personal" && w.name == "personal" {

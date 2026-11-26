@@ -349,6 +349,11 @@ pub enum Command {
     CheckForUpdates {
         feed_url: String,
     },
+    PollReleaseBroadcast {
+        server_base_url: Option<String>,
+        fallback_feed_url: String,
+        check_fallback: bool,
+    },
     DownloadAndInstallUpdate {
         download_url: String,
         expected_sha256: String,
@@ -492,6 +497,7 @@ pub enum Event {
     WebSocketFinished(Result<String, String>),
     GrpcUnaryFinished(Result<String, String>),
     UpdateCheckResult(crate::updater::UpdateCheckOutcome),
+    BroadcastUpdateDetected(crate::updater::UpdateCheckOutcome),
     UpdateInstallLaunched(String),
     HttpFailed {
         execution_id: u64,
@@ -859,6 +865,29 @@ impl Worker {
                                     break;
                                 }
                                 wake();
+                                continue;
+                            }
+                            Command::PollReleaseBroadcast {
+                                server_base_url,
+                                fallback_feed_url,
+                                check_fallback,
+                            } => {
+                                if let Some(outcome) =
+                                    runtime.block_on(crate::updater::poll_release_broadcast(
+                                        server_base_url.as_deref(),
+                                        &fallback_feed_url,
+                                        check_fallback,
+                                        &dl_dir,
+                                    ))
+                                {
+                                    if outgoing
+                                        .send(Event::BroadcastUpdateDetected(outcome))
+                                        .is_err()
+                                    {
+                                        break;
+                                    }
+                                    wake();
+                                }
                                 continue;
                             }
                             Command::DownloadAndInstallUpdate {
@@ -2259,6 +2288,7 @@ impl Worker {
                     | Command::ResolveTeamComment { .. }
                     | Command::MarkTeamNotificationsRead { .. }
                     | Command::CheckForUpdates { .. }
+                    | Command::PollReleaseBroadcast { .. }
                     | Command::DownloadAndInstallUpdate { .. }
                     | Command::InstallLocalUpdatePackage { .. }
                     | Command::Shutdown => unreachable!(),
@@ -2348,12 +2378,8 @@ fn apply_script_var_mutations_to_state(
 }
 
 fn upsert_cookie(cookies: &mut Vec<CookieRecord>, incoming: CookieRecord) {
-    cookies.retain(|c| {
-        !(c.domain.eq_ignore_ascii_case(&incoming.domain)
-            && c.path == incoming.path
-            && c.name == incoming.name)
-    });
-    cookies.push(incoming);
+    let now_secs = time::OffsetDateTime::now_utc().unix_timestamp();
+    CookieRecord::upsert_into_jar(cookies, incoming, now_secs);
 }
 
 fn safe_copy_file(source: &Path, destination: &Path) -> Result<(), String> {

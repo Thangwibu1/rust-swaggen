@@ -112,7 +112,7 @@ pub fn show_workspace_manager(app: &mut App, ui: &mut egui::Ui) {
             let workspaces: Vec<_> = if app.workspace_summaries.is_empty() {
                 app.available_workspaces
                     .iter()
-                    .filter(|w| !w.as_str().starts_with("team-"))
+                    .filter(|w| !w.as_str().starts_with("team-") && w.as_str() != "server-auth")
                     .map(|id| crate::worker::WorkspaceListEntry {
                         name: if id.as_str() == "personal" {
                             "Personal".into()
@@ -127,7 +127,9 @@ pub fn show_workspace_manager(app: &mut App, ui: &mut egui::Ui) {
                 app.workspace_summaries
                     .iter()
                     .filter(|w| {
-                        w.kind == WorkspaceKind::Personal && !w.id.as_str().starts_with("team-")
+                        w.kind == WorkspaceKind::Personal
+                            && !w.id.as_str().starts_with("team-")
+                            && w.id.as_str() != "server-auth"
                     })
                     .cloned()
                     .collect()

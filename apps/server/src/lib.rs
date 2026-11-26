@@ -1,5 +1,6 @@
 #![recursion_limit = "256"]
 //! P04 Swaggen collaboration server: Axum transport, Firebase & internal auth, workspace RBAC, and MongoDB transactions.
+pub mod admin_portal;
 pub mod firebase_auth;
 pub mod graphql_api;
 use crate::firebase_auth::{FirebaseAuthConfig, FirebaseVerifier, render_browser_signin_html};
@@ -84,6 +85,7 @@ pub struct VaultEntry {
 pub struct AppState {
     pub store: Arc<ServerStore>,
     pub firebase: Option<Arc<FirebaseVerifier>>,
+    pub admin_auth: Option<admin_portal::AdminAuthConfig>,
     pub max_body_bytes: usize,
     pub event_bus: broadcast::Sender<(String, i64)>,
     pub presence: Arc<Mutex<BTreeMap<(String, String), PresenceEntry>>>,
@@ -129,7 +131,7 @@ struct EventsQuery {
 }
 
 #[derive(Clone)]
-struct RequestCorrelationId(String);
+pub struct RequestCorrelationId(pub String);
 
 fn sanitize_request_id(request: &Request) -> Option<String> {
     request
@@ -301,7 +303,7 @@ async fn enforce_idempotency_key(
     }
 }
 
-fn map_err(corr: &str, err: StoreError) -> (StatusCode, Json<ErrorEnvelope>) {
+pub(crate) fn map_err(corr: &str, err: StoreError) -> (StatusCode, Json<ErrorEnvelope>) {
     let (status_u16, code, msg, retryable) = err.to_http_parts();
     let status = StatusCode::from_u16(status_u16).unwrap_or(StatusCode::INTERNAL_SERVER_ERROR);
     (status, Json(ErrorEnvelope::new(code, msg, corr, retryable)))
@@ -2236,16 +2238,42 @@ async fn serve_google_g_png() -> Response {
 }
 
 pub fn router(store: Arc<ServerStore>) -> Router {
+    let admin_auth = admin_portal::AdminAuthConfig::from_env();
+    router_with_admin(store, admin_auth)
+}
+
+pub fn router_with_admin(
+    store: Arc<ServerStore>,
+    admin_auth: Option<admin_portal::AdminAuthConfig>,
+) -> Router {
     let (event_bus, _) = broadcast::channel(256);
     let firebase = FirebaseAuthConfig::from_env().map(|cfg| Arc::new(FirebaseVerifier::new(cfg)));
     let state = AppState {
         store,
         firebase,
+        admin_auth,
         max_body_bytes: DEFAULT_MAX_BODY_BYTES,
         event_bus,
         presence: Arc::new(Mutex::new(BTreeMap::new())),
     };
     Router::new()
+        .route("/admin", get(admin_portal::serve_admin_html))
+        .route("/admin/", get(admin_portal::serve_admin_html))
+        .route("/v1/admin/login", post(admin_portal::admin_login))
+        .route("/v1/admin/logout", post(admin_portal::admin_logout))
+        .route("/v1/admin/state", get(admin_portal::admin_get_state))
+        .route(
+            "/v1/admin/releases/broadcast",
+            post(admin_portal::admin_broadcast_release),
+        )
+        .route(
+            "/v1/admin/releases/deactivate",
+            post(admin_portal::admin_deactivate_release),
+        )
+        .route(
+            "/v1/releases/latest",
+            get(admin_portal::public_latest_release),
+        )
         .route("/favicon.ico", get(serve_favicon_ico))
         .route("/v1/assets/favicon.png", get(serve_favicon_png))
         .route("/v1/assets/brand-mark.png", get(serve_brand_mark_png))
@@ -2536,7 +2564,11 @@ pub fn build_server_openapi_json() -> serde_json::Value {
             "/v1/workspaces/{workspace_id}/vault/{key}": { "get": { "summary": "Reveal workspace vault secret (Editor+)" }, "put": { "summary": "Put or rotate workspace vault secret" } },
             "/v1/workspaces/{workspace_id}/runners/register": { "post": { "summary": "Register self-hosted runner lease" } },
             "/v1/workspaces/{workspace_id}/runners/{runner_id}/heartbeat": { "post": { "summary": "Extend self-hosted runner lease" } },
-            "/v1/workspaces/{workspace_id}/schedules": { "post": { "summary": "Create timezone/DST scheduled run monitor" } }
+            "/v1/workspaces/{workspace_id}/schedules": { "post": { "summary": "Create timezone/DST scheduled run monitor" } },
+            "/admin": { "get": { "summary": "Web Admin Portal for broadcasting release updates" } },
+            "/v1/admin/login": { "post": { "summary": "Authenticate admin using SWAGGEN_ADMIN_USERNAME & SWAGGEN_ADMIN_PASSWORD" } },
+            "/v1/admin/releases/broadcast": { "post": { "summary": "Broadcast new desktop release update to all users" } },
+            "/v1/releases/latest": { "get": { "summary": "Public desktop client release broadcast feed" } }
         }
     })
 }
@@ -3785,6 +3817,103 @@ mod tests {
             db_queries <= 7,
             "Expected constant O(1) batched queries (<= 7) across 4 workspaces with 4 nested lists, got {db_queries}"
         );
+
+        stop.send(()).unwrap();
+        let _ = srv.await;
+    }
+
+    #[tokio::test]
+    async fn admin_portal_login_broadcast_and_public_latest_release_work() {
+        let store = Arc::new(ServerStore::Memory(InMemoryStore::new(None)));
+        let admin_cfg = Some(admin_portal::AdminAuthConfig {
+            username: "root_admin".into(),
+            password: "super-secret-env-password".into(),
+        });
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let addr = listener.local_addr().unwrap();
+        let base = format!("http://{addr}");
+        let (stop, stopped) = tokio::sync::oneshot::channel();
+        let srv = tokio::spawn(async move {
+            axum::serve(listener, router_with_admin(store, admin_cfg))
+                .with_graceful_shutdown(async {
+                    let _ = stopped.await;
+                })
+                .await
+                .unwrap();
+        });
+
+        // 1. GET /admin renders HTML portal
+        let (st_html, html_body) = http_call(&base, Method::GET, "/admin", None, None).await;
+        assert_eq!(st_html, 200);
+        assert!(html_body.contains("Swaggen Admin Portal"));
+
+        // 2. Before any broadcast, GET /v1/releases/latest returns 204 No Content
+        let (st_init, _) = http_call(&base, Method::GET, "/v1/releases/latest", None, None).await;
+        assert_eq!(st_init, 204);
+
+        // 3. Wrong admin password returns 401
+        let (st_bad, _) = http_call(
+            &base,
+            Method::POST,
+            "/v1/admin/login",
+            None,
+            Some(json!({ "username": "root_admin", "password": "wrong" })),
+        )
+        .await;
+        assert_eq!(st_bad, 401);
+
+        // 4. Correct env credentials return 200 + session token
+        let (st_ok, login_body) = http_call(
+            &base,
+            Method::POST,
+            "/v1/admin/login",
+            None,
+            Some(json!({ "username": "root_admin", "password": "super-secret-env-password" })),
+        )
+        .await;
+        assert_eq!(st_ok, 200, "admin login failed: {login_body}");
+        let login_json: serde_json::Value = serde_json::from_str(&login_body).unwrap();
+        let admin_tok = login_json["token"].as_str().unwrap().to_owned();
+
+        // 5. Broadcast release v0.1.23 to all users
+        let (st_bc, bc_body) = http_call(
+            &base,
+            Method::POST,
+            "/v1/admin/releases/broadcast",
+            Some(&admin_tok),
+            Some(json!({
+                "version": "v0.1.23",
+                "installer_url": "https://github.com/Thangwibu1/rust-swaggen/releases/download/v0.1.23/Swaggen-Setup-0.1.23-x64.exe",
+                "installer_sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+                "portable_url": "https://github.com/Thangwibu1/rust-swaggen/releases/download/v0.1.23/Swaggen-0.1.23-win64-portable.zip",
+                "notes": "Cookie Jar & Admin Update Broadcast",
+                "auto_install": true
+            })),
+        )
+        .await;
+        assert_eq!(st_bc, 200, "broadcast failed: {bc_body}");
+
+        // 6. Public GET /v1/releases/latest returns 200 with broadcast manifest
+        let (st_pub, pub_body) =
+            http_call(&base, Method::GET, "/v1/releases/latest", None, None).await;
+        assert_eq!(st_pub, 200);
+        let pub_json: serde_json::Value = serde_json::from_str(&pub_body).unwrap();
+        assert_eq!(pub_json["version"], "0.1.23");
+        assert_eq!(pub_json["auto_install"], true);
+        assert_eq!(pub_json["notes"], "Cookie Jar & Admin Update Broadcast");
+
+        // 7. Deactivate broadcast soft-updates active=false and returns 204 on public feed
+        let (st_deact, _) = http_call(
+            &base,
+            Method::POST,
+            "/v1/admin/releases/deactivate",
+            Some(&admin_tok),
+            Some(json!({})),
+        )
+        .await;
+        assert_eq!(st_deact, 200);
+        let (st_after, _) = http_call(&base, Method::GET, "/v1/releases/latest", None, None).await;
+        assert_eq!(st_after, 204);
 
         stop.send(()).unwrap();
         let _ = srv.await;

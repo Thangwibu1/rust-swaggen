@@ -179,6 +179,29 @@ pub fn show(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
                         if resp.tls_exception_used {
                             swaggen_ui_kit::status_badge(ui, NoticeKind::Warning, "TLS exception");
                         }
+                        if !resp.captured_cookies.is_empty()
+                            && ui
+                                .add(
+                                    egui::Button::new(
+                                        egui::RichText::new(format!(
+                                            "Cookies saved ({})",
+                                            resp.captured_cookies.len()
+                                        ))
+                                        .size(10.5)
+                                        .color(Tokens::STATUS_SUCCESS)
+                                        .strong(),
+                                    )
+                                    .fill(swaggen_ui_kit::subtle_bg(ui))
+                                    .stroke(egui::Stroke::new(1.0, Tokens::STATUS_SUCCESS))
+                                    .corner_radius(4),
+                                )
+                                .on_hover_text(
+                                    "HTTP Set-Cookie saved to Workspace Cookie Jar — will be sent automatically on matching requests (click to inspect)",
+                                )
+                                .clicked()
+                        {
+                            app.response_subtab = ResponseSubTab::HeadersCookies;
+                        }
                         if resp.headers.iter().any(|(k, v)| {
                             k.eq_ignore_ascii_case("x-idempotent-replayed")
                                 && v.trim().eq_ignore_ascii_case("true")

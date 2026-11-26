@@ -22,6 +22,7 @@ pub struct UpdateManifest {
     pub tag: String,
     #[serde(default)]
     pub published_at: String,
+    #[serde(default)]
     pub installer_url: String,
     #[serde(default)]
     pub installer_sha256: String,
@@ -35,6 +36,83 @@ pub struct UpdateManifest {
     pub portable_sha256: String,
     #[serde(default)]
     pub notes: String,
+    #[serde(default)]
+    pub auto_install: bool,
+    #[serde(default)]
+    pub broadcast_id: String,
+}
+
+/// Picks `(download_url, expected_sha256)` best suited for how Swaggen is currently installed:
+/// - Installed under `%LOCALAPPDATA%\Swaggen` -> prefers `installer_url` (`.exe` Setup) so shortcuts & registry version update cleanly.
+/// - Running from a portable folder -> prefers `portable_url` (`.zip` in-place swap & restart), falling back to `installer_url`.
+pub fn select_best_package_for_current_install(
+    manifest: &UpdateManifest,
+) -> Option<(String, String)> {
+    let running_in_localappdata = std::env::current_exe()
+        .ok()
+        .and_then(|p| {
+            let exe_lc = p.to_string_lossy().to_ascii_lowercase();
+            std::env::var("LOCALAPPDATA")
+                .ok()
+                .map(|la| exe_lc.starts_with(&la.to_ascii_lowercase()))
+        })
+        .unwrap_or(false);
+
+    let has_installer = !manifest.installer_url.trim().is_empty();
+    let has_portable = !manifest.portable_url.trim().is_empty();
+
+    if running_in_localappdata {
+        if has_installer {
+            Some((
+                manifest.installer_url.trim().to_owned(),
+                manifest.installer_sha256.trim().to_owned(),
+            ))
+        } else if has_portable {
+            Some((
+                manifest.portable_url.trim().to_owned(),
+                manifest.portable_sha256.trim().to_owned(),
+            ))
+        } else {
+            None
+        }
+    } else if has_portable {
+        Some((
+            manifest.portable_url.trim().to_owned(),
+            manifest.portable_sha256.trim().to_owned(),
+        ))
+    } else if has_installer {
+        Some((
+            manifest.installer_url.trim().to_owned(),
+            manifest.installer_sha256.trim().to_owned(),
+        ))
+    } else {
+        None
+    }
+}
+
+/// Silently polls `{server_base_url}/v1/releases/latest` (and optionally `fallback_feed_url`)
+/// for admin-broadcast version updates without raising UI errors when offline or `204 No Content`.
+pub async fn poll_release_broadcast(
+    server_base_url: Option<&str>,
+    fallback_feed_url: &str,
+    check_fallback: bool,
+    scratch_dir: &Path,
+) -> Option<UpdateCheckOutcome> {
+    if let Some(base) = server_base_url.map(str::trim).filter(|s| !s.is_empty()) {
+        let srv_feed = format!("{}/v1/releases/latest", base.trim_end_matches('/'));
+        if validate_update_url(&srv_feed).is_ok()
+            && let Ok(outcome) = fetch_latest_manifest(&srv_feed, scratch_dir).await
+        {
+            return Some(outcome);
+        }
+    }
+    if check_fallback && !fallback_feed_url.trim().is_empty() {
+        fetch_latest_manifest(fallback_feed_url.trim(), scratch_dir)
+            .await
+            .ok()
+    } else {
+        None
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -253,9 +331,8 @@ pub fn launch_local_update_package(
             "exe" => {
                 let mut cmd = std::process::Command::new(package_path);
                 if silent {
-                    cmd.args(["/SILENT", "/CLOSEAPPLICATIONS", "/RESTARTAPPLICATIONS"]);
-                } else {
-                    cmd.args(["/CLOSEAPPLICATIONS", "/RESTARTAPPLICATIONS"]);
+                    // Swaggen-Setup-x64.exe is built with Windows IExpress (`/Q` invokes silent install + auto-relaunch)
+                    cmd.arg("/Q");
                 }
                 cmd.spawn()
                     .map_err(|e| format!("Failed to launch installer .exe: {e}"))?;

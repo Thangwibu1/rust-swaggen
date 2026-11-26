@@ -269,6 +269,11 @@ pub struct App {
     pub deep_link_input: String,
     pub update_feed_url: String,
     pub update_check: Option<crate::updater::UpdateCheckOutcome>,
+    pub last_update_poll: Option<std::time::Instant>,
+    pub initial_fallback_checked: bool,
+    pub dismissed_update_key: Option<String>,
+    pub auto_triggered_update_key: Option<String>,
+    pub update_installing: bool,
     pub local_update_path: String,
     pub local_update_sha256: String,
     pub update_silent_install: bool,
@@ -516,6 +521,11 @@ impl App {
             deep_link_input: "swaggen://workspace/personal/mode/runner".into(),
             update_feed_url: crate::updater::DEFAULT_UPDATE_FEED_URL.into(),
             update_check: None,
+            last_update_poll: None,
+            initial_fallback_checked: false,
+            dismissed_update_key: None,
+            auto_triggered_update_key: None,
+            update_installing: false,
             local_update_path: String::new(),
             local_update_sha256: String::new(),
             update_silent_install: true,
@@ -1063,8 +1073,13 @@ impl App {
 
     pub fn events(&mut self) {
         while let Ok(event) = self.worker.events.try_recv() {
-            self.pending = false;
-            self.error = false;
+            if !matches!(event, Event::BroadcastUpdateDetected(_)) {
+                self.pending = false;
+                self.error = false;
+            }
+            if matches!(event, Event::ActionError(_)) {
+                self.update_installing = false;
+            }
             match event {
                 Event::Loaded {
                     snapshot,
@@ -1493,7 +1508,28 @@ impl App {
                     };
                     self.update_check = Some(outcome);
                 }
+                Event::BroadcastUpdateDetected(outcome) => {
+                    let is_new = outcome.update_available;
+                    let latest = outcome.latest.clone();
+                    self.update_check = Some(outcome);
+                    if is_new {
+                        let bkey = if latest.broadcast_id.is_empty() {
+                            latest.version.clone()
+                        } else {
+                            format!("{}:{}", latest.version, latest.broadcast_id)
+                        };
+                        self.status = format!("New Swaggen v{} update available!", latest.version);
+                        if latest.auto_install
+                            && self.auto_triggered_update_key.as_deref() != Some(bkey.as_str())
+                            && !self.update_installing
+                        {
+                            self.auto_triggered_update_key = Some(bkey);
+                            self.trigger_one_click_update(&latest);
+                        }
+                    }
+                }
                 Event::UpdateInstallLaunched(msg) => {
+                    self.update_installing = false;
                     self.status = msg;
                 }
                 Event::HttpCompleted {
@@ -1519,13 +1555,13 @@ impl App {
                     self.history = history;
                     self.storage_stats = storage_stats;
                     if !response.captured_cookies.is_empty() {
+                        let now_secs = time::OffsetDateTime::now_utc().unix_timestamp();
                         for ck in &response.captured_cookies {
-                            self.state.cookies.retain(|c| {
-                                !(c.domain.eq_ignore_ascii_case(&ck.domain)
-                                    && c.path == ck.path
-                                    && c.name == ck.name)
-                            });
-                            self.state.cookies.push(ck.clone());
+                            swaggen_domain::workspace::CookieRecord::upsert_into_jar(
+                                &mut self.state.cookies,
+                                ck.clone(),
+                                now_secs,
+                            );
                         }
                     }
                     crate::worker::apply_merged_mutations(
@@ -1776,6 +1812,20 @@ impl App {
     /// Smart multi-format file importer shared by OS Drag-and-Drop and Import/Export Hub (`CSV`, `Postman`, `OpenAPI/Swagger`, `HAR`, `.http`).
     pub fn import_dropped_or_loaded_file(&mut self, name: &str, raw: &str) {
         let low_name = name.to_ascii_lowercase();
+
+        // If the user is currently on the API Documentation (`Specs`) screen and drops a spec file,
+        // open it directly in the clean Swagger Docs Viewer!
+        if self.mode == MainMode::Specs
+            && (low_name.ends_with(".json")
+                || low_name.ends_with(".yaml")
+                || low_name.ends_with(".yml")
+                || low_name.ends_with(".html")
+                || low_name.ends_with(".htm"))
+        {
+            crate::views::specs::load_spec_into_app(self, name.to_owned(), raw);
+            return;
+        }
+
         let stem = name.rsplit_once('.').map(|(s, _)| s).unwrap_or(name).trim();
         let stem = if stem.is_empty() {
             "Imported APIs"
@@ -1993,6 +2043,121 @@ impl App {
             self.status = format!("Imported '{name}' ({ops_count} endpoint(s)) into Docs");
         }
     }
+
+    pub fn trigger_one_click_update(&mut self, manifest: &crate::updater::UpdateManifest) {
+        let Some((download_url, expected_sha256)) =
+            crate::updater::select_best_package_for_current_install(manifest)
+        else {
+            self.error = true;
+            self.status = "Update manifest has no download URL configured.".into();
+            return;
+        };
+        self.update_installing = true;
+        self.status = format!(
+            "Downloading & verifying Swaggen v{} update…",
+            manifest.version
+        );
+        self.submit(Command::DownloadAndInstallUpdate {
+            download_url,
+            expected_sha256,
+            version: manifest.version.clone(),
+            silent: true,
+        });
+    }
+
+    fn maybe_poll_release_broadcast(&mut self, ctx: &egui::Context) {
+        if !self.loaded {
+            return;
+        }
+        ctx.request_repaint_after(std::time::Duration::from_secs(45));
+        let should_poll = match self.last_update_poll {
+            None => true,
+            Some(prev) => prev.elapsed() >= std::time::Duration::from_secs(45),
+        };
+        if !should_poll {
+            return;
+        }
+        self.last_update_poll = Some(std::time::Instant::now());
+        let server_base_url = self
+            .server_profiles
+            .active()
+            .map(|p| p.base_url.clone())
+            .filter(|u| !u.trim().is_empty());
+        let check_fallback = !self.initial_fallback_checked;
+        self.initial_fallback_checked = true;
+        let _ = self
+            .worker
+            .commands
+            .try_send(Command::PollReleaseBroadcast {
+                server_base_url,
+                fallback_feed_url: self.update_feed_url.clone(),
+                check_fallback,
+            });
+    }
+
+    fn show_top_update_broadcast_banner(&mut self, ui: &mut egui::Ui) {
+        let Some(uc) = self.update_check.clone() else {
+            return;
+        };
+        if !uc.update_available {
+            return;
+        }
+        let bkey = if uc.latest.broadcast_id.is_empty() {
+            uc.latest.version.clone()
+        } else {
+            format!("{}:{}", uc.latest.version, uc.latest.broadcast_id)
+        };
+        if self.dismissed_update_key.as_deref() == Some(bkey.as_str()) {
+            return;
+        }
+        let banner_frame = egui::Frame::new()
+            .fill(egui::Color32::from_rgb(239, 246, 255))
+            .stroke(egui::Stroke::NONE)
+            .inner_margin(egui::Margin::symmetric(16, 7));
+        let banner_resp = egui::Panel::top("update_broadcast_banner")
+            .show_separator_line(false)
+            .frame(banner_frame)
+            .show(ui, |ui| {
+                ui.horizontal(|ui| {
+                    swaggen_ui_kit::pill_badge(ui, Tokens::STATUS_INFO, "NEW RELEASE");
+                    ui.label(swaggen_ui_kit::bold_text(
+                        &format!(
+                            "Swaggen v{} is ready (installed v{})",
+                            uc.latest.version, uc.current_version
+                        ),
+                        12.5,
+                        Tokens::TEXT_PRIMARY,
+                    ));
+                    if !uc.latest.notes.is_empty() {
+                        ui.label(
+                            egui::RichText::new(format!("· {}", uc.latest.notes))
+                                .size(11.5)
+                                .color(Tokens::TEXT_SECONDARY),
+                        );
+                    }
+                    ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                        if swaggen_ui_kit::secondary_button(ui, true, "Later").clicked() {
+                            self.dismissed_update_key = Some(bkey);
+                        }
+                        let btn_label = if self.update_installing {
+                            "Updating & Restarting…".to_owned()
+                        } else {
+                            format!("Update & Restart (v{})", uc.latest.version)
+                        };
+                        if swaggen_ui_kit::primary_button(
+                            ui,
+                            !self.pending && !self.update_installing,
+                            &btn_label,
+                        )
+                        .clicked()
+                        {
+                            self.trigger_one_click_update(&uc.latest);
+                        }
+                    });
+                });
+            });
+        swaggen_ui_kit::paint_edge_divider(ui, banner_resp.response.rect, Edge::Bottom);
+    }
 }
 
 impl eframe::App for App {
@@ -2077,6 +2242,10 @@ impl eframe::App for App {
                 });
             return;
         }
+
+        // Poll server `/v1/releases/latest` (and initial GitHub feed) for live update broadcasts
+        self.maybe_poll_release_broadcast(&ctx);
+        self.show_top_update_broadcast_banner(ui);
 
         // Figma A01 / Welcome to Swaggen (Firebase Google + Email Sign-In).
         if self.show_welcome {
@@ -3085,6 +3254,11 @@ mod tests {
             deep_link_input: String::new(),
             update_feed_url: String::new(),
             update_check: None,
+            last_update_poll: None,
+            initial_fallback_checked: false,
+            dismissed_update_key: None,
+            auto_triggered_update_key: None,
+            update_installing: false,
             local_update_path: String::new(),
             local_update_sha256: String::new(),
             update_silent_install: true,

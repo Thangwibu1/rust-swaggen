@@ -644,7 +644,13 @@ pub async fn run_collection(
 
                 match execute_request(&resolved, downloads_dir, cancel.clone()).await {
                     Ok(resp) => {
-                        working_cookies.extend(resp.captured_cookies.clone());
+                        for ck in &resp.captured_cookies {
+                            swaggen_domain::workspace::CookieRecord::upsert_into_jar(
+                                &mut working_cookies,
+                                ck.clone(),
+                                now_secs,
+                            );
+                        }
                         let extracted = apply_response_extractors(
                             &working_req.extractors,
                             &resp.headers,

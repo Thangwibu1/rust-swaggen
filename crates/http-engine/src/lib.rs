@@ -360,6 +360,46 @@ async fn execute_with_redirects(
                     current_method = Method::GET;
                     current_body.clear();
                 }
+                // Propagate newly captured Set-Cookie values onto the next redirect hop when matching target host/path
+                if let Some(next_host) = next_url.host_str() {
+                    let next_https = next_url.scheme() == "https";
+                    let mut hop_jar = Vec::new();
+                    for ck in &captured_cookies {
+                        CookieRecord::upsert_into_jar(&mut hop_jar, ck.clone(), now_secs);
+                    }
+                    let matching_hop: Vec<(String, String)> = hop_jar
+                        .into_iter()
+                        .filter(|c| c.matches(next_host, next_url.path(), next_https, now_secs))
+                        .map(|c| (c.name, c.value))
+                        .collect();
+                    if !matching_hop.is_empty() {
+                        let mut merged_pairs: Vec<(String, String)> = Vec::new();
+                        if let Some((_, existing_val)) = current_headers
+                            .iter()
+                            .find(|(k, _)| k.eq_ignore_ascii_case("cookie"))
+                        {
+                            for seg in existing_val.split(';') {
+                                if let Some((ck_k, ck_v)) = seg.trim().split_once('=') {
+                                    merged_pairs
+                                        .push((ck_k.trim().to_owned(), ck_v.trim().to_owned()));
+                                }
+                            }
+                        }
+                        for (nk, nv) in matching_hop {
+                            merged_pairs.retain(|(ek, _)| ek != &nk);
+                            merged_pairs.push((nk, nv));
+                        }
+                        let cookie_val = merged_pairs
+                            .into_iter()
+                            .map(|(k, v)| format!("{k}={v}"))
+                            .collect::<Vec<_>>()
+                            .join("; ");
+                        current_headers.retain(|(k, _)| !k.eq_ignore_ascii_case("cookie"));
+                        if !cookie_val.is_empty() {
+                            current_headers.push(("Cookie".into(), cookie_val));
+                        }
+                    }
+                }
                 redirect_chain.push(RedirectHop {
                     status,
                     from_url: current_url.to_string(),
