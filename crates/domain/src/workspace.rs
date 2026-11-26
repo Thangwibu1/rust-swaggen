@@ -826,6 +826,14 @@ pub struct EffectiveVariable {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+pub struct VariableSuggestion {
+    pub key: String,
+    pub value_preview: String,
+    pub is_secret: bool,
+    pub scope: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum VariableError {
     Missing(String),
     Circular(Vec<String>),
@@ -897,6 +905,77 @@ impl<'a> VariableContext<'a> {
             return Some(self.materialize(v, "Workspace", None));
         }
         None
+    }
+
+    /// Collects all unique variables visible in the current scope in precedence order,
+    /// followed by built-in `$` dynamic tokens for `{` / `{{` editor autocomplete.
+    pub fn available_suggestions(&self) -> Vec<VariableSuggestion> {
+        let mut out = Vec::new();
+        let mut seen = BTreeSet::new();
+
+        let mut push_entry = |key: &str, value: &str, is_secret: bool, scope: String| {
+            let trimmed = key.trim();
+            if trimmed.is_empty() || !seen.insert(trimmed.to_owned()) {
+                return;
+            }
+            let preview = if is_secret {
+                if value.is_empty() {
+                    "(secret not set)".to_owned()
+                } else {
+                    "••••••••".to_owned()
+                }
+            } else {
+                value.to_owned()
+            };
+            out.push(VariableSuggestion {
+                key: trimmed.to_owned(),
+                value_preview: preview,
+                is_secret,
+                scope,
+            });
+        };
+
+        for v in self.request_vars.iter().rev().filter(|v| v.enabled) {
+            let eff = self.materialize(v, "Request", None);
+            push_entry(&eff.key, &eff.value, eff.is_secret, "Request".into());
+        }
+        if let Some(env) = self.environment {
+            for (k, ov) in &env.personal_overrides {
+                let val = if ov.is_secret {
+                    ov.secret_ref
+                        .as_ref()
+                        .and_then(|r| self.local_secrets.get(r))
+                        .cloned()
+                        .unwrap_or_else(|| ov.value.clone())
+                } else {
+                    ov.value.clone()
+                };
+                push_entry(k, &val, ov.is_secret, format!("{} · Personal", env.name));
+            }
+            for v in env.variables.iter().rev().filter(|v| v.enabled) {
+                let eff = self.materialize(v, &env.name, None);
+                push_entry(&eff.key, &eff.value, eff.is_secret, env.name.clone());
+            }
+        }
+        for v in self.collection_vars.iter().rev().filter(|v| v.enabled) {
+            let eff = self.materialize(v, "Collection", None);
+            push_entry(&eff.key, &eff.value, eff.is_secret, "Collection".into());
+        }
+        for v in self.workspace_vars.iter().rev().filter(|v| v.enabled) {
+            let eff = self.materialize(v, "Global", None);
+            push_entry(&eff.key, &eff.value, eff.is_secret, "Global".into());
+        }
+
+        for (dyn_key, desc) in [
+            ("$uuid", "Random UUID v4"),
+            ("$timestamp", "Unix timestamp (sec)"),
+            ("$isoTimestamp", "UTC ISO-8601 timestamp"),
+            ("$randomInt", "Random 0..99999"),
+            ("$randomHex", "16-char random hex"),
+        ] {
+            push_entry(dyn_key, desc, false, "Dynamic".into());
+        }
+        out
     }
 
     fn materialize(
@@ -3354,6 +3433,67 @@ pub fn folder_chain<'a>(folders: &'a [Folder], start_folder_id: Option<&str>) ->
     chain
 }
 
+/// Detects an unclosed `{` or `{{` variable token immediately before `cursor_char_idx`,
+/// returning `(open_brace_char_idx, typed_prefix)` for editor autocomplete.
+pub fn extract_brace_var_trigger(text: &str, cursor_char_idx: usize) -> Option<(usize, String)> {
+    let chars: Vec<char> = text.chars().collect();
+    let cur = cursor_char_idx.min(chars.len());
+    let mut i = cur;
+    while i > 0 {
+        i -= 1;
+        let ch = chars[i];
+        if ch == '}'
+            || ch.is_whitespace()
+            || matches!(
+                ch,
+                '?' | '&' | '/' | '=' | '#' | '"' | '\'' | ',' | ';' | '(' | ')' | '[' | ']'
+            )
+        {
+            return None;
+        }
+        if ch == '{' {
+            let open_idx = if i > 0 && chars[i - 1] == '{' {
+                i - 1
+            } else {
+                i
+            };
+            let prefix_start = if open_idx + 1 < cur && chars[open_idx + 1] == '{' {
+                open_idx + 2
+            } else {
+                open_idx + 1
+            };
+            let prefix: String = chars[prefix_start..cur].iter().collect();
+            return Some((open_idx, prefix));
+        }
+    }
+    None
+}
+
+/// Replaces `{prefix` or `{{prefix` (plus any immediately adjacent closing braces) with `{{var_name}}`
+/// and returns `(updated_text, new_cursor_char_idx)`.
+pub fn apply_brace_var_completion(
+    text: &str,
+    open_char_idx: usize,
+    cursor_char_idx: usize,
+    var_name: &str,
+) -> (String, usize) {
+    let chars: Vec<char> = text.chars().collect();
+    let start = open_char_idx.min(chars.len());
+    let mut end = cursor_char_idx.clamp(start, chars.len());
+    let mut closed = 0usize;
+    while end < chars.len() && closed < 2 && chars[end] == '}' {
+        end += 1;
+        closed += 1;
+    }
+    let insertion = format!("{{{{{var_name}}}}}");
+    let new_cursor = start + insertion.chars().count();
+    let mut out = String::with_capacity(text.len() + insertion.len());
+    out.extend(chars[..start].iter());
+    out.push_str(&insertion);
+    out.extend(chars[end..].iter());
+    (out, new_cursor)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -3758,5 +3898,71 @@ mod tests {
         assert!(ws.restore_trashed_request(&r2_id).is_some());
         assert!(ws.trashed_requests.is_empty());
         assert!(ws.requests.iter().any(|r| r.id == r2_id));
+    }
+
+    #[test]
+    fn brace_variable_trigger_completion_and_suggestions_work() {
+        let mut env = Environment::new("Development", false);
+        env.variables.push(VariableEntry::public(
+            "base_url",
+            "https://api.example.test",
+        ));
+        let sec_id = crate::LocalId::parse("sec-1").unwrap();
+        env.variables
+            .push(VariableEntry::secret("api_token", sec_id.clone()));
+        let col_vars = vec![
+            VariableEntry::public("base_url", "https://ignored.collection.test"),
+            VariableEntry::public("user_id", "42"),
+        ];
+        let ws_vars = vec![VariableEntry::public("tenant", "acme")];
+        let mut secrets = BTreeMap::new();
+        secrets.insert(sec_id, "super-secret".into());
+
+        let ctx = VariableContext {
+            workspace_vars: &ws_vars,
+            collection_vars: &col_vars,
+            environment: Some(&env),
+            request_vars: &[],
+            local_secrets: &secrets,
+        };
+        let suggestions = ctx.available_suggestions();
+        let base_s = suggestions.iter().find(|s| s.key == "base_url").unwrap();
+        assert_eq!(base_s.scope, "Development");
+        assert_eq!(base_s.value_preview, "https://api.example.test");
+        let sec_s = suggestions.iter().find(|s| s.key == "api_token").unwrap();
+        assert_eq!(sec_s.value_preview, "••••••••");
+        assert!(
+            suggestions
+                .iter()
+                .any(|s| s.key == "tenant" && s.scope == "Global")
+        );
+        assert!(
+            suggestions
+                .iter()
+                .any(|s| s.key == "$uuid" && s.scope == "Dynamic")
+        );
+
+        assert_eq!(
+            extract_brace_var_trigger("https://host/{", 14),
+            Some((13, String::new()))
+        );
+        assert_eq!(
+            extract_brace_var_trigger("https://host/{{ba", 17),
+            Some((13, "ba".into()))
+        );
+        assert_eq!(
+            extract_brace_var_trigger("{{base_url}}/users/{u", 21),
+            Some((19, "u".into()))
+        );
+        assert_eq!(extract_brace_var_trigger("{{base_url}}/users", 18), None);
+        assert_eq!(extract_brace_var_trigger("{\n  \"id\": 1", 11), None);
+
+        let (done, new_cur) = apply_brace_var_completion("{/users", 0, 1, "base_url");
+        assert_eq!(done, "{{base_url}}/users");
+        assert_eq!(new_cur, 12);
+
+        let (done2, new_cur2) = apply_brace_var_completion("{{ba}}/users", 0, 4, "base_url");
+        assert_eq!(done2, "{{base_url}}/users");
+        assert_eq!(new_cur2, 12);
     }
 }

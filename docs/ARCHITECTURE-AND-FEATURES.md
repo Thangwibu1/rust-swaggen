@@ -1,4 +1,4 @@
-# Swaggen — Tài liệu Kiến trúc Hệ thống & Tổng hợp Tính năng (`v0.1.19`)
+# Swaggen — Tài liệu Kiến trúc Hệ thống & Tổng hợp Tính năng (`v0.1.20`)
 
 > **Swaggen** là nền tảng kiểm thử, thiết kế và cộng tác API (REST, GraphQL, SSE, OpenAPI) viết hoàn toàn bằng **Rust** (`edition = "2024"`, MSRV `1.100`) theo kiến trúc **Windows Native Desktop + Cloud Collaboration Backend**.
 >
@@ -26,14 +26,14 @@ Dự án được tổ chức theo mô hình **Rust Cargo Workspace** gồm **3 
 
 ```text
 d:\code\potmen\
-├── Cargo.toml                  # Cấu hình Workspace, version (0.1.19) và pin dependency tập trung
+├── Cargo.toml                  # Cấu hình Workspace, version (0.1.20) và pin dependency tập trung
 ├── Dockerfile                  # Build image production cho swaggen-server
 ├── docker-compose.yml          # Triển khai Server + MongoDB Replica Set
 ├── 07-operations/              # Hướng dẫn triển khai Coolify VPS & Windows Installer
 ├── assets/                     # Icon ứng dụng (.ico, .png) và bộ icon Figma (assets/icons/)
 ├── tools/                      # Script kiểm tra P00-P01, bundle-result.ps1, build-installer.ps1
 ├── docs/                       # Tài liệu tổng hợp kiến trúc & tính năng
-├── result/                     # Output build release theo từng phiên bản (gitignored), vd: result/v0.1.19/
+├── result/                     # Output build release theo từng phiên bản (gitignored), vd: result/v0.1.20/
 │
 ├── apps/                       # === CÁC ỨNG DỤNG CHÍNH (BINARIES) ===
 │   ├── desktop/                # [FRONTEND] Ứng dụng Windows Desktop (swaggen-desktop.exe)
@@ -162,9 +162,9 @@ Backend (`axum 0.8.9`) phục vụ đồng bộ đội nhóm, quản lý quyền
    - **Tab `Params` tách 2 bảng rõ ràng**: `Query Params (?key=value)` và `Path Variables (:id / {id})` đồng bộ trực tiếp với URL, cùng bộ icon vector `mini_icon_button` (`+`, `-`, `×`, `⋯`, `↑`, `↓`) bo góc hiện đại.
    - **Màu sắc Collection, đổi tên trực tiếp & Thùng rác xoá mềm (`Trash & Restore`)**: Menu `⋯` của Collection cho phép chọn màu thẻ/thư mục và đổi tên; mọi thao tác xoá Collection, Folder, Request, Environment đều là xoá mềm có khôi phục 1-click.
    - **Logo `[S]` chuyển thẳng về Home** và **Workspace Switcher gọn đẹp** ở đầu Sidebar (bỏ chữ `SWAGGEN` thừa).
-3. **Biến Môi trường 3 Tầng & Live `{{variable}}` Pills (`v0.1.16`)**:
+3. **Biến Môi trường 3 Tầng, Live `{{variable}}` Pills & Gợi ý tự động khi gõ `{` (`v0.1.20`)**:
    - Quản lý trực quan 3 tầng biến trong `Environments`: **1. Deployment Environments** (`Local / Development / Staging / Production`), **2. Collection Variables**, **3. Global Workspace Variables**; click chọn môi trường là kích hoạt ngay kèm bộ chọn nhanh ở góc phải thanh Header.
-   - Ngay dưới thanh URL hiển thị **Live `{{variable}}` Status Pills**: báo rõ giá trị & tầng biến đang nhận, hoặc cảnh báo vàng `⚠ {{var}} · Click to set value` cho phép gán giá trị chỉ với 1 cú click.
+   - **Gợi ý biến môi trường tức thì khi gõ `{` hoặc `{{`**: xuất hiện popup gợi ý (kèm giá trị xem trước & tầng biến, hỗ trợ `↑`/`↓`, `Tab`/`Enter` hoặc click) tại thanh URL, bảng Query/Path/Header/Form, Auth, Body (`JSON/Raw/XML`) và GraphQL Query/Variables; cộng với **Live `{{variable}}` Status Pills** để xem/gán nhanh chỉ với 1 click.
 4. **GraphQL Studio toàn diện**:
    - Chọn `GRAPHQL` ngay trong Method dropdown hoặc nút `+ GQL`.
    - Trình soạn thảo đôi **Query/Mutation** ↔ **Variables (JSON)** có thanh kéo phân cách `1px`, bộ chọn `Operation`, nút `Sync $Vars`.

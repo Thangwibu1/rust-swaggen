@@ -473,6 +473,7 @@ pub fn render_browser_signin_html(
 
   document.getElementById("googleBtn").onclick = async () => {{
     try {{
+      try {{ await auth.signOut(); }} catch (_) {{}}
       const provider = new firebase.auth.GoogleAuthProvider();
       provider.setCustomParameters({{ prompt: "select_account" }});
       const res = await auth.signInWithPopup(provider);

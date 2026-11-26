@@ -664,6 +664,8 @@ pub fn handle_server_command(
             prof.session_id.clear();
             prof.email.clear();
             prof.user_id.clear();
+            prof.display_name.clear();
+            prof.last_error.clear();
             store.upsert(prof);
             Ok(match save_profiles(root, store) {
                 Ok(saved) => Event::ServerProfilesUpdated {

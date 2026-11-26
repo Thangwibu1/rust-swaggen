@@ -15,7 +15,8 @@ use swaggen_domain::{
     workspace::{
         ApiKeyPlacement, AssertionRule, AssertionTarget, AuthConfig, ClientCertMapping, HttpMethod,
         HttpVersionPolicy, IdempotencyMode, KeyValueRow, MultipartField, MultipartValueKind,
-        OAuthGrantType, RequestBody, RequestItem, VariableContext, VariableEntry, folder_chain,
+        OAuthGrantType, RequestBody, RequestItem, VariableContext, VariableEntry,
+        VariableSuggestion, apply_brace_var_completion, extract_brace_var_trigger, folder_chain,
         infer_query_param_suggestions, inspect_request_variables, new_uid,
         remove_url_path_param_key, rename_url_path_param_key, resolve_effective_auth,
         resolve_request_preview, split_url_parts,
@@ -277,6 +278,26 @@ pub fn show_top_bar(app: &mut App, ui: &mut egui::Ui) -> Option<usize> {
     let mut do_copy_curl = false;
     let mut move_to_col: Option<String> = None;
 
+    let avail_vars: Vec<VariableSuggestion> = {
+        let masked_secrets = app.masked_secret_placeholders();
+        let req_ref = &app.state.requests[req_idx];
+        let col_vars = app
+            .state
+            .collections
+            .iter()
+            .find(|c| c.id == req_ref.collection_id)
+            .map(|c| c.variables.as_slice())
+            .unwrap_or(&[]);
+        let vctx = VariableContext {
+            workspace_vars: &app.state.workspace_vars,
+            collection_vars: col_vars,
+            environment: app.state.active_environment(),
+            request_vars: &req_ref.local_vars,
+            local_secrets: &masked_secrets,
+        };
+        vctx.available_suggestions()
+    };
+
     let all_cols: Vec<(String, String)> = app
         .state
         .collections
@@ -404,9 +425,23 @@ pub fn show_top_bar(app: &mut App, ui: &mut egui::Ui) -> Option<usize> {
                         } else {
                             "Enter URL or {{base_url}}/endpoint"
                         };
+                        let url_edit_id = egui::Id::unique(("req_url_input", &req_id));
+                        let url_ac = prepare_var_autocomplete(
+                            ui,
+                            url_edit_id,
+                            &mut app.state.requests[req_idx].url,
+                            &avail_vars,
+                            false,
+                        );
+                        let url_ac_consumed_enter = url_ac.consumed_enter;
+                        if url_ac.completed {
+                            app.state.requests[req_idx].sync_params_from_url();
+                            changed = true;
+                        }
                         let url_resp = ui
                             .add(
                                 egui::TextEdit::singleline(&mut app.state.requests[req_idx].url)
+                                    .id(url_edit_id)
                                     .hint_text(url_hint)
                                     .align(egui::Align2::LEFT_CENTER)
                                     .margin(egui::Margin::symmetric(4, 0))
@@ -414,13 +449,25 @@ pub fn show_top_bar(app: &mut App, ui: &mut egui::Ui) -> Option<usize> {
                                     .desired_width(url_input_w),
                             )
                             .on_hover_text(
-                                "Enter URL — supports {{variables}}, :pathParams, and ?query=values (Enter / Ctrl+Enter to Send)",
+                                "Enter URL — type { or {{ to pick environment variables, :pathParams, and ?query=values (Enter / Ctrl+Enter to Send)",
                             );
                         if url_resp.changed() {
                             app.state.requests[req_idx].sync_params_from_url();
                             changed = true;
                         }
-                        if url_resp.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter)) {
+                        if finish_var_autocomplete(
+                            ui,
+                            url_edit_id,
+                            url_resp.rect,
+                            &mut app.state.requests[req_idx].url,
+                            url_ac,
+                        ) {
+                            app.state.requests[req_idx].sync_params_from_url();
+                            changed = true;
+                        } else if !url_ac_consumed_enter
+                            && url_resp.lost_focus()
+                            && ui.input(|i| i.key_pressed(egui::Key::Enter))
+                        {
                             app.send_active_request(false);
                         }
                     },
@@ -798,7 +845,7 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
         .iter()
         .find(|c| c.id == req_clone.collection_id)
         .cloned();
-    let (resolved, eff_auth_source) = {
+    let (resolved, eff_auth_source, avail_vars) = {
         let fchain = folder_chain(&app.state.folders, req_clone.folder_id.as_deref());
         let col_vars = col.as_ref().map(|c| c.variables.as_slice()).unwrap_or(&[]);
         let ctx = VariableContext {
@@ -818,7 +865,8 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
             now_secs,
         );
         let eff_source = resolve_effective_auth(col.as_ref(), &fchain, &req_clone).source;
-        (resolved, eff_source)
+        let avail_vars = ctx.available_suggestions();
+        (resolved, eff_source, avail_vars)
     };
 
     // 3. Clean Postman Sub-tabs: `Params` (Query Params + Path Variables) | `Headers` | `Body` | `Auth` | `Scripts` | `Assertions` | `Settings` | `Code`
@@ -945,6 +993,7 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
                     &req_clone,
                     &resolved,
                     inner_scroll_h,
+                    &avail_vars,
                     &mut changed,
                     &mut pending_worker_cmd,
                 );
@@ -989,7 +1038,7 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
                     }
                 });
                 ui.add_space(4.0);
-                if edit_postman_kv_grid(
+                if edit_postman_kv_grid_with_vars(
                     ui,
                     "query-params",
                     "Key",
@@ -997,6 +1046,7 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
                     &mut app.state.requests[req_idx].query_params,
                     &mut kv_ratio,
                     true,
+                    &avail_vars,
                 ) {
                     app.state.requests[req_idx].sync_url_from_query_params();
                     changed = true;
@@ -1016,7 +1066,7 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
                     .map(|p| p.key.clone())
                     .collect();
                 let prev_len = prev_keys.len();
-                if edit_postman_kv_grid(
+                if edit_postman_kv_grid_with_vars(
                     ui,
                     "path-params",
                     "Path variable (e.g. id)",
@@ -1024,6 +1074,7 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
                     &mut app.state.requests[req_idx].path_params,
                     &mut kv_ratio,
                     true,
+                    &avail_vars,
                 ) {
                     let req = &mut app.state.requests[req_idx];
                     if req.path_params.len() > prev_len {
@@ -1098,7 +1149,7 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
                     }
                 });
                 ui.add_space(4.0);
-                if edit_postman_kv_grid(
+                if edit_postman_kv_grid_with_vars(
                     ui,
                     "req-headers",
                     "Header (e.g. Accept, X-Api-Version)",
@@ -1106,6 +1157,7 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
                     &mut app.state.requests[req_idx].headers,
                     &mut kv_ratio,
                     true,
+                    &avail_vars,
                 ) {
                     changed = true;
                 }
@@ -1140,6 +1192,7 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
                     ui,
                     req_idx,
                     inner_scroll_h,
+                    &avail_vars,
                     &mut kv_ratio,
                     &mut changed,
                 );
@@ -1150,6 +1203,7 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
                     ui,
                     req_idx,
                     &eff_auth_source,
+                    &avail_vars,
                     &mut changed,
                     &mut pending_worker_cmd,
                 );
@@ -1226,6 +1280,7 @@ fn show_graphql_studio(
     req_clone: &RequestItem,
     resolved: &swaggen_domain::workspace::ResolvedRequest,
     inner_scroll_h: f32,
+    avail_vars: &[VariableSuggestion],
     changed: &mut bool,
     pending_cmd: &mut Option<crate::worker::Command>,
 ) {
@@ -1365,17 +1420,16 @@ fn show_graphql_studio(
                             .color(swaggen_ui_kit::text_secondary(ui))
                             .strong(),
                     );
-                    if ui
-                        .add(
-                            egui::TextEdit::multiline(query)
-                                .id_salt("gql_query_editor")
-                                .hint_text("query Example($id: ID!) {\n  ...\n}")
-                                .desired_width(left_w)
-                                .desired_rows(code_rows)
-                                .code_editor(),
-                        )
-                        .changed()
-                    {
+                    let q_id = egui::Id::unique(("gql_query_editor", &req_clone.id));
+                    if var_text_edit_multiline(
+                        ui,
+                        q_id,
+                        query,
+                        "query Example($id: ID!) {\n  ...\n}",
+                        left_w,
+                        code_rows,
+                        avail_vars,
+                    ) {
                         *changed = true;
                     }
                 },
@@ -1408,17 +1462,16 @@ fn show_graphql_studio(
                     } else {
                         code_rows
                     };
-                    if ui
-                        .add(
-                            egui::TextEdit::multiline(variables)
-                                .id_salt("gql_vars_editor")
-                                .hint_text("{\n  \"id\": \"1\"\n}")
-                                .desired_width(right_w)
-                                .desired_rows(var_rows)
-                                .code_editor(),
-                        )
-                        .changed()
-                    {
+                    let v_id = egui::Id::unique(("gql_vars_editor", &req_clone.id));
+                    if var_text_edit_multiline(
+                        ui,
+                        v_id,
+                        variables,
+                        "{\n  \"id\": \"1\"\n}",
+                        right_w,
+                        var_rows,
+                        avail_vars,
+                    ) {
                         *changed = true;
                     }
                     if let Some(ref schema) = schema_opt {
@@ -1484,6 +1537,7 @@ fn show_body_editor(
     ui: &mut egui::Ui,
     req_idx: usize,
     inner_scroll_h: f32,
+    avail_vars: &[VariableSuggestion],
     kv_ratio: &mut f32,
     changed: &mut bool,
 ) {
@@ -1535,6 +1589,7 @@ fn show_body_editor(
         }
     });
     ui.add_space(4.0);
+    let body_req_id = app.state.requests[req_idx].id.clone();
     match &mut app.state.requests[req_idx].body {
         RequestBody::None => {
             ui.label(
@@ -1567,34 +1622,31 @@ fn show_body_editor(
                     );
                 }
             });
-            if ui
-                .add(
-                    egui::TextEdit::multiline(text)
-                        .desired_width(ui.available_width())
-                        .desired_rows(body_rows)
-                        .code_editor(),
-                )
-                .changed()
-            {
+            let json_id = egui::Id::unique(("req_body_json", &body_req_id));
+            let avail_w = ui.available_width();
+            if var_text_edit_multiline(ui, json_id, text, "", avail_w, body_rows, avail_vars) {
                 *changed = true;
             }
         }
         RequestBody::Text(text) | RequestBody::Xml(text) => {
             let body_rows = ((inner_scroll_h - 40.0) / 17.5).clamp(4.0, 26.0) as usize;
-            if ui
-                .add(
-                    egui::TextEdit::multiline(text)
-                        .desired_width(ui.available_width())
-                        .desired_rows(body_rows)
-                        .code_editor(),
-                )
-                .changed()
-            {
+            let raw_id = egui::Id::unique(("req_body_raw", &body_req_id));
+            let avail_w = ui.available_width();
+            if var_text_edit_multiline(ui, raw_id, text, "", avail_w, body_rows, avail_vars) {
                 *changed = true;
             }
         }
         RequestBody::FormUrlEncoded(rows) => {
-            if edit_postman_kv_grid(ui, "form-body", "Field", "Value", rows, kv_ratio, true) {
+            if edit_postman_kv_grid_with_vars(
+                ui,
+                "form-body",
+                "Field",
+                "Value",
+                rows,
+                kv_ratio,
+                true,
+                avail_vars,
+            ) {
                 *changed = true;
             }
         }
@@ -1749,6 +1801,7 @@ fn show_auth_editor(
     ui: &mut egui::Ui,
     req_idx: usize,
     eff_auth_source: &str,
+    avail_vars: &[VariableSuggestion],
     changed: &mut bool,
     pending_cmd: &mut Option<crate::worker::Command>,
 ) {
@@ -1836,6 +1889,7 @@ fn show_auth_editor(
     ui.separator();
     ui.add_space(6.0);
 
+    let req_auth_id = app.state.requests[req_idx].id.clone();
     match &mut app.state.requests[req_idx].auth {
         AuthConfig::Inherit => {
             ui.label(
@@ -1855,17 +1909,19 @@ fn show_auth_editor(
             setting_row(
                 ui,
                 "Token",
-                "Paste a raw JWT/token or reference an environment variable like {{api_token}}",
+                "Paste a raw JWT/token or type { to pick {{api_token}}",
                 |ui| {
-                    if swaggen_ui_kit::text_input(
+                    let w = (ui.available_width() - 10.0).clamp(180.0, 380.0);
+                    let id = egui::Id::unique(("auth_bearer", &req_auth_id));
+                    if var_text_edit_boxed(
                         ui,
+                        id,
                         token,
                         "Token or {{api_token}}",
-                        (ui.available_width() - 10.0).clamp(180.0, 380.0),
+                        w,
                         false,
-                    )
-                    .changed()
-                    {
+                        avail_vars,
+                    ) {
                         *changed = true;
                     }
                 },
@@ -1873,12 +1929,14 @@ fn show_auth_editor(
         }
         AuthConfig::Basic { username, password } => {
             setting_row(ui, "Username", "HTTP Basic username or {{var}}", |ui| {
-                if swaggen_ui_kit::text_input(ui, username, "username", 260.0, false).changed() {
+                let id = egui::Id::unique(("auth_basic_u", &req_auth_id));
+                if var_text_edit_boxed(ui, id, username, "username", 260.0, false, avail_vars) {
                     *changed = true;
                 }
             });
             setting_row(ui, "Password", "HTTP Basic password or {{var}}", |ui| {
-                if swaggen_ui_kit::text_input(ui, password, "password", 260.0, true).changed() {
+                let id = egui::Id::unique(("auth_basic_p", &req_auth_id));
+                if var_text_edit_boxed(ui, id, password, "password", 260.0, true, avail_vars) {
                     *changed = true;
                 }
             });
@@ -1898,13 +1956,25 @@ fn show_auth_editor(
                     }
                 },
             );
-            setting_row(ui, "Value", "Key value or {{api_key}}", |ui| {
-                if swaggen_ui_kit::text_input(ui, value, "Value or {{api_key}}", 260.0, false)
-                    .changed()
-                {
-                    *changed = true;
-                }
-            });
+            setting_row(
+                ui,
+                "Value",
+                "Key value or type { to pick {{api_key}}",
+                |ui| {
+                    let id = egui::Id::unique(("auth_apikey_v", &req_auth_id));
+                    if var_text_edit_boxed(
+                        ui,
+                        id,
+                        value,
+                        "Value or {{api_key}}",
+                        260.0,
+                        false,
+                        avail_vars,
+                    ) {
+                        *changed = true;
+                    }
+                },
+            );
             setting_row(
                 ui,
                 "Add to",
@@ -3054,6 +3124,29 @@ pub fn edit_postman_kv_grid(
     key_ratio: &mut f32,
     include_ghost_row: bool,
 ) -> bool {
+    edit_postman_kv_grid_with_vars(
+        ui,
+        id_salt,
+        key_hint,
+        val_hint,
+        rows,
+        key_ratio,
+        include_ghost_row,
+        &[],
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+pub fn edit_postman_kv_grid_with_vars(
+    ui: &mut egui::Ui,
+    id_salt: &str,
+    key_hint: &str,
+    val_hint: &str,
+    rows: &mut Vec<KeyValueRow>,
+    key_ratio: &mut f32,
+    include_ghost_row: bool,
+    avail_vars: &[VariableSuggestion],
+) -> bool {
     let mut changed = false;
     let mut remove_idx = None;
     let border_col = swaggen_ui_kit::border_color(ui);
@@ -3163,36 +3256,30 @@ pub fn edit_postman_kv_grid(
                                     }
                                 });
                                 kv_fixed_cell(ui, key_w, row_h, false, |ui| {
-                                    if ui
-                                        .add(
-                                            egui::TextEdit::singleline(&mut row.key)
-                                                .id(egui::Id::unique((id_salt, "flat_k", i)))
-                                                .hint_text(key_hint)
-                                                .text_color(text_col)
-                                                .align(egui::Align2::LEFT_CENTER)
-                                                .margin(egui::Margin::ZERO)
-                                                .frame(egui::Frame::NONE)
-                                                .desired_width((key_w - 20.0).max(32.0)),
-                                        )
-                                        .changed()
-                                    {
+                                    let k_id = egui::Id::unique((id_salt, "flat_k", i));
+                                    if var_text_edit_singleline(
+                                        ui,
+                                        k_id,
+                                        &mut row.key,
+                                        key_hint,
+                                        (key_w - 20.0).max(32.0),
+                                        text_col,
+                                        avail_vars,
+                                    ) {
                                         changed = true;
                                     }
                                 });
                                 kv_fixed_cell(ui, val_w, row_h, false, |ui| {
-                                    if ui
-                                        .add(
-                                            egui::TextEdit::singleline(&mut row.value)
-                                                .id(egui::Id::unique((id_salt, "flat_v", i)))
-                                                .hint_text(val_hint)
-                                                .text_color(text_col)
-                                                .align(egui::Align2::LEFT_CENTER)
-                                                .margin(egui::Margin::ZERO)
-                                                .frame(egui::Frame::NONE)
-                                                .desired_width((val_w - 20.0).max(32.0)),
-                                        )
-                                        .changed()
-                                    {
+                                    let v_id = egui::Id::unique((id_salt, "flat_v", i));
+                                    if var_text_edit_singleline(
+                                        ui,
+                                        v_id,
+                                        &mut row.value,
+                                        val_hint,
+                                        (val_w - 20.0).max(32.0),
+                                        text_col,
+                                        avail_vars,
+                                    ) {
                                         changed = true;
                                     }
                                 });
@@ -3401,4 +3488,420 @@ fn paint_h_hairline(ui: &egui::Ui, row_rect: egui::Rect, color: egui::Color32) {
         [row_rect.left_bottom(), row_rect.right_bottom()],
         egui::Stroke::new(1.0, color),
     );
+}
+
+struct VarAutocompleteSession {
+    active: bool,
+    completed: bool,
+    consumed_enter: bool,
+    open_idx: usize,
+    cursor_idx: usize,
+    selected_idx: usize,
+    matches: Vec<VariableSuggestion>,
+}
+
+fn filter_var_suggestions(
+    suggestions: &[VariableSuggestion],
+    prefix: &str,
+) -> Vec<VariableSuggestion> {
+    if suggestions.is_empty() {
+        return Vec::new();
+    }
+    let low = prefix.trim().to_ascii_lowercase();
+    let mut starts = Vec::new();
+    let mut contains = Vec::new();
+    for s in suggestions {
+        let k_low = s.key.to_ascii_lowercase();
+        if low.is_empty() || k_low.starts_with(&low) {
+            starts.push(s.clone());
+        } else if k_low.contains(&low) {
+            contains.push(s.clone());
+        }
+    }
+    starts.extend(contains);
+    starts.truncate(12);
+    starts
+}
+
+fn apply_var_completion_to_textedit(
+    ui: &egui::Ui,
+    text_id: egui::Id,
+    text: &mut String,
+    open_idx: usize,
+    cursor_idx: usize,
+    var_key: &str,
+) {
+    let (updated, new_cursor) = apply_brace_var_completion(text, open_idx, cursor_idx, var_key);
+    *text = updated;
+    if let Some(mut state) = egui::TextEdit::load_state(ui.ctx(), text_id) {
+        state
+            .cursor
+            .set_char_range(Some(egui::text::CCursorRange::one(
+                egui::text::CCursor::new(new_cursor),
+            )));
+        state.store(ui.ctx(), text_id);
+    }
+    ui.ctx().memory_mut(|m| m.request_focus(text_id));
+    ui.ctx()
+        .data_mut(|d| d.remove::<egui::Rect>(text_id.with("var_ac_rect")));
+}
+
+fn prepare_var_autocomplete(
+    ui: &egui::Ui,
+    text_id: egui::Id,
+    text: &mut String,
+    suggestions: &[VariableSuggestion],
+    is_multiline: bool,
+) -> VarAutocompleteSession {
+    let mut session = VarAutocompleteSession {
+        active: false,
+        completed: false,
+        consumed_enter: false,
+        open_idx: 0,
+        cursor_idx: 0,
+        selected_idx: 0,
+        matches: Vec::new(),
+    };
+    if suggestions.is_empty() {
+        return session;
+    }
+
+    let has_focus = ui.ctx().memory(|m| m.has_focus(text_id));
+    let prev_popup_rect: Option<egui::Rect> =
+        ui.ctx().data(|d| d.get_temp(text_id.with("var_ac_rect")));
+    let pointer_over_popup = prev_popup_rect.is_some_and(|r| {
+        ui.ctx()
+            .pointer_interact_pos()
+            .is_some_and(|p| r.expand(6.0).contains(p))
+    });
+    if !has_focus && !pointer_over_popup {
+        return session;
+    }
+
+    let cursor_idx = egui::TextEdit::load_state(ui.ctx(), text_id)
+        .and_then(|s| s.cursor.char_range())
+        .map(|r| usize::from(r.primary.index))
+        .unwrap_or_else(|| text.chars().count());
+
+    let Some((open_idx, prefix)) = extract_brace_var_trigger(text, cursor_idx) else {
+        ui.ctx()
+            .data_mut(|d| d.remove::<(usize, String)>(text_id.with("var_ac_dismissed")));
+        return session;
+    };
+
+    let dismissed: Option<(usize, String)> = ui
+        .ctx()
+        .data(|d| d.get_temp(text_id.with("var_ac_dismissed")));
+    if dismissed
+        .as_ref()
+        .is_some_and(|(d_open, d_pref)| *d_open == open_idx && *d_pref == prefix)
+    {
+        return session;
+    }
+
+    let matches = filter_var_suggestions(suggestions, &prefix);
+    if matches.is_empty() {
+        return session;
+    }
+
+    let prev_prefix: Option<String> = ui.ctx().data(|d| d.get_temp(text_id.with("var_ac_pref")));
+    let mut sel_idx: usize = ui
+        .ctx()
+        .data(|d| d.get_temp(text_id.with("var_ac_sel")))
+        .unwrap_or(0);
+    let mut moved: bool = ui
+        .ctx()
+        .data(|d| d.get_temp(text_id.with("var_ac_moved")))
+        .unwrap_or(false);
+    if prev_prefix.as_deref() != Some(prefix.as_str()) {
+        sel_idx = 0;
+        moved = false;
+    }
+    if sel_idx >= matches.len() {
+        sel_idx = 0;
+    }
+
+    if has_focus {
+        if ui.input_mut(|i| i.consume_key(egui::Modifiers::NONE, egui::Key::ArrowDown)) {
+            sel_idx = (sel_idx + 1) % matches.len();
+            moved = true;
+        }
+        if ui.input_mut(|i| i.consume_key(egui::Modifiers::NONE, egui::Key::ArrowUp)) {
+            sel_idx = if sel_idx == 0 {
+                matches.len() - 1
+            } else {
+                sel_idx - 1
+            };
+            moved = true;
+        }
+        if ui.input_mut(|i| i.consume_key(egui::Modifiers::NONE, egui::Key::Escape)) {
+            ui.ctx()
+                .data_mut(|d| d.insert_temp(text_id.with("var_ac_dismissed"), (open_idx, prefix)));
+            return session;
+        }
+        let accept_tab = ui.input_mut(|i| i.consume_key(egui::Modifiers::NONE, egui::Key::Tab));
+        let can_accept_enter = !is_multiline || !prefix.is_empty() || moved;
+        let accept_enter = can_accept_enter
+            && ui.input_mut(|i| i.consume_key(egui::Modifiers::NONE, egui::Key::Enter));
+        if accept_tab || accept_enter {
+            let chosen = matches[sel_idx].key.clone();
+            apply_var_completion_to_textedit(ui, text_id, text, open_idx, cursor_idx, &chosen);
+            session.completed = true;
+            session.consumed_enter = accept_enter;
+            return session;
+        }
+    }
+
+    ui.ctx().data_mut(|d| {
+        d.insert_temp(text_id.with("var_ac_pref"), prefix);
+        d.insert_temp(text_id.with("var_ac_sel"), sel_idx);
+        d.insert_temp(text_id.with("var_ac_moved"), moved);
+    });
+
+    session.active = true;
+    session.open_idx = open_idx;
+    session.cursor_idx = cursor_idx;
+    session.selected_idx = sel_idx;
+    session.matches = matches;
+    session
+}
+
+fn finish_var_autocomplete(
+    ui: &egui::Ui,
+    text_id: egui::Id,
+    anchor_rect: egui::Rect,
+    text: &mut String,
+    session: VarAutocompleteSession,
+) -> bool {
+    if session.completed {
+        return true;
+    }
+    if !session.active || session.matches.is_empty() {
+        ui.ctx()
+            .data_mut(|d| d.remove::<egui::Rect>(text_id.with("var_ac_rect")));
+        return false;
+    }
+
+    let screen = ui.ctx().content_rect();
+    let popup_w = 340.0_f32.min((screen.width() - 24.0).max(220.0));
+    let est_h = (28.0 + session.matches.len() as f32 * 30.0).min(220.0);
+    let mut x = anchor_rect
+        .left()
+        .min(screen.right() - popup_w - 8.0)
+        .max(8.0);
+    if !x.is_finite() {
+        x = 16.0;
+    }
+    let y = if anchor_rect.bottom() + 4.0 + est_h <= screen.bottom() - 8.0 {
+        anchor_rect.bottom() + 4.0
+    } else {
+        (anchor_rect.top() - est_h - 4.0).max(8.0)
+    };
+
+    let mut applied = false;
+    let area_resp = egui::Area::new(text_id.with("var_ac_popup"))
+        .order(egui::Order::Foreground)
+        .fixed_pos(egui::pos2(x, y))
+        .show(ui.ctx(), |ui| {
+            egui::Frame::new()
+                .fill(swaggen_ui_kit::surface_bg(ui))
+                .stroke(egui::Stroke::new(1.0, swaggen_ui_kit::border_color(ui)))
+                .corner_radius(6)
+                .shadow(egui::Shadow {
+                    offset: [0, 4],
+                    blur: 14,
+                    spread: 0,
+                    color: egui::Color32::from_black_alpha(28),
+                })
+                .inner_margin(egui::Margin::symmetric(6, 6))
+                .show(ui, |ui| {
+                    ui.set_min_width(popup_w - 12.0);
+                    ui.set_max_width(popup_w - 12.0);
+                    ui.horizontal(|ui| {
+                        ui.label(
+                            egui::RichText::new("Variables")
+                                .size(10.5)
+                                .color(swaggen_ui_kit::text_secondary(ui))
+                                .strong(),
+                        );
+                        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                            ui.label(
+                                egui::RichText::new("↑↓ · Tab / Enter")
+                                    .size(9.5)
+                                    .color(swaggen_ui_kit::text_secondary(ui)),
+                            );
+                        });
+                    });
+                    ui.add_space(3.0);
+                    egui::ScrollArea::vertical()
+                        .id_salt(text_id.with("var_ac_scroll"))
+                        .max_height(190.0)
+                        .show(ui, |ui| {
+                            for (idx, item) in session.matches.iter().enumerate() {
+                                let is_sel = idx == session.selected_idx;
+                                let bg = if is_sel {
+                                    swaggen_ui_kit::selected_bg(ui)
+                                } else {
+                                    egui::Color32::TRANSPARENT
+                                };
+                                let row_frame = egui::Frame::new()
+                                    .fill(bg)
+                                    .corner_radius(4)
+                                    .inner_margin(egui::Margin::symmetric(6, 4))
+                                    .show(ui, |ui| {
+                                        ui.set_min_width(popup_w - 28.0);
+                                        ui.horizontal(|ui| {
+                                            ui.label(
+                                                egui::RichText::new(format!(
+                                                    "{{{{{}}}}}",
+                                                    item.key
+                                                ))
+                                                .size(11.5)
+                                                .color(Tokens::STATUS_INFO)
+                                                .strong(),
+                                            );
+                                            if !item.value_preview.is_empty() {
+                                                let short: String =
+                                                    if item.value_preview.chars().count() > 20 {
+                                                        let mut s: String = item
+                                                            .value_preview
+                                                            .chars()
+                                                            .take(19)
+                                                            .collect();
+                                                        s.push('…');
+                                                        s
+                                                    } else {
+                                                        item.value_preview.clone()
+                                                    };
+                                                ui.label(
+                                                    egui::RichText::new(short)
+                                                        .size(10.5)
+                                                        .color(swaggen_ui_kit::text_secondary(ui)),
+                                                );
+                                            }
+                                            ui.with_layout(
+                                                egui::Layout::right_to_left(egui::Align::Center),
+                                                |ui| {
+                                                    swaggen_ui_kit::pill_badge(
+                                                        ui,
+                                                        swaggen_ui_kit::text_secondary(ui),
+                                                        &item.scope,
+                                                    );
+                                                },
+                                            );
+                                        });
+                                    });
+                                let row_resp = row_frame.response.interact(egui::Sense::click());
+                                if row_resp.hovered() {
+                                    ui.ctx().set_cursor_icon(egui::CursorIcon::PointingHand);
+                                    ui.ctx().data_mut(|d| {
+                                        d.insert_temp(text_id.with("var_ac_sel"), idx);
+                                    });
+                                }
+                                if row_resp.clicked() {
+                                    apply_var_completion_to_textedit(
+                                        ui,
+                                        text_id,
+                                        text,
+                                        session.open_idx,
+                                        session.cursor_idx,
+                                        &item.key,
+                                    );
+                                    applied = true;
+                                }
+                            }
+                        });
+                });
+        });
+
+    ui.ctx()
+        .data_mut(|d| d.insert_temp(text_id.with("var_ac_rect"), area_resp.response.rect));
+    applied
+}
+
+fn var_text_edit_singleline(
+    ui: &mut egui::Ui,
+    text_id: egui::Id,
+    text: &mut String,
+    hint: &str,
+    width: f32,
+    text_color: egui::Color32,
+    suggestions: &[VariableSuggestion],
+) -> bool {
+    let ac = prepare_var_autocomplete(ui, text_id, text, suggestions, false);
+    let mut changed = ac.completed;
+    let resp = ui.add(
+        egui::TextEdit::singleline(text)
+            .id(text_id)
+            .hint_text(hint)
+            .text_color(text_color)
+            .align(egui::Align2::LEFT_CENTER)
+            .margin(egui::Margin::ZERO)
+            .frame(egui::Frame::NONE)
+            .desired_width(width),
+    );
+    if resp.changed() {
+        changed = true;
+    }
+    if finish_var_autocomplete(ui, text_id, resp.rect, text, ac) {
+        changed = true;
+    }
+    changed
+}
+
+fn var_text_edit_boxed(
+    ui: &mut egui::Ui,
+    text_id: egui::Id,
+    text: &mut String,
+    hint: &str,
+    width: f32,
+    password: bool,
+    suggestions: &[VariableSuggestion],
+) -> bool {
+    let ac = prepare_var_autocomplete(ui, text_id, text, suggestions, false);
+    let mut changed = ac.completed;
+    let resp = ui.add(
+        egui::TextEdit::singleline(text)
+            .id(text_id)
+            .hint_text(hint)
+            .password(password)
+            .margin(egui::Margin::symmetric(8, 6))
+            .desired_width(width),
+    );
+    if resp.changed() {
+        changed = true;
+    }
+    if finish_var_autocomplete(ui, text_id, resp.rect, text, ac) {
+        changed = true;
+    }
+    changed
+}
+
+fn var_text_edit_multiline(
+    ui: &mut egui::Ui,
+    text_id: egui::Id,
+    text: &mut String,
+    hint: &str,
+    width: f32,
+    rows: usize,
+    suggestions: &[VariableSuggestion],
+) -> bool {
+    let ac = prepare_var_autocomplete(ui, text_id, text, suggestions, true);
+    let mut changed = ac.completed;
+    let mut edit = egui::TextEdit::multiline(text)
+        .id(text_id)
+        .desired_width(width)
+        .desired_rows(rows)
+        .code_editor();
+    if !hint.is_empty() {
+        edit = edit.hint_text(hint);
+    }
+    let resp = ui.add(edit);
+    if resp.changed() {
+        changed = true;
+    }
+    if finish_var_autocomplete(ui, text_id, resp.rect, text, ac) {
+        changed = true;
+    }
+    changed
 }

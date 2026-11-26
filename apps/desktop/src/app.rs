@@ -891,22 +891,40 @@ impl App {
                 }
                 Event::ServerProfilesUpdated { store, message } => {
                     self.firebase_auth_pending = false;
-                    let signed_in_id = store
+                    let prev_uid = self
+                        .server_profiles
                         .active()
                         .filter(|p| !p.session_id.is_empty())
-                        .map(|p| p.id.clone());
+                        .map(|p| p.user_id.clone());
+                    let next_active = store.active().filter(|p| !p.session_id.is_empty());
+                    let signed_in_id = next_active.map(|p| p.id.clone());
+                    let next_uid = next_active.map(|p| p.user_id.clone());
+                    let account_switched = prev_uid != next_uid;
                     self.server_profiles = store;
-                    if signed_in_id.is_none() {
+                    if signed_in_id.is_none() || account_switched {
                         self.team_workspaces.clear();
                         self.pending_invitations.clear();
                         self.public_invite_links.clear();
+                        self.team_member_details = None;
+                        self.team_audit_events.clear();
+                        self.team_notifications.clear();
+                        self.team_unread_notifications = 0;
                         self.selected_team_workspace_id = None;
+                    }
+                    if signed_in_id.is_none()
+                        && matches!(
+                            self.state.meta.kind,
+                            swaggen_domain::workspace::WorkspaceKind::Team { .. }
+                        )
+                    {
+                        self.show_welcome = true;
                     } else if let Some(pid) = signed_in_id {
                         self.submit(Command::RefreshTeamWorkspaces {
                             profile_id: pid.clone(),
                         });
                         self.submit(Command::RefreshPendingInvitations { profile_id: pid });
                     }
+                    self.error = false;
                     self.status = message;
                 }
                 Event::FirebaseLoginCancelled => {
