@@ -1,4 +1,4 @@
-# Swaggen — Tài liệu Kiến trúc Hệ thống & Tổng hợp Tính năng (`v0.1.23`)
+# Swaggen — Tài liệu Kiến trúc Hệ thống & Tổng hợp Tính năng (`v0.1.24`)
 
 > **Swaggen** là nền tảng kiểm thử, thiết kế và cộng tác API (REST, GraphQL, SSE, OpenAPI) viết hoàn toàn bằng **Rust** (`edition = "2024"`, MSRV `1.100`) theo kiến trúc **Windows Native Desktop + Cloud Collaboration Backend**.
 >
@@ -26,7 +26,7 @@ Dự án được tổ chức theo mô hình **Rust Cargo Workspace** gồm **3 
 
 ```text
 d:\code\potmen\
-├── Cargo.toml                  # Cấu hình Workspace, version (0.1.23) và pin dependency tập trung
+├── Cargo.toml                  # Cấu hình Workspace, version (0.1.24) và pin dependency tập trung
 ├── Dockerfile                  # Build image production cho swaggen-server
 ├── docker-compose.yml          # Triển khai Server + MongoDB Replica Set
 ├── 07-operations/              # Hướng dẫn triển khai Coolify VPS & Windows Installer

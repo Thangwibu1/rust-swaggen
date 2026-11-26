@@ -846,6 +846,10 @@ pub struct RequestTab {
     pub id: String,
     pub request_id: String,
     pub pinned: bool,
+    #[serde(default)]
+    pub group_name: Option<String>,
+    #[serde(default)]
+    pub group_color: Option<String>,
 }
 
 fn default_sidebar_footer_height() -> f32 {
@@ -870,6 +874,8 @@ pub struct LayoutPreferences {
     pub sidebar_footer_height: f32,
     #[serde(default = "default_kv_key_ratio")]
     pub kv_key_ratio: f32,
+    #[serde(default)]
+    pub collapsed_tab_groups: Vec<String>,
 }
 
 impl Default for LayoutPreferences {
@@ -882,6 +888,7 @@ impl Default for LayoutPreferences {
             workbench_side_by_side: false,
             sidebar_footer_height: default_sidebar_footer_height(),
             kv_key_ratio: default_kv_key_ratio(),
+            collapsed_tab_groups: Vec::new(),
         }
     }
 }
@@ -2967,6 +2974,8 @@ impl WorkspaceState {
             id: new_uid(),
             request_id: req.id.clone(),
             pinned: false,
+            group_name: None,
+            group_color: None,
         };
         let active_tab_id = Some(tab.id.clone());
         let active_env_id = Some(dev.id.clone());
@@ -3415,6 +3424,9 @@ impl WorkspaceState {
     pub fn open_or_focus_tab(&mut self, request_id: &str) -> String {
         if let Some(existing) = self.open_tabs.iter().find(|t| t.request_id == request_id) {
             let id = existing.id.clone();
+            if let Some(ref g) = existing.group_name {
+                self.layout.collapsed_tab_groups.retain(|cg| cg != g);
+            }
             self.active_tab_id = Some(id.clone());
             return id;
         }
@@ -3422,6 +3434,8 @@ impl WorkspaceState {
             id: new_uid(),
             request_id: request_id.to_owned(),
             pinned: false,
+            group_name: None,
+            group_color: None,
         };
         let id = tab.id.clone();
         self.open_tabs.push(tab);
@@ -3430,11 +3444,209 @@ impl WorkspaceState {
     }
 
     pub fn close_unpinned_tabs(&mut self) {
+        self.close_all_tabs(false);
+    }
+
+    pub fn close_tab(&mut self, tab_id: &str) {
+        let Some(pos) = self.open_tabs.iter().position(|t| t.id == tab_id) else {
+            return;
+        };
+        let was_active = self.active_tab_id.as_deref() == Some(tab_id);
+        self.open_tabs.remove(pos);
+        if was_active {
+            let next_idx = pos.min(self.open_tabs.len().saturating_sub(1));
+            self.active_tab_id = self.open_tabs.get(next_idx).map(|t| t.id.clone());
+        }
+    }
+
+    pub fn close_other_tabs(&mut self, keep_tab_id: &str) {
+        if !self.open_tabs.iter().any(|t| t.id == keep_tab_id) {
+            return;
+        }
+        self.open_tabs.retain(|t| t.id == keep_tab_id || t.pinned);
+        self.active_tab_id = Some(keep_tab_id.to_owned());
+    }
+
+    pub fn close_tabs_to_right(&mut self, tab_id: &str) {
+        let Some(pos) = self.open_tabs.iter().position(|t| t.id == tab_id) else {
+            return;
+        };
+        let mut idx = 0usize;
+        self.open_tabs.retain(|t| {
+            let keep = idx <= pos || t.pinned;
+            idx += 1;
+            keep
+        });
+        if let Some(ref active) = self.active_tab_id
+            && !self.open_tabs.iter().any(|t| &t.id == active)
+        {
+            self.active_tab_id = Some(tab_id.to_owned());
+        }
+    }
+
+    pub fn close_all_tabs(&mut self, include_pinned: bool) {
+        if include_pinned {
+            self.open_tabs.clear();
+            self.active_tab_id = None;
+            self.layout.collapsed_tab_groups.clear();
+            return;
+        }
         self.open_tabs.retain(|t| t.pinned);
         if let Some(ref active) = self.active_tab_id
             && !self.open_tabs.iter().any(|t| &t.id == active)
         {
             self.active_tab_id = self.open_tabs.first().map(|t| t.id.clone());
+        }
+    }
+
+    pub fn toggle_pin_tab(&mut self, tab_id: &str) {
+        let Some(pos) = self.open_tabs.iter().position(|t| t.id == tab_id) else {
+            return;
+        };
+        let mut tab = self.open_tabs.remove(pos);
+        tab.pinned = !tab.pinned;
+        if tab.pinned {
+            // Pinned tabs live at the left of the tab strip and leave collapsible groups
+            tab.group_name = None;
+            tab.group_color = None;
+            let insert_at = self
+                .open_tabs
+                .iter()
+                .position(|t| !t.pinned)
+                .unwrap_or(self.open_tabs.len());
+            self.open_tabs.insert(insert_at, tab);
+        } else {
+            let insert_at = self
+                .open_tabs
+                .iter()
+                .position(|t| !t.pinned)
+                .unwrap_or(self.open_tabs.len());
+            self.open_tabs.insert(insert_at, tab);
+        }
+    }
+
+    pub fn assign_tab_group(
+        &mut self,
+        tab_id: &str,
+        group_name: Option<String>,
+        group_color: Option<String>,
+    ) {
+        let clean_name = group_name
+            .map(|s| s.trim().to_owned())
+            .filter(|s| !s.is_empty());
+        let Some(pos) = self.open_tabs.iter().position(|t| t.id == tab_id) else {
+            return;
+        };
+        let Some(gname) = clean_name else {
+            self.open_tabs[pos].group_name = None;
+            self.open_tabs[pos].group_color = None;
+            return;
+        };
+
+        // Inherit existing group's color when none explicitly passed, or update entire group's color when passed
+        let resolved_color = if let Some(c) = group_color {
+            for t in &mut self.open_tabs {
+                if t.group_name.as_deref() == Some(gname.as_str()) {
+                    t.group_color = Some(c.clone());
+                }
+            }
+            Some(c)
+        } else {
+            self.open_tabs
+                .iter()
+                .find(|t| t.group_name.as_deref() == Some(gname.as_str()))
+                .and_then(|t| t.group_color.clone())
+                .or_else(|| Some("blue".into()))
+        };
+
+        let mut tab = self.open_tabs.remove(pos);
+        tab.pinned = false;
+        tab.group_name = Some(gname.clone());
+        tab.group_color = resolved_color;
+
+        // Place contiguous right after the last tab already in this group (if any)
+        if let Some(last_grp_pos) = self
+            .open_tabs
+            .iter()
+            .rposition(|t| t.group_name.as_deref() == Some(gname.as_str()))
+        {
+            self.open_tabs.insert(last_grp_pos + 1, tab);
+        } else {
+            let insert_at = pos.min(self.open_tabs.len());
+            let first_unpinned = self
+                .open_tabs
+                .iter()
+                .position(|t| !t.pinned)
+                .unwrap_or(self.open_tabs.len());
+            self.open_tabs.insert(insert_at.max(first_unpinned), tab);
+        }
+        self.layout.collapsed_tab_groups.retain(|cg| cg != &gname);
+    }
+
+    pub fn rename_or_recolor_tab_group(
+        &mut self,
+        old_name: &str,
+        new_name: &str,
+        new_color: Option<String>,
+    ) {
+        let trimmed = new_name.trim();
+        let target_name = if trimmed.is_empty() {
+            old_name.to_owned()
+        } else {
+            trimmed.to_owned()
+        };
+        for t in &mut self.open_tabs {
+            if t.group_name.as_deref() == Some(old_name) {
+                t.group_name = Some(target_name.clone());
+                if let Some(ref c) = new_color {
+                    t.group_color = Some(c.clone());
+                }
+            }
+        }
+        if old_name != target_name {
+            for cg in &mut self.layout.collapsed_tab_groups {
+                if cg == old_name {
+                    *cg = target_name.clone();
+                }
+            }
+        }
+    }
+
+    pub fn ungroup_tab_group(&mut self, group_name: &str) {
+        for t in &mut self.open_tabs {
+            if t.group_name.as_deref() == Some(group_name) {
+                t.group_name = None;
+                t.group_color = None;
+            }
+        }
+        self.layout
+            .collapsed_tab_groups
+            .retain(|cg| cg != group_name);
+    }
+
+    pub fn close_tab_group(&mut self, group_name: &str) {
+        self.open_tabs
+            .retain(|t| t.group_name.as_deref() != Some(group_name) || t.pinned);
+        self.layout
+            .collapsed_tab_groups
+            .retain(|cg| cg != group_name);
+        if let Some(ref active) = self.active_tab_id
+            && !self.open_tabs.iter().any(|t| &t.id == active)
+        {
+            self.active_tab_id = self.open_tabs.first().map(|t| t.id.clone());
+        }
+    }
+
+    pub fn toggle_collapse_tab_group(&mut self, group_name: &str) {
+        if let Some(pos) = self
+            .layout
+            .collapsed_tab_groups
+            .iter()
+            .position(|g| g == group_name)
+        {
+            self.layout.collapsed_tab_groups.remove(pos);
+        } else {
+            self.layout.collapsed_tab_groups.push(group_name.to_owned());
         }
     }
 
@@ -4651,5 +4863,73 @@ mod tests {
         .expect("Logout Set-Cookie should parse");
         CookieRecord::upsert_into_jar(&mut jar, logout_ck, now + 5);
         assert!(jar.is_empty(), "Max-Age=0 should remove cookie from jar");
+    }
+
+    #[test]
+    fn tab_pin_close_others_close_all_and_grouping_work() {
+        let mut ws = WorkspaceState::new_personal(LocalId::parse("personal").unwrap(), "Personal");
+        let col_id = ws.collections[0].id.clone();
+        let t1 = ws.open_tabs[0].id.clone();
+
+        let r2 = RequestItem::new(
+            col_id.clone(),
+            "Get Users",
+            HttpMethod::Get,
+            "{{base_url}}/users",
+        );
+        let r3 = RequestItem::new(
+            col_id.clone(),
+            "Create User",
+            HttpMethod::Post,
+            "{{base_url}}/users",
+        );
+        let r4 = RequestItem::new(col_id, "Orders", HttpMethod::Get, "{{base_url}}/orders");
+        let r2_id = r2.id.clone();
+        let r3_id = r3.id.clone();
+        let r4_id = r4.id.clone();
+        ws.requests.extend([r2, r3, r4]);
+
+        let t2 = ws.open_or_focus_tab(&r2_id);
+        let t3 = ws.open_or_focus_tab(&r3_id);
+        let t4 = ws.open_or_focus_tab(&r4_id);
+        assert_eq!(ws.open_tabs.len(), 4);
+
+        // Pin t2 -> moves to index 0 (leftmost)
+        ws.toggle_pin_tab(&t2);
+        assert_eq!(ws.open_tabs[0].id, t2);
+        assert!(ws.open_tabs[0].pinned);
+
+        // Group t1 and t4 under "Users Group" -> become contiguous with matching color
+        ws.assign_tab_group(&t1, Some("Users Group".into()), Some("emerald".into()));
+        ws.assign_tab_group(&t4, Some("Users Group".into()), None);
+        let g_positions: Vec<usize> = ws
+            .open_tabs
+            .iter()
+            .enumerate()
+            .filter(|(_, t)| t.group_name.as_deref() == Some("Users Group"))
+            .map(|(i, _)| i)
+            .collect();
+        assert_eq!(g_positions.len(), 2);
+        assert_eq!(
+            g_positions[1],
+            g_positions[0] + 1,
+            "grouped tabs stay contiguous"
+        );
+        assert_eq!(
+            ws.open_tabs[g_positions[1]].group_color.as_deref(),
+            Some("emerald")
+        );
+
+        // Close others around t3 -> keeps pinned t2 + target t3, closes t1 & t4
+        ws.close_other_tabs(&t3);
+        assert_eq!(ws.open_tabs.len(), 2);
+        assert!(ws.open_tabs.iter().any(|t| t.id == t2 && t.pinned));
+        assert!(ws.open_tabs.iter().any(|t| t.id == t3));
+        assert_eq!(ws.active_tab_id.as_deref(), Some(t3.as_str()));
+
+        // Close all unpinned -> leaves only pinned t2
+        ws.close_all_tabs(false);
+        assert_eq!(ws.open_tabs.len(), 1);
+        assert_eq!(ws.open_tabs[0].id, t2);
     }
 }

@@ -24,13 +24,51 @@ use swaggen_domain::{
 };
 use swaggen_ui_kit::{Edge, NoticeKind, Tokens};
 
+const TAB_GROUP_SWATCHES: &[(&str, &str, egui::Color32)] = &[
+    ("Blue", "blue", egui::Color32::from_rgb(37, 99, 235)),
+    ("Emerald", "emerald", egui::Color32::from_rgb(5, 150, 105)),
+    ("Amber", "amber", egui::Color32::from_rgb(217, 119, 6)),
+    ("Rose", "rose", egui::Color32::from_rgb(225, 29, 72)),
+    ("Violet", "violet", egui::Color32::from_rgb(124, 58, 237)),
+    ("Cyan", "cyan", egui::Color32::from_rgb(8, 145, 178)),
+    ("Slate", "slate", egui::Color32::from_rgb(71, 85, 105)),
+];
+
+fn resolve_tab_group_color(color_key: Option<&str>) -> egui::Color32 {
+    match color_key {
+        Some("emerald") => egui::Color32::from_rgb(5, 150, 105),
+        Some("amber") => egui::Color32::from_rgb(217, 119, 6),
+        Some("rose") => egui::Color32::from_rgb(225, 29, 72),
+        Some("violet") => egui::Color32::from_rgb(124, 58, 237),
+        Some("cyan") => egui::Color32::from_rgb(8, 145, 178),
+        Some("slate") => egui::Color32::from_rgb(71, 85, 105),
+        _ => egui::Color32::from_rgb(37, 99, 235),
+    }
+}
+
+#[derive(Default)]
+struct TabBarActions {
+    switch_tab: Option<String>,
+    close_tab: Option<String>,
+    close_others: Option<String>,
+    close_right: Option<String>,
+    close_all_unpinned: bool,
+    close_all_including_pinned: bool,
+    toggle_pin: Option<String>,
+    duplicate_tab: Option<String>,
+    assign_group: Option<(String, Option<String>, Option<String>)>,
+    new_tab_in_group: Option<(String, Option<String>)>,
+    rename_recolor_group: Option<(String, String, Option<String>)>,
+    ungroup_group: Option<String>,
+    close_group: Option<String>,
+    toggle_collapse_group: Option<String>,
+}
+
 pub fn show_top_bar(app: &mut App, ui: &mut egui::Ui) -> Option<usize> {
-    // 1. Clean Flat Postman-Style Open Tab Strip
+    // 1. Clean Flat Postman-Style Open Tab Strip + Right-Click Menu + Chrome-Style Tab Groups
     let tab_bar_resp = ui.horizontal(|ui| {
         ui.spacing_mut().item_spacing.x = 2.0;
-        let mut switch_tab: Option<String> = None;
-        let mut close_tab: Option<String> = None;
-        let mut toggle_pin: Option<String> = None;
+        let mut acts = TabBarActions::default();
 
         let close_unpinned_w = if app.state.open_tabs.len() > 1 {
             88.0
@@ -39,6 +77,21 @@ pub fn show_top_bar(app: &mut App, ui: &mut egui::Ui) -> Option<usize> {
         };
         let fixed_right_w = 24.0 + 44.0 + 28.0 + close_unpinned_w + 18.0;
         let tabs_scroll_w = (ui.available_width() - fixed_right_w).max(80.0);
+
+        // Collect existing unique groups for 1-click assignment inside right-click menu
+        let mut existing_groups: Vec<(String, Option<String>, usize)> = Vec::new();
+        for t in &app.state.open_tabs {
+            if let Some(ref gname) = t.group_name {
+                if let Some(ex) = existing_groups.iter_mut().find(|(n, _, _)| n == gname) {
+                    ex.2 += 1;
+                } else {
+                    existing_groups.push((gname.clone(), t.group_color.clone(), 1));
+                }
+            }
+        }
+        let total_tabs = app.state.open_tabs.len();
+        let has_pinned_tabs = app.state.open_tabs.iter().any(|t| t.pinned);
+        let unpinned_count = app.state.open_tabs.iter().filter(|t| !t.pinned).count();
 
         ui.allocate_ui_with_layout(
             egui::vec2(tabs_scroll_w, 28.0),
@@ -52,7 +105,166 @@ pub fn show_top_bar(app: &mut App, ui: &mut egui::Ui) -> Option<usize> {
                     .show(ui, |ui| {
                         ui.horizontal(|ui| {
                             ui.spacing_mut().item_spacing.x = 1.0;
-                            for tab in &app.state.open_tabs {
+                            let mut prev_group: Option<String> = None;
+
+                            for (tab_idx, tab) in app.state.open_tabs.iter().enumerate() {
+                                // Render Chrome-style Group Pill Header when entering a contiguous group
+                                if let Some(ref gname) = tab.group_name
+                                    && prev_group.as_deref() != Some(gname.as_str())
+                                {
+                                    let gcol = resolve_tab_group_color(tab.group_color.as_deref());
+                                    let is_collapsed = app
+                                        .state
+                                        .layout
+                                        .collapsed_tab_groups
+                                        .iter()
+                                        .any(|cg| cg == gname);
+                                    let gcount = existing_groups
+                                        .iter()
+                                        .find(|(n, _, _)| n == gname)
+                                        .map(|(_, _, c)| *c)
+                                        .unwrap_or(1);
+                                    let chev = if is_collapsed { "▸" } else { "▾" };
+                                    let pill_fill = egui::Color32::from_rgba_unmultiplied(
+                                        gcol.r(),
+                                        gcol.g(),
+                                        gcol.b(),
+                                        26,
+                                    );
+                                    ui.add_space(3.0);
+                                    let pill_resp = ui
+                                        .add(
+                                            egui::Button::new(
+                                                egui::RichText::new(format!(
+                                                    "● {gname} ({gcount}) {chev}"
+                                                ))
+                                                .size(10.5)
+                                                .color(gcol)
+                                                .strong(),
+                                            )
+                                            .fill(pill_fill)
+                                            .stroke(egui::Stroke::new(1.0, gcol))
+                                            .corner_radius(6),
+                                        )
+                                        .on_hover_text(
+                                            "Click to collapse/expand group · Right-click for group options",
+                                        );
+                                    if pill_resp.clicked() {
+                                        acts.toggle_collapse_group = Some(gname.clone());
+                                    }
+                                    let gname_menu = gname.clone();
+                                    let gcolor_menu = tab.group_color.clone();
+                                    pill_resp.context_menu(|ui| {
+                                        ui.set_min_width(210.0);
+                                        ui.label(
+                                            egui::RichText::new("Tab group name")
+                                                .size(10.5)
+                                                .color(Tokens::TEXT_SECONDARY),
+                                        );
+                                        let buf_id =
+                                            egui::Id::unique(("tab_grp_rename_buf", &gname_menu));
+                                        let mut name_buf = ui.ctx().data_mut(|d| {
+                                            d.get_temp_mut_or_insert_with(buf_id, || {
+                                                gname_menu.clone()
+                                            })
+                                            .clone()
+                                        });
+                                        let r_edit = ui.text_edit_singleline(&mut name_buf);
+                                        ui.ctx().data_mut(|d| d.insert_temp(buf_id, name_buf.clone()));
+                                        if r_edit.lost_focus()
+                                            && ui.input(|i| i.key_pressed(egui::Key::Enter))
+                                            && !name_buf.trim().is_empty()
+                                        {
+                                            acts.rename_recolor_group = Some((
+                                                gname_menu.clone(),
+                                                name_buf.trim().to_owned(),
+                                                None,
+                                            ));
+                                            ui.close();
+                                        }
+                                        if name_buf.trim() != gname_menu
+                                            && !name_buf.trim().is_empty()
+                                            && ui.small_button("Apply group name").clicked()
+                                        {
+                                            acts.rename_recolor_group = Some((
+                                                gname_menu.clone(),
+                                                name_buf.trim().to_owned(),
+                                                None,
+                                            ));
+                                            ui.close();
+                                        }
+                                        ui.add_space(4.0);
+                                        ui.label(
+                                            egui::RichText::new("Group color")
+                                                .size(10.5)
+                                                .color(Tokens::TEXT_SECONDARY),
+                                        );
+                                        ui.horizontal_wrapped(|ui| {
+                                            ui.spacing_mut().item_spacing = egui::vec2(5.0, 4.0);
+                                            for (cname, ckey, c32) in TAB_GROUP_SWATCHES {
+                                                let sel = gcolor_menu.as_deref() == Some(*ckey);
+                                                let (srect, sresp) = ui.allocate_exact_size(
+                                                    egui::vec2(17.0, 17.0),
+                                                    egui::Sense::click(),
+                                                );
+                                                ui.painter()
+                                                    .circle_filled(srect.center(), 6.5, *c32);
+                                                if sel || sresp.hovered() {
+                                                    ui.painter().circle_stroke(
+                                                        srect.center(),
+                                                        8.5,
+                                                        egui::Stroke::new(
+                                                            if sel { 1.8 } else { 1.0 },
+                                                            Tokens::TEXT_PRIMARY,
+                                                        ),
+                                                    );
+                                                }
+                                                if sresp.on_hover_text(*cname).clicked() {
+                                                    acts.rename_recolor_group = Some((
+                                                        gname_menu.clone(),
+                                                        name_buf.trim().to_owned(),
+                                                        Some((*ckey).to_owned()),
+                                                    ));
+                                                }
+                                            }
+                                        });
+                                        ui.separator();
+                                        if ui.button("+ New request in group").clicked() {
+                                            acts.new_tab_in_group =
+                                                Some((gname_menu.clone(), gcolor_menu.clone()));
+                                            ui.close();
+                                        }
+                                        if ui.button("Ungroup tabs").clicked() {
+                                            acts.ungroup_group = Some(gname_menu.clone());
+                                            ui.close();
+                                        }
+                                        if ui
+                                            .button(
+                                                egui::RichText::new("Close group")
+                                                    .color(Tokens::TEXT_DANGER),
+                                            )
+                                            .clicked()
+                                        {
+                                            acts.close_group = Some(gname_menu.clone());
+                                            ui.close();
+                                        }
+                                    });
+                                    ui.add_space(2.0);
+                                }
+                                prev_group = tab.group_name.clone();
+
+                                // Hide individual tabs inside a collapsed group
+                                if let Some(ref gname) = tab.group_name
+                                    && app
+                                        .state
+                                        .layout
+                                        .collapsed_tab_groups
+                                        .iter()
+                                        .any(|cg| cg == gname)
+                                {
+                                    continue;
+                                }
+
                                 let (raw_method, name, req_url) = app
                                     .state
                                     .requests
@@ -96,37 +308,17 @@ pub fn show_top_bar(app: &mut App, ui: &mut egui::Ui) -> Option<usize> {
                                                     .color(swaggen_ui_kit::method_color(raw_method))
                                                     .strong(),
                                             );
-                                            let title_resp = ui
-                                                .add(
-                                                    egui::Button::new(if active {
-                                                        swaggen_ui_kit::bold_text(
-                                                            &short_name,
-                                                            11.5,
-                                                            swaggen_ui_kit::text_primary(ui),
-                                                        )
-                                                    } else {
-                                                        egui::RichText::new(&short_name)
-                                                            .size(11.5)
-                                                            .color(
-                                                                swaggen_ui_kit::text_secondary(ui),
-                                                            )
-                                                    })
-                                                    .fill(egui::Color32::TRANSPARENT)
-                                                    .stroke(egui::Stroke::NONE)
-                                                    .frame(false),
+                                            ui.label(if active {
+                                                swaggen_ui_kit::bold_text(
+                                                    &short_name,
+                                                    11.5,
+                                                    swaggen_ui_kit::text_primary(ui),
                                                 )
-                                                .on_hover_text(format!(
-                                                    "{raw_method} {name}\n{req_url}\n(Middle-click to close · Right-click to pin)"
-                                                ));
-                                            if title_resp.clicked() {
-                                                switch_tab = Some(tab.id.clone());
-                                            }
-                                            if title_resp.secondary_clicked() {
-                                                toggle_pin = Some(tab.id.clone());
-                                            }
-                                            if !tab.pinned && title_resp.middle_clicked() {
-                                                close_tab = Some(tab.id.clone());
-                                            }
+                                            } else {
+                                                egui::RichText::new(&short_name)
+                                                    .size(11.5)
+                                                    .color(swaggen_ui_kit::text_secondary(ui))
+                                            });
                                             if tab.pinned {
                                                 if ui
                                                     .add(
@@ -135,10 +327,10 @@ pub fn show_top_bar(app: &mut App, ui: &mut egui::Ui) -> Option<usize> {
                                                         )
                                                         .frame(false),
                                                     )
-                                                    .on_hover_text("Unpin tab")
+                                                    .on_hover_text("Pinned tab (click to unpin)")
                                                     .clicked()
                                                 {
-                                                    toggle_pin = Some(tab.id.clone());
+                                                    acts.toggle_pin = Some(tab.id.clone());
                                                 }
                                             } else if swaggen_ui_kit::mini_icon_button(
                                                 ui,
@@ -149,22 +341,292 @@ pub fn show_top_bar(app: &mut App, ui: &mut egui::Ui) -> Option<usize> {
                                             )
                                             .clicked()
                                             {
-                                                close_tab = Some(tab.id.clone());
+                                                acts.close_tab = Some(tab.id.clone());
                                             }
                                         });
                                     });
                                 let r = inner.response.rect;
+                                // Interactive hit area across the entire tab body (excluding the rightmost 24px pin/close icon)
+                                let hit_rect = egui::Rect::from_min_max(
+                                    r.min,
+                                    egui::pos2((r.right() - 24.0).max(r.left() + 8.0), r.bottom()),
+                                );
+                                let tab_hit = ui
+                                    .interact(
+                                        hit_rect,
+                                        egui::Id::unique(("wb_tab_hit", &tab.id)),
+                                        egui::Sense::click(),
+                                    )
+                                    .on_hover_text(format!(
+                                        "{raw_method} {name}\n{req_url}\n(Right-click for tab options · Middle-click to close)"
+                                    ));
+                                if tab_hit.clicked() {
+                                    acts.switch_tab = Some(tab.id.clone());
+                                }
+                                if !tab.pinned && tab_hit.middle_clicked() {
+                                    acts.close_tab = Some(tab.id.clone());
+                                }
+
+                                // Right-click Tab Context Menu (Pin, Duplicate, Tab Group, Close, Close Others, Close All)
+                                let tab_id_c = tab.id.clone();
+                                let is_pinned_c = tab.pinned;
+                                let cur_grp_c = tab.group_name.clone();
+                                let cur_grp_col_c = tab.group_color.clone();
+                                let has_unpinned_others = app
+                                    .state
+                                    .open_tabs
+                                    .iter()
+                                    .any(|t| t.id != tab_id_c && !t.pinned);
+                                let has_unpinned_right = app
+                                    .state
+                                    .open_tabs
+                                    .iter()
+                                    .skip(tab_idx + 1)
+                                    .any(|t| !t.pinned);
+                                let existing_groups_c = existing_groups.clone();
+
+                                tab_hit.context_menu(|ui| {
+                                    ui.set_min_width(226.0);
+                                    let pin_label = if is_pinned_c {
+                                        "📌 Unpin tab"
+                                    } else {
+                                        "📌 Pin tab"
+                                    };
+                                    if ui.button(pin_label).clicked() {
+                                        acts.toggle_pin = Some(tab_id_c.clone());
+                                        ui.close();
+                                    }
+                                    if ui.button("⧉ Duplicate tab").clicked() {
+                                        acts.duplicate_tab = Some(tab_id_c.clone());
+                                        ui.close();
+                                    }
+
+                                    ui.separator();
+                                    ui.label(
+                                        egui::RichText::new("Tab Group")
+                                            .size(10.5)
+                                            .color(Tokens::TEXT_SECONDARY)
+                                            .strong(),
+                                    );
+                                    if !existing_groups_c.is_empty() {
+                                        ui.horizontal_wrapped(|ui| {
+                                            ui.spacing_mut().item_spacing = egui::vec2(4.0, 4.0);
+                                            for (eg_name, eg_col, _) in &existing_groups_c {
+                                                let col32 =
+                                                    resolve_tab_group_color(eg_col.as_deref());
+                                                let is_cur =
+                                                    cur_grp_c.as_deref() == Some(eg_name.as_str());
+                                                if ui
+                                                    .add(
+                                                        egui::Button::new(
+                                                            egui::RichText::new(format!(
+                                                                "● {eg_name}"
+                                                            ))
+                                                            .size(10.5)
+                                                            .color(col32)
+                                                            .strong(),
+                                                        )
+                                                        .fill(if is_cur {
+                                                            Tokens::BG_SELECTED
+                                                        } else {
+                                                            Tokens::BG_SUBTLE
+                                                        })
+                                                        .stroke(egui::Stroke::new(
+                                                            if is_cur { 1.4 } else { 1.0 },
+                                                            col32,
+                                                        ))
+                                                        .corner_radius(5),
+                                                    )
+                                                    .on_hover_text("Move tab to this group")
+                                                    .clicked()
+                                                {
+                                                    acts.assign_group = Some((
+                                                        tab_id_c.clone(),
+                                                        Some(eg_name.clone()),
+                                                        eg_col.clone(),
+                                                    ));
+                                                    ui.close();
+                                                }
+                                            }
+                                        });
+                                    }
+
+                                    let grp_buf_id =
+                                        egui::Id::unique(("tab_new_grp_input", &tab_id_c));
+                                    let mut grp_buf = ui.ctx().data_mut(|d| {
+                                        d.get_temp_mut_or_insert_with(grp_buf_id, || {
+                                            cur_grp_c.clone().unwrap_or_default()
+                                        })
+                                        .clone()
+                                    });
+                                    ui.horizontal(|ui| {
+                                        let edit_resp = ui.add_sized(
+                                            [154.0, 22.0],
+                                            egui::TextEdit::singleline(&mut grp_buf)
+                                                .hint_text("New group name…"),
+                                        );
+                                        ui.ctx()
+                                            .data_mut(|d| d.insert_temp(grp_buf_id, grp_buf.clone()));
+                                        let enter_pressed = edit_resp.lost_focus()
+                                            && ui.input(|i| i.key_pressed(egui::Key::Enter));
+                                        if (ui
+                                            .add_enabled(
+                                                !grp_buf.trim().is_empty(),
+                                                egui::Button::new("Group"),
+                                            )
+                                            .clicked()
+                                            || enter_pressed)
+                                            && !grp_buf.trim().is_empty()
+                                        {
+                                            acts.assign_group = Some((
+                                                tab_id_c.clone(),
+                                                Some(grp_buf.trim().to_owned()),
+                                                cur_grp_col_c.clone(),
+                                            ));
+                                            ui.close();
+                                        }
+                                    });
+
+                                    ui.horizontal_wrapped(|ui| {
+                                        ui.spacing_mut().item_spacing = egui::vec2(5.0, 4.0);
+                                        for (cname, ckey, c32) in TAB_GROUP_SWATCHES {
+                                            let sel = cur_grp_col_c.as_deref() == Some(*ckey)
+                                                && cur_grp_c.is_some();
+                                            let (srect, sresp) = ui.allocate_exact_size(
+                                                egui::vec2(17.0, 17.0),
+                                                egui::Sense::click(),
+                                            );
+                                            ui.painter().circle_filled(srect.center(), 6.5, *c32);
+                                            if sel || sresp.hovered() {
+                                                ui.painter().circle_stroke(
+                                                    srect.center(),
+                                                    8.5,
+                                                    egui::Stroke::new(
+                                                        if sel { 1.8 } else { 1.0 },
+                                                        Tokens::TEXT_PRIMARY,
+                                                    ),
+                                                );
+                                            }
+                                            if sresp
+                                                .on_hover_text(format!("Group color: {cname}"))
+                                                .clicked()
+                                            {
+                                                let target_gname = if !grp_buf.trim().is_empty() {
+                                                    grp_buf.trim().to_owned()
+                                                } else if let Some(ref existing) = cur_grp_c {
+                                                    existing.clone()
+                                                } else {
+                                                    format!("{cname} Group")
+                                                };
+                                                acts.assign_group = Some((
+                                                    tab_id_c.clone(),
+                                                    Some(target_gname),
+                                                    Some((*ckey).to_owned()),
+                                                ));
+                                                ui.close();
+                                            }
+                                        }
+                                    });
+
+                                    if let Some(ref active_grp) = cur_grp_c {
+                                        if ui
+                                            .button(format!("+ New tab in \"{active_grp}\""))
+                                            .clicked()
+                                        {
+                                            acts.new_tab_in_group = Some((
+                                                active_grp.clone(),
+                                                cur_grp_col_c.clone(),
+                                            ));
+                                            ui.close();
+                                        }
+                                        if ui.button("Remove from group").clicked() {
+                                            acts.assign_group =
+                                                Some((tab_id_c.clone(), None, None));
+                                            ui.close();
+                                        }
+                                    }
+
+                                    ui.separator();
+                                    if ui.button("Close tab (Ctrl+W)").clicked() {
+                                        acts.close_tab = Some(tab_id_c.clone());
+                                        ui.close();
+                                    }
+                                    if ui
+                                        .add_enabled(
+                                            has_unpinned_others,
+                                            egui::Button::new("Close other tabs"),
+                                        )
+                                        .clicked()
+                                    {
+                                        acts.close_others = Some(tab_id_c.clone());
+                                        ui.close();
+                                    }
+                                    if ui
+                                        .add_enabled(
+                                            has_unpinned_right,
+                                            egui::Button::new("Close tabs to the right"),
+                                        )
+                                        .clicked()
+                                    {
+                                        acts.close_right = Some(tab_id_c.clone());
+                                        ui.close();
+                                    }
+                                    if ui
+                                        .add_enabled(
+                                            unpinned_count > 0,
+                                            egui::Button::new(
+                                                egui::RichText::new("Close all tabs")
+                                                    .color(Tokens::TEXT_DANGER),
+                                            ),
+                                        )
+                                        .clicked()
+                                    {
+                                        acts.close_all_unpinned = true;
+                                        ui.close();
+                                    }
+                                    if has_pinned_tabs
+                                        && total_tabs > 0
+                                        && ui
+                                            .button(
+                                                egui::RichText::new(
+                                                    "Close all (including pinned)",
+                                                )
+                                                .size(11.0)
+                                                .color(Tokens::TEXT_DANGER),
+                                            )
+                                            .clicked()
+                                    {
+                                        acts.close_all_including_pinned = true;
+                                        ui.close();
+                                    }
+                                });
+
                                 ui.painter().line_segment(
                                     [r.right_top(), r.right_bottom()],
                                     egui::Stroke::new(1.0, swaggen_ui_kit::border_color(ui)),
                                 );
+                                if let Some(ref _gname) = tab.group_name {
+                                    let gcol = resolve_tab_group_color(tab.group_color.as_deref());
+                                    ui.painter().line_segment(
+                                        [
+                                            egui::pos2(r.left(), r.bottom() - 1.0),
+                                            egui::pos2(r.right(), r.bottom() - 1.0),
+                                        ],
+                                        egui::Stroke::new(2.5, gcol),
+                                    );
+                                }
                                 if active {
+                                    let top_col = if tab.group_name.is_some() {
+                                        resolve_tab_group_color(tab.group_color.as_deref())
+                                    } else {
+                                        Tokens::STATUS_INFO
+                                    };
                                     ui.painter().line_segment(
                                         [
                                             egui::pos2(r.left(), r.top() + 1.0),
                                             egui::pos2(r.right(), r.top() + 1.0),
                                         ],
-                                        egui::Stroke::new(2.0, Tokens::STATUS_INFO),
+                                        egui::Stroke::new(2.0, top_col),
                                     );
                                 }
                             }
@@ -178,16 +640,11 @@ pub fn show_top_bar(app: &mut App, ui: &mut egui::Ui) -> Option<usize> {
             "new_http_req_tab_btn",
             swaggen_ui_kit::MiniIconKind::Plus,
             Tokens::STATUS_INFO,
-            "New HTTP request",
+            "New HTTP request tab (Ctrl+T)",
         )
         .clicked()
-            && let Some(cid) = app.state.collections.first().map(|c| c.id.clone())
         {
-            let req = RequestItem::new(cid, "New request", HttpMethod::Get, "{{base_url}}/");
-            let rid = req.id.clone();
-            app.state.requests.push(req);
-            app.open_request_in_workbench(&rid);
-            app.mark_dirty();
+            app.create_and_open_new_request_tab(false, None);
         }
         if ui
             .add(
@@ -203,15 +660,10 @@ pub fn show_top_bar(app: &mut App, ui: &mut egui::Ui) -> Option<usize> {
                 .min_size(egui::vec2(40.0, 22.0))
                 .corner_radius(4),
             )
-            .on_hover_text("New GraphQL request")
+            .on_hover_text("New GraphQL request tab")
             .clicked()
-            && let Some(cid) = app.state.collections.first().map(|c| c.id.clone())
         {
-            let req = RequestItem::new_graphql(cid, "GraphQL query", "{{base_url}}/graphql");
-            let rid = req.id.clone();
-            app.state.requests.push(req);
-            app.open_request_in_workbench(&rid);
-            app.mark_dirty();
+            app.create_and_open_new_request_tab(true, None);
         }
 
         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
@@ -223,12 +675,12 @@ pub fn show_top_bar(app: &mut App, ui: &mut egui::Ui) -> Option<usize> {
                 app.request_config_collapsed = false;
             }
             if app.state.open_tabs.len() > 1 && ui.small_button("Close all").clicked() {
-                app.state.close_unpinned_tabs();
+                app.state.close_all_tabs(false);
                 app.mark_dirty();
             }
         });
 
-        if let Some(tid) = switch_tab {
+        if let Some(tid) = acts.switch_tab {
             app.state.active_tab_id = Some(tid);
             if let Some(req) = app.active_request() {
                 if req.is_graphql() {
@@ -238,17 +690,54 @@ pub fn show_top_bar(app: &mut App, ui: &mut egui::Ui) -> Option<usize> {
                 }
             }
         }
-        if let Some(tid) = toggle_pin
-            && let Some(t) = app.state.open_tabs.iter_mut().find(|t| t.id == tid)
-        {
-            t.pinned = !t.pinned;
+        if let Some(tid) = acts.toggle_pin {
+            app.state.toggle_pin_tab(&tid);
             app.mark_dirty();
         }
-        if let Some(tid) = close_tab {
-            app.state.open_tabs.retain(|t| t.id != tid);
-            if app.state.active_tab_id.as_deref() == Some(tid.as_str()) {
-                app.state.active_tab_id = app.state.open_tabs.first().map(|t| t.id.clone());
-            }
+        if let Some(tid) = acts.duplicate_tab {
+            app.duplicate_tab_request(&tid);
+        }
+        if let Some((tid, gname, gcol)) = acts.assign_group {
+            app.state.assign_tab_group(&tid, gname, gcol);
+            app.mark_dirty();
+        }
+        if let Some((gname, gcol)) = acts.new_tab_in_group {
+            app.create_and_open_new_request_tab(false, Some((gname, gcol)));
+        }
+        if let Some((old_g, new_g, new_c)) = acts.rename_recolor_group {
+            app.state.rename_or_recolor_tab_group(&old_g, &new_g, new_c);
+            app.mark_dirty();
+        }
+        if let Some(gname) = acts.ungroup_group {
+            app.state.ungroup_tab_group(&gname);
+            app.mark_dirty();
+        }
+        if let Some(gname) = acts.close_group {
+            app.state.close_tab_group(&gname);
+            app.mark_dirty();
+        }
+        if let Some(gname) = acts.toggle_collapse_group {
+            app.state.toggle_collapse_tab_group(&gname);
+            app.mark_dirty();
+        }
+        if let Some(tid) = acts.close_tab {
+            app.state.close_tab(&tid);
+            app.mark_dirty();
+        }
+        if let Some(tid) = acts.close_others {
+            app.state.close_other_tabs(&tid);
+            app.mark_dirty();
+        }
+        if let Some(tid) = acts.close_right {
+            app.state.close_tabs_to_right(&tid);
+            app.mark_dirty();
+        }
+        if acts.close_all_unpinned {
+            app.state.close_all_tabs(false);
+            app.mark_dirty();
+        }
+        if acts.close_all_including_pinned {
+            app.state.close_all_tabs(true);
             app.mark_dirty();
         }
     });

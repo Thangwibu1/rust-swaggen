@@ -1953,6 +1953,25 @@ pub fn show_command_palette(app: &mut App, ui: &mut egui::Ui) {
             .id_salt("cmd_palette_scroll")
             .max_height(360.0)
             .show(ui, |ui| {
+                if q.is_empty() || "new tab request http ctrl+t".contains(&q) {
+                    swaggen_ui_kit::table_row_frame(ui, |ui| {
+                        if ui
+                            .add(
+                                egui::Button::new(
+                                    egui::RichText::new("+ New HTTP Request Tab (Ctrl+T)")
+                                        .size(13.0)
+                                        .color(Tokens::STATUS_INFO),
+                                )
+                                .fill(egui::Color32::TRANSPARENT)
+                                .stroke(egui::Stroke::NONE),
+                            )
+                            .clicked()
+                        {
+                            app.show_command_palette = false;
+                            app.create_and_open_new_request_tab(false, None);
+                        }
+                    });
+                }
                 if q.is_empty() || "sign in firebase google welcome".contains(&q) {
                     swaggen_ui_kit::table_row_frame(ui, |ui| {
                         if ui
@@ -2045,12 +2064,13 @@ pub fn show_shortcuts(app: &mut App, ui: &mut egui::Ui) {
     swaggen_ui_kit::surface_card(ui, |ui| {
         swaggen_ui_kit::table_header(ui, &[("SHORTCUT", 180.0), ("ACTION", 420.0)]);
         for (keys, action) in [
+            ("Ctrl + T", "Open new HTTP request tab"),
+            ("Ctrl + W", "Close active unpinned tab"),
             ("Ctrl + K", "Toggle Command Palette"),
             ("Ctrl + Enter", "Send active request (anywhere)"),
             ("Enter", "Send active request (when outside text inputs)"),
-            ("Ctrl + S", "Save local workspace / OpenAPI spec"),
+            ("Ctrl + S", "Save local workspace / sequential team publish"),
             ("Ctrl + P", "Focus quick search in sidebar"),
-            ("Ctrl + W", "Close active unpinned tab"),
             ("Esc", "Close active modal or palette"),
             ("Tab / Shift+Tab", "Navigate focusable controls (AccessKit)"),
         ] {

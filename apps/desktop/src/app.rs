@@ -860,6 +860,98 @@ impl App {
         self.mode = MainMode::Workbench;
     }
 
+    pub fn create_and_open_new_request_tab(
+        &mut self,
+        is_graphql: bool,
+        in_group: Option<(String, Option<String>)>,
+    ) {
+        let (col_id, folder_id) = if let Some(cur) = self.active_request() {
+            (cur.collection_id.clone(), cur.folder_id.clone())
+        } else if let Some(first_col) = self.state.collections.first() {
+            (first_col.id.clone(), None)
+        } else {
+            let col = swaggen_domain::workspace::Collection {
+                id: swaggen_domain::workspace::new_uid(),
+                name: "Requests".into(),
+                description: String::new(),
+                color: None,
+                auth: swaggen_domain::workspace::AuthConfig::Inherit,
+                variables: Vec::new(),
+                pre_request_script: String::new(),
+                post_response_script: String::new(),
+                order_key: 0,
+            };
+            let cid = col.id.clone();
+            self.state.collections.push(col);
+            (cid, None)
+        };
+
+        let mut req = if is_graphql {
+            swaggen_domain::workspace::RequestItem::new_graphql(
+                col_id,
+                "GraphQL query",
+                "{{base_url}}/graphql",
+            )
+        } else {
+            swaggen_domain::workspace::RequestItem::new(
+                col_id,
+                "New request",
+                swaggen_domain::workspace::HttpMethod::Get,
+                "{{base_url}}/",
+            )
+        };
+        req.folder_id = folder_id;
+        let rid = req.id.clone();
+        self.state.requests.push(req);
+        self.open_request_in_workbench(&rid);
+        if let Some((gname, gcolor)) = in_group
+            && let Some(tid) = self.state.active_tab_id.clone()
+        {
+            self.state.assign_tab_group(&tid, Some(gname), gcolor);
+        }
+        self.mark_dirty();
+        self.status = if is_graphql {
+            "Opened new GraphQL request tab".into()
+        } else {
+            "Opened new HTTP request tab (Ctrl+T)".into()
+        };
+    }
+
+    pub fn duplicate_tab_request(&mut self, tab_id: &str) {
+        let Some(src_tab) = self
+            .state
+            .open_tabs
+            .iter()
+            .find(|t| t.id == tab_id)
+            .cloned()
+        else {
+            return;
+        };
+        let Some(src_req) = self
+            .state
+            .requests
+            .iter()
+            .find(|r| r.id == src_tab.request_id)
+            .cloned()
+        else {
+            return;
+        };
+        let mut copy = src_req;
+        copy.id = swaggen_domain::workspace::new_uid();
+        copy.name = format!("{} (copy)", copy.name);
+        let new_rid = copy.id.clone();
+        self.state.requests.push(copy);
+        self.open_request_in_workbench(&new_rid);
+        if let Some(gname) = src_tab.group_name
+            && let Some(new_tid) = self.state.active_tab_id.clone()
+        {
+            self.state
+                .assign_tab_group(&new_tid, Some(gname), src_tab.group_color);
+        }
+        self.mark_dirty();
+        self.status = "Duplicated request in new tab".into();
+    }
+
     pub fn slugify_workspace_id(raw_name: &str) -> Option<LocalId> {
         let mut slug = String::with_capacity(64);
         let mut prev_dash = false;
@@ -2307,6 +2399,9 @@ impl eframe::App for App {
         if ctx.input_mut(|i| i.consume_key(egui::Modifiers::CTRL, egui::Key::B)) {
             self.state.layout.sidebar_collapsed = !self.state.layout.sidebar_collapsed;
         }
+        if ctx.input_mut(|i| i.consume_key(egui::Modifiers::CTRL, egui::Key::T)) {
+            self.create_and_open_new_request_tab(false, None);
+        }
         if ctx.input_mut(|i| i.consume_key(egui::Modifiers::CTRL, egui::Key::P)) {
             self.mode = MainMode::Workbench;
             self.state.layout.sidebar_collapsed = false;
@@ -2314,11 +2409,14 @@ impl eframe::App for App {
         }
         if ctx.input_mut(|i| i.consume_key(egui::Modifiers::CTRL, egui::Key::W))
             && let Some(active_id) = self.state.active_tab_id.clone()
-        {
-            self.state
+            && self
+                .state
                 .open_tabs
-                .retain(|t| t.id != active_id || t.pinned);
-            self.state.active_tab_id = self.state.open_tabs.first().map(|t| t.id.clone());
+                .iter()
+                .any(|t| t.id == active_id && !t.pinned)
+        {
+            self.state.close_tab(&active_id);
+            self.mark_dirty();
         }
 
         // 1. Compact Statusbar (24px height, outer top 1px divider, explicit Local PC execution notice).
