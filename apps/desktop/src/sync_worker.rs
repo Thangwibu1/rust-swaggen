@@ -7,10 +7,10 @@ use crate::{
 };
 use std::path::Path;
 use swaggen_api_contract::{
-    ChangesFeedResponse, CommentListResponse, CommentThreadRecord, CreateCommentRequest,
-    MarkNotificationsReadRequest, NotificationListResponse, PublishBatchRequest,
-    PublishBatchResponse, ResolveCommentRequest, RestoreRevisionRequest, RevisionListResponse,
-    SnapshotResponse,
+    ChangeEventRecord, ChangesFeedResponse, CommentListResponse, CommentThreadRecord,
+    CreateCommentRequest, MarkNotificationsReadRequest, NotificationListResponse,
+    PublishBatchRequest, PublishBatchResponse, PublishOperation, PublishResultKind,
+    ResolveCommentRequest, RestoreRevisionRequest, RevisionListResponse, SnapshotResponse,
 };
 use swaggen_domain::{LocalId, server_profiles::ServerProfile, workspace::HttpMethod};
 use swaggen_local_store::{WorkspaceDirectory, sync_store::SyncJournalStore};
@@ -129,6 +129,131 @@ pub fn handle_sync_command(
             Ok(Event::SyncStateUpdated {
                 state: Box::new(synced),
                 message: msg,
+            })
+        }
+        Command::LoadPublishHistory {
+            profile_id,
+            workspace_id,
+        } => {
+            let (prof, tok) = match profile_and_token(root, &profile_id) {
+                Ok(v) => v,
+                Err(e) => return Ok(Event::ActionError(e)),
+            };
+            match fetch_all_changes(runtime, &prof, &tok, &workspace_id, downloads) {
+                Ok(events) => {
+                    let count = events.len();
+                    Ok(Event::PublishHistoryLoaded {
+                        events,
+                        state: None,
+                        message: format!("Loaded {count} publish event(s) from server"),
+                    })
+                }
+                Err(e) => Ok(Event::ActionError(e)),
+            }
+        }
+        Command::PublishSequentialEvent {
+            profile_id,
+            workspace_id,
+            entity_id,
+            kind,
+            name,
+            payload_json,
+            note,
+        } => {
+            let now = now_secs();
+            let (prof, tok) = match profile_and_token(root, &profile_id) {
+                Ok(v) => v,
+                Err(e) => return Ok(Event::ActionError(e)),
+            };
+            let mut journal = match open_sync_journal(root, &profile_id, &workspace_id) {
+                Ok(j) => j,
+                Err(e) => return Ok(Event::ActionError(e)),
+            };
+            let mut st = journal.state().clone();
+            let events_before = fetch_all_changes(runtime, &prof, &tok, &workspace_id, downloads)
+                .unwrap_or_default();
+            let mut known_rev = events_before
+                .iter()
+                .find(|ev| ev.entity_id == entity_id)
+                .map(|ev| ev.revision)
+                .or_else(|| st.base_entities.get(&entity_id).map(|b| b.revision))
+                .unwrap_or(0);
+
+            let pub_path = format!("/v1/workspaces/{workspace_id}/publish");
+            let mut target_eid = entity_id.clone();
+            let mut published_rev = known_rev + 1;
+            let mut published_cursor = None;
+
+            for _attempt in 0..4 {
+                let op_id = Uuid::new_v4().to_string();
+                let op = PublishOperation {
+                    operation_id: op_id.clone(),
+                    request_hash: format!("ctrl-s-{op_id}"),
+                    entity_id: target_eid.clone(),
+                    parent_id: None,
+                    kind: kind.clone(),
+                    name: name.clone(),
+                    order_key: 0,
+                    payload_json: payload_json.clone(),
+                    base_revision: known_rev,
+                    delete: false,
+                    note: if note.trim().is_empty() {
+                        "Ctrl+S".into()
+                    } else {
+                        note.trim().to_owned()
+                    },
+                };
+                let req = PublishBatchRequest {
+                    expected_membership_revision: None,
+                    operations: vec![op],
+                };
+                match runtime.block_on(server_call::<PublishBatchRequest, PublishBatchResponse>(
+                    &prof,
+                    HttpMethod::Post,
+                    &pub_path,
+                    Some(&tok),
+                    Some(&req),
+                    downloads,
+                )) {
+                    Ok((resp, _)) => {
+                        st.apply_publish_response(&resp, now);
+                        if let Some(res) = resp.results.first() {
+                            match res.kind {
+                                PublishResultKind::Applied | PublishResultKind::AlreadyAcked => {
+                                    published_rev = res.server_revision;
+                                    published_cursor = res.server_cursor;
+                                    break;
+                                }
+                                PublishResultKind::ConflictRevision => {
+                                    known_rev = res.server_revision;
+                                    continue;
+                                }
+                                PublishResultKind::ConflictDeletedRemote => {
+                                    // Preserve cherry-pick / re-save smoothly as a fresh entity revision
+                                    target_eid = Uuid::new_v4().to_string();
+                                    known_rev = 0;
+                                    continue;
+                                }
+                                _ => {
+                                    return Ok(Event::ActionError(res.reason.clone()));
+                                }
+                            }
+                        }
+                    }
+                    Err(e) => return Ok(Event::ActionError(e)),
+                }
+            }
+
+            let _ = journal.save(st.clone());
+            let events = fetch_all_changes(runtime, &prof, &tok, &workspace_id, downloads)
+                .unwrap_or(events_before);
+            let cur_txt = published_cursor
+                .map(|c| format!("#{c}"))
+                .unwrap_or_else(|| format!("r{published_rev}"));
+            Ok(Event::PublishHistoryLoaded {
+                events,
+                state: Some(Box::new(st)),
+                message: format!("Published '{name}' ({cur_txt}) to team history"),
             })
         }
         Command::ResolveSyncConflict {
@@ -352,6 +477,37 @@ pub fn handle_sync_command(
         }
         other => Err(other),
     }
+}
+
+fn fetch_all_changes(
+    runtime: &tokio::runtime::Runtime,
+    prof: &ServerProfile,
+    tok: &str,
+    workspace_id: &str,
+    downloads: &Path,
+) -> Result<Vec<ChangeEventRecord>, String> {
+    let mut after = 0i64;
+    let mut all = Vec::new();
+    for _ in 0..25 {
+        let path = format!("/v1/workspaces/{workspace_id}/changes?after_cursor={after}&limit=100");
+        let (feed, _) = runtime.block_on(server_call::<(), ChangesFeedResponse>(
+            prof,
+            HttpMethod::Get,
+            &path,
+            Some(tok),
+            None,
+            downloads,
+        ))?;
+        let next = feed.next_cursor;
+        let more = feed.has_more;
+        all.extend(feed.events);
+        if !more || next <= after {
+            break;
+        }
+        after = next;
+    }
+    all.sort_by_key(|a| std::cmp::Reverse(a.cursor));
+    Ok(all)
 }
 
 fn flush_outbox_and_catch_up(

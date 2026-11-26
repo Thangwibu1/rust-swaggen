@@ -210,6 +210,8 @@ pub struct App {
     pub comment_body_input: String,
     pub team_notifications: Vec<swaggen_api_contract::NotificationRecord>,
     pub team_unread_notifications: usize,
+    pub publish_history: Vec<swaggen_api_contract::ChangeEventRecord>,
+    pub preview_history_cursor: Option<i64>,
 
     // P07 Version B core UI state
     pub transfer_progress: Option<(u64, &'static str, u64, Option<u64>)>,
@@ -460,6 +462,8 @@ impl App {
             comment_body_input: String::new(),
             team_notifications: Vec::new(),
             team_unread_notifications: 0,
+            publish_history: Vec::new(),
+            preview_history_cursor: None,
             transfer_progress: None,
             previous_responses: HashMap::new(),
             diff_ignore_paths: "timestamp, request_id".into(),
@@ -581,6 +585,176 @@ impl App {
         {
             self.state.open_or_focus_tab(&first_id);
         }
+        if mode == MainMode::TeamSync
+            && let Some((pid, wid)) = self.active_team_target()
+        {
+            self.submit(Command::LoadPublishHistory {
+                profile_id: pid,
+                workspace_id: wid,
+            });
+        }
+    }
+
+    pub fn active_team_target(&self) -> Option<(String, String)> {
+        if let swaggen_domain::workspace::WorkspaceKind::Team {
+            server_profile_id: Some(spid),
+            remote_workspace_id: Some(rwid),
+        } = &self.state.meta.kind
+        {
+            let signed_in = self
+                .server_profiles
+                .profiles
+                .iter()
+                .any(|p| p.id == *spid && !p.session_id.is_empty());
+            if signed_in {
+                return Some((spid.clone(), rwid.clone()));
+            }
+        }
+        let prof = self
+            .server_profiles
+            .active()
+            .filter(|p| !p.session_id.is_empty())?;
+        let wid = self.selected_team_workspace_id.as_ref()?;
+        Some((prof.id.clone(), wid.clone()))
+    }
+
+    pub fn open_team_workspace(
+        &mut self,
+        profile_id: &str,
+        workspace_id: &str,
+        workspace_name: &str,
+    ) {
+        self.selected_team_workspace_id = Some(workspace_id.to_owned());
+        self.state.meta.kind = swaggen_domain::workspace::WorkspaceKind::Team {
+            server_profile_id: Some(profile_id.to_owned()),
+            remote_workspace_id: Some(workspace_id.to_owned()),
+        };
+        if !workspace_name.trim().is_empty() {
+            self.state.meta.name = workspace_name.to_owned();
+        }
+        self.submit(Command::LoadTeamWorkspaceDetails {
+            profile_id: profile_id.to_owned(),
+            workspace_id: workspace_id.to_owned(),
+        });
+        self.submit(Command::LoadPublishHistory {
+            profile_id: profile_id.to_owned(),
+            workspace_id: workspace_id.to_owned(),
+        });
+    }
+
+    pub fn publish_current_on_save(&mut self, custom_note: Option<&str>) {
+        let Some((profile_id, workspace_id)) = self.active_team_target() else {
+            return;
+        };
+        let note = custom_note
+            .map(str::trim)
+            .filter(|s| !s.is_empty())
+            .unwrap_or("Ctrl+S")
+            .to_owned();
+        if let Some(req) = self.active_request().cloned() {
+            let payload_json = serde_json::to_string(&req).unwrap_or_else(|_| "{}".into());
+            self.submit(Command::PublishSequentialEvent {
+                profile_id,
+                workspace_id,
+                entity_id: req.id.clone(),
+                kind: "request".into(),
+                name: format!("{} {}", req.method.as_str(), req.name),
+                payload_json,
+                note,
+            });
+        } else {
+            let payload_json = serde_json::to_string(&self.state).unwrap_or_else(|_| "{}".into());
+            self.submit(Command::PublishSequentialEvent {
+                profile_id,
+                workspace_id,
+                entity_id: "workspace-snapshot".into(),
+                kind: "workspace".into(),
+                name: self.state.meta.name.clone(),
+                payload_json,
+                note,
+            });
+        }
+    }
+
+    pub fn cherry_pick_publish_event(&mut self, ev: &swaggen_api_contract::ChangeEventRecord) {
+        let Some(raw) = ev.payload_json.as_deref() else {
+            self.error = true;
+            self.status = format!("Event #{} has no payload to restore.", ev.cursor);
+            return;
+        };
+        if ev.entity_kind == "request" {
+            match serde_json::from_str::<RequestItem>(raw) {
+                Ok(mut req) => {
+                    if !self
+                        .state
+                        .collections
+                        .iter()
+                        .any(|c| c.id == req.collection_id)
+                    {
+                        req.collection_id = self
+                            .state
+                            .collections
+                            .first()
+                            .map(|c| c.id.clone())
+                            .unwrap_or_else(|| "default".into());
+                    }
+                    if let Some(existing) = self.state.requests.iter_mut().find(|r| r.id == req.id)
+                    {
+                        *existing = req.clone();
+                    } else {
+                        self.state.requests.push(req.clone());
+                    }
+                    self.open_request_in_workbench(&req.id);
+                    self.mark_dirty();
+                    self.save_workspace_local_only();
+                    if let Some((profile_id, workspace_id)) = self.active_team_target() {
+                        self.submit(Command::PublishSequentialEvent {
+                            profile_id,
+                            workspace_id,
+                            entity_id: req.id.clone(),
+                            kind: "request".into(),
+                            name: format!("{} {}", req.method.as_str(), req.name),
+                            payload_json: serde_json::to_string(&req)
+                                .unwrap_or_else(|_| "{}".into()),
+                            note: format!("Cherry-pick #{} (r{})", ev.cursor, ev.revision),
+                        });
+                    }
+                    self.error = false;
+                    self.status = format!(
+                        "Cherry-picked #{} ({}) into Workbench",
+                        ev.cursor, ev.entity_name
+                    );
+                }
+                Err(e) => {
+                    self.error = true;
+                    self.status =
+                        format!("Failed to parse request payload from #{}: {e}", ev.cursor);
+                }
+            }
+        } else if ev.entity_kind == "workspace" {
+            match serde_json::from_str::<WorkspaceState>(raw) {
+                Ok(mut ws) => {
+                    ws.meta = self.state.meta.clone();
+                    self.state = ws;
+                    if self.active_request_id().is_none()
+                        && let Some(first_id) = self.state.requests.first().map(|r| r.id.clone())
+                    {
+                        self.state.open_or_focus_tab(&first_id);
+                    }
+                    self.mark_dirty();
+                    self.save_workspace_local_only();
+                    self.error = false;
+                    self.status = format!("Cherry-picked workspace snapshot #{}", ev.cursor);
+                }
+                Err(e) => {
+                    self.error = true;
+                    self.status = format!("Failed to parse workspace snapshot #{}: {e}", ev.cursor);
+                }
+            }
+        } else {
+            self.error = true;
+            self.status = format!("Unsupported cherry-pick kind '{}'", ev.entity_kind);
+        }
     }
 
     pub fn open_request_in_workbench(&mut self, req_id: &str) {
@@ -687,12 +861,19 @@ impl App {
         }
     }
 
-    pub fn save_workspace(&mut self) {
+    pub fn save_workspace_local_only(&mut self) {
         if self.loaded && !self.pending && !self.recovery_needed {
             self.submit(Command::SaveWorkspace {
                 generation: self.generation,
                 state: Box::new(self.state.clone()),
             });
+        }
+    }
+
+    pub fn save_workspace(&mut self) {
+        if self.loaded && !self.pending && !self.recovery_needed {
+            self.save_workspace_local_only();
+            self.publish_current_on_save(None);
         }
     }
 
@@ -909,6 +1090,8 @@ impl App {
                         self.team_audit_events.clear();
                         self.team_notifications.clear();
                         self.team_unread_notifications = 0;
+                        self.publish_history.clear();
+                        self.preview_history_cursor = None;
                         self.selected_team_workspace_id = None;
                     }
                     if signed_in_id.is_none()
@@ -1016,6 +1199,18 @@ impl App {
                 }
                 Event::SyncStateUpdated { state, message } => {
                     self.sync_state = *state;
+                    self.status = message;
+                }
+                Event::PublishHistoryLoaded {
+                    events,
+                    state,
+                    message,
+                } => {
+                    self.publish_history = events;
+                    if let Some(st) = state {
+                        self.sync_state = *st;
+                    }
+                    self.error = false;
                     self.status = message;
                 }
                 Event::EntityRevisionsLoaded(revs) => {
@@ -1481,7 +1676,7 @@ impl App {
                 .unwrap_or_else(|| "API Workbench".into()),
             MainMode::Runner => "Testing & Developer Tools".into(),
             MainMode::Server => "Team Collaboration & Workspaces".into(),
-            MainMode::TeamSync => "Collaboration & Sync".into(),
+            MainMode::TeamSync => "Publish History".into(),
             MainMode::Specs => "API Definitions & Docs".into(),
             MainMode::ImportExport => "Import & Export".into(),
             MainMode::Environments => "Environments".into(),
@@ -2016,7 +2211,7 @@ impl eframe::App for App {
                         (
                             MainMode::TeamSync,
                             IconKind::GitBranch,
-                            "Sync, Branches & Comments",
+                            "Publish History (Ctrl+S & Cherry-Pick)",
                         ),
                         (
                             MainMode::Server,
@@ -2060,20 +2255,6 @@ impl eframe::App for App {
                             self.navigate_to(mode);
                         }
                         ui.add_space(6.0);
-                    }
-                    let bell_active = self.mode == MainMode::TeamSync
-                        && self.sync_subtab == 4
-                        && !self.show_workspace_modal;
-                    if swaggen_ui_kit::rail_icon_button(
-                        ui,
-                        bell_active,
-                        IconKind::Bell,
-                        "Activity & Notifications",
-                    )
-                    .clicked()
-                    {
-                        self.sync_subtab = 4;
-                        self.navigate_to(MainMode::TeamSync);
                     }
                     ui.with_layout(egui::Layout::bottom_up(egui::Align::Center), |ui| {
                         let initials = self.user_initials();
@@ -2770,6 +2951,8 @@ mod tests {
             comment_body_input: String::new(),
             team_notifications: Vec::new(),
             team_unread_notifications: 0,
+            publish_history: Vec::new(),
+            preview_history_cursor: None,
             transfer_progress: None,
             previous_responses: HashMap::new(),
             diff_ignore_paths: String::new(),
@@ -2871,6 +3054,32 @@ mod tests {
             !app.dirty(),
             "opening a request must not mark workspace dirty"
         );
+
+        let mut old_req = app.state.requests[0].clone();
+        old_req.url = "https://cherry-picked.example.test/v1/items".into();
+        let ev = swaggen_api_contract::ChangeEventRecord {
+            cursor: 7,
+            workspace_id: "ws-team-1".into(),
+            entity_id: old_req.id.clone(),
+            entity_kind: "request".into(),
+            entity_name: format!("GET {}", old_req.name),
+            parent_id: None,
+            order_key: 0,
+            revision: 3,
+            deleted: false,
+            payload_json: Some(serde_json::to_string(&old_req).unwrap()),
+            operation_id: "op-7".into(),
+            actor_user_id: "u-1".into(),
+            actor_email: "alice@swaggen.local".into(),
+            note: "Ctrl+S".into(),
+            created_at_unix: 1_700_000_000,
+        };
+        app.cherry_pick_publish_event(&ev);
+        assert_eq!(
+            app.state.requests[0].url,
+            "https://cherry-picked.example.test/v1/items"
+        );
+        assert_eq!(app.mode, MainMode::Workbench);
 
         drop(app);
         let _ = std::fs::remove_dir_all(root);

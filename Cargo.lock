@@ -3957,14 +3957,14 @@ checksum = "13c2bddecc57b384dee18652358fb23172facb8a2c51ccc10d74c157bdea3292"
 
 [[package]]
 name = "swaggen-api-contract"
-version = "0.1.20"
+version = "0.1.21"
 dependencies = [
  "serde",
 ]
 
 [[package]]
 name = "swaggen-cli"
-version = "0.1.20"
+version = "0.1.21"
 dependencies = [
  "axum",
  "serde_json",
@@ -3979,7 +3979,7 @@ dependencies = [
 
 [[package]]
 name = "swaggen-desktop"
-version = "0.1.20"
+version = "0.1.21"
 dependencies = [
  "eframe",
  "hex",
@@ -4003,7 +4003,7 @@ dependencies = [
 
 [[package]]
 name = "swaggen-domain"
-version = "0.1.20"
+version = "0.1.21"
 dependencies = [
  "hex",
  "hmac",
@@ -4018,7 +4018,7 @@ dependencies = [
 
 [[package]]
 name = "swaggen-http-engine"
-version = "0.1.20"
+version = "0.1.21"
 dependencies = [
  "base64",
  "flate2",
@@ -4043,7 +4043,7 @@ dependencies = [
 
 [[package]]
 name = "swaggen-local-store"
-version = "0.1.20"
+version = "0.1.21"
 dependencies = [
  "serde",
  "serde_json",
@@ -4055,7 +4055,7 @@ dependencies = [
 
 [[package]]
 name = "swaggen-mongo-store"
-version = "0.1.20"
+version = "0.1.21"
 dependencies = [
  "argon2",
  "base64",
@@ -4075,7 +4075,7 @@ dependencies = [
 
 [[package]]
 name = "swaggen-runner"
-version = "0.1.20"
+version = "0.1.21"
 dependencies = [
  "axum",
  "base64",
@@ -4097,7 +4097,7 @@ dependencies = [
 
 [[package]]
 name = "swaggen-secret-store"
-version = "0.1.20"
+version = "0.1.21"
 dependencies = [
  "serde",
  "serde_json",
@@ -4108,7 +4108,7 @@ dependencies = [
 
 [[package]]
 name = "swaggen-server"
-version = "0.1.20"
+version = "0.1.21"
 dependencies = [
  "axum",
  "base64",
@@ -4134,7 +4134,7 @@ dependencies = [
 
 [[package]]
 name = "swaggen-spec-engine"
-version = "0.1.20"
+version = "0.1.21"
 dependencies = [
  "hex",
  "serde",
@@ -4148,7 +4148,7 @@ dependencies = [
 
 [[package]]
 name = "swaggen-sync"
-version = "0.1.20"
+version = "0.1.21"
 dependencies = [
  "hex",
  "serde",
@@ -4160,7 +4160,7 @@ dependencies = [
 
 [[package]]
 name = "swaggen-ui-kit"
-version = "0.1.20"
+version = "0.1.21"
 dependencies = [
  "eframe",
 ]

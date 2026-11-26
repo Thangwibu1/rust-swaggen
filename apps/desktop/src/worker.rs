@@ -242,6 +242,19 @@ pub enum Command {
         profile_id: String,
         workspace_id: String,
     },
+    PublishSequentialEvent {
+        profile_id: String,
+        workspace_id: String,
+        entity_id: String,
+        kind: String,
+        name: String,
+        payload_json: String,
+        note: String,
+    },
+    LoadPublishHistory {
+        profile_id: String,
+        workspace_id: String,
+    },
     ResolveSyncConflict {
         profile_id: String,
         workspace_id: String,
@@ -404,6 +417,11 @@ pub enum Event {
     WorkspaceMembersUpdated(swaggen_api_contract::MemberListResponse),
     SyncStateUpdated {
         state: Box<swaggen_sync::TeamSyncState>,
+        message: String,
+    },
+    PublishHistoryLoaded {
+        events: Vec<swaggen_api_contract::ChangeEventRecord>,
+        state: Option<Box<swaggen_sync::TeamSyncState>>,
         message: String,
     },
     EntityRevisionsLoaded(Vec<swaggen_api_contract::EntityRevisionRecord>),
@@ -2231,6 +2249,8 @@ impl Worker {
                     | Command::RemoveWorkspaceMember { .. }
                     | Command::StageAndPublishEntity { .. }
                     | Command::SyncNow { .. }
+                    | Command::PublishSequentialEvent { .. }
+                    | Command::LoadPublishHistory { .. }
                     | Command::ResolveSyncConflict { .. }
                     | Command::LoadEntityRevisions { .. }
                     | Command::RestoreEntityRevision { .. }

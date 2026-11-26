@@ -557,20 +557,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                                         ui.add_space(6.0);
                                     }
                                     if let Some((wid, wname)) = open_team_ws {
-                                        app.selected_team_workspace_id = Some(wid.clone());
-                                        app.state.meta.name = wname;
-                                        app.submit(Command::LoadTeamWorkspaceDetails {
-                                            profile_id: prof_id.clone(),
-                                            workspace_id: wid.clone(),
-                                        });
-                                        app.submit(Command::SyncNow {
-                                            profile_id: prof_id.clone(),
-                                            workspace_id: wid.clone(),
-                                        });
-                                        app.submit(Command::LoadCollabData {
-                                            profile_id: prof_id.clone(),
-                                            workspace_id: wid,
-                                        });
+                                        app.open_team_workspace(&prof_id, &wid, &wname);
                                         app.show_welcome = false;
                                         app.navigate_to(MainMode::Workbench);
                                     }

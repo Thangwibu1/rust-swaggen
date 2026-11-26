@@ -282,12 +282,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                     ui.add_space(4.0);
                 }
                 if let Some((wid, wname)) = select_ws {
-                    app.selected_team_workspace_id = Some(wid.clone());
-                    app.state.meta.name = wname;
-                    app.submit(Command::LoadTeamWorkspaceDetails {
-                        profile_id: active.id.clone(),
-                        workspace_id: wid,
-                    });
+                    app.open_team_workspace(&active.id, &wid, &wname);
                 }
             }
         });

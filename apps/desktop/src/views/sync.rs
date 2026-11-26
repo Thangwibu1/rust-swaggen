@@ -1,600 +1,287 @@
-//! Desktop P05 Team Collaboration, Sync Queue (SY02), Publish (C05),
-//! 3-Way Conflict Resolver (C06/Y04), Comments (C04/C27), Version History (C10/C11),
-//! Activity & Notifications (C03/C28) UI.
+//! Sequential Publish & Cherry-Pick History View:
+//! Every `Ctrl+S` (or explicit Publish) in a Team Workspace sends a sequential commit event
+//! to the server; teammates see the timeline and can cherry-pick any saved version back anytime.
 use crate::{app::App, worker::Command};
 use eframe::egui;
-use swaggen_sync::{ConflictChoice, OutboxStatus, compute_three_way_diff};
-use swaggen_ui_kit::{AvatarTone, NoticeKind, Tokens};
+use swaggen_ui_kit::{NoticeKind, Tokens};
 
 pub fn show(app: &mut App, ui: &mut egui::Ui) {
     egui::ScrollArea::vertical().show(ui, |ui| {
-        let title = match app.sync_subtab {
-            0 => "Publish your changes",
-            1 => "Resolve a sync conflict",
-            2 => "Version history",
-            3 => "Discuss & comments",
-            _ => "Workspace activity",
-        };
         swaggen_ui_kit::page_header(
             ui,
-            title,
-            "Durable outbox queue, idempotent team publish, 3-way conflict resolver, revision history, and workspace notifications.",
+            "Publish History & Cherry-Pick",
+            "Press Ctrl+S inside a Team Workspace to publish your change sequentially to the server. Browse history below and cherry-pick any version back into Workbench.",
             None,
             false,
         );
 
-        let Some(active_prof) = app.server_profiles.active().cloned() else {
+        let Some(active_prof) = app
+            .server_profiles
+            .active()
+            .filter(|p| !p.session_id.is_empty())
+            .cloned()
+        else {
             swaggen_ui_kit::notice_banner(
                 ui,
                 NoticeKind::Info,
-                "Working offline",
-                "Connect a Team Server in Server Profiles when ready to collaborate.",
+                "Sign in to view Team Publish History",
+                "Connect with Google in Team Collaboration to publish and cherry-pick shared API versions.",
             );
-            return;
-        };
-        let Some(ref wid) = app.selected_team_workspace_id.clone() else {
-            swaggen_ui_kit::notice_banner(
-                ui,
-                NoticeKind::Info,
-                "No team workspace selected",
-                "Sign in and select a team workspace under Team Server -> Workspaces & Roles.",
-            );
-            return;
-        };
-
-        ui.horizontal_wrapped(|ui| {
-            swaggen_ui_kit::pill_badge(
-                ui,
-                Tokens::STATUS_INFO,
-                &format!(
-                    "Cursor {} · {} base · {} drafts · {} outbox",
-                    app.sync_state.last_cursor,
-                    app.sync_state.base_entities.len(),
-                    app.sync_state.drafts.len(),
-                    app.sync_state.outbox.len(),
-                ),
-            );
-            if swaggen_ui_kit::primary_button(ui, !app.pending, "Sync now").clicked() {
-                app.submit(Command::SyncNow {
-                    profile_id: active_prof.id.clone(),
-                    workspace_id: wid.clone(),
-                });
-            }
-            if swaggen_ui_kit::secondary_button(ui, !app.pending, "Refresh activity")
-                .clicked()
-            {
-                app.submit(Command::LoadCollabData {
-                    profile_id: active_prof.id.clone(),
-                    workspace_id: wid.clone(),
-                });
-            }
-        });
-        ui.add_space(6.0);
-
-        ui.horizontal_wrapped(|ui| {
-            for (idx, label) in [
-                "Outbox & Publish",
-                "3-Way Conflicts",
-                "Version History",
-                "Comments",
-                "Activity & Notifications",
-            ]
-            .iter()
-            .enumerate()
-            {
-                if swaggen_ui_kit::underline_tab(ui, app.sync_subtab == idx, label).clicked() {
-                    app.sync_subtab = idx;
-                }
-            }
-        });
-        ui.add_space(10.0);
-
-        swaggen_ui_kit::surface_card(ui, |ui| match app.sync_subtab {
-            0 => show_outbox_and_publish(app, ui, &active_prof.id, wid),
-            1 => show_conflicts(app, ui, &active_prof.id, wid),
-            2 => show_history(app, ui, &active_prof.id, wid),
-            3 => show_comments(app, ui, &active_prof.id, wid),
-            _ => show_notifications(app, ui, &active_prof.id, wid),
-        });
-    });
-}
-
-fn show_outbox_and_publish(app: &mut App, ui: &mut egui::Ui, profile_id: &str, wid: &str) {
-    swaggen_ui_kit::surface_card(ui, |ui| {
-        ui.strong("Stage active request / edit for Team Publish");
-        ui.horizontal_wrapped(|ui| {
-            ui.label("Publish note:");
-            ui.add(
-                egui::TextEdit::singleline(&mut app.publish_note_input)
-                    .hint_text("Describe your change…")
-                    .desired_width(280.0),
-            );
+            ui.add_space(8.0);
             if swaggen_ui_kit::primary_button(
                 ui,
-                app.active_request().is_some() && !app.pending,
-                "Queue active request into durable outbox & publish",
+                true,
+                "Open Team Collaboration",
             )
             .clicked()
-                && let Some(req) = app.active_request().cloned()
             {
-                let payload_json = serde_json::to_string(&req).unwrap_or_else(|_| "{}".into());
-                app.submit(Command::StageAndPublishEntity {
-                    profile_id: profile_id.to_owned(),
-                    workspace_id: wid.to_owned(),
-                    entity_id: req.id.clone(),
-                    name: req.name.clone(),
-                    kind: "request".into(),
-                    payload_json,
-                    delete: false,
-                    note: app.publish_note_input.clone(),
-                });
+                app.navigate_to(crate::app::MainMode::Server);
             }
-        });
-    });
+            return;
+        };
 
-    ui.add_space(6.0);
-    swaggen_ui_kit::surface_card(ui, |ui| {
-        ui.strong("Durable Outbox Queue");
-        if app.sync_state.outbox.is_empty() {
-            ui.label(egui::RichText::new("Outbox is empty.").color(Tokens::TEXT_SECONDARY));
-        } else {
-            for entry in app.sync_state.outbox.iter().rev() {
-                let kind = match &entry.status {
-                    OutboxStatus::Acked => NoticeKind::Success,
-                    OutboxStatus::Pending | OutboxStatus::Sending => NoticeKind::Info,
-                    OutboxStatus::RetryWait { .. } => NoticeKind::Warning,
-                    _ => NoticeKind::Danger,
-                };
-                ui.horizontal_wrapped(|ui| {
-                    swaggen_ui_kit::status_badge(ui, kind, entry.status.label());
-                    ui.strong(&entry.name);
-                    ui.label(format!(
-                        "base rev {} · op {}",
-                        entry.base_revision,
-                        &entry.operation_id[..8.min(entry.operation_id.len())]
-                    ));
-                    if !entry.note.is_empty() {
-                        ui.label(
-                            egui::RichText::new(format!("({})", entry.note))
-                                .color(Tokens::TEXT_SECONDARY),
-                        );
-                    }
-                });
-                match &entry.status {
-                    OutboxStatus::RetryWait {
-                        attempts,
-                        last_error,
-                        ..
-                    } => {
-                        ui.label(format!("Retry #{attempts}: {last_error}"));
-                    }
-                    OutboxStatus::BlockedPermission { reason } => {
-                        swaggen_ui_kit::notice_banner(
-                            ui,
-                            NoticeKind::Danger,
-                            "Permission revoked",
-                            &format!(
-                                "{reason}. Your local draft stays preserved for personal export."
-                            ),
-                        );
-                    }
-                    OutboxStatus::FailedActionRequired { reason } => {
-                        ui.label(egui::RichText::new(reason).color(Tokens::TEXT_DANGER));
-                    }
-                    _ => {}
-                }
-            }
-        }
-    });
-}
-
-fn show_conflicts(app: &mut App, ui: &mut egui::Ui, profile_id: &str, wid: &str) {
-    let conflicts: Vec<_> = app
-        .sync_state
-        .outbox
-        .iter()
-        .filter(|e| {
-            matches!(
-                e.status,
-                OutboxStatus::Conflicted { .. } | OutboxStatus::DeletedRemoteConflict { .. }
-            )
-        })
-        .cloned()
-        .collect();
-
-    if conflicts.is_empty() {
-        swaggen_ui_kit::notice_banner(
-            ui,
-            NoticeKind::Success,
-            "No sync conflicts",
-            "All outbox operations match remote revisions.",
-        );
-        return;
-    }
-
-    for entry in conflicts {
-        swaggen_ui_kit::surface_card(ui, |ui| match &entry.status {
-            OutboxStatus::Conflicted {
-                server_revision,
-                server_payload_json,
-                reason,
-            } => {
-                ui.horizontal_wrapped(|ui| {
-                    ui.label(swaggen_ui_kit::bold_text(
-                        &entry.name,
-                        15.0,
-                        swaggen_ui_kit::text_primary(ui),
-                    ));
-                    swaggen_ui_kit::pill_badge(
-                        ui,
-                        Tokens::TEXT_WARNING,
-                        &format!(
-                            "Base r{} vs Server r{}",
-                            entry.base_revision, server_revision
-                        ),
-                    );
-                });
-                ui.label(
-                    egui::RichText::new(reason)
-                        .size(12.0)
-                        .color(swaggen_ui_kit::text_secondary(ui)),
-                );
-                ui.add_space(8.0);
-                let diffs = compute_three_way_diff(
-                    &entry.base_payload_json,
-                    &entry.local_payload_json,
-                    server_payload_json,
-                );
-                let diff_cols = if ui.available_width() < 680.0 { 1 } else { 3 };
-                ui.columns(diff_cols, |cols| {
-                    let c0 = 0;
-                    let c1 = 1 % cols.len();
-                    let c2 = 2 % cols.len();
-                    swaggen_ui_kit::surface_card(&mut cols[c0], |ui| {
-                        swaggen_ui_kit::card_header(ui, "Base (Common Ancestor)");
-                        for d in &diffs {
-                            ui.monospace(format!("{}: {}", d.path, d.base_val));
-                        }
-                    });
-                    swaggen_ui_kit::surface_card(&mut cols[c1], |ui| {
-                        swaggen_ui_kit::card_header(ui, "Your Local Version");
-                        for d in &diffs {
-                            ui.label(
-                                egui::RichText::new(format!("{}: {}", d.path, d.local_val))
-                                    .monospace()
-                                    .color(Tokens::STATUS_INFO),
-                            );
-                        }
-                    });
-                    swaggen_ui_kit::surface_card(&mut cols[c2], |ui| {
-                        swaggen_ui_kit::card_header(ui, "Server Version");
-                        for d in &diffs {
-                            ui.label(
-                                egui::RichText::new(format!("{}: {}", d.path, d.server_val))
-                                    .monospace()
-                                    .color(Tokens::TEXT_WARNING),
-                            );
-                        }
-                    });
-                });
-                ui.add_space(10.0);
-                ui.horizontal_wrapped(|ui| {
-                    if swaggen_ui_kit::primary_button(
-                        ui,
-                        !app.pending,
-                        "Rebase & publish my version",
-                    )
-                    .clicked()
-                    {
-                        app.submit(Command::ResolveSyncConflict {
-                            profile_id: profile_id.to_owned(),
-                            workspace_id: wid.to_owned(),
-                            operation_id: entry.operation_id.clone(),
-                            choice: ConflictChoice::RebaseWithPayload {
-                                merged_payload_json: entry.local_payload_json.clone(),
-                                note: format!("Resolved conflict cleanly over r{server_revision}"),
-                            },
-                        });
-                    }
-                    if swaggen_ui_kit::secondary_button(
-                        ui,
-                        !app.pending,
-                        "Take server & keep my draft",
-                    )
-                    .clicked()
-                    {
-                        app.submit(Command::ResolveSyncConflict {
-                            profile_id: profile_id.to_owned(),
-                            workspace_id: wid.to_owned(),
-                            operation_id: entry.operation_id.clone(),
-                            choice: ConflictChoice::TakeServerKeepMyDraft,
-                        });
-                    }
-                });
-            }
-            OutboxStatus::DeletedRemoteConflict {
-                server_revision,
-                reason,
-            } => {
-                swaggen_ui_kit::notice_banner(
-                    ui,
-                    NoticeKind::Danger,
-                    "Deleted while offline",
-                    &format!(
-                        "{reason} (rev {server_revision}). Tombstone prevents silent resurrection."
-                    ),
-                );
-                if swaggen_ui_kit::secondary_button(
-                    ui,
-                    !app.pending,
-                    "Accept deletion & preserve my draft locally",
-                )
-                .clicked()
-                {
-                    app.submit(Command::ResolveSyncConflict {
-                        profile_id: profile_id.to_owned(),
-                        workspace_id: wid.to_owned(),
-                        operation_id: entry.operation_id.clone(),
-                        choice: ConflictChoice::TakeServerKeepMyDraft,
-                    });
-                }
-            }
-            _ => {}
-        });
-    }
-}
-
-fn show_history(app: &mut App, ui: &mut egui::Ui, profile_id: &str, wid: &str) {
-    ui.horizontal(|ui| {
-        ui.label("Entity ID:");
-        ui.add(egui::TextEdit::singleline(&mut app.history_entity_id_input).desired_width(220.0));
-        if swaggen_ui_kit::secondary_button(ui, !app.pending, "Load revisions").clicked() {
-            app.submit(Command::LoadEntityRevisions {
-                profile_id: profile_id.to_owned(),
-                workspace_id: wid.to_owned(),
-                entity_id: app.history_entity_id_input.clone(),
-            });
-        }
-    });
-    ui.separator();
-    let cur_rev = app.team_revisions.first().map(|r| r.revision).unwrap_or(1);
-    let mut restore_target: Option<(String, i64)> = None;
-    for r in &app.team_revisions {
-        ui.horizontal_wrapped(|ui| {
-            ui.strong(format!("r{}", r.revision));
-            ui.label(format!("{} · {} · {}", r.actor_email, r.name, r.note));
-            if ui.small_button("Restore as new version").clicked() {
-                restore_target = Some((r.entity_id.clone(), r.revision));
-            }
-        });
-    }
-    if let Some((entity_id, target_revision)) = restore_target {
-        app.submit(Command::RestoreEntityRevision {
-            profile_id: profile_id.to_owned(),
-            workspace_id: wid.to_owned(),
-            entity_id,
-            target_revision,
-            expected_current_revision: cur_rev,
-        });
-    }
-}
-
-fn show_comments(app: &mut App, ui: &mut egui::Ui, profile_id: &str, wid: &str) {
-    // Figma C04 / Discuss 2-column layout: selected request preview left + Discussion feed right.
-    let active_req = app.active_request().cloned();
-    if app.history_entity_id_input.trim().is_empty()
-        && let Some(ref req) = active_req
-    {
-        app.history_entity_id_input = req.id.clone();
-    }
-
-    let mut resolve_cid: Option<String> = None;
-    let discuss_cols = if ui.available_width() < 680.0 { 1 } else { 2 };
-    ui.columns(discuss_cols, |cols| {
-        let right_idx = 1 % cols.len();
-        // Left column: Selected endpoint preview
-        swaggen_ui_kit::surface_card(&mut cols[0], |ui| {
-            swaggen_ui_kit::card_header(ui, "Referenced Endpoint");
-            if let Some(ref req) = active_req {
-                ui.horizontal_wrapped(|ui| {
-                    swaggen_ui_kit::method_badge(ui, req.method.as_str());
-                    ui.label(swaggen_ui_kit::bold_text(
-                        &req.name,
-                        15.0,
-                        swaggen_ui_kit::text_primary(ui),
-                    ));
-                });
-                ui.add_space(6.0);
-                swaggen_ui_kit::code_surface(ui, &req.url);
-                ui.add_space(10.0);
-                if !req.query_params.is_empty() {
-                    swaggen_ui_kit::card_header(ui, "Query parameters");
-                    for row in &req.query_params {
-                        ui.monospace(format!("{} = {}", row.key, row.value));
-                    }
-                }
-            } else {
-                ui.label(
-                    egui::RichText::new("Select an endpoint in the sidebar to anchor comments.")
-                        .color(swaggen_ui_kit::text_secondary(ui)),
-                );
-            }
-            ui.add_space(10.0);
-            ui.label(
-                egui::RichText::new("Entity ID")
-                    .size(11.5)
-                    .color(swaggen_ui_kit::text_secondary(ui)),
-            );
-            swaggen_ui_kit::text_input(
+        let Some((pid, wid)) = app.active_team_target() else {
+            swaggen_ui_kit::notice_banner(
                 ui,
-                &mut app.history_entity_id_input,
-                "request entity id",
-                ui.available_width(),
-                false,
+                NoticeKind::Info,
+                "Select a Team Workspace",
+                "Choose a Team Workspace below to start publishing with Ctrl+S and cherry-picking revisions.",
             );
-        });
-
-        // Right column: Figma C04 Discussion thread + reply box
-        swaggen_ui_kit::surface_card(&mut cols[right_idx], |ui| {
-            ui.horizontal(|ui| {
-                ui.label(swaggen_ui_kit::bold_text(
-                    "Discussion",
-                    15.0,
-                    swaggen_ui_kit::text_primary(ui),
-                ));
-                ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                    swaggen_ui_kit::pill_badge(
-                        ui,
-                        swaggen_ui_kit::text_secondary(ui),
-                        &format!("{} thread(s)", app.team_comments.len()),
-                    );
+            ui.add_space(8.0);
+            if app.team_workspaces.is_empty() {
+                ui.horizontal(|ui| {
+                    if swaggen_ui_kit::primary_button(ui, !app.pending, "Create / Join Team Workspace")
+                        .clicked()
+                    {
+                        app.navigate_to(crate::app::MainMode::Server);
+                    }
+                    if swaggen_ui_kit::secondary_button(ui, !app.pending, "Refresh workspaces")
+                        .clicked()
+                    {
+                        app.submit(Command::RefreshTeamWorkspaces {
+                            profile_id: active_prof.id.clone(),
+                        });
+                    }
                 });
-            });
-            ui.add_space(10.0);
-
-            if app.team_comments.is_empty() {
-                ui.label(
-                    egui::RichText::new("No discussion threads yet. Start a review note below.")
-                        .size(12.0)
-                        .color(swaggen_ui_kit::text_secondary(ui)),
-                );
             } else {
-                for (i, c) in app.team_comments.iter().enumerate() {
-                    let initials: String = c
-                        .author_email
-                        .split(|ch: char| !ch.is_alphanumeric())
-                        .filter(|s| !s.is_empty())
-                        .filter_map(|s| s.chars().next())
-                        .take(2)
-                        .collect::<String>()
-                        .to_ascii_uppercase();
-                    let tone = match i % 3 {
-                        0 => AvatarTone::Teal,
-                        1 => AvatarTone::Salmon,
-                        _ => AvatarTone::Cream,
-                    };
-                    swaggen_ui_kit::surface_card(ui, |ui| {
-                        ui.horizontal(|ui| {
-                            swaggen_ui_kit::avatar_circle(
-                                ui,
-                                if initials.is_empty() { "TM" } else { &initials },
-                                tone,
-                            );
-                            ui.vertical(|ui| {
-                                ui.horizontal_wrapped(|ui| {
-                                    ui.label(swaggen_ui_kit::bold_text(
-                                        &c.author_email,
-                                        12.5,
-                                        swaggen_ui_kit::text_primary(ui),
-                                    ));
-                                    ui.label(
-                                        egui::RichText::new(format!("r{}", c.anchor_revision))
-                                            .size(11.0)
-                                            .color(swaggen_ui_kit::text_secondary(ui)),
-                                    );
-                                    if c.resolved {
-                                        swaggen_ui_kit::pill_badge(
+                let mut chosen: Option<(String, String)> = None;
+                for ws in &app.team_workspaces {
+                    egui::Frame::new()
+                        .fill(swaggen_ui_kit::subtle_bg(ui))
+                        .stroke(egui::Stroke::new(1.0, swaggen_ui_kit::border_color(ui)))
+                        .corner_radius(6)
+                        .inner_margin(egui::Margin::symmetric(12, 8))
+                        .show(ui, |ui| {
+                            ui.horizontal(|ui| {
+                                ui.strong(&ws.name);
+                                swaggen_ui_kit::pill_badge(
+                                    ui,
+                                    Tokens::STATUS_INFO,
+                                    ws.role.as_str(),
+                                );
+                                ui.with_layout(
+                                    egui::Layout::right_to_left(egui::Align::Center),
+                                    |ui| {
+                                        if swaggen_ui_kit::primary_button(
                                             ui,
-                                            Tokens::STATUS_SUCCESS,
-                                            "Resolved",
-                                        );
-                                    } else if ui.small_button("Resolve").clicked() {
-                                        resolve_cid = Some(c.comment_id.clone());
-                                    }
-                                });
-                                ui.label(
-                                    egui::RichText::new(&c.body)
-                                        .size(12.5)
-                                        .color(swaggen_ui_kit::text_primary(ui)),
+                                            !app.pending,
+                                            "Open Team Workspace",
+                                        )
+                                        .clicked()
+                                        {
+                                            chosen = Some((
+                                                ws.workspace_id.clone(),
+                                                ws.name.clone(),
+                                            ));
+                                        }
+                                    },
                                 );
                             });
                         });
-                        for rep in &c.replies {
-                            ui.add_space(4.0);
-                            ui.label(
-                                egui::RichText::new(format!(
-                                    "  ↳ {}: {}",
-                                    rep.author_email, rep.body
-                                ))
-                                .size(12.0)
-                                .color(swaggen_ui_kit::text_secondary(ui)),
-                            );
-                        }
-                    });
-                    ui.add_space(8.0);
+                    ui.add_space(4.0);
+                }
+                if let Some((chosen_id, chosen_name)) = chosen {
+                    app.open_team_workspace(&active_prof.id, &chosen_id, &chosen_name);
                 }
             }
+            return;
+        };
 
-            ui.add_space(8.0);
-            swaggen_ui_kit::text_input(
-                ui,
-                &mut app.comment_body_input,
-                "Write a reply…",
-                ui.available_width(),
-                false,
-            );
-            ui.add_space(8.0);
-            if swaggen_ui_kit::primary_button(
-                ui,
-                !app.pending && !app.comment_body_input.trim().is_empty(),
-                "Post comment",
-            )
-            .clicked()
-            {
-                let rev = app
-                    .sync_state
-                    .base_entities
-                    .get(&app.history_entity_id_input)
-                    .map(|e| e.revision)
-                    .unwrap_or(1);
-                let body = std::mem::take(&mut app.comment_body_input);
-                let eid = app.history_entity_id_input.clone();
-                app.submit(Command::CreateTeamComment {
-                    profile_id: profile_id.to_owned(),
-                    workspace_id: wid.to_owned(),
-                    entity_id: eid,
-                    anchor_revision: rev,
-                    body,
-                });
-            }
-        });
-    });
+        let ws_name = app
+            .team_workspaces
+            .iter()
+            .find(|w| w.workspace_id == wid)
+            .map(|w| w.name.clone())
+            .unwrap_or_else(|| app.state.meta.name.clone());
 
-    if let Some(cid) = resolve_cid {
-        app.submit(Command::ResolveTeamComment {
-            profile_id: profile_id.to_owned(),
-            workspace_id: wid.to_owned(),
-            comment_id: cid,
-            resolved: true,
-        });
-    }
-}
-
-fn show_notifications(app: &mut App, ui: &mut egui::Ui, profile_id: &str, wid: &str) {
-    ui.horizontal_wrapped(|ui| {
-        ui.strong(format!(
-            "Notifications inbox ({} unread · C28)",
-            app.team_unread_notifications
-        ));
-        if swaggen_ui_kit::secondary_button(ui, !app.pending, "Mark all read").clicked() {
-            app.submit(Command::MarkTeamNotificationsRead {
-                profile_id: profile_id.to_owned(),
-                workspace_id: wid.to_owned(),
+        // Top Action & Quick Publish Bar
+        swaggen_ui_kit::surface_card(ui, |ui| {
+            ui.horizontal_wrapped(|ui| {
+                swaggen_ui_kit::pill_badge(
+                    ui,
+                    Tokens::STATUS_SUCCESS,
+                    &format!("Team: {ws_name}"),
+                );
+                swaggen_ui_kit::pill_badge(
+                    ui,
+                    Tokens::STATUS_INFO,
+                    &format!("{} sequential event(s)", app.publish_history.len()),
+                );
+                if swaggen_ui_kit::secondary_button(ui, !app.pending, "Refresh history").clicked() {
+                    app.submit(Command::LoadPublishHistory {
+                        profile_id: pid.clone(),
+                        workspace_id: wid.clone(),
+                    });
+                }
             });
+            ui.add_space(8.0);
+            ui.horizontal_wrapped(|ui| {
+                let target_label = app
+                    .active_request()
+                    .map(|r| format!("{} {}", r.method.as_str(), r.name))
+                    .unwrap_or_else(|| format!("Workspace: {ws_name}"));
+                ui.label(
+                    egui::RichText::new(format!("Target: {target_label}"))
+                        .size(11.5)
+                        .color(swaggen_ui_kit::text_secondary(ui)),
+                );
+                swaggen_ui_kit::text_input(
+                    ui,
+                    &mut app.publish_note_input,
+                    "Optional note (default: Ctrl+S)",
+                    260.0,
+                    false,
+                );
+                if swaggen_ui_kit::primary_button(ui, !app.pending, "Publish change (Ctrl+S)")
+                    .clicked()
+                {
+                    let note = std::mem::take(&mut app.publish_note_input);
+                    app.save_workspace_local_only();
+                    app.publish_current_on_save(Some(&note));
+                }
+            });
+        });
+
+        ui.add_space(10.0);
+
+        if app.publish_history.is_empty() {
+            swaggen_ui_kit::notice_banner(
+                ui,
+                NoticeKind::Info,
+                "No publish events recorded yet",
+                "Edit any API in Workbench and press Ctrl+S to publish the first sequential snapshot.",
+            );
+            return;
+        }
+
+        let mut cherry_pick_ev = None;
+        let events = app.publish_history.clone();
+        for ev in &events {
+            let is_preview = app.preview_history_cursor == Some(ev.cursor);
+            egui::Frame::new()
+                .fill(swaggen_ui_kit::surface_bg(ui))
+                .stroke(egui::Stroke::new(1.0, swaggen_ui_kit::border_color(ui)))
+                .corner_radius(6)
+                .inner_margin(egui::Margin::symmetric(12, 9))
+                .show(ui, |ui| {
+                    ui.horizontal_wrapped(|ui| {
+                        swaggen_ui_kit::pill_badge(
+                            ui,
+                            Tokens::STATUS_INFO,
+                            &format!("#{}", ev.cursor),
+                        );
+                        swaggen_ui_kit::pill_badge(
+                            ui,
+                            Tokens::METHOD_POST,
+                            &ev.entity_kind.to_ascii_uppercase(),
+                        );
+                        ui.label(swaggen_ui_kit::bold_text(
+                            &ev.entity_name,
+                            13.0,
+                            swaggen_ui_kit::text_primary(ui),
+                        ));
+                        ui.label(
+                            egui::RichText::new(format!("r{}", ev.revision))
+                                .size(11.0)
+                                .color(swaggen_ui_kit::text_secondary(ui)),
+                        );
+                        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                            if swaggen_ui_kit::primary_button(
+                                ui,
+                                ev.payload_json.is_some() && !ev.deleted,
+                                "Cherry-pick & Restore",
+                            )
+                            .on_hover_text(
+                                "Restore this exact saved version into Workbench and publish a new sequential commit",
+                            )
+                            .clicked()
+                            {
+                                cherry_pick_ev = Some(ev.clone());
+                            }
+                            if ev.payload_json.is_some()
+                                && swaggen_ui_kit::secondary_button(
+                                    ui,
+                                    true,
+                                    if is_preview { "Hide JSON" } else { "Preview" },
+                                )
+                                .clicked()
+                            {
+                                app.preview_history_cursor = if is_preview {
+                                    None
+                                } else {
+                                    Some(ev.cursor)
+                                };
+                            }
+                        });
+                    });
+                    ui.add_space(3.0);
+                    ui.horizontal_wrapped(|ui| {
+                        let ts = format_unix_utc(ev.created_at_unix);
+                        let note_str = if ev.note.trim().is_empty() {
+                            "Saved"
+                        } else {
+                            ev.note.trim()
+                        };
+                        ui.label(
+                            egui::RichText::new(format!(
+                                "{} · {} · Note: {}",
+                                ev.actor_email, ts, note_str
+                            ))
+                            .size(11.0)
+                            .color(swaggen_ui_kit::text_secondary(ui)),
+                        );
+                    });
+
+                    if is_preview && let Some(ref raw) = ev.payload_json {
+                        ui.add_space(6.0);
+                        let pretty = serde_json::from_str::<serde_json::Value>(raw)
+                            .ok()
+                            .and_then(|v| serde_json::to_string_pretty(&v).ok())
+                            .unwrap_or_else(|| raw.clone());
+                        swaggen_ui_kit::code_surface_numbered(ui, &pretty);
+                    }
+                });
+            ui.add_space(6.0);
+        }
+
+        if let Some(ev) = cherry_pick_ev {
+            app.cherry_pick_publish_event(&ev);
         }
     });
-    for n in &app.team_notifications {
-        ui.horizontal_wrapped(|ui| {
-            swaggen_ui_kit::status_badge(
-                ui,
-                if n.read {
-                    NoticeKind::Info
-                } else {
-                    NoticeKind::Warning
-                },
-                if n.read { "read" } else { "new" },
-            );
-            ui.label(&n.title);
-        });
-    }
+}
+
+fn format_unix_utc(unix: i64) -> String {
+    time::OffsetDateTime::from_unix_timestamp(unix)
+        .map(|dt| {
+            format!(
+                "{:04}-{:02}-{:02} {:02}:{:02}:{:02} UTC",
+                dt.year(),
+                u8::from(dt.month()),
+                dt.day(),
+                dt.hour(),
+                dt.minute(),
+                dt.second()
+            )
+        })
+        .unwrap_or_else(|_| unix.to_string())
 }
