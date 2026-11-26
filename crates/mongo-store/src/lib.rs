@@ -581,6 +581,24 @@ impl WorkspaceRepository for ServerStore {
             Self::Memory(m) => m.leave_workspace(auth, workspace_id, now).await,
         }
     }
+    async fn remove_member(
+        &self,
+        auth: &AuthContext,
+        workspace_id: &str,
+        target_user_id: &str,
+        now: i64,
+    ) -> Result<MemberListResponse, StoreError> {
+        match self {
+            Self::Mongo(m) => {
+                m.remove_member(auth, workspace_id, target_user_id, now)
+                    .await
+            }
+            Self::Memory(m) => {
+                m.remove_member(auth, workspace_id, target_user_id, now)
+                    .await
+            }
+        }
+    }
     async fn kv_get(&self, namespace: &str, key: &str) -> Result<Option<String>, StoreError> {
         match self {
             Self::Mongo(m) => m.kv_get(namespace, key).await,

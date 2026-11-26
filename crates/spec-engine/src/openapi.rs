@@ -1164,17 +1164,62 @@ pub fn parse_api_documentation(
     doc
 }
 
-/// Extracts candidate OpenAPI/Swagger JSON/YAML URLs from Swagger UI or ReDoc HTML,
+/// Extracts Swagger UI initialization script URLs (e.g. `swagger-initializer.js`, `swagger-ui-init.js`)
+/// from an HTML page so the fetcher can inspect external JS configs too.
+pub fn extract_swagger_script_urls_from_html(html: &str, base_url: &str) -> Vec<String> {
+    let mut raw = Vec::new();
+    let mut search_from = 0usize;
+    while let Some(pos) = html[search_from..].find("src=") {
+        let abs = search_from + pos + 4;
+        let slice = &html[abs..html.len().min(abs + 320)];
+        if let Some(q) = extract_first_quoted_string(slice) {
+            let low = q.to_ascii_lowercase();
+            if (low.contains("swagger") || low.contains("redoc") || low.contains("openapi"))
+                && low.ends_with(".js")
+                && !low.contains("swagger-ui-bundle")
+                && !low.contains("swagger-ui-standalone")
+                && !raw.contains(&q)
+            {
+                raw.push(q);
+            }
+        }
+        search_from = abs;
+    }
+    let Ok(base) = url::Url::parse(base_url) else {
+        return raw;
+    };
+    let mut resolved = Vec::new();
+    for cand in raw {
+        let final_url = if cand.starts_with("http://") || cand.starts_with("https://") {
+            cand
+        } else if let Ok(joined) = base.join(&cand) {
+            joined.into()
+        } else {
+            continue;
+        };
+        if !resolved.contains(&final_url) {
+            resolved.push(final_url);
+        }
+    }
+    resolved
+}
+
+/// Extracts candidate OpenAPI/Swagger JSON/YAML URLs from Swagger UI or ReDoc HTML/JS,
 /// resolving relative paths cleanly against `base_url`.
 pub fn extract_swagger_urls_from_html(html: &str, base_url: &str) -> Vec<String> {
     let mut raw_candidates: Vec<String> = Vec::new();
     for needle in [
         "url:",
         "url :",
+        "\"url\":",
+        "'url':",
+        "configUrl:",
+        "configUrl :",
+        "\"configUrl\":",
         "spec-url=",
         "data-spec-url=",
         "Redoc.init(",
-        "SwaggerUIBundle",
+        "SwaggerUIBundle(",
     ] {
         let mut search_from = 0usize;
         while let Some(pos) = html[search_from..].find(needle) {
@@ -1195,17 +1240,27 @@ pub fn extract_swagger_urls_from_html(html: &str, base_url: &str) -> Vec<String>
         }
     }
 
-    // Fallback well-known Swagger/OpenAPI endpoints on the same origin if HTML omitted config URL
-    if raw_candidates.is_empty() {
+    // Also include well-known Swagger/OpenAPI endpoints on the same origin as fallbacks
+    // ONLY when the HTML actually appears to be Swagger/ReDoc UI or has no discovered candidates.
+    let html_low = html.to_ascii_lowercase();
+    let looks_like_api_docs_ui = !raw_candidates.is_empty()
+        || html_low.contains("swagger")
+        || html_low.contains("redoc")
+        || html_low.contains("openapi")
+        || html_low.contains("rapidoc");
+    if looks_like_api_docs_ui {
         for fallback in [
             "/openapi.json",
             "/api/v3/openapi.json",
             "/v3/api-docs",
+            "/v2/api-docs",
             "/swagger/v1/swagger.json",
             "/swagger.json",
             "/openapi.yaml",
         ] {
-            raw_candidates.push(fallback.to_owned());
+            if !raw_candidates.iter().any(|c| c == fallback) {
+                raw_candidates.push(fallback.to_owned());
+            }
         }
     }
 

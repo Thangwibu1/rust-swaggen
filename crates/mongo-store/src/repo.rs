@@ -312,6 +312,14 @@ pub trait WorkspaceRepository: Send + Sync {
         now: i64,
     ) -> Result<(), StoreError>;
 
+    async fn remove_member(
+        &self,
+        auth: &AuthContext,
+        workspace_id: &str,
+        target_user_id: &str,
+        now: i64,
+    ) -> Result<MemberListResponse, StoreError>;
+
     async fn kv_get(&self, namespace: &str, key: &str) -> Result<Option<String>, StoreError>;
 
     async fn kv_put(

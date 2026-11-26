@@ -42,7 +42,6 @@ pub enum MainMode {
 pub enum RequestSubTab {
     GraphQl,
     Params,
-    PathParams,
     Headers,
     Body,
     Auth,
@@ -993,6 +992,10 @@ impl App {
                         });
                     }
                 }
+                Event::WorkspaceMembersUpdated(members) => {
+                    self.team_member_details = Some(members);
+                    self.status = "Workspace members updated".into();
+                }
                 Event::SyncStateUpdated { state, message } => {
                     self.sync_state = *state;
                     self.status = message;
@@ -1459,7 +1462,7 @@ impl App {
                 .map(|r| r.name.clone())
                 .unwrap_or_else(|| "API Workbench".into()),
             MainMode::Runner => "Testing & Developer Tools".into(),
-            MainMode::Server => "Team Server & Accounts".into(),
+            MainMode::Server => "Team Collaboration & Workspaces".into(),
             MainMode::TeamSync => "Collaboration & Sync".into(),
             MainMode::Specs => "API Definitions & Docs".into(),
             MainMode::ImportExport => "Import & Export".into(),
@@ -1473,6 +1476,227 @@ impl App {
             MainMode::Shortcuts => "Keyboard Shortcuts".into(),
         };
         format!("{} / {leaf}", self.active_workspace_display_name())
+    }
+
+    /// Smart multi-format file importer shared by OS Drag-and-Drop and Import/Export Hub (`CSV`, `Postman`, `OpenAPI/Swagger`, `HAR`, `.http`).
+    pub fn import_dropped_or_loaded_file(&mut self, name: &str, raw: &str) {
+        let low_name = name.to_ascii_lowercase();
+        let stem = name.rsplit_once('.').map(|(s, _)| s).unwrap_or(name).trim();
+        let stem = if stem.is_empty() {
+            "Imported APIs"
+        } else {
+            stem
+        };
+
+        // 1. CSV API import -> ready-to-test Collection & Requests in Workbench
+        if low_name.ends_with(".csv") {
+            match swaggen_spec_engine::importers::import_requests_from_csv(stem, raw) {
+                Ok((col, reqs, _rep)) => {
+                    let count = reqs.len();
+                    let first_id = reqs.first().map(|r| r.id.clone());
+                    self.state.collections.push(col);
+                    self.state.requests.extend(reqs);
+                    if let Some(rid) = first_id {
+                        self.open_request_in_workbench(&rid);
+                    } else {
+                        self.mode = MainMode::Workbench;
+                    }
+                    self.mark_dirty();
+                    self.last_import_summary =
+                        format!("Imported {count} API request(s) from '{name}'");
+                    self.status = self.last_import_summary.clone();
+                }
+                Err(e) => {
+                    self.error = true;
+                    self.status = format!("CSV import failed ({name}): {e}");
+                }
+            }
+            return;
+        }
+
+        // 2. `.http` REST Client file
+        if low_name.ends_with(".http") || low_name.ends_with(".rest") {
+            let cid = self
+                .state
+                .collections
+                .first()
+                .map(|c| c.id.clone())
+                .unwrap_or_else(|| "default".into());
+            if let Ok((reqs, vars, _)) = swaggen_spec_engine::har_http::import_dot_http(raw, &cid)
+                && !reqs.is_empty()
+            {
+                let count = reqs.len();
+                let first_id = reqs.first().map(|r| r.id.clone());
+                self.state.requests.extend(reqs);
+                self.state.workspace_vars.extend(
+                    vars.into_iter()
+                        .map(|(k, v)| swaggen_domain::workspace::VariableEntry::public(k, v)),
+                );
+                if let Some(rid) = first_id {
+                    self.open_request_in_workbench(&rid);
+                }
+                self.mark_dirty();
+                self.last_import_summary =
+                    format!("Imported {count} request(s) from '{name}' into Workbench");
+                self.status = self.last_import_summary.clone();
+                return;
+            }
+        }
+
+        let trimmed = raw.trim_start();
+        if trimmed.starts_with('{')
+            && let Ok(val) = serde_json::from_str::<serde_json::Value>(raw)
+        {
+            // 3. Postman Environment JSON
+            let is_pm_env = val
+                .get("_postman_variable_scope")
+                .and_then(serde_json::Value::as_str)
+                .is_some_and(|s| s == "environment")
+                || (val
+                    .get("values")
+                    .and_then(serde_json::Value::as_array)
+                    .is_some()
+                    && val.get("item").is_none()
+                    && val.get("paths").is_none());
+            if is_pm_env
+                && let Ok((env, lines)) =
+                    swaggen_spec_engine::importers::import_postman_environment(raw)
+            {
+                let eid = env.id.clone();
+                self.last_import_summary = format!(
+                    "Imported Environment '{}' ({} vars): {}",
+                    env.name,
+                    env.variables.len(),
+                    lines.join(" · ")
+                );
+                self.state.environments.push(env);
+                self.state.active_environment_id = Some(eid);
+                self.mark_dirty();
+                self.navigate_to(MainMode::Environments);
+                self.status = self.last_import_summary.clone();
+                return;
+            }
+
+            // 4. Postman Collection v2.1 JSON -> Collection + Folders + Requests for immediate testing
+            if val
+                .get("item")
+                .and_then(serde_json::Value::as_array)
+                .is_some()
+                && val.get("paths").is_none()
+                && let Ok((col, folders, reqs, _rep)) =
+                    swaggen_spec_engine::importers::import_postman_collection_v2_1(raw)
+            {
+                let count = reqs.len();
+                let cname = col.name.clone();
+                let first_id = reqs.first().map(|r| r.id.clone());
+                self.state.collections.push(col);
+                self.state.folders.extend(folders);
+                self.state.requests.extend(reqs);
+                if let Some(rid) = first_id {
+                    self.open_request_in_workbench(&rid);
+                } else {
+                    self.mode = MainMode::Workbench;
+                }
+                self.mark_dirty();
+                self.last_import_summary = format!(
+                    "Imported Postman Collection '{cname}' ({count} request(s)) into Workbench"
+                );
+                self.status = self.last_import_summary.clone();
+                return;
+            }
+
+            // 5. HAR 1.2 JSON
+            if val.pointer("/log/entries").is_some() {
+                let col_id = swaggen_domain::workspace::new_uid();
+                if let Ok((reqs, _)) = swaggen_spec_engine::har_http::import_har(raw, &col_id)
+                    && !reqs.is_empty()
+                {
+                    let count = reqs.len();
+                    let first_id = reqs.first().map(|r| r.id.clone());
+                    self.state
+                        .collections
+                        .push(swaggen_domain::workspace::Collection {
+                            id: col_id,
+                            name: stem.to_owned(),
+                            description: format!("Imported from HAR '{name}'"),
+                            color: None,
+                            auth: Default::default(),
+                            variables: Vec::new(),
+                            pre_request_script: String::new(),
+                            post_response_script: String::new(),
+                            order_key: self.state.collections.len() as u64,
+                        });
+                    self.state.requests.extend(reqs);
+                    if let Some(rid) = first_id {
+                        self.open_request_in_workbench(&rid);
+                    }
+                    self.mark_dirty();
+                    self.status = format!("Imported {count} API request(s) from HAR '{name}'");
+                    return;
+                }
+            }
+        }
+
+        // 6. OpenAPI / Swagger JSON/YAML/HTML -> add to Docs Studio AND create runnable test requests when dropped in Import/Workbench
+        let doc = swaggen_spec_engine::openapi::parse_api_documentation(
+            swaggen_domain::workspace::new_uid(),
+            name.to_owned(),
+            raw,
+            &[],
+        );
+        let ops_count = doc.operations.len();
+        if ops_count > 0 && self.mode != MainMode::Specs {
+            let col_id = swaggen_domain::workspace::new_uid();
+            let col_title = if !doc.title.trim().is_empty() && doc.title != "Untitled" {
+                doc.title.clone()
+            } else {
+                stem.to_owned()
+            };
+            let mut gen_reqs = Vec::with_capacity(ops_count);
+            for op in &doc.operations {
+                gen_reqs.push(swaggen_spec_engine::openapi::generate_linked_request(
+                    &doc, op, &col_id,
+                ));
+            }
+            let first_id = gen_reqs.first().map(|r| r.id.clone());
+            self.state
+                .collections
+                .push(swaggen_domain::workspace::Collection {
+                    id: col_id,
+                    name: col_title.clone(),
+                    description: format!("Generated from '{name}'"),
+                    color: None,
+                    auth: Default::default(),
+                    variables: Vec::new(),
+                    pre_request_script: String::new(),
+                    post_response_script: String::new(),
+                    order_key: self.state.collections.len() as u64,
+                });
+            self.state.requests.extend(gen_reqs);
+            self.spec_editor_text = doc.raw_text.clone();
+            self.specs.push(doc);
+            self.selected_spec_idx = self.specs.len() - 1;
+            self.submit(Command::SaveSpecs {
+                specs: self.specs.clone(),
+            });
+            if let Some(rid) = first_id {
+                self.open_request_in_workbench(&rid);
+            }
+            self.mark_dirty();
+            self.last_import_summary = format!(
+                "Imported '{col_title}': {ops_count} API request(s) ready to test + Docs added"
+            );
+            self.status = self.last_import_summary.clone();
+        } else {
+            self.spec_editor_text = doc.raw_text.clone();
+            self.specs.push(doc);
+            self.selected_spec_idx = self.specs.len() - 1;
+            self.mode = MainMode::Specs;
+            self.submit(Command::SaveSpecs {
+                specs: self.specs.clone(),
+            });
+            self.status = format!("Imported '{name}' ({ops_count} endpoint(s)) into Docs");
+        }
     }
 }
 
@@ -1574,7 +1798,7 @@ impl eframe::App for App {
             self.show_command_palette = false;
             self.show_workspace_modal = false;
         }
-        // OS file drag-and-drop safe OpenAPI/Postman import (UX08).
+        // OS file drag-and-drop smart import: CSV, Postman JSON, OpenAPI/Swagger, HAR 1.2, `.http` (UX08).
         let dropped = ctx.input(|i| i.raw.dropped_files.clone());
         for df in dropped {
             let path = df.path();
@@ -1582,19 +1806,9 @@ impl eframe::App for App {
                 let name = path
                     .file_name()
                     .and_then(|n| n.to_str())
-                    .unwrap_or("dropped-spec")
+                    .unwrap_or("dropped-file")
                     .to_owned();
-                let doc = swaggen_spec_engine::openapi::parse_api_documentation(
-                    swaggen_domain::workspace::new_uid(),
-                    name.clone(),
-                    &raw,
-                    &[],
-                );
-                self.spec_editor_text = doc.raw_text.clone();
-                self.specs.push(doc);
-                self.selected_spec_idx = self.specs.len() - 1;
-                self.mode = MainMode::Specs;
-                self.status = format!("Imported dropped file '{name}' safely (UX08)");
+                self.import_dropped_or_loaded_file(&name, &raw);
             }
         }
         if ctx.input_mut(|i| i.consume_key(egui::Modifiers::CTRL, egui::Key::S)) {
@@ -1759,7 +1973,11 @@ impl eframe::App for App {
             .frame(rail_frame)
             .show(ui, |ui| {
                 ui.vertical_centered(|ui| {
-                    swaggen_ui_kit::brand_mark(ui, 26.0);
+                    if swaggen_ui_kit::brand_mark(ui, 26.0).clicked() {
+                        self.show_welcome = true;
+                        self.show_workspace_modal = false;
+                        self.show_command_palette = false;
+                    }
                     ui.add_space(10.0);
                     for (mode, icon, tip) in [
                         (
@@ -1782,7 +2000,11 @@ impl eframe::App for App {
                             IconKind::GitBranch,
                             "Sync, Branches & Comments",
                         ),
-                        (MainMode::Server, IconKind::Users, "Team Server & Accounts"),
+                        (
+                            MainMode::Server,
+                            IconKind::Users,
+                            "Team Collaboration (Workspaces & Members)",
+                        ),
                         (
                             MainMode::Environments,
                             IconKind::Globe,

@@ -546,6 +546,8 @@ pub struct Collection {
     pub id: String,
     pub name: String,
     pub description: String,
+    #[serde(default)]
+    pub color: Option<String>,
     pub auth: AuthConfig,
     pub variables: Vec<VariableEntry>,
     #[serde(default)]
@@ -2750,7 +2752,13 @@ pub struct WorkspaceState {
     pub folders: Vec<Folder>,
     pub requests: Vec<RequestItem>,
     #[serde(default)]
+    pub trashed_collections: Vec<Collection>,
+    #[serde(default)]
+    pub trashed_folders: Vec<Folder>,
+    #[serde(default)]
     pub trashed_requests: Vec<RequestItem>,
+    #[serde(default)]
+    pub trashed_environments: Vec<Environment>,
     pub environments: Vec<Environment>,
     pub active_environment_id: Option<String>,
     pub workspace_vars: Vec<VariableEntry>,
@@ -2769,6 +2777,7 @@ impl WorkspaceState {
             id: new_uid(),
             name: "Getting Started".into(),
             description: "Default offline personal collection".into(),
+            color: None,
             auth: AuthConfig::Inherit,
             variables: Vec::new(),
             pre_request_script: String::new(),
@@ -2815,7 +2824,10 @@ impl WorkspaceState {
             collections: vec![col],
             folders: Vec::new(),
             requests: vec![req],
+            trashed_collections: Vec::new(),
+            trashed_folders: Vec::new(),
             trashed_requests: Vec::new(),
+            trashed_environments: Vec::new(),
             environments: vec![dev, staging, prod],
             active_environment_id: active_env_id,
             workspace_vars: Vec::new(),
@@ -2962,7 +2974,10 @@ impl WorkspaceState {
     }
 
     pub fn empty_trash(&mut self) {
+        self.trashed_collections.clear();
+        self.trashed_folders.clear();
         self.trashed_requests.clear();
+        self.trashed_environments.clear();
     }
 
     pub fn reorder_request(&mut self, request_id: &str, move_up: bool) -> bool {
@@ -2999,23 +3014,129 @@ impl WorkspaceState {
         true
     }
 
+    pub fn delete_folder(&mut self, folder_id: &str) -> bool {
+        if !self.folders.iter().any(|f| f.id == folder_id) {
+            return false;
+        }
+        let mut to_remove = vec![folder_id.to_owned()];
+        let mut idx = 0usize;
+        while idx < to_remove.len() {
+            let parent = to_remove[idx].clone();
+            for child in &self.folders {
+                if child.parent_folder_id.as_deref() == Some(parent.as_str()) {
+                    to_remove.push(child.id.clone());
+                }
+            }
+            idx += 1;
+        }
+        let mut kept_folders = Vec::with_capacity(self.folders.len());
+        for f in std::mem::take(&mut self.folders) {
+            if to_remove.contains(&f.id) {
+                if self.trashed_folders.len() >= 100 {
+                    self.trashed_folders.remove(0);
+                }
+                self.trashed_folders.push(f);
+            } else {
+                kept_folders.push(f);
+            }
+        }
+        self.folders = kept_folders;
+        let mut removed_req_ids = BTreeSet::new();
+        let mut kept_reqs = Vec::with_capacity(self.requests.len());
+        for r in std::mem::take(&mut self.requests) {
+            if r.folder_id
+                .as_ref()
+                .is_some_and(|fid| to_remove.contains(fid))
+            {
+                removed_req_ids.insert(r.id.clone());
+                if self.trashed_requests.len() >= 100 {
+                    self.trashed_requests.remove(0);
+                }
+                self.trashed_requests.push(r);
+            } else {
+                kept_reqs.push(r);
+            }
+        }
+        self.requests = kept_reqs;
+        self.open_tabs
+            .retain(|t| !removed_req_ids.contains(&t.request_id));
+        if let Some(ref active) = self.active_tab_id
+            && !self.open_tabs.iter().any(|t| &t.id == active)
+        {
+            self.active_tab_id = self.open_tabs.first().map(|t| t.id.clone());
+        }
+        true
+    }
+
+    pub fn restore_trashed_folder(&mut self, folder_id: &str) -> bool {
+        let Some(pos) = self.trashed_folders.iter().position(|f| f.id == folder_id) else {
+            return false;
+        };
+        let mut restored = self.trashed_folders.remove(pos);
+        if !self
+            .collections
+            .iter()
+            .any(|c| c.id == restored.collection_id)
+            && let Some(first) = self.collections.first()
+        {
+            restored.collection_id = first.id.clone();
+            restored.parent_folder_id = None;
+        }
+        self.folders.push(restored);
+        let mut restored_reqs = Vec::new();
+        let mut kept_trash = Vec::with_capacity(self.trashed_requests.len());
+        for r in std::mem::take(&mut self.trashed_requests) {
+            if r.folder_id.as_deref() == Some(folder_id) {
+                restored_reqs.push(r);
+            } else {
+                kept_trash.push(r);
+            }
+        }
+        self.trashed_requests = kept_trash;
+        self.requests.extend(restored_reqs);
+        true
+    }
+
     pub fn delete_collection(&mut self, collection_id: &str) -> bool {
         if self.collections.len() <= 1 {
             return false;
         }
-        let before = self.collections.len();
-        self.collections.retain(|c| c.id != collection_id);
-        if self.collections.len() == before {
+        let Some(pos) = self.collections.iter().position(|c| c.id == collection_id) else {
             return false;
+        };
+        let removed_col = self.collections.remove(pos);
+        if self.trashed_collections.len() >= 50 {
+            self.trashed_collections.remove(0);
         }
-        self.folders.retain(|f| f.collection_id != collection_id);
-        let removed_reqs: BTreeSet<String> = self
-            .requests
-            .iter()
-            .filter(|r| r.collection_id == collection_id)
-            .map(|r| r.id.clone())
-            .collect();
-        self.requests.retain(|r| r.collection_id != collection_id);
+        self.trashed_collections.push(removed_col);
+
+        let mut kept_folders = Vec::with_capacity(self.folders.len());
+        for f in std::mem::take(&mut self.folders) {
+            if f.collection_id == collection_id {
+                if self.trashed_folders.len() >= 100 {
+                    self.trashed_folders.remove(0);
+                }
+                self.trashed_folders.push(f);
+            } else {
+                kept_folders.push(f);
+            }
+        }
+        self.folders = kept_folders;
+
+        let mut removed_reqs = BTreeSet::new();
+        let mut kept_reqs = Vec::with_capacity(self.requests.len());
+        for r in std::mem::take(&mut self.requests) {
+            if r.collection_id == collection_id {
+                removed_reqs.insert(r.id.clone());
+                if self.trashed_requests.len() >= 100 {
+                    self.trashed_requests.remove(0);
+                }
+                self.trashed_requests.push(r);
+            } else {
+                kept_reqs.push(r);
+            }
+        }
+        self.requests = kept_reqs;
         self.open_tabs
             .retain(|t| !removed_reqs.contains(&t.request_id));
         if let Some(ref active) = self.active_tab_id
@@ -3023,6 +3144,67 @@ impl WorkspaceState {
         {
             self.active_tab_id = self.open_tabs.first().map(|t| t.id.clone());
         }
+        true
+    }
+
+    pub fn restore_trashed_collection(&mut self, collection_id: &str) -> bool {
+        let Some(pos) = self
+            .trashed_collections
+            .iter()
+            .position(|c| c.id == collection_id)
+        else {
+            return false;
+        };
+        let restored_col = self.trashed_collections.remove(pos);
+        self.collections.push(restored_col);
+
+        let mut kept_f = Vec::with_capacity(self.trashed_folders.len());
+        for f in std::mem::take(&mut self.trashed_folders) {
+            if f.collection_id == collection_id {
+                self.folders.push(f);
+            } else {
+                kept_f.push(f);
+            }
+        }
+        self.trashed_folders = kept_f;
+
+        let mut kept_r = Vec::with_capacity(self.trashed_requests.len());
+        for r in std::mem::take(&mut self.trashed_requests) {
+            if r.collection_id == collection_id {
+                self.requests.push(r);
+            } else {
+                kept_r.push(r);
+            }
+        }
+        self.trashed_requests = kept_r;
+        true
+    }
+
+    pub fn delete_environment(&mut self, env_id: &str) -> bool {
+        let Some(pos) = self.environments.iter().position(|e| e.id == env_id) else {
+            return false;
+        };
+        let removed = self.environments.remove(pos);
+        if self.trashed_environments.len() >= 50 {
+            self.trashed_environments.remove(0);
+        }
+        self.trashed_environments.push(removed);
+        if self.active_environment_id.as_deref() == Some(env_id) {
+            self.active_environment_id = self.environments.first().map(|e| e.id.clone());
+        }
+        true
+    }
+
+    pub fn restore_trashed_environment(&mut self, env_id: &str) -> bool {
+        let Some(pos) = self
+            .trashed_environments
+            .iter()
+            .position(|e| e.id == env_id)
+        else {
+            return false;
+        };
+        let restored = self.trashed_environments.remove(pos);
+        self.environments.push(restored);
         true
     }
 
@@ -3233,6 +3415,7 @@ mod tests {
             id: "c1".into(),
             name: "Core".into(),
             description: String::new(),
+            color: None,
             auth: AuthConfig::Bearer {
                 token: "{{token}}".into(),
             },

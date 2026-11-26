@@ -25,26 +25,69 @@ struct SidebarActions {
     fork_col_id: Option<String>,
     del_col_id: Option<String>,
     rename_col: Option<(String, String)>,
+    recolor_col: Option<(String, Option<String>)>,
+}
+
+const COLLECTION_COLOR_SWATCHES: &[(&str, Option<&str>, egui::Color32)] = &[
+    ("Default", None, Tokens::METHOD_POST),
+    (
+        "Blue",
+        Some("#2563EB"),
+        egui::Color32::from_rgb(0x25, 0x63, 0xEB),
+    ),
+    (
+        "Teal",
+        Some("#0F766E"),
+        egui::Color32::from_rgb(0x0F, 0x76, 0x6E),
+    ),
+    (
+        "Emerald",
+        Some("#15803D"),
+        egui::Color32::from_rgb(0x15, 0x80, 0x3D),
+    ),
+    (
+        "Amber",
+        Some("#D97706"),
+        egui::Color32::from_rgb(0xD9, 0x77, 0x06),
+    ),
+    (
+        "Rose",
+        Some("#DC2626"),
+        egui::Color32::from_rgb(0xDC, 0x26, 0x26),
+    ),
+    (
+        "Purple",
+        Some("#7C3AED"),
+        egui::Color32::from_rgb(0x7C, 0x3A, 0xED),
+    ),
+    (
+        "Slate",
+        Some("#475569"),
+        egui::Color32::from_rgb(0x47, 0x55, 0x69),
+    ),
+];
+
+fn resolve_collection_color(hex: Option<&str>) -> egui::Color32 {
+    if let Some(h) = hex {
+        for (_, code, col) in COLLECTION_COLOR_SWATCHES {
+            if *code == Some(h) {
+                return *col;
+            }
+        }
+    }
+    Tokens::METHOD_POST
 }
 
 pub fn show(app: &mut App, ui: &mut egui::Ui) {
     let sidebar_full_rect = ui.max_rect();
 
-    // 1. Brand title + Prominent Bordered Workspace Switcher Dropdown right beside Logo (F2)
+    // 1. Clean Full-Width Workspace Switcher Pill (no redundant "SWAGGEN" text)
     ui.horizontal(|ui| {
-        ui.spacing_mut().item_spacing.x = 6.0;
-        ui.label(swaggen_ui_kit::bold_text(
-            "SWAGGEN",
-            13.5,
-            swaggen_ui_kit::text_primary(ui),
-        ));
-        let kind_badge = if app.selected_team_workspace_id.is_some() {
-            "Team"
-        } else {
-            "Personal"
-        };
-        let ws_btn_w = (ui.available_width() - 2.0).max(86.0);
-        let max_ws_chars = ((ws_btn_w - 58.0) / 6.5).max(5.0) as usize;
+        let is_team = app.selected_team_workspace_id.is_some();
+        let kind_badge = if is_team { "Team" } else { "Local" };
+        let kind_icon = if is_team { "👥" } else { "📁" };
+        let ws_btn_w = (ui.available_width() - 2.0).max(120.0);
+        let max_ws_chars = ((ws_btn_w - 86.0) / 7.0).max(6.0) as usize;
         let ws_display = app.active_workspace_display_name();
         let ws_short: String = if ws_display.chars().count() > max_ws_chars {
             let mut s: String = ws_display
@@ -58,16 +101,23 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
         };
         let ws_btn = ui
             .add_sized(
-                [ws_btn_w, 25.0],
+                [ws_btn_w, 30.0],
                 egui::Button::new(
-                    egui::RichText::new(format!("{ws_short} · {kind_badge} ▾"))
-                        .size(11.0)
+                    egui::RichText::new(format!("{kind_icon}  {ws_short}  ·  {kind_badge}  ▾"))
+                        .size(11.5)
                         .color(swaggen_ui_kit::text_primary(ui))
                         .strong(),
                 )
                 .fill(swaggen_ui_kit::subtle_bg(ui))
-                .stroke(egui::Stroke::new(1.0, swaggen_ui_kit::border_color(ui)))
-                .corner_radius(5),
+                .stroke(egui::Stroke::new(
+                    1.0,
+                    if is_team {
+                        Tokens::STATUS_INFO
+                    } else {
+                        swaggen_ui_kit::border_color(ui)
+                    },
+                ))
+                .corner_radius(7),
             )
             .on_hover_text("Switch Individual or Team Workspace");
 
@@ -282,21 +332,15 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                 .strong(),
         );
         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-            let (rect, resp) = ui.allocate_exact_size(egui::vec2(20.0, 20.0), egui::Sense::click());
-            if resp.hovered() {
-                ui.painter().rect_filled(rect, 4.0, Tokens::BG_SUBTLE);
-            }
-            swaggen_ui_kit::paint_icon(
-                ui.painter(),
-                rect.shrink(3.5),
-                IconKind::Plus,
-                if resp.hovered() {
-                    Tokens::STATUS_INFO
-                } else {
-                    Tokens::TEXT_SECONDARY
-                },
-            );
-            if resp.on_hover_text("Create new collection").clicked() {
+            if swaggen_ui_kit::mini_icon_button(
+                ui,
+                "sidebar_new_collection_btn",
+                swaggen_ui_kit::MiniIconKind::Plus,
+                Tokens::STATUS_INFO,
+                "Create new collection",
+            )
+            .clicked()
+            {
                 app.show_new_collection_input = !app.show_new_collection_input;
             }
         });
@@ -307,16 +351,25 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
             let resp = ui.add(
                 egui::TextEdit::singleline(&mut app.new_collection_name)
                     .hint_text("Collection name…")
-                    .desired_width((ui.available_width() - 42.0).max(70.0)),
+                    .desired_width((ui.available_width() - 48.0).max(70.0)),
             );
             let enter = resp.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter));
-            if (ui.small_button("Add").clicked() || enter)
+            if (swaggen_ui_kit::mini_icon_button(
+                ui,
+                "sidebar_confirm_new_col",
+                swaggen_ui_kit::MiniIconKind::Plus,
+                Tokens::STATUS_SUCCESS,
+                "Confirm create collection",
+            )
+            .clicked()
+                || enter)
                 && !app.new_collection_name.trim().is_empty()
             {
                 let col = Collection {
                     id: new_uid(),
                     name: app.new_collection_name.trim().to_owned(),
                     description: String::new(),
+                    color: None,
                     auth: Default::default(),
                     variables: Vec::new(),
                     pre_request_script: String::new(),
@@ -447,8 +500,19 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                             .data_mut(|d| d.insert_persisted(col_state_id, is_open));
                     }
 
+                    let col_tint = resolve_collection_color(col.color.as_deref());
+                    // Accent left color stripe on Collection row
+                    if col.color.is_some() {
+                        ui.painter().line_segment(
+                            [
+                                egui::pos2(row_rect.left() + 1.5, row_rect.top() + 4.0),
+                                egui::pos2(row_rect.left() + 1.5, row_rect.bottom() - 4.0),
+                            ],
+                            egui::Stroke::new(2.5, col_tint),
+                        );
+                    }
                     let chev_rect = egui::Rect::from_center_size(
-                        egui::pos2(row_rect.left() + 7.0, row_rect.center().y),
+                        egui::pos2(row_rect.left() + 9.0, row_rect.center().y),
                         egui::vec2(11.0, 11.0),
                     );
                     swaggen_ui_kit::paint_icon(
@@ -462,16 +526,16 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                         Tokens::TEXT_SECONDARY,
                     );
                     let folder_rect = egui::Rect::from_center_size(
-                        egui::pos2(row_rect.left() + 21.0, row_rect.center().y),
+                        egui::pos2(row_rect.left() + 23.0, row_rect.center().y),
                         egui::vec2(14.0, 14.0),
                     );
                     swaggen_ui_kit::paint_icon(
                         ui.painter(),
                         folder_rect,
                         IconKind::Folder,
-                        Tokens::METHOD_POST,
+                        col_tint,
                     );
-                    let max_col_chars = ((row_w - 80.0) / 6.8).max(6.0) as usize;
+                    let max_col_chars = ((row_w - 86.0) / 6.8).max(6.0) as usize;
                     let col_lbl: String = if col.name.chars().count() > max_col_chars {
                         let mut s: String = col
                             .name
@@ -484,30 +548,45 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                         col.name.clone()
                     };
                     ui.painter().text(
-                        egui::pos2(row_rect.left() + 33.0, row_rect.center().y),
+                        egui::pos2(row_rect.left() + 35.0, row_rect.center().y),
                         egui::Align2::LEFT_CENTER,
                         col_lbl,
                         egui::FontId::new(12.0, egui::FontFamily::Name("bold".into())),
                         Tokens::TEXT_PRIMARY,
                     );
 
-                    // `+` New request button
+                    // Crisp `+` New request icon button
                     let add_rect = egui::Rect::from_center_size(
-                        egui::pos2(row_rect.right() - 31.0, row_rect.center().y),
-                        egui::vec2(19.0, 19.0),
+                        egui::pos2(row_rect.right() - 34.0, row_rect.center().y),
+                        egui::vec2(20.0, 20.0),
                     );
                     let add_resp = ui.interact(
                         add_rect,
                         ui.scope_id().with(("col_add_req", &col.id)),
                         egui::Sense::click(),
                     );
-                    if add_resp.hovered() {
-                        ui.painter().rect_filled(add_rect, 4.0, Tokens::BG_SELECTED);
-                    }
-                    swaggen_ui_kit::paint_icon(
+                    ui.painter().rect(
+                        add_rect,
+                        5.0,
+                        if add_resp.hovered() {
+                            Tokens::BG_SELECTED
+                        } else {
+                            Tokens::BG_SUBTLE
+                        },
+                        egui::Stroke::new(
+                            1.0,
+                            if add_resp.hovered() {
+                                Tokens::STATUS_INFO
+                            } else {
+                                Tokens::BORDER_DEFAULT
+                            },
+                        ),
+                        egui::StrokeKind::Middle,
+                    );
+                    swaggen_ui_kit::paint_mini_icon(
                         ui.painter(),
-                        add_rect.shrink(3.5),
-                        IconKind::Plus,
+                        add_rect,
+                        swaggen_ui_kit::MiniIconKind::Plus,
                         if add_resp.hovered() {
                             Tokens::STATUS_INFO
                         } else {
@@ -521,36 +600,47 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                         acts.add_req_target = Some((col.id.clone(), None));
                     }
 
-                    // `⋯` Collection actions button
+                    // Crisp `⋯` Collection actions icon button
                     let dots_rect = egui::Rect::from_center_size(
                         egui::pos2(row_rect.right() - 11.0, row_rect.center().y),
-                        egui::vec2(19.0, 19.0),
+                        egui::vec2(20.0, 20.0),
                     );
                     let dots_id = ui.scope_id().with(("col_dots", &col.id));
                     let dots_resp = ui.interact(dots_rect, dots_id, egui::Sense::click());
-                    if dots_resp.hovered() {
-                        ui.painter()
-                            .rect_filled(dots_rect, 4.0, Tokens::BG_SELECTED);
-                    }
-                    ui.painter().text(
-                        dots_rect.center(),
-                        egui::Align2::CENTER_CENTER,
-                        "⋯",
-                        egui::FontId::new(13.0, egui::FontFamily::Proportional),
+                    ui.painter().rect(
+                        dots_rect,
+                        5.0,
+                        if dots_resp.hovered() {
+                            Tokens::BG_SELECTED
+                        } else {
+                            egui::Color32::TRANSPARENT
+                        },
+                        if dots_resp.hovered() {
+                            egui::Stroke::new(1.0, Tokens::STATUS_INFO)
+                        } else {
+                            egui::Stroke::NONE
+                        },
+                        egui::StrokeKind::Middle,
+                    );
+                    swaggen_ui_kit::paint_mini_icon(
+                        ui.painter(),
+                        dots_rect,
+                        swaggen_ui_kit::MiniIconKind::More,
                         if dots_resp.hovered() {
                             Tokens::STATUS_INFO
                         } else {
                             Tokens::TEXT_SECONDARY
                         },
                     );
-                    let dots_resp = dots_resp.on_hover_text("Collection actions");
+                    let dots_resp = dots_resp.on_hover_text("Collection color, rename & actions");
                     let mut col_name_buf = col.name.clone();
                     let col_id_clone = col.id.clone();
+                    let cur_color = col.color.clone();
                     let show_col_menu =
                         |ui: &mut egui::Ui,
                          acts: &mut SidebarActions,
                          col_name_buf: &mut String| {
-                            ui.set_min_width(172.0);
+                            ui.set_min_width(196.0);
                             ui.label(
                                 egui::RichText::new("Collection name")
                                     .size(10.5)
@@ -566,6 +656,41 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                             {
                                 ui.close();
                             }
+                            ui.add_space(6.0);
+                            ui.label(
+                                egui::RichText::new("Collection color")
+                                    .size(10.5)
+                                    .color(Tokens::TEXT_SECONDARY),
+                            );
+                            ui.horizontal_wrapped(|ui| {
+                                ui.spacing_mut().item_spacing = egui::vec2(5.0, 4.0);
+                                for (cname, cval, c32) in COLLECTION_COLOR_SWATCHES {
+                                    let selected = cur_color.as_deref() == *cval;
+                                    let (srect, sresp) = ui.allocate_exact_size(
+                                        egui::vec2(17.0, 17.0),
+                                        egui::Sense::click(),
+                                    );
+                                    ui.painter().circle_filled(srect.center(), 6.5, *c32);
+                                    if selected || sresp.hovered() {
+                                        ui.painter().circle_stroke(
+                                            srect.center(),
+                                            8.5,
+                                            egui::Stroke::new(
+                                                if selected { 1.8 } else { 1.0 },
+                                                if selected {
+                                                    Tokens::TEXT_PRIMARY
+                                                } else {
+                                                    Tokens::STATUS_INFO
+                                                },
+                                            ),
+                                        );
+                                    }
+                                    if sresp.on_hover_text(*cname).clicked() {
+                                        acts.recolor_col =
+                                            Some((col_id_clone.clone(), cval.map(str::to_owned)));
+                                    }
+                                }
+                            });
                             ui.separator();
                             if ui.button("+ New request").clicked() {
                                 acts.add_req_target = Some((col_id_clone.clone(), None));
@@ -587,7 +712,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                                 ui.separator();
                                 if ui
                                     .button(
-                                        egui::RichText::new("Delete collection")
+                                        egui::RichText::new("Move collection to Trash")
                                             .color(Tokens::TEXT_DANGER),
                                     )
                                     .clicked()
@@ -742,34 +867,24 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
         c.name = new_name;
         app.mark_dirty();
     }
+    if let Some((cid, new_color)) = acts.recolor_col
+        && let Some(c) = app.state.collections.iter_mut().find(|c| c.id == cid)
+    {
+        c.color = new_color;
+        app.mark_dirty();
+        app.status = "Updated collection color".into();
+    }
     if let Some((fid, new_name)) = acts.rename_folder
         && let Some(f) = app.state.folders.iter_mut().find(|f| f.id == fid)
     {
         f.name = new_name;
         app.mark_dirty();
     }
-    if let Some(fid) = acts.del_folder_id {
-        let mut to_remove = vec![fid.clone()];
-        let mut idx = 0usize;
-        while idx < to_remove.len() {
-            let parent = to_remove[idx].clone();
-            for child in &app.state.folders {
-                if child.parent_folder_id.as_deref() == Some(parent.as_str()) {
-                    to_remove.push(child.id.clone());
-                }
-            }
-            idx += 1;
-        }
-        for req in &mut app.state.requests {
-            if let Some(ref rfid) = req.folder_id
-                && to_remove.contains(rfid)
-            {
-                req.folder_id = None;
-            }
-        }
-        app.state.folders.retain(|f| !to_remove.contains(&f.id));
+    if let Some(fid) = acts.del_folder_id
+        && app.state.delete_folder(&fid)
+    {
         app.mark_dirty();
-        app.status = "Deleted folder (requests moved to collection root)".into();
+        app.status = "Moved folder to Trash (restore anytime from Sidebar Trash)".into();
     }
     if let Some(cid) = acts.fork_col_id
         && app.state.fork_collection(&cid).is_some()
@@ -780,6 +895,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
         && app.state.delete_collection(&cid)
     {
         app.mark_dirty();
+        app.status = "Moved collection to Trash (restore anytime from Sidebar Trash)".into();
     }
 
     // 5. Pointer-locked Splitter + PERSONAL section anchored cleanly at sidebar bottom
@@ -857,16 +973,44 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
         {
             app.navigate_to(MainMode::Secrets);
         }
-        if !app.state.trashed_requests.is_empty() {
+        let total_trashed = app.state.trashed_requests.len()
+            + app.state.trashed_collections.len()
+            + app.state.trashed_folders.len()
+            + app.state.trashed_environments.len();
+        if total_trashed > 0 {
             let trash_btn = swaggen_ui_kit::nav_item(
                 ui,
                 IconKind::Trash,
                 "Trash (Restore)",
-                Some(app.state.trashed_requests.len()),
+                Some(total_trashed),
                 app.show_sidebar_trash,
             );
-            let mut restore_id: Option<String> = None;
+            let mut restore_req_id: Option<String> = None;
+            let mut restore_col_id: Option<String> = None;
+            let mut restore_fld_id: Option<String> = None;
+            let mut restore_env_id: Option<String> = None;
             let mut empty_all = false;
+            let trashed_cols: Vec<(String, String)> = app
+                .state
+                .trashed_collections
+                .iter()
+                .rev()
+                .map(|c| (c.id.clone(), c.name.clone()))
+                .collect();
+            let trashed_flds: Vec<(String, String)> = app
+                .state
+                .trashed_folders
+                .iter()
+                .rev()
+                .map(|f| (f.id.clone(), f.name.clone()))
+                .collect();
+            let trashed_envs: Vec<(String, String)> = app
+                .state
+                .trashed_environments
+                .iter()
+                .rev()
+                .map(|e| (e.id.clone(), e.name.clone()))
+                .collect();
             let trashed_snapshot: Vec<(String, String, String)> = app
                 .state
                 .trashed_requests
@@ -878,10 +1022,10 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                 .id(egui::Id::unique("sidebar_trash_popup"))
                 .close_behavior(egui::PopupCloseBehavior::CloseOnClickOutside)
                 .show(|ui| {
-                    ui.set_min_width(220.0);
+                    ui.set_min_width(245.0);
                     ui.horizontal(|ui| {
                         ui.label(
-                            egui::RichText::new("RECENTLY DELETED")
+                            egui::RichText::new("SOFT-DELETED ITEMS")
                                 .size(10.0)
                                 .color(swaggen_ui_kit::text_secondary(ui))
                                 .strong(),
@@ -899,6 +1043,63 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                         });
                     });
                     ui.separator();
+                    for (cid, cname) in &trashed_cols {
+                        ui.horizontal(|ui| {
+                            ui.label(
+                                egui::RichText::new("COL")
+                                    .size(10.0)
+                                    .color(Tokens::METHOD_POST),
+                            );
+                            ui.label(egui::RichText::new(cname).size(11.5));
+                            ui.with_layout(
+                                egui::Layout::right_to_left(egui::Align::Center),
+                                |ui| {
+                                    if ui.small_button("Restore").clicked() {
+                                        restore_col_id = Some(cid.clone());
+                                        ui.close();
+                                    }
+                                },
+                            );
+                        });
+                    }
+                    for (fid, fname) in &trashed_flds {
+                        ui.horizontal(|ui| {
+                            ui.label(
+                                egui::RichText::new("DIR")
+                                    .size(10.0)
+                                    .color(Tokens::TEXT_SECONDARY),
+                            );
+                            ui.label(egui::RichText::new(fname).size(11.5));
+                            ui.with_layout(
+                                egui::Layout::right_to_left(egui::Align::Center),
+                                |ui| {
+                                    if ui.small_button("Restore").clicked() {
+                                        restore_fld_id = Some(fid.clone());
+                                        ui.close();
+                                    }
+                                },
+                            );
+                        });
+                    }
+                    for (eid, ename) in &trashed_envs {
+                        ui.horizontal(|ui| {
+                            ui.label(
+                                egui::RichText::new("ENV")
+                                    .size(10.0)
+                                    .color(Tokens::STATUS_SUCCESS),
+                            );
+                            ui.label(egui::RichText::new(ename).size(11.5));
+                            ui.with_layout(
+                                egui::Layout::right_to_left(egui::Align::Center),
+                                |ui| {
+                                    if ui.small_button("Restore").clicked() {
+                                        restore_env_id = Some(eid.clone());
+                                        ui.close();
+                                    }
+                                },
+                            );
+                        });
+                    }
                     for (tid, tm, tname) in &trashed_snapshot {
                         ui.horizontal(|ui| {
                             ui.monospace(
@@ -911,7 +1112,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                                 egui::Layout::right_to_left(egui::Align::Center),
                                 |ui| {
                                     if ui.small_button("Restore").clicked() {
-                                        restore_id = Some(tid.clone());
+                                        restore_req_id = Some(tid.clone());
                                         ui.close();
                                     }
                                 },
@@ -919,7 +1120,25 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                         });
                     }
                 });
-            if let Some(rid) = restore_id
+            if let Some(cid) = restore_col_id
+                && app.state.restore_trashed_collection(&cid)
+            {
+                app.mark_dirty();
+                app.status = "Restored collection from Trash".into();
+            }
+            if let Some(fid) = restore_fld_id
+                && app.state.restore_trashed_folder(&fid)
+            {
+                app.mark_dirty();
+                app.status = "Restored folder from Trash".into();
+            }
+            if let Some(eid) = restore_env_id
+                && app.state.restore_trashed_environment(&eid)
+            {
+                app.mark_dirty();
+                app.status = "Restored environment from Trash".into();
+            }
+            if let Some(rid) = restore_req_id
                 && let Some(restored_id) = app.state.restore_trashed_request(&rid)
             {
                 app.open_request_in_workbench(&restored_id);

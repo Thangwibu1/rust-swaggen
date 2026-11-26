@@ -539,18 +539,14 @@ fn show_env_scope_list(app: &mut App, ui: &mut egui::Ui, changed: &mut bool) {
                 .strong(),
         );
         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-            if ui
-                .add(
-                    egui::Button::new(
-                        egui::RichText::new("+")
-                            .size(14.0)
-                            .color(swaggen_ui_kit::text_secondary(ui))
-                            .strong(),
-                    )
-                    .frame(false),
-                )
-                .on_hover_text("Create new environment")
-                .clicked()
+            if swaggen_ui_kit::mini_icon_button(
+                ui,
+                "env_create_btn",
+                swaggen_ui_kit::MiniIconKind::Plus,
+                Tokens::STATUS_INFO,
+                "Create new environment",
+            )
+            .clicked()
             {
                 let mut idx_n = app.state.environments.len() + 1;
                 let mut name = format!("Environment {idx_n}");
@@ -783,15 +779,14 @@ fn show_env_active_editor(app: &mut App, ui: &mut egui::Ui, changed: &mut bool) 
                 *changed = true;
             }
             if delete_selected_env && app.state.environments.len() > 1 {
-                let removed = app.state.environments.remove(app.selected_env_idx);
-                if app.state.active_environment_id.as_deref() == Some(removed.id.as_str()) {
-                    app.state.active_environment_id =
-                        app.state.environments.first().map(|e| e.id.clone());
+                let eid = app.state.environments[app.selected_env_idx].id.clone();
+                if app.state.delete_environment(&eid) {
+                    app.selected_env_idx = app
+                        .selected_env_idx
+                        .min(app.state.environments.len().saturating_sub(1));
+                    app.status = "Moved environment to Trash (restore from Sidebar)".into();
+                    *changed = true;
                 }
-                app.selected_env_idx = app
-                    .selected_env_idx
-                    .min(app.state.environments.len().saturating_sub(1));
-                *changed = true;
             }
         }
         1 => {
@@ -1095,16 +1090,14 @@ fn edit_flat_variable_table(
                                 });
 
                                 env_fixed_cell(ui, act_w, row_h, true, |ui| {
-                                    if ui
-                                        .add(
-                                            egui::Button::new(
-                                                egui::RichText::new("×")
-                                                    .size(13.0)
-                                                    .color(swaggen_ui_kit::text_secondary(ui)),
-                                            )
-                                            .frame(false),
-                                        )
-                                        .clicked()
+                                    if swaggen_ui_kit::mini_icon_button(
+                                        ui,
+                                        (id_salt, "env_del_row", i),
+                                        swaggen_ui_kit::MiniIconKind::Close,
+                                        Tokens::TEXT_DANGER,
+                                        "Delete variable row",
+                                    )
+                                    .clicked()
                                     {
                                         rm_idx = Some(i);
                                     }

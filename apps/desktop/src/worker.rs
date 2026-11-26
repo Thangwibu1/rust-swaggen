@@ -31,7 +31,8 @@ use swaggen_local_store::{
 };
 use swaggen_secret_store::SecretStore;
 use swaggen_spec_engine::openapi::{
-    SpecDocument, extract_swagger_urls_from_html, parse_api_documentation,
+    SpecDocument, extract_swagger_script_urls_from_html, extract_swagger_urls_from_html,
+    parse_api_documentation,
 };
 use tokio_util::sync::CancellationToken;
 
@@ -222,6 +223,11 @@ pub enum Command {
         role: swaggen_api_contract::Role,
         expected_membership_revision: i64,
     },
+    RemoveWorkspaceMember {
+        profile_id: String,
+        workspace_id: String,
+        user_id: String,
+    },
     StageAndPublishEntity {
         profile_id: String,
         workspace_id: String,
@@ -395,6 +401,7 @@ pub enum Event {
     InAppInvitationAccepted(swaggen_api_contract::AcceptInvitationResponse),
     PublicInviteLinkCreated(swaggen_api_contract::PublicInviteLinkSummary),
     PublicInviteLinksLoaded(Vec<swaggen_api_contract::PublicInviteLinkSummary>),
+    WorkspaceMembersUpdated(swaggen_api_contract::MemberListResponse),
     SyncStateUpdated {
         state: Box<swaggen_sync::TeamSyncState>,
         message: String,
@@ -2059,14 +2066,18 @@ impl Worker {
                         };
                         let resolved = resolve_request_preview(&req, None, &[], &ctx, &[], 0);
                         let dl = sess.ws_store.downloads_dir();
+                        let read_full = |resp: &HttpResponseData| -> String {
+                            std::fs::read_to_string(&resp.raw_body_path).unwrap_or_else(|_| {
+                                String::from_utf8_lossy(&resp.preview_bytes).into_owned()
+                            })
+                        };
                         let event = match runtime.block_on(execute_request(
                             &resolved,
                             &dl,
                             CancellationToken::new(),
                         )) {
                             Ok(resp) => {
-                                let text =
-                                    String::from_utf8_lossy(&resp.preview_bytes).into_owned();
+                                let text = read_full(&resp);
                                 let mut doc =
                                     parse_api_documentation(new_uid(), name.clone(), &text, &[]);
                                 let trimmed_lower = text
@@ -2075,12 +2086,45 @@ impl Worker {
                                     .take(24)
                                     .collect::<String>()
                                     .to_ascii_lowercase();
-                                if doc.operations.is_empty()
-                                    && (trimmed_lower.starts_with("<!doctype html")
-                                        || trimmed_lower.starts_with("<html"))
-                                {
-                                    let candidates =
-                                        extract_swagger_urls_from_html(&text, &resolved.url);
+                                let is_html = trimmed_lower.starts_with("<!doctype html")
+                                    || trimmed_lower.starts_with("<html");
+                                if doc.operations.is_empty() && is_html {
+                                    let mut candidates =
+                                        extract_swagger_urls_from_html(&text, &resp.final_url);
+                                    for script_url in extract_swagger_script_urls_from_html(
+                                        &text,
+                                        &resp.final_url,
+                                    ) {
+                                        let s_req = RequestItem::new(
+                                            "spec-fetch-js",
+                                            name.clone(),
+                                            swaggen_domain::workspace::HttpMethod::Get,
+                                            script_url,
+                                        );
+                                        let s_resolved = resolve_request_preview(
+                                            &s_req,
+                                            None,
+                                            &[],
+                                            &ctx,
+                                            &[],
+                                            0,
+                                        );
+                                        if let Ok(s_resp) = runtime.block_on(execute_request(
+                                            &s_resolved,
+                                            &dl,
+                                            CancellationToken::new(),
+                                        )) {
+                                            let js_text = read_full(&s_resp);
+                                            for discovered in extract_swagger_urls_from_html(
+                                                &js_text,
+                                                &s_resp.final_url,
+                                            ) {
+                                                if !candidates.contains(&discovered) {
+                                                    candidates.insert(0, discovered);
+                                                }
+                                            }
+                                        }
+                                    }
                                     for cand_url in candidates {
                                         let cand_req = RequestItem::new(
                                             "spec-fetch-cand",
@@ -2101,9 +2145,7 @@ impl Worker {
                                             &dl,
                                             CancellationToken::new(),
                                         )) {
-                                            let cand_text =
-                                                String::from_utf8_lossy(&cand_resp.preview_bytes)
-                                                    .into_owned();
+                                            let cand_text = read_full(&cand_resp);
                                             let cand_doc = parse_api_documentation(
                                                 new_uid(),
                                                 name.clone(),
@@ -2117,7 +2159,13 @@ impl Worker {
                                         }
                                     }
                                 }
-                                Event::SpecFetched(Box::new(doc))
+                                if doc.operations.is_empty() && is_html {
+                                    Event::ActionError(
+                                        "URL returned an HTML webpage without an embedded/linked OpenAPI or Swagger JSON/YAML spec. Enter a direct JSON/YAML URL (e.g. /openapi.json, /swagger/v1/swagger.json) or a Swagger UI page.".into(),
+                                    )
+                                } else {
+                                    Event::SpecFetched(Box::new(doc))
+                                }
                             }
                             Err(err) => Event::ActionError(format!(
                                 "Spec fetch failed ({}): {}",
@@ -2180,6 +2228,7 @@ impl Worker {
                     | Command::RevokePublicInviteLink { .. }
                     | Command::JoinByPublicInviteLink { .. }
                     | Command::UpdateMemberRole { .. }
+                    | Command::RemoveWorkspaceMember { .. }
                     | Command::StageAndPublishEntity { .. }
                     | Command::SyncNow { .. }
                     | Command::ResolveSyncConflict { .. }

@@ -232,63 +232,47 @@ fn load_first_existing(paths: &[PathBuf]) -> Option<Vec<u8>> {
     None
 }
 
-/// Loads Segoe UI / Segoe UI Bold for crisp Windows UI typography (`Proportional` & `bold`),
-/// and JetBrains Mono / Cascadia Mono / Consolas strictly for `Monospace` code & URLs.
+/// Configures typography across the entire desktop app using JetBrains Mono cleanly for
+/// both `Proportional` UI prose and `Monospace` code/URLs (with Segoe UI fallback only for rare symbols).
 fn configure_fonts(context: &egui::Context) {
     let mut defs = egui::FontDefinitions::default();
     let local_fonts = std::env::var_os("LOCALAPPDATA")
         .map(|p| PathBuf::from(p).join("Microsoft\\Windows\\Fonts"));
     let win_fonts = std::env::var_os("WINDIR").map(|p| PathBuf::from(p).join("Fonts"));
 
-    let mut ui_candidates = Vec::new();
-    let mut ui_bold_candidates = Vec::new();
+    let mut ui_fallback_candidates = Vec::new();
     let mut mono_candidates = Vec::new();
     let mut mono_bold_candidates = Vec::new();
 
     if let Some(ref wf) = win_fonts {
-        ui_candidates.push(wf.join("segoeui.ttf"));
-        ui_candidates.push(wf.join("arial.ttf"));
-        ui_bold_candidates.push(wf.join("segoeuib.ttf"));
-        ui_bold_candidates.push(wf.join("arialbd.ttf"));
         mono_candidates.push(wf.join("JetBrainsMono-Regular.ttf"));
+        mono_candidates.push(wf.join("JetBrainsMonoNL-Regular.ttf"));
         mono_candidates.push(wf.join("CascadiaMono.ttf"));
         mono_candidates.push(wf.join("consola.ttf"));
         mono_bold_candidates.push(wf.join("JetBrainsMono-Bold.ttf"));
+        mono_bold_candidates.push(wf.join("JetBrainsMonoNL-Bold.ttf"));
         mono_bold_candidates.push(wf.join("consolab.ttf"));
+        ui_fallback_candidates.push(wf.join("segoeui.ttf"));
+        ui_fallback_candidates.push(wf.join("seguisym.ttf"));
     }
     if let Some(ref lf) = local_fonts {
         mono_candidates.insert(0, lf.join("JetBrainsMono-Regular.ttf"));
         mono_candidates.insert(1, lf.join("JetBrainsMonoNL-Regular.ttf"));
+        mono_candidates.insert(2, lf.join("JetBrainsMono-Medium.ttf"));
         mono_bold_candidates.insert(0, lf.join("JetBrainsMono-Bold.ttf"));
         mono_bold_candidates.insert(1, lf.join("JetBrainsMonoNL-Bold.ttf"));
         mono_bold_candidates.insert(2, lf.join("JetBrainsMono-SemiBold.ttf"));
     }
 
-    let mut ui_stack = Vec::new();
-    let mut mono_stack = Vec::new();
+    let mut primary_stack = Vec::new();
     let mut bold_stack = Vec::new();
 
-    if let Some(bytes) = load_first_existing(&ui_candidates) {
-        defs.font_data.insert(
-            "ui_regular".into(),
-            std::sync::Arc::new(egui::FontData::from_owned(bytes)),
-        );
-        ui_stack.push("ui_regular".to_owned());
-    }
-    if let Some(bytes) = load_first_existing(&ui_bold_candidates) {
-        defs.font_data.insert(
-            "ui_bold".into(),
-            std::sync::Arc::new(egui::FontData::from_owned(bytes)),
-        );
-        bold_stack.push("ui_bold".to_owned());
-    }
     if let Some(bytes) = load_first_existing(&mono_candidates) {
         defs.font_data.insert(
             "jb_regular".into(),
             std::sync::Arc::new(egui::FontData::from_owned(bytes)),
         );
-        mono_stack.push("jb_regular".to_owned());
-        ui_stack.push("jb_regular".to_owned());
+        primary_stack.push("jb_regular".to_owned());
     }
     if let Some(bytes) = load_first_existing(&mono_bold_candidates) {
         defs.font_data.insert(
@@ -297,29 +281,23 @@ fn configure_fonts(context: &egui::Context) {
         );
         bold_stack.push("jb_bold".to_owned());
     }
+    if let Some(bytes) = load_first_existing(&ui_fallback_candidates) {
+        defs.font_data.insert(
+            "ui_fallback".into(),
+            std::sync::Arc::new(egui::FontData::from_owned(bytes)),
+        );
+    }
 
-    if !ui_stack.is_empty() {
-        let entry = defs
-            .families
-            .entry(egui::FontFamily::Proportional)
-            .or_default();
-        for (pos, name) in ui_stack.iter().enumerate() {
+    for family in [egui::FontFamily::Proportional, egui::FontFamily::Monospace] {
+        let entry = defs.families.entry(family).or_default();
+        for (pos, name) in primary_stack.iter().enumerate() {
             entry.insert(pos, name.clone());
         }
-    }
-    if !mono_stack.is_empty() {
-        let entry = defs
-            .families
-            .entry(egui::FontFamily::Monospace)
-            .or_default();
-        for (pos, name) in mono_stack.iter().enumerate() {
-            entry.insert(pos, name.clone());
-        }
-        // Keep Segoe UI fallback on Monospace for glyphs not present in JetBrains Mono
-        if defs.font_data.contains_key("ui_regular") {
-            entry.push("ui_regular".to_owned());
+        if defs.font_data.contains_key("ui_fallback") {
+            entry.push("ui_fallback".to_owned());
         }
     }
+
     let mut bold_family = bold_stack;
     if let Some(existing) = defs.families.get(&egui::FontFamily::Proportional) {
         for name in existing {
@@ -615,9 +593,19 @@ pub fn google_button(ui: &mut egui::Ui, enabled: bool, label: &str) -> egui::Res
     resp
 }
 
-/// Renders the exact Figma Swaggen Brand/Mark (node 4:81) exported directly from Figma.
-pub fn brand_mark(ui: &mut egui::Ui, size: f32) {
-    let (rect, _) = ui.allocate_exact_size(egui::vec2(size, size), egui::Sense::hover());
+/// Renders the exact Figma Swaggen Brand/Mark (node 4:81) as a clickable Home trigger.
+pub fn brand_mark(ui: &mut egui::Ui, size: f32) -> egui::Response {
+    let (rect, resp) = ui.allocate_exact_size(egui::vec2(size, size), egui::Sense::click());
+    if resp.hovered() {
+        ui.ctx().set_cursor_icon(egui::CursorIcon::PointingHand);
+        ui.painter().rect(
+            rect.expand(4.0),
+            7.0,
+            subtle_bg(ui),
+            egui::Stroke::new(1.0, border_color(ui)),
+            egui::StrokeKind::Middle,
+        );
+    }
     if let Some(tex) = load_figma_texture(ui.ctx(), "figma_brand_mark_4_81", FIGMA_BRAND_MARK_PNG) {
         ui.painter().image(
             tex.id(),
@@ -625,6 +613,128 @@ pub fn brand_mark(ui: &mut egui::Ui, size: f32) {
             egui::Rect::from_min_max(egui::pos2(0.0, 0.0), egui::pos2(1.0, 1.0)),
             egui::Color32::WHITE,
         );
+    }
+    resp.on_hover_text("Home (Workspaces overview)")
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum MiniIconKind {
+    Plus,
+    Minus,
+    Close,
+    More,
+    Up,
+    Down,
+}
+
+/// Crisp rounded 22x22 vector action button for `+`, `-`, `×`, `⋯`, `↑`, `↓`.
+pub fn mini_icon_button(
+    ui: &mut egui::Ui,
+    _id_salt: impl std::hash::Hash,
+    kind: MiniIconKind,
+    hover_accent: egui::Color32,
+    tooltip: &str,
+) -> egui::Response {
+    let (rect, resp) = ui.allocate_exact_size(egui::vec2(22.0, 22.0), egui::Sense::click());
+    if resp.hovered() {
+        ui.ctx().set_cursor_icon(egui::CursorIcon::PointingHand);
+    }
+    let fill = if resp.hovered() {
+        selected_bg(ui)
+    } else {
+        subtle_bg(ui)
+    };
+    let stroke_col = if resp.hovered() {
+        hover_accent
+    } else {
+        border_color(ui)
+    };
+    ui.painter().rect(
+        rect,
+        5.0,
+        fill,
+        egui::Stroke::new(1.0, stroke_col),
+        egui::StrokeKind::Middle,
+    );
+    let fg = if resp.hovered() {
+        hover_accent
+    } else {
+        text_secondary(ui)
+    };
+    paint_mini_icon(ui.painter(), rect, kind, fg);
+    if tooltip.is_empty() {
+        resp
+    } else {
+        resp.on_hover_text(tooltip)
+    }
+}
+
+/// Paints a mini crisp vector icon (`+`, `-`, `×`, `⋯`, `↑`, `↓`) centered inside `rect`.
+pub fn paint_mini_icon(
+    painter: &egui::Painter,
+    rect: egui::Rect,
+    kind: MiniIconKind,
+    fg: egui::Color32,
+) {
+    let c = rect.center();
+    let r = (rect.width().min(rect.height()) * 0.24).clamp(3.0, 5.5);
+    let st = egui::Stroke::new(1.5, fg);
+    match kind {
+        MiniIconKind::Plus => {
+            painter.line_segment([egui::pos2(c.x - r, c.y), egui::pos2(c.x + r, c.y)], st);
+            painter.line_segment([egui::pos2(c.x, c.y - r), egui::pos2(c.x, c.y + r)], st);
+        }
+        MiniIconKind::Minus => {
+            painter.line_segment([egui::pos2(c.x - r, c.y), egui::pos2(c.x + r, c.y)], st);
+        }
+        MiniIconKind::Close => {
+            let d = r * 0.85;
+            painter.line_segment(
+                [egui::pos2(c.x - d, c.y - d), egui::pos2(c.x + d, c.y + d)],
+                st,
+            );
+            painter.line_segment(
+                [egui::pos2(c.x - d, c.y + d), egui::pos2(c.x + d, c.y - d)],
+                st,
+            );
+        }
+        MiniIconKind::More => {
+            for dx in [-4.0_f32, 0.0, 4.0] {
+                painter.circle_filled(egui::pos2(c.x + dx, c.y), 1.35, fg);
+            }
+        }
+        MiniIconKind::Up => {
+            painter.line_segment(
+                [
+                    egui::pos2(c.x - r, c.y + 1.5),
+                    egui::pos2(c.x, c.y - r + 1.0),
+                ],
+                st,
+            );
+            painter.line_segment(
+                [
+                    egui::pos2(c.x + r, c.y + 1.5),
+                    egui::pos2(c.x, c.y - r + 1.0),
+                ],
+                st,
+            );
+        }
+        MiniIconKind::Down => {
+            painter.line_segment(
+                [
+                    egui::pos2(c.x - r, c.y - 1.5),
+                    egui::pos2(c.x, c.y + r - 1.0),
+                ],
+                st,
+            );
+            painter.line_segment(
+                [
+                    egui::pos2(c.x + r, c.y - 1.5),
+                    egui::pos2(c.x, c.y + r - 1.0),
+                ],
+                st,
+            );
+        }
     }
 }
 

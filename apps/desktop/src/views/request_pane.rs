@@ -21,7 +21,7 @@ use swaggen_domain::{
         resolve_request_preview, split_url_parts,
     },
 };
-use swaggen_ui_kit::{Edge, IconKind, NoticeKind, Tokens};
+use swaggen_ui_kit::{Edge, NoticeKind, Tokens};
 
 pub fn show_top_bar(app: &mut App, ui: &mut egui::Ui) -> Option<usize> {
     // 1. Clean Flat Postman-Style Open Tab Strip
@@ -139,19 +139,14 @@ pub fn show_top_bar(app: &mut App, ui: &mut egui::Ui) -> Option<usize> {
                                                 {
                                                     toggle_pin = Some(tab.id.clone());
                                                 }
-                                            } else if ui
-                                                .add(
-                                                    egui::Button::new(
-                                                        egui::RichText::new("×")
-                                                            .size(12.0)
-                                                            .color(
-                                                                swaggen_ui_kit::text_secondary(ui),
-                                                            ),
-                                                    )
-                                                    .frame(false),
-                                                )
-                                                .on_hover_text("Close tab (Ctrl+W)")
-                                                .clicked()
+                                            } else if swaggen_ui_kit::mini_icon_button(
+                                                ui,
+                                                ("close_tab_x", &tab.id),
+                                                swaggen_ui_kit::MiniIconKind::Close,
+                                                Tokens::TEXT_DANGER,
+                                                "Close tab (Ctrl+W)",
+                                            )
+                                            .clicked()
                                             {
                                                 close_tab = Some(tab.id.clone());
                                             }
@@ -177,19 +172,14 @@ pub fn show_top_bar(app: &mut App, ui: &mut egui::Ui) -> Option<usize> {
             },
         );
 
-        let (add_rect, add_resp) =
-            ui.allocate_exact_size(egui::vec2(22.0, 22.0), egui::Sense::click());
-        if add_resp.hovered() {
-            ui.painter()
-                .rect_filled(add_rect, 4.0, swaggen_ui_kit::subtle_bg(ui));
-        }
-        swaggen_ui_kit::paint_icon(
-            ui.painter(),
-            add_rect.shrink(4.5),
-            IconKind::Plus,
-            swaggen_ui_kit::text_primary(ui),
-        );
-        if add_resp.on_hover_text("New HTTP request").clicked()
+        if swaggen_ui_kit::mini_icon_button(
+            ui,
+            "new_http_req_tab_btn",
+            swaggen_ui_kit::MiniIconKind::Plus,
+            Tokens::STATUS_INFO,
+            "New HTTP request",
+        )
+        .clicked()
             && let Some(cid) = app.state.collections.first().map(|c| c.id.clone())
         {
             let req = RequestItem::new(cid, "New request", HttpMethod::Get, "{{base_url}}/");
@@ -831,27 +821,27 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
         (resolved, eff_source)
     };
 
-    // 3. Clean Postman Sub-tabs: `Params` | `Path Variables` | `Headers` | `Body` | `Auth` | `Scripts` | `Tests` | `Settings` | `Code`
+    // 3. Clean Postman Sub-tabs: `Params` (Query Params + Path Variables) | `Headers` | `Body` | `Auth` | `Scripts` | `Assertions` | `Settings` | `Code`
     let q_count = req_clone
         .query_params
         .iter()
         .filter(|q| !q.key.is_empty() || !q.value.is_empty())
         .count();
-    let p_count = req_clone.path_params.len();
+    let p_count = req_clone
+        .path_params
+        .iter()
+        .filter(|p| !p.key.is_empty() || !p.value.is_empty())
+        .count();
+    let total_params = q_count + p_count;
     let h_count = req_clone.headers.len();
     let a_count = req_clone.assertions.len() + req_clone.extractors.len();
     let has_scripts = !req_clone.pre_request_script.trim().is_empty()
         || !req_clone.post_response_script.trim().is_empty();
 
-    let query_lbl = if q_count > 0 {
-        format!("Params ({q_count})")
+    let query_lbl = if total_params > 0 {
+        format!("Params ({total_params})")
     } else {
         "Params".into()
-    };
-    let path_lbl = if p_count > 0 {
-        format!("Path Vars ({p_count})")
-    } else {
-        "Path Vars".into()
     };
     let headers_lbl = if h_count > 0 {
         format!("Headers ({h_count})")
@@ -881,14 +871,11 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
 
     let subtab_bar = ui.horizontal_wrapped(|ui| {
         ui.spacing_mut().item_spacing.x = 2.0;
-        let mut tabs: Vec<(RequestSubTab, &str)> = Vec::with_capacity(10);
+        let mut tabs: Vec<(RequestSubTab, &str)> = Vec::with_capacity(9);
         if is_gql {
             tabs.push((RequestSubTab::GraphQl, "GraphQL"));
         }
         tabs.push((RequestSubTab::Params, query_lbl.as_str()));
-        if p_count > 0 || app.request_subtab == RequestSubTab::PathParams {
-            tabs.push((RequestSubTab::PathParams, path_lbl.as_str()));
-        }
         tabs.push((RequestSubTab::Headers, headers_lbl.as_str()));
         if allows_body {
             tabs.push((RequestSubTab::Body, "Body"));
@@ -965,7 +952,7 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
             RequestSubTab::Params => {
                 ui.horizontal_wrapped(|ui| {
                     ui.label(
-                        egui::RichText::new("Query Params")
+                        egui::RichText::new("Query Params (?key=value)")
                             .size(11.5)
                             .color(swaggen_ui_kit::text_secondary(ui))
                             .strong(),
@@ -1014,8 +1001,8 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
                     app.state.requests[req_idx].sync_url_from_query_params();
                     changed = true;
                 }
-            }
-            RequestSubTab::PathParams => {
+
+                ui.add_space(12.0);
                 ui.label(
                     egui::RichText::new("Path Variables (:id or {id} in URL)")
                         .size(11.5)
@@ -1059,9 +1046,24 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
                         }
                     } else if req.path_params.len() == prev_len {
                         for (old_k, row) in prev_keys.iter().zip(req.path_params.iter()) {
-                            if old_k != &row.key && !row.key.trim().is_empty() {
-                                req.url =
-                                    rename_url_path_param_key(&req.url, old_k, row.key.trim());
+                            let new_k = row.key.trim();
+                            if old_k.trim().is_empty() && !new_k.is_empty() {
+                                let (base, query, frag) = split_url_parts(&req.url);
+                                let sep = if base.ends_with('/') { "" } else { "/" };
+                                let mut new_url = format!("{base}{sep}:{new_k}");
+                                if let Some(q) = query {
+                                    new_url.push('?');
+                                    new_url.push_str(q);
+                                }
+                                if let Some(f) = frag {
+                                    new_url.push('#');
+                                    new_url.push_str(f);
+                                }
+                                req.url = new_url;
+                            } else if old_k != &row.key && !new_k.is_empty() {
+                                req.url = rename_url_path_param_key(&req.url, old_k, new_k);
+                            } else if !old_k.trim().is_empty() && new_k.is_empty() {
+                                req.url = remove_url_path_param_key(&req.url, old_k);
                             }
                         }
                     } else if req.path_params.len() < prev_len {
@@ -3214,17 +3216,14 @@ pub fn edit_postman_kv_grid(
                                     });
                                 }
                                 kv_fixed_cell(ui, act_w, row_h, true, |ui| {
-                                    if ui
-                                        .add(
-                                            egui::Button::new(
-                                                egui::RichText::new("×")
-                                                    .size(13.0)
-                                                    .color(swaggen_ui_kit::text_secondary(ui)),
-                                            )
-                                            .frame(false),
-                                        )
-                                        .on_hover_text("Delete row")
-                                        .clicked()
+                                    if swaggen_ui_kit::mini_icon_button(
+                                        ui,
+                                        (id_salt, "kv_del_row", i),
+                                        swaggen_ui_kit::MiniIconKind::Close,
+                                        Tokens::TEXT_DANGER,
+                                        "Delete row",
+                                    )
+                                    .clicked()
                                     {
                                         remove_idx = Some(i);
                                     }

@@ -183,6 +183,7 @@ pub fn import_postman_collection_v2_1(
         id: col_id,
         name: col_name,
         description: col_desc,
+        color: None,
         auth: col_auth,
         variables,
         pre_request_script: col_pre,
@@ -740,9 +741,215 @@ fn tokenize_curl(input: &str) -> Result<Vec<String>, String> {
     Ok(tokens)
 }
 
+fn parse_csv_row(line: &str) -> Vec<String> {
+    let mut fields = Vec::new();
+    let mut cur = String::new();
+    let mut in_quotes = false;
+    let mut chars = line.chars().peekable();
+    while let Some(c) = chars.next() {
+        if in_quotes {
+            if c == '"' {
+                if chars.peek() == Some(&'"') {
+                    cur.push('"');
+                    chars.next();
+                } else {
+                    in_quotes = false;
+                }
+            } else {
+                cur.push(c);
+            }
+        } else {
+            match c {
+                '"' => in_quotes = true,
+                ',' => {
+                    fields.push(cur.trim().to_owned());
+                    cur.clear();
+                }
+                _ => cur.push(c),
+            }
+        }
+    }
+    fields.push(cur.trim().to_owned());
+    fields
+}
+
+/// Imports API requests from a CSV file into a ready-to-test Collection!
+/// Supports headered CSV (`name,method,url,headers,body,description`), 2-column (`METHOD,URL`), or 1-column URL lists.
+pub fn import_requests_from_csv(
+    collection_name: impl Into<String>,
+    csv_text: &str,
+) -> Result<(Collection, Vec<RequestItem>, CompatibilityReport), String> {
+    let raw_lines: Vec<&str> = csv_text
+        .lines()
+        .map(str::trim)
+        .filter(|l| !l.is_empty() && !l.starts_with('#'))
+        .collect();
+    if raw_lines.is_empty() {
+        return Err("CSV file is empty".into());
+    }
+
+    let col_id = new_uid();
+    let first_cells: Vec<String> = parse_csv_row(raw_lines[0])
+        .into_iter()
+        .map(|s| s.to_ascii_lowercase())
+        .collect();
+
+    let has_header = first_cells.iter().any(|c| {
+        matches!(
+            c.as_str(),
+            "url" | "endpoint" | "path" | "method" | "name" | "title" | "api"
+        )
+    });
+
+    let (idx_name, idx_method, idx_url, idx_headers, idx_body, idx_desc, start_row) = if has_header
+    {
+        let find_col = |aliases: &[&str]| -> Option<usize> {
+            first_cells
+                .iter()
+                .position(|c| aliases.iter().any(|a| c == a))
+        };
+        (
+            find_col(&["name", "title", "request", "endpoint_name"]),
+            find_col(&["method", "http_method", "verb"]),
+            find_col(&["url", "endpoint", "path", "uri", "api"]),
+            find_col(&["headers", "header"]),
+            find_col(&["body", "payload", "json", "data"]),
+            find_col(&["description", "desc", "notes"]),
+            1usize,
+        )
+    } else {
+        (None, None, None, None, None, None, 0usize)
+    };
+
+    let mut requests = Vec::new();
+    for (row_idx, line) in raw_lines.iter().enumerate().skip(start_row) {
+        let cols = parse_csv_row(line);
+        if cols.is_empty() {
+            continue;
+        }
+        let get = |opt: Option<usize>| -> String {
+            opt.and_then(|i| cols.get(i))
+                .map(|s| s.trim().to_owned())
+                .unwrap_or_default()
+        };
+
+        let (mut name, raw_method, raw_url, raw_headers, raw_body, desc) = if has_header {
+            let u = get(idx_url);
+            let m = get(idx_method);
+            let n = get(idx_name);
+            (n, m, u, get(idx_headers), get(idx_body), get(idx_desc))
+        } else if cols.len() >= 3 {
+            (
+                cols[0].clone(),
+                cols[1].clone(),
+                cols[2].clone(),
+                cols.get(3).cloned().unwrap_or_default(),
+                cols.get(4).cloned().unwrap_or_default(),
+                cols.get(5).cloned().unwrap_or_default(),
+            )
+        } else if cols.len() == 2 {
+            (
+                String::new(),
+                cols[0].clone(),
+                cols[1].clone(),
+                String::new(),
+                String::new(),
+                String::new(),
+            )
+        } else {
+            (
+                String::new(),
+                "GET".into(),
+                cols[0].clone(),
+                String::new(),
+                String::new(),
+                String::new(),
+            )
+        };
+
+        if raw_url.is_empty() {
+            continue;
+        }
+        let url = if raw_url.starts_with('/') {
+            format!("{{{{base_url}}}}{raw_url}")
+        } else {
+            raw_url
+        };
+        let method = HttpMethod::parse(&raw_method).unwrap_or(HttpMethod::Get);
+        if name.is_empty() {
+            name = format!("{} {}", method.as_str(), url);
+        }
+        let mut req = RequestItem::new(col_id.clone(), name, method, url);
+        req.description = desc;
+        if !raw_headers.is_empty() {
+            for part in raw_headers.split([';', '|']) {
+                if let Some((k, v)) = part.split_once(':') {
+                    let hk = k.trim();
+                    if !hk.is_empty() {
+                        req.headers.push(KeyValueRow::new(hk, v.trim()));
+                    }
+                }
+            }
+        }
+        if !raw_body.is_empty() {
+            let t = raw_body.trim();
+            req.body = if t.starts_with('{') || t.starts_with('[') {
+                RequestBody::Json(raw_body)
+            } else {
+                RequestBody::Text(raw_body)
+            };
+        }
+        req.sync_params_from_url();
+        req.order_key = row_idx as u64;
+        requests.push(req);
+    }
+
+    if requests.is_empty() {
+        return Err("No valid API rows found in CSV (need url / endpoint column)".into());
+    }
+
+    let col = Collection {
+        id: col_id,
+        name: collection_name.into(),
+        description: "Imported from CSV".into(),
+        color: None,
+        auth: AuthConfig::Inherit,
+        variables: Vec::new(),
+        pre_request_script: String::new(),
+        post_response_script: String::new(),
+        order_key: 0,
+    };
+    let report = CompatibilityReport {
+        imported_collections: 1,
+        imported_folders: 0,
+        imported_requests: requests.len(),
+        imported_variables: 0,
+        warnings: Vec::new(),
+        unsupported_items: Vec::new(),
+    };
+    Ok((col, requests, report))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn csv_api_importer_parses_headered_and_simple_rows() {
+        let csv = "name,method,url,headers,body,description\n\
+                   List Users,GET,https://api.example.test/users?page=1,Accept: application/json,,Fetch users\n\
+                   Create Item,POST,/items,,\"{\"\"title\"\":\"\"demo\"\"}\",Create item";
+        let (col, reqs, report) = import_requests_from_csv("Test CSV", csv).unwrap();
+        assert_eq!(col.name, "Test CSV");
+        assert_eq!(reqs.len(), 2);
+        assert_eq!(reqs[0].method, HttpMethod::Get);
+        assert_eq!(reqs[0].headers.len(), 1);
+        assert_eq!(reqs[0].query_params.len(), 1);
+        assert_eq!(reqs[1].method, HttpMethod::Post);
+        assert_eq!(reqs[1].url, "{{base_url}}/items");
+        assert!(matches!(reqs[1].body, RequestBody::Json(_)));
+        assert_eq!(report.imported_requests, 2);
+    }
 
     #[test]
     fn postman_v2_1_and_environment_import_work_with_report() {

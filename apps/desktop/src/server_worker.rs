@@ -1111,6 +1111,34 @@ pub fn handle_server_command(
                 },
             )
         }
+        Command::RemoveWorkspaceMember {
+            profile_id,
+            workspace_id,
+            user_id,
+        } => {
+            let (_, prof) = match get_profile(root, &profile_id) {
+                Ok(v) => v,
+                Err(m) => return Ok(Event::ActionError(m)),
+            };
+            let tok = match read_session_token(root, &prof) {
+                Ok(t) => t,
+                Err(m) => return Ok(Event::ActionError(m)),
+            };
+            let path = format!("/v1/workspaces/{workspace_id}/members/{user_id}/remove");
+            Ok(
+                match runtime.block_on(server_call::<(), MemberListResponse>(
+                    &prof,
+                    HttpMethod::Post,
+                    &path,
+                    Some(&tok),
+                    None,
+                    downloads,
+                )) {
+                    Ok((members, _)) => Event::WorkspaceMembersUpdated(members),
+                    Err(e) => Event::ActionError(e),
+                },
+            )
+        }
         other => Err(other),
     }
 }

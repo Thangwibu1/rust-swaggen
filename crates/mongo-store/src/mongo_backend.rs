@@ -376,7 +376,11 @@ impl MongoStore {
         let mem_rev = fence_doc.get_i64("membership_revision").unwrap_or(1);
         let mem_col: Collection<Document> = self.db.collection("memberships");
         let mem = mem_col
-            .find_one(doc! { "workspace_id": workspace_id, "user_id": user_id })
+            .find_one(doc! {
+                "workspace_id": workspace_id,
+                "user_id": user_id,
+                "deleted_at_unix": { "$exists": false }
+            })
             .session(&mut *session)
             .await
             .map_err(|e| map_mongo_err(&e))?
@@ -983,7 +987,7 @@ impl WorkspaceRepository for MongoStore {
         let fences: Collection<Document> = self.db.collection("workspace_permission_fences");
 
         let mut cursor = mem_col
-            .find(doc! { "user_id": &auth.user_id })
+            .find(doc! { "user_id": &auth.user_id, "deleted_at_unix": { "$exists": false } })
             .await
             .map_err(|e| map_mongo_err(&e))?;
         let mut caller_mems: Vec<(String, Role)> = Vec::new();
@@ -1039,7 +1043,7 @@ impl WorkspaceRepository for MongoStore {
         let mut count_map = std::collections::HashMap::with_capacity(wids.len());
         let mut agg_cur = mem_col
             .aggregate([
-                doc! { "$match": { "workspace_id": { "$in": &wids } } },
+                doc! { "$match": { "workspace_id": { "$in": &wids }, "deleted_at_unix": { "$exists": false } } },
                 doc! { "$group": { "_id": "$workspace_id", "count": { "$sum": 1_i32 } } },
             ])
             .await
@@ -1102,7 +1106,7 @@ impl WorkspaceRepository for MongoStore {
         let mem_col: Collection<Document> = self.db.collection("memberships");
         let users_col: Collection<Document> = self.db.collection("users");
         let mut cursor = mem_col
-            .find(doc! { "workspace_id": workspace_id })
+            .find(doc! { "workspace_id": workspace_id, "deleted_at_unix": { "$exists": false } })
             .session(&mut session)
             .await
             .map_err(|e| map_mongo_err(&e))?;
@@ -1485,12 +1489,19 @@ impl WorkspaceRepository for MongoStore {
 
         let mem_col: Collection<Document> = self.db.collection("memberships");
         mem_col
-            .insert_one(doc! {
-                "workspace_id": &workspace_id,
-                "user_id": &user_id,
-                "role": role.as_str(),
-                "joined_at_unix": now,
-            })
+            .update_one(
+                doc! { "workspace_id": &workspace_id, "user_id": &user_id },
+                doc! {
+                    "$set": {
+                        "workspace_id": &workspace_id,
+                        "user_id": &user_id,
+                        "role": role.as_str(),
+                        "joined_at_unix": now,
+                    },
+                    "$unset": { "deleted_at_unix": "" }
+                },
+            )
+            .upsert(true)
             .session(&mut session)
             .await
             .map_err(|e| map_mongo_err(&e))?;
@@ -1537,7 +1548,10 @@ impl WorkspaceRepository for MongoStore {
         .await?;
         commit_with_retry(&mut session).await?;
         let member_count = mem_col
-            .count_documents(doc! { "workspace_id": &workspace_id })
+            .count_documents(doc! {
+                "workspace_id": &workspace_id,
+                "deleted_at_unix": { "$exists": false }
+            })
             .await
             .unwrap_or(1) as usize;
         Ok(AcceptInvitationResponse {
@@ -1704,18 +1718,29 @@ impl WorkspaceRepository for MongoStore {
 
         let mem_col: Collection<Document> = self.db.collection("memberships");
         let existing_mem = mem_col
-            .find_one(doc! { "workspace_id": &workspace_id, "user_id": &auth.user_id })
+            .find_one(doc! {
+                "workspace_id": &workspace_id,
+                "user_id": &auth.user_id,
+                "deleted_at_unix": { "$exists": false }
+            })
             .session(&mut session)
             .await
             .map_err(|e| map_mongo_err(&e))?;
         if existing_mem.is_none() {
             mem_col
-                .insert_one(doc! {
-                    "workspace_id": &workspace_id,
-                    "user_id": &auth.user_id,
-                    "role": role.as_str(),
-                    "joined_at_unix": now,
-                })
+                .update_one(
+                    doc! { "workspace_id": &workspace_id, "user_id": &auth.user_id },
+                    doc! {
+                        "$set": {
+                            "workspace_id": &workspace_id,
+                            "user_id": &auth.user_id,
+                            "role": role.as_str(),
+                            "joined_at_unix": now,
+                        },
+                        "$unset": { "deleted_at_unix": "" }
+                    },
+                )
+                .upsert(true)
                 .session(&mut session)
                 .await
                 .map_err(|e| map_mongo_err(&e))?;
@@ -1769,7 +1794,10 @@ impl WorkspaceRepository for MongoStore {
         .await?;
         commit_with_retry(&mut session).await?;
         let member_count = mem_col
-            .count_documents(doc! { "workspace_id": &workspace_id })
+            .count_documents(doc! {
+                "workspace_id": &workspace_id,
+                "deleted_at_unix": { "$exists": false }
+            })
             .await
             .unwrap_or(1) as usize;
         Ok(AcceptInvitationResponse {
@@ -2144,19 +2172,30 @@ impl WorkspaceRepository for MongoStore {
 
         let mem_col: Collection<Document> = self.db.collection("memberships");
         if mem_col
-            .find_one(doc! { "workspace_id": &workspace_id, "user_id": &auth.user_id })
+            .find_one(doc! {
+                "workspace_id": &workspace_id,
+                "user_id": &auth.user_id,
+                "deleted_at_unix": { "$exists": false }
+            })
             .session(&mut session)
             .await
             .map_err(|e| map_mongo_err(&e))?
             .is_none()
         {
             mem_col
-                .insert_one(doc! {
-                    "workspace_id": &workspace_id,
-                    "user_id": &auth.user_id,
-                    "role": role.as_str(),
-                    "joined_at_unix": now,
-                })
+                .update_one(
+                    doc! { "workspace_id": &workspace_id, "user_id": &auth.user_id },
+                    doc! {
+                        "$set": {
+                            "workspace_id": &workspace_id,
+                            "user_id": &auth.user_id,
+                            "role": role.as_str(),
+                            "joined_at_unix": now,
+                        },
+                        "$unset": { "deleted_at_unix": "" }
+                    },
+                )
+                .upsert(true)
                 .session(&mut session)
                 .await
                 .map_err(|e| map_mongo_err(&e))?;
@@ -2207,7 +2246,10 @@ impl WorkspaceRepository for MongoStore {
         .await?;
         commit_with_retry(&mut session).await?;
         let member_count = mem_col
-            .count_documents(doc! { "workspace_id": &workspace_id })
+            .count_documents(doc! {
+                "workspace_id": &workspace_id,
+                "deleted_at_unix": { "$exists": false }
+            })
             .await
             .unwrap_or(1) as usize;
         Ok(AcceptInvitationResponse {
@@ -2277,7 +2319,11 @@ impl WorkspaceRepository for MongoStore {
         }
         let mem_col: Collection<Document> = self.db.collection("memberships");
         let target_mem = mem_col
-            .find_one(doc! { "workspace_id": workspace_id, "user_id": target_user_id })
+            .find_one(doc! {
+                "workspace_id": workspace_id,
+                "user_id": target_user_id,
+                "deleted_at_unix": { "$exists": false }
+            })
             .session(&mut session)
             .await
             .map_err(|e| map_mongo_err(&e))?
@@ -3724,7 +3770,10 @@ impl WorkspaceRepository for MongoStore {
             .ok_or_else(|| StoreError::NotFound("Workspace not found".into()))?;
         let mem_col: Collection<Document> = self.db.collection("memberships");
         let member_count = mem_col
-            .count_documents(doc! { "workspace_id": workspace_id })
+            .count_documents(doc! {
+                "workspace_id": workspace_id,
+                "deleted_at_unix": { "$exists": false }
+            })
             .session(&mut session)
             .await
             .map_err(|e| map_mongo_err(&e))? as usize;
@@ -3781,7 +3830,11 @@ impl WorkspaceRepository for MongoStore {
         }
         let mem_col: Collection<Document> = self.db.collection("memberships");
         let target = mem_col
-            .find_one(doc! { "workspace_id": workspace_id, "user_id": &req.target_user_id })
+            .find_one(doc! {
+                "workspace_id": workspace_id,
+                "user_id": &req.target_user_id,
+                "deleted_at_unix": { "$exists": false }
+            })
             .session(&mut session)
             .await
             .map_err(|e| map_mongo_err(&e))?;
@@ -3866,7 +3919,14 @@ impl WorkspaceRepository for MongoStore {
         }
         let mem_col: Collection<Document> = self.db.collection("memberships");
         mem_col
-            .delete_one(doc! { "workspace_id": workspace_id, "user_id": &auth.user_id })
+            .update_one(
+                doc! {
+                    "workspace_id": workspace_id,
+                    "user_id": &auth.user_id,
+                    "deleted_at_unix": { "$exists": false }
+                },
+                doc! { "$set": { "deleted_at_unix": now } },
+            )
             .session(&mut session)
             .await
             .map_err(|e| map_mongo_err(&e))?;
@@ -3895,7 +3955,7 @@ impl WorkspaceRepository for MongoStore {
             &auth.email,
             "workspace.member_left",
             &auth.user_id,
-            "Member left workspace",
+            "Member left workspace (soft delete)",
             now,
         )
         .await?;
@@ -3903,10 +3963,105 @@ impl WorkspaceRepository for MongoStore {
         Ok(())
     }
 
+    async fn remove_member(
+        &self,
+        auth: &AuthContext,
+        workspace_id: &str,
+        target_user_id: &str,
+        now: i64,
+    ) -> Result<MemberListResponse, StoreError> {
+        let mut session = self
+            .client
+            .start_session()
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        session
+            .start_transaction()
+            .read_concern(ReadConcern::snapshot())
+            .write_concern(WriteConcern::majority())
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        let (_, caller_role, _) = self
+            .require_membership_tx(&mut session, workspace_id, &auth.user_id)
+            .await?;
+        if caller_role != Role::Owner {
+            let _ = session.abort_transaction().await;
+            return Err(StoreError::Forbidden(
+                "Only the Workspace Owner can remove members".into(),
+            ));
+        }
+        if target_user_id == auth.user_id {
+            let _ = session.abort_transaction().await;
+            return Err(StoreError::OwnerRequired(
+                "Workspace Owner cannot remove themselves".into(),
+            ));
+        }
+        let mem_col: Collection<Document> = self.db.collection("memberships");
+        let target_mem = mem_col
+            .find_one(doc! {
+                "workspace_id": workspace_id,
+                "user_id": target_user_id,
+                "deleted_at_unix": { "$exists": false }
+            })
+            .session(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?
+            .ok_or_else(|| StoreError::NotFound("Target member not in workspace".into()))?;
+        if parse_role(target_mem.get_str("role").unwrap_or("viewer")) == Role::Owner {
+            let _ = session.abort_transaction().await;
+            return Err(StoreError::OwnerRequired(
+                "Cannot remove Workspace Owner".into(),
+            ));
+        }
+        mem_col
+            .update_one(
+                doc! { "workspace_id": workspace_id, "user_id": target_user_id },
+                doc! { "$set": { "deleted_at_unix": now } },
+            )
+            .session(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        let ws_col: Collection<Document> = self.db.collection("workspaces");
+        ws_col
+            .update_one(
+                doc! { "workspace_id": workspace_id },
+                doc! { "$inc": { "membership_revision": 1_i64 } },
+            )
+            .session(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        let fences: Collection<Document> = self.db.collection("workspace_permission_fences");
+        fences
+            .update_one(
+                doc! { "workspace_id": workspace_id },
+                doc! { "$inc": { "membership_revision": 1_i64 } },
+            )
+            .session(&mut session)
+            .await
+            .map_err(|e| map_mongo_err(&e))?;
+        self.record_audit_tx(
+            &mut session,
+            Some(workspace_id),
+            &auth.user_id,
+            &auth.email,
+            "workspace.member_removed",
+            target_user_id,
+            "Owner removed workspace member (soft delete)",
+            now,
+        )
+        .await?;
+        commit_with_retry(&mut session).await?;
+        self.list_members_and_invitations(auth, workspace_id).await
+    }
+
     async fn kv_get(&self, namespace: &str, key: &str) -> Result<Option<String>, StoreError> {
         let col: Collection<Document> = self.db.collection("server_kv_docs");
         let found = col
-            .find_one(doc! { "namespace": namespace, "key": key })
+            .find_one(doc! {
+                "namespace": namespace,
+                "key": key,
+                "deleted_at_unix": { "$exists": false }
+            })
             .await
             .map_err(|e| map_mongo_err(&e))?;
         Ok(found.and_then(|d| d.get_str("value_json").ok().map(str::to_owned)))
@@ -3928,7 +4083,8 @@ impl WorkspaceRepository for MongoStore {
                     "key": key,
                     "value_json": value_json,
                     "updated_at_unix": now,
-                }
+                },
+                "$unset": { "deleted_at_unix": "" }
             },
         )
         .upsert(true)
@@ -3940,10 +4096,17 @@ impl WorkspaceRepository for MongoStore {
     async fn kv_delete(&self, namespace: &str, key: &str) -> Result<bool, StoreError> {
         let col: Collection<Document> = self.db.collection("server_kv_docs");
         let res = col
-            .delete_one(doc! { "namespace": namespace, "key": key })
+            .update_one(
+                doc! {
+                    "namespace": namespace,
+                    "key": key,
+                    "deleted_at_unix": { "$exists": false }
+                },
+                doc! { "$set": { "deleted_at_unix": crate::repo::now_unix() } },
+            )
             .await
             .map_err(|e| map_mongo_err(&e))?;
-        Ok(res.deleted_count > 0)
+        Ok(res.modified_count > 0)
     }
 
     async fn kv_list(
@@ -3955,10 +4118,14 @@ impl WorkspaceRepository for MongoStore {
         let filter = if let Some(upper) = prefix_upper_bound(key_prefix) {
             doc! {
                 "namespace": namespace,
-                "key": { "$gte": key_prefix, "$lt": upper }
+                "key": { "$gte": key_prefix, "$lt": upper },
+                "deleted_at_unix": { "$exists": false }
             }
         } else {
-            doc! { "namespace": namespace }
+            doc! {
+                "namespace": namespace,
+                "deleted_at_unix": { "$exists": false }
+            }
         };
         let mut cursor = col
             .find(filter)
@@ -4013,7 +4180,8 @@ impl WorkspaceRepository for MongoStore {
                         "Idempotency-Key cannot be reused with a different request payload".into(),
                     ));
                 }
-                if existing.get_str("state").unwrap_or("") == "completed" {
+                let state_str = existing.get_str("state").unwrap_or("");
+                if state_str == "completed" {
                     let code = existing.get_i32("status_code").unwrap_or(200) as u16;
                     let body = existing.get_str("body_json").unwrap_or("{}").to_owned();
                     return Ok(IdempotencyClaimOutcome::Replayed {
@@ -4022,7 +4190,7 @@ impl WorkspaceRepository for MongoStore {
                     });
                 }
                 let created = existing.get_i64("created_at_unix").unwrap_or(now);
-                if now - created < 30 {
+                if state_str == "in_progress" && now - created < 30 {
                     return Err(StoreError::Conflict(
                         "Concurrent request with the same Idempotency-Key is still in progress"
                             .into(),
@@ -4030,7 +4198,14 @@ impl WorkspaceRepository for MongoStore {
                 }
                 col.update_one(
                     doc! { "scope": scope, "key": key },
-                    doc! { "$set": { "created_at_unix": now, "state": "in_progress" } },
+                    doc! {
+                        "$set": {
+                            "request_hash": request_hash,
+                            "created_at_unix": now,
+                            "state": "in_progress"
+                        },
+                        "$unset": { "released_at_unix": "" }
+                    },
                 )
                 .await
                 .map_err(|e| map_mongo_err(&e))?;
@@ -4065,9 +4240,12 @@ impl WorkspaceRepository for MongoStore {
 
     async fn release_idempotency(&self, scope: &str, key: &str) -> Result<(), StoreError> {
         let col: Collection<Document> = self.db.collection("idempotency_records");
-        col.delete_one(doc! { "scope": scope, "key": key, "state": "in_progress" })
-            .await
-            .map_err(|e| map_mongo_err(&e))?;
+        col.update_one(
+            doc! { "scope": scope, "key": key, "state": "in_progress" },
+            doc! { "$set": { "state": "released", "released_at_unix": crate::repo::now_unix() } },
+        )
+        .await
+        .map_err(|e| map_mongo_err(&e))?;
         Ok(())
     }
 
@@ -4090,7 +4268,8 @@ impl WorkspaceRepository for MongoStore {
         let mut allowed_cur = mem_col
             .find(doc! {
                 "user_id": &auth.user_id,
-                "workspace_id": { "$in": workspace_ids }
+                "workspace_id": { "$in": workspace_ids },
+                "deleted_at_unix": { "$exists": false }
             })
             .await
             .map_err(|e| map_mongo_err(&e))?;
@@ -4144,7 +4323,10 @@ impl WorkspaceRepository for MongoStore {
         if include_members {
             out.db_queries_executed += 1;
             let mut mcur = mem_col
-                .find(doc! { "workspace_id": { "$in": &allowed_wids } })
+                .find(doc! {
+                    "workspace_id": { "$in": &allowed_wids },
+                    "deleted_at_unix": { "$exists": false }
+                })
                 .await
                 .map_err(|e| map_mongo_err(&e))?;
             let mut raw_mems: Vec<(String, String, Role, i64)> = Vec::new();

@@ -61,6 +61,13 @@ struct WorkspaceRec {
 struct MembershipRec {
     role: Role,
     joined_at_unix: i64,
+    deleted_at_unix: Option<i64>,
+}
+
+#[derive(Clone)]
+struct KvRec {
+    value_json: String,
+    deleted_at_unix: Option<i64>,
 }
 
 #[derive(Clone)]
@@ -86,6 +93,7 @@ struct IdempotencyRec {
     request_hash: String,
     completed: Option<(u16, String)>,
     created_at_unix: i64,
+    released_at_unix: Option<i64>,
 }
 
 #[derive(Default)]
@@ -111,7 +119,7 @@ struct State {
     comments: BTreeMap<(String, String), CommentThreadRecord>,
     notifications: Vec<NotificationRecord>,
     audit_events: Vec<AuditEventRecord>,
-    kv_docs: BTreeMap<(String, String), String>,
+    kv_docs: BTreeMap<(String, String), KvRec>,
     idempotency_records: HashMap<(String, String), IdempotencyRec>,
 }
 
@@ -213,6 +221,7 @@ impl InMemoryStore {
         let m = state
             .memberships
             .get(&(workspace_id.to_owned(), user_id.to_owned()))
+            .filter(|m| m.deleted_at_unix.is_none())
             .ok_or_else(|| StoreError::Forbidden("No access to this workspace".into()))?;
         let ws = state
             .workspaces_by_id
@@ -224,8 +233,8 @@ impl InMemoryStore {
     fn workspace_summary(state: &State, ws: &WorkspaceRec, role: Role) -> TeamWorkspaceSummary {
         let member_count = state
             .memberships
-            .keys()
-            .filter(|(wid, _)| wid == &ws.workspace_id)
+            .iter()
+            .filter(|((wid, _), m)| wid == &ws.workspace_id && m.deleted_at_unix.is_none())
             .count();
         TeamWorkspaceSummary {
             workspace_id: ws.workspace_id.clone(),
@@ -633,6 +642,7 @@ impl WorkspaceRepository for InMemoryStore {
             MembershipRec {
                 role: Role::Owner,
                 joined_at_unix: now,
+                deleted_at_unix: None,
             },
         );
         Self::record_audit(
@@ -656,6 +666,7 @@ impl WorkspaceRepository for InMemoryStore {
         let mut out = Vec::new();
         for ((wid, uid), mem) in &guard.memberships {
             if uid == &auth.user_id
+                && mem.deleted_at_unix.is_none()
                 && let Some(ws) = guard.workspaces_by_id.get(wid)
             {
                 out.push(Self::workspace_summary(&guard, ws, mem.role));
@@ -675,6 +686,7 @@ impl WorkspaceRepository for InMemoryStore {
         let mut members = Vec::new();
         for ((wid, uid), mem) in &guard.memberships {
             if wid == workspace_id
+                && mem.deleted_at_unix.is_none()
                 && let Some(user) = guard.users_by_id.get(uid)
             {
                 members.push(MemberSummary {
@@ -917,6 +929,7 @@ impl WorkspaceRepository for InMemoryStore {
             MembershipRec {
                 role: inv.role,
                 joined_at_unix: now,
+                deleted_at_unix: None,
             },
         );
         let ws = guard
@@ -1017,13 +1030,14 @@ impl WorkspaceRepository for InMemoryStore {
         if let Some(inv_mut) = guard.invitations_by_id.get_mut(invitation_id) {
             inv_mut.used_at_unix = Some(now);
         }
-        guard
-            .memberships
-            .entry((inv.workspace_id.clone(), user.user_id.clone()))
-            .or_insert(MembershipRec {
+        guard.memberships.insert(
+            (inv.workspace_id.clone(), user.user_id.clone()),
+            MembershipRec {
                 role: inv.role,
                 joined_at_unix: now,
-            });
+                deleted_at_unix: None,
+            },
+        );
         let ws = guard
             .workspaces_by_id
             .get_mut(&inv.workspace_id)
@@ -1259,13 +1273,14 @@ impl WorkspaceRepository for InMemoryStore {
         if let Some(lm) = guard.public_links_by_id.get_mut(&link_id) {
             lm.uses_count += 1;
         }
-        guard
-            .memberships
-            .entry((link.workspace_id.clone(), user.user_id.clone()))
-            .or_insert(MembershipRec {
+        guard.memberships.insert(
+            (link.workspace_id.clone(), user.user_id.clone()),
+            MembershipRec {
                 role: link.role,
                 joined_at_unix: now,
-            });
+                deleted_at_unix: None,
+            },
+        );
         let ws = guard
             .workspaces_by_id
             .get_mut(&link.workspace_id)
@@ -1321,6 +1336,7 @@ impl WorkspaceRepository for InMemoryStore {
         let target_mem = guard
             .memberships
             .get(&(workspace_id.to_owned(), target_user_id.to_owned()))
+            .filter(|m| m.deleted_at_unix.is_none())
             .cloned()
             .ok_or_else(|| StoreError::NotFound("Target member not in workspace".into()))?;
         if target_mem.role == Role::Owner {
@@ -1883,9 +1899,11 @@ impl WorkspaceRepository for InMemoryStore {
         guard.comments.insert(key, thread.clone());
         let recipients: Vec<String> = guard
             .memberships
-            .keys()
-            .filter(|(wid, uid)| wid == workspace_id && uid != &auth.user_id)
-            .map(|(_, uid)| uid.clone())
+            .iter()
+            .filter(|((wid, uid), m)| {
+                wid == workspace_id && uid != &auth.user_id && m.deleted_at_unix.is_none()
+            })
+            .map(|((_, uid), _)| uid.clone())
             .collect();
         let mention_targets: std::collections::BTreeSet<String> = thread
             .body
@@ -2069,8 +2087,8 @@ impl WorkspaceRepository for InMemoryStore {
         }
         let member_count = guard
             .memberships
-            .keys()
-            .filter(|(w, _)| w == workspace_id)
+            .iter()
+            .filter(|((w, _), m)| w == workspace_id && m.deleted_at_unix.is_none())
             .count();
         let summary = {
             let ws = guard
@@ -2136,7 +2154,8 @@ impl WorkspaceRepository for InMemoryStore {
             }
             if !guard
                 .memberships
-                .contains_key(&(workspace_id.to_owned(), req.target_user_id.clone()))
+                .get(&(workspace_id.to_owned(), req.target_user_id.clone()))
+                .is_some_and(|m| m.deleted_at_unix.is_none())
             {
                 return Err(StoreError::NotFound(
                     "Target member not found in workspace".into(),
@@ -2184,9 +2203,12 @@ impl WorkspaceRepository for InMemoryStore {
                 "Workspace Owner cannot leave without transferring ownership first".into(),
             ));
         }
-        guard
+        if let Some(m) = guard
             .memberships
-            .remove(&(workspace_id.to_owned(), auth.user_id.clone()));
+            .get_mut(&(workspace_id.to_owned(), auth.user_id.clone()))
+        {
+            m.deleted_at_unix = Some(now);
+        }
         if let Some(ws) = guard.workspaces_by_id.get_mut(workspace_id) {
             ws.membership_revision += 1;
         }
@@ -2197,10 +2219,64 @@ impl WorkspaceRepository for InMemoryStore {
             &auth.email,
             "workspace.member_left",
             &auth.user_id,
-            "Member left workspace",
+            "Member left workspace (soft delete)",
             now,
         );
         Ok(())
+    }
+
+    async fn remove_member(
+        &self,
+        auth: &AuthContext,
+        workspace_id: &str,
+        target_user_id: &str,
+        now: i64,
+    ) -> Result<MemberListResponse, StoreError> {
+        {
+            let mut guard = self.state.lock().map_err(|_| StoreError::InternalSafe)?;
+            let (_, caller_mem) = Self::require_membership(&guard, workspace_id, &auth.user_id)?;
+            if caller_mem.role != Role::Owner {
+                return Err(StoreError::Forbidden(
+                    "Only the Workspace Owner can remove members".into(),
+                ));
+            }
+            if target_user_id == auth.user_id {
+                return Err(StoreError::OwnerRequired(
+                    "Workspace Owner cannot remove themselves".into(),
+                ));
+            }
+            let target = guard
+                .memberships
+                .get(&(workspace_id.to_owned(), target_user_id.to_owned()))
+                .filter(|m| m.deleted_at_unix.is_none())
+                .cloned()
+                .ok_or_else(|| StoreError::NotFound("Target member not in workspace".into()))?;
+            if target.role == Role::Owner {
+                return Err(StoreError::OwnerRequired(
+                    "Cannot remove Workspace Owner".into(),
+                ));
+            }
+            if let Some(m) = guard
+                .memberships
+                .get_mut(&(workspace_id.to_owned(), target_user_id.to_owned()))
+            {
+                m.deleted_at_unix = Some(now);
+            }
+            if let Some(ws) = guard.workspaces_by_id.get_mut(workspace_id) {
+                ws.membership_revision += 1;
+            }
+            Self::record_audit(
+                &mut guard,
+                Some(workspace_id),
+                &auth.user_id,
+                &auth.email,
+                "workspace.member_removed",
+                target_user_id,
+                "Owner removed workspace member (soft delete)",
+                now,
+            );
+        }
+        self.list_members_and_invitations(auth, workspace_id).await
     }
 
     async fn kv_get(&self, namespace: &str, key: &str) -> Result<Option<String>, StoreError> {
@@ -2208,7 +2284,8 @@ impl WorkspaceRepository for InMemoryStore {
         Ok(guard
             .kv_docs
             .get(&(namespace.to_owned(), key.to_owned()))
-            .cloned())
+            .filter(|rec| rec.deleted_at_unix.is_none())
+            .map(|rec| rec.value_json.clone()))
     }
 
     async fn kv_put(
@@ -2221,17 +2298,25 @@ impl WorkspaceRepository for InMemoryStore {
         let mut guard = self.state.lock().map_err(|_| StoreError::InternalSafe)?;
         guard.kv_docs.insert(
             (namespace.to_owned(), key.to_owned()),
-            value_json.to_owned(),
+            KvRec {
+                value_json: value_json.to_owned(),
+                deleted_at_unix: None,
+            },
         );
         Ok(())
     }
 
     async fn kv_delete(&self, namespace: &str, key: &str) -> Result<bool, StoreError> {
         let mut guard = self.state.lock().map_err(|_| StoreError::InternalSafe)?;
-        Ok(guard
+        if let Some(rec) = guard
             .kv_docs
-            .remove(&(namespace.to_owned(), key.to_owned()))
-            .is_some())
+            .get_mut(&(namespace.to_owned(), key.to_owned()))
+            && rec.deleted_at_unix.is_none()
+        {
+            rec.deleted_at_unix = Some(crate::repo::now_unix());
+            return Ok(true);
+        }
+        Ok(false)
     }
 
     async fn kv_list(
@@ -2243,8 +2328,10 @@ impl WorkspaceRepository for InMemoryStore {
         Ok(guard
             .kv_docs
             .iter()
-            .filter(|((ns, k), _)| ns == namespace && k.starts_with(key_prefix))
-            .map(|((_, k), v)| (k.clone(), v.clone()))
+            .filter(|((ns, k), rec)| {
+                ns == namespace && k.starts_with(key_prefix) && rec.deleted_at_unix.is_none()
+            })
+            .map(|((_, k), rec)| (k.clone(), rec.value_json.clone()))
             .collect())
     }
 
@@ -2257,7 +2344,9 @@ impl WorkspaceRepository for InMemoryStore {
     ) -> Result<IdempotencyClaimOutcome, StoreError> {
         let mut guard = self.state.lock().map_err(|_| StoreError::InternalSafe)?;
         let map_key = (scope.to_owned(), key.to_owned());
-        if let Some(existing) = guard.idempotency_records.get(&map_key) {
+        if let Some(existing) = guard.idempotency_records.get(&map_key)
+            && existing.released_at_unix.is_none()
+        {
             if existing.request_hash != request_hash {
                 return Err(StoreError::Conflict(
                     "Idempotency-Key cannot be reused with a different request payload".into(),
@@ -2281,6 +2370,7 @@ impl WorkspaceRepository for InMemoryStore {
                 request_hash: request_hash.to_owned(),
                 completed: None,
                 created_at_unix: now,
+                released_at_unix: None,
             },
         );
         Ok(IdempotencyClaimOutcome::Acquired)
@@ -2307,12 +2397,10 @@ impl WorkspaceRepository for InMemoryStore {
     async fn release_idempotency(&self, scope: &str, key: &str) -> Result<(), StoreError> {
         let mut guard = self.state.lock().map_err(|_| StoreError::InternalSafe)?;
         let map_key = (scope.to_owned(), key.to_owned());
-        if guard
-            .idempotency_records
-            .get(&map_key)
-            .is_some_and(|r| r.completed.is_none())
+        if let Some(rec) = guard.idempotency_records.get_mut(&map_key)
+            && rec.completed.is_none()
         {
-            guard.idempotency_records.remove(&map_key);
+            rec.released_at_unix = Some(crate::repo::now_unix());
         }
         Ok(())
     }
@@ -2337,7 +2425,8 @@ impl WorkspaceRepository for InMemoryStore {
             .filter(|wid| {
                 guard
                     .memberships
-                    .contains_key(&((*wid).to_owned(), auth.user_id.clone()))
+                    .get(&((*wid).to_owned(), auth.user_id.clone()))
+                    .is_some_and(|m| m.deleted_at_unix.is_none())
             })
             .collect();
         if allowed.is_empty() {
@@ -2357,7 +2446,8 @@ impl WorkspaceRepository for InMemoryStore {
         if include_members {
             out.db_queries_executed += 2; // 1 memberships batch + 1 users batch
             for ((wid, uid), mrec) in &guard.memberships {
-                if allowed.contains(wid.as_str())
+                if mrec.deleted_at_unix.is_none()
+                    && allowed.contains(wid.as_str())
                     && let Some(u) = guard.users_by_id.get(uid)
                 {
                     let mem_rev = guard

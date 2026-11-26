@@ -46,12 +46,50 @@ pub fn show(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
     egui::ScrollArea::vertical()
         .id_salt("import_export_hub_scroll")
         .show(ui, |ui| match app.import_hub_tab {
-            0 => show_import_tab(app, ui),
+            0 => show_import_tab(app, ui, ctx),
             _ => show_export_tab(app, ui, ctx),
         });
 }
 
-fn show_import_tab(app: &mut App, ui: &mut egui::Ui) {
+fn show_import_tab(app: &mut App, ui: &mut egui::Ui, ctx: &egui::Context) {
+    // Drag & Drop `.json` / `.csv` Dropzone Card
+    let is_hovering_file = ctx.input(|i| !i.raw.hovered_files.is_empty());
+    egui::Frame::new()
+        .fill(if is_hovering_file {
+            swaggen_ui_kit::selected_bg(ui)
+        } else {
+            swaggen_ui_kit::subtle_bg(ui)
+        })
+        .stroke(egui::Stroke::new(
+            if is_hovering_file { 2.0 } else { 1.0 },
+            if is_hovering_file {
+                Tokens::STATUS_INFO
+            } else {
+                swaggen_ui_kit::border_color(ui)
+            },
+        ))
+        .corner_radius(8)
+        .inner_margin(egui::Margin::symmetric(16, 12))
+        .show(ui, |ui| {
+            ui.set_min_width(ui.available_width());
+            ui.horizontal_wrapped(|ui| {
+                swaggen_ui_kit::pill_badge(ui, Tokens::STATUS_INFO, "Drag & Drop");
+                ui.label(swaggen_ui_kit::bold_text(
+                    "Drop any .json or .csv file into this window to import APIs for instant testing",
+                    12.5,
+                    swaggen_ui_kit::text_primary(ui),
+                ));
+            });
+            ui.label(
+                egui::RichText::new(
+                    "Auto-detects CSV (name,method,url,headers,body), Postman Collection v2.1 / Environment JSON, OpenAPI 3.x / Swagger 2.0 JSON/YAML, HAR 1.2 JSON, and .http files.",
+                )
+                .size(11.0)
+                .color(swaggen_ui_kit::text_secondary(ui)),
+            );
+        });
+    ui.add_space(10.0);
+
     swaggen_ui_kit::surface_card(ui, |ui| {
         // 1. Format Picker Pills
         ui.horizontal_wrapped(|ui| {
@@ -64,8 +102,9 @@ fn show_import_tab(app: &mut App, ui: &mut egui::Ui) {
             for (k_idx, lbl) in [
                 (0usize, "cURL Command"),
                 (1, "Postman Collection v2.1 / Env"),
-                (2, "OpenAPI 3.x / YAML / JSON"),
-                (3, "HAR 1.2 / .http File"),
+                (2, "OpenAPI / Swagger"),
+                (3, "HAR 1.2 / .http"),
+                (4, "CSV (.csv API table)"),
             ] {
                 if ui
                     .selectable_label(app.import_source_kind == k_idx, lbl)
@@ -80,18 +119,18 @@ fn show_import_tab(app: &mut App, ui: &mut egui::Ui) {
         // 2. Load from File Path helper (except cURL where direct paste is primary, though still handy!)
         if app.import_source_kind != 0 {
             ui.horizontal_wrapped(|ui| {
-                let path_w = (ui.available_width() - 120.0).max(180.0);
+                let path_w = (ui.available_width() - 190.0).max(180.0);
                 swaggen_ui_kit::text_input(
                     ui,
                     &mut app.import_file_path,
-                    "C:\\Users\\...\\collection.json (or paste content below)",
+                    "C:\\Users\\...\\apis.json or apis.csv (or drag & drop)",
                     path_w,
                     false,
                 );
                 if swaggen_ui_kit::secondary_button(
                     ui,
                     !app.import_file_path.trim().is_empty(),
-                    "Load File",
+                    "Load Buffer",
                 )
                 .clicked()
                 {
@@ -99,6 +138,29 @@ fn show_import_tab(app: &mut App, ui: &mut egui::Ui) {
                         Ok(content) => {
                             app.postman_input = content;
                             app.status = "Loaded file into import buffer".into();
+                        }
+                        Err(e) => {
+                            app.error = true;
+                            app.status = format!("Cannot read file: {e}");
+                        }
+                    }
+                }
+                if swaggen_ui_kit::primary_button(
+                    ui,
+                    !app.import_file_path.trim().is_empty(),
+                    "Auto-Import File",
+                )
+                .clicked()
+                {
+                    let p = std::path::Path::new(app.import_file_path.trim());
+                    match std::fs::read_to_string(p) {
+                        Ok(content) => {
+                            let fname = p
+                                .file_name()
+                                .and_then(|n| n.to_str())
+                                .unwrap_or("imported-file")
+                                .to_owned();
+                            app.import_dropped_or_loaded_file(&fname, &content);
                         }
                         Err(e) => {
                             app.error = true;
@@ -253,30 +315,42 @@ fn show_import_tab(app: &mut App, ui: &mut egui::Ui) {
                         .code_editor(),
                 );
                 ui.add_space(8.0);
-                if swaggen_ui_kit::primary_button(
-                    ui,
-                    !app.postman_input.trim().is_empty(),
-                    "Import into OpenAPI Studio",
-                )
-                .clicked()
-                {
-                    let doc = parse_api_documentation(
-                        swaggen_domain::workspace::new_uid(),
-                        format!("Imported API Docs {}", app.specs.len() + 1),
-                        &app.postman_input,
-                        &[],
-                    );
-                    app.spec_editor_text = doc.raw_text.clone();
-                    app.specs.push(doc);
-                    app.selected_spec_idx = app.specs.len() - 1;
-                    app.spec_view_mode = 0;
-                    app.submit(Command::SaveSpecs {
-                        specs: app.specs.clone(),
-                    });
-                    app.navigate_to(MainMode::Specs);
-                }
+                ui.horizontal_wrapped(|ui| {
+                    if swaggen_ui_kit::primary_button(
+                        ui,
+                        !app.postman_input.trim().is_empty(),
+                        "Import as Workbench Collection + Docs",
+                    )
+                    .clicked()
+                    {
+                        let raw = app.postman_input.clone();
+                        app.import_dropped_or_loaded_file("pasted-openapi.json", &raw);
+                    }
+                    if swaggen_ui_kit::secondary_button(
+                        ui,
+                        !app.postman_input.trim().is_empty(),
+                        "Open in Docs Studio Only",
+                    )
+                    .clicked()
+                    {
+                        let doc = parse_api_documentation(
+                            swaggen_domain::workspace::new_uid(),
+                            format!("Imported API Docs {}", app.specs.len() + 1),
+                            &app.postman_input,
+                            &[],
+                        );
+                        app.spec_editor_text = doc.raw_text.clone();
+                        app.specs.push(doc);
+                        app.selected_spec_idx = app.specs.len() - 1;
+                        app.spec_view_mode = 0;
+                        app.submit(Command::SaveSpecs {
+                            specs: app.specs.clone(),
+                        });
+                        app.navigate_to(MainMode::Specs);
+                    }
+                });
             }
-            _ => {
+            3 => {
                 ui.add(
                     egui::TextEdit::multiline(&mut app.postman_input)
                         .hint_text("Paste HAR 1.2 JSON or VS Code REST Client .http text here…")
@@ -329,6 +403,11 @@ fn show_import_tab(app: &mut App, ui: &mut egui::Ui) {
                                     vars.len()
                                 );
                                 app.state.requests.extend(reqs);
+                                app.state
+                                    .workspace_vars
+                                    .extend(vars.into_iter().map(|(k, v)| {
+                                        swaggen_domain::workspace::VariableEntry::public(k, v)
+                                    }));
                                 app.mark_dirty();
                             }
                             Err(e) => {
@@ -338,6 +417,45 @@ fn show_import_tab(app: &mut App, ui: &mut egui::Ui) {
                         }
                     }
                 });
+            }
+            _ => {
+                ui.add(
+                    egui::TextEdit::multiline(&mut app.postman_input)
+                        .hint_text("name,method,url,headers,body,description\nList Users,GET,https://api.example.test/users?page=1,Accept: application/json,,Fetch users")
+                        .desired_width(ui.available_width())
+                        .desired_rows(9)
+                        .code_editor(),
+                );
+                ui.add_space(8.0);
+                if swaggen_ui_kit::primary_button(
+                    ui,
+                    !app.postman_input.trim().is_empty(),
+                    "Import CSV into Workbench Collection",
+                )
+                .clicked()
+                {
+                    match swaggen_spec_engine::importers::import_requests_from_csv(
+                        "Imported CSV APIs",
+                        &app.postman_input,
+                    ) {
+                        Ok((col, reqs, _rep)) => {
+                            let count = reqs.len();
+                            let first_id = reqs.first().map(|r| r.id.clone());
+                            app.state.collections.push(col);
+                            app.state.requests.extend(reqs);
+                            if let Some(rid) = first_id {
+                                app.open_request_in_workbench(&rid);
+                            }
+                            app.mark_dirty();
+                            app.last_import_summary =
+                                format!("Imported {count} API request(s) from CSV into Workbench");
+                        }
+                        Err(e) => {
+                            app.error = true;
+                            app.status = e;
+                        }
+                    }
+                }
             }
         }
 

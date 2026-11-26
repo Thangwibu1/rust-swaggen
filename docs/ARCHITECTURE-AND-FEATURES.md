@@ -1,4 +1,4 @@
-# Swaggen — Tài liệu Kiến trúc Hệ thống & Tổng hợp Tính năng (`v0.1.18`)
+# Swaggen — Tài liệu Kiến trúc Hệ thống & Tổng hợp Tính năng (`v0.1.19`)
 
 > **Swaggen** là nền tảng kiểm thử, thiết kế và cộng tác API (REST, GraphQL, SSE, OpenAPI) viết hoàn toàn bằng **Rust** (`edition = "2024"`, MSRV `1.100`) theo kiến trúc **Windows Native Desktop + Cloud Collaboration Backend**.
 >
@@ -26,14 +26,14 @@ Dự án được tổ chức theo mô hình **Rust Cargo Workspace** gồm **3 
 
 ```text
 d:\code\potmen\
-├── Cargo.toml                  # Cấu hình Workspace, version (0.1.18) và pin dependency tập trung
+├── Cargo.toml                  # Cấu hình Workspace, version (0.1.19) và pin dependency tập trung
 ├── Dockerfile                  # Build image production cho swaggen-server
 ├── docker-compose.yml          # Triển khai Server + MongoDB Replica Set
 ├── 07-operations/              # Hướng dẫn triển khai Coolify VPS & Windows Installer
 ├── assets/                     # Icon ứng dụng (.ico, .png) và bộ icon Figma (assets/icons/)
 ├── tools/                      # Script kiểm tra P00-P01, bundle-result.ps1, build-installer.ps1
 ├── docs/                       # Tài liệu tổng hợp kiến trúc & tính năng
-├── result/                     # Output build release theo từng phiên bản (gitignored), vd: result/v0.1.18/
+├── result/                     # Output build release theo từng phiên bản (gitignored), vd: result/v0.1.19/
 │
 ├── apps/                       # === CÁC ỨNG DỤNG CHÍNH (BINARIES) ===
 │   ├── desktop/                # [FRONTEND] Ứng dụng Windows Desktop (swaggen-desktop.exe)
@@ -153,15 +153,15 @@ Backend (`axum 0.8.9`) phục vụ đồng bộ đội nhóm, quản lý quyền
 
 ---
 
-## 6. Tổng hợp Toàn bộ Tính năng Đã Hoàn thiện (Tính đến `v0.1.18`)
+## 6. Tổng hợp Toàn bộ Tính năng Đã Hoàn thiện (Tính đến `v0.1.19`)
 
 ### A. API Workbench (Postman-Style Flat UI, REST & GraphQL)
 1. **Thực thi HTTP cục bộ trực tiếp từ PC**: Hỗ trợ `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `HEAD`, `OPTIONS` và `GRAPHQL` qua `swaggen-http-engine`, tuỳ chọn `HTTP Version` (`Auto / HTTP/1.1 / HTTP/2`), Local HTTP Proxy, Custom Root CA & mTLS Client Certificate, hiển thị tiến độ upload/download và `Cancel` tức thì.
-2. **Giao diện chuẩn Postman & Responsive Split-Screen (`v0.1.16`)**:
-   - **Flat Open Tab Strip** với viền nhấn xanh `#1D4ED8` phía trên (bỏ các khung card lồng nhau), thanh URL hợp nhất `[ Method ▾ | URL ] [ Send ] [ ⋯ ]` (gộp `GRAPHQL` vào ngay bộ chọn Method).
-   - **Bảng Key-Value dạng lưới phẳng (`✓ | KEY | VALUE | DESCRIPTION | ×`)** không viền lồng nhau, có vạch kéo chia cột `KEY | VALUE` mượt 1:1.
-   - **Đường chia vùng mỏng `1px` duy nhất** (loại bỏ vạch kéo màu xám và viền đôi giữa Request/Response), tự động co giãn mượt và gập cột thông minh khi chia đôi màn hình Windows (`Win + Left/Right`).
-   - **Workspace Switcher nổi bật ngay cạnh logo `SWAGGEN`** trên Sidebar, kèm sắp xếp thứ tự Request (`↑`/`↓`), kéo-thả giữa các Folder, và **Thùng rác khôi phục mềm (Trash & Restore)**.
+2. **Giao diện chuẩn Postman & Responsive Split-Screen (`v0.1.19`)**:
+   - **Flat Open Tab Strip** với viền nhấn xanh `#1D4ED8` phía trên, thanh URL hợp nhất `[ Method ▾ | URL ] [ Send ] [ ⋯ ]` (hỗ trợ phím tắt `Ctrl+S` lưu và `Enter` khi không focus ô nhập để gửi request ngay).
+   - **Tab `Params` tách 2 bảng rõ ràng**: `Query Params (?key=value)` và `Path Variables (:id / {id})` đồng bộ trực tiếp với URL, cùng bộ icon vector `mini_icon_button` (`+`, `-`, `×`, `⋯`, `↑`, `↓`) bo góc hiện đại.
+   - **Màu sắc Collection, đổi tên trực tiếp & Thùng rác xoá mềm (`Trash & Restore`)**: Menu `⋯` của Collection cho phép chọn màu thẻ/thư mục và đổi tên; mọi thao tác xoá Collection, Folder, Request, Environment đều là xoá mềm có khôi phục 1-click.
+   - **Logo `[S]` chuyển thẳng về Home** và **Workspace Switcher gọn đẹp** ở đầu Sidebar (bỏ chữ `SWAGGEN` thừa).
 3. **Biến Môi trường 3 Tầng & Live `{{variable}}` Pills (`v0.1.16`)**:
    - Quản lý trực quan 3 tầng biến trong `Environments`: **1. Deployment Environments** (`Local / Development / Staging / Production`), **2. Collection Variables**, **3. Global Workspace Variables**; click chọn môi trường là kích hoạt ngay kèm bộ chọn nhanh ở góc phải thanh Header.
    - Ngay dưới thanh URL hiển thị **Live `{{variable}}` Status Pills**: báo rõ giá trị & tầng biến đang nhận, hoặc cảnh báo vàng `⚠ {{var}} · Click to set value` cho phép gán giá trị chỉ với 1 cú click.
@@ -182,13 +182,13 @@ Backend (`axum 0.8.9`) phục vụ đồng bộ đội nhóm, quản lý quyền
 8. **Scenario Mock Server & Giao thức Realtime (`WebSocket · SSE · gRPC`)**:
    - Local Mock Server tuỳ chỉnh cổng (`Port`), hỗ trợ **Conditional Scenario Rules** (khớp method/path/query/header để trả status code và độ trễ giả lập `delay_ms`).
    - Hỗ trợ kết nối trực tiếp **WebSocket (`ws://`/`wss://`)**, **Server-Sent Events (`SSE`)**, và **gRPC Unary over HTTP/2**.
-9. **OpenAPI / Swagger Docs Studio đa định dạng & Import/Export Hub (`v0.1.18`)**:
-   - Hỗ trợ đầy đủ **OpenAPI 3.0 / 3.1 (JSON/YAML)**, **Swagger 2.0 (JSON/YAML)**, **Swagger UI / ReDoc HTML** (tự động trích xuất URL spec hoặc JSON nhúng bên trong HTML khi Fetch URL), và **Postman Collection v2.1 JSON**; 3 chế độ: **Swagger Docs Preview** (Hero API Card, Tag filter chips, Server/Security pills, Endpoint Accordion chi tiết kèm Parameters grid, Request/Response JSON tự sinh + Copy JSON, Schemas Explorer & nút `Try in Workbench →`), **Split YAML/JSON Editor + Docs**, **Linter, Contract Drift & SDK Generator**.
-   - **Import & Export Hub** gọn 2 tab: Import từ `OpenAPI / Swagger / Postman JSON`, `cURL`, `HAR 1.2`, `.http` có **Import Preview** trước khi nạp; Export ra Collection/OpenAPI/Git Sync/Offline Encrypted Bundle.
+9. **OpenAPI / Swagger Docs Studio đa định dạng & Drag-Drop Import (`v0.1.19`)**:
+   - Hỗ trợ đầy đủ **OpenAPI 3.0 / 3.1 (JSON/YAML)**, **Swagger 2.0 (JSON/YAML)**, **Swagger UI / ReDoc HTML** (đọc toàn bộ body phản hồi, tự theo dõi `<script src="...swagger-initializer.js">` / URL spec nhúng và báo lỗi rõ nếu trang HTML không chứa spec thay vì tạo tab rỗng), và **Postman Collection v2.1 JSON**.
+   - **Import & Export Hub hỗ trợ kéo-thả trực tiếp file `.json` / `.csv` / `.yaml` / `.http`**: tự động nhận diện Postman v2.1, Environment JSON, OpenAPI/Swagger, HAR 1.2, `.http` và bảng CSV endpoint (`name,method,url,headers,body,description`) để tạo thành Collection chạy test ngay trong Workbench.
 10. **Headless CLI (`swaggen-cli`)**: Chạy test suite trong CI/CD (`swaggen-cli run`) và xuất code snippet (`cURL`, `Rust`, `JavaScript`, `Python`, `Go`, `C#`, `Java`, `PHP`, `Dart`).
 
-### C. Cộng tác Đội nhóm, Bảo mật, Giao diện Light/Dark & Đóng gói
-11. **Auth, RBAC & 2 Luồng Cộng tác (`v0.1.18`)**: Đăng nhập **Google qua Firebase** (loopback browser), tài khoản nội bộ Argon2id, TOTP MFA, quản lý & thu hồi phiên thiết bị, phân quyền `Owner / Admin / Editor / Viewer`, cùng **2 cách mời vào Team Workspace**: (1) **In-App Direct Invitation** (gửi thẳng theo email & bấm `Accept & Join` / `Decline` ngay trong ứng dụng) và (2) **Public Expiring Invite Link** (`swaggen://join/...` có thời hạn & giới hạn lượt dùng để đồng đội paste trực tiếp vào app và tham gia ngay).
+### C. Cộng tác Đội nhóm, Xoá mềm DB, Typography JetBrains Mono & Đóng gói
+11. **Workspace Collaboration tinh gọn & Xoá mềm trên MongoDB (`v0.1.19`)**: Tập trung hoàn toàn vào cộng tác Workspace (Google Sign-In qua Firebase, lời mời in-app `Accept / Decline`, **Public Expiring Invite Link** `swaggen://join/...`, đổi vai trò và **Owner xoá thành viên trực tiếp**); mọi thao tác xoá trên MongoDB & InMemoryStore đều ghi dấu xoá mềm (`deleted_at_unix` / `released_at_unix`) thay vì xoá cứng.
 12. **Offline-First Sync & Versioning**: Hàng đợi Outbox bền vững trên ổ đĩa, đồng bộ delta/cursor, giải quyết xung đột 3 chiều (Base / Local / Server), lịch sử Revision & Restore, Branch & Merge Request, Comment Thread trên từng API, Realtime SSE Notifications.
 13. **End-to-End Idempotency**: Chống double-click trên UI, tự động sinh `Idempotency-Key` SHA-256 cho `POST`/`PATCH`/GraphQL `mutation`, nút `Rotate Key`, và middleware Server replay `2xx` / chặn `409 Conflict`.
-14. **Bảo mật, Typography Segoe UI & Đóng gói Windows**: Tách rạch ròi font `Segoe UI` cho toàn bộ UI văn bản/bảng và `JetBrains Mono` cho URL/code, lưới KV & Environment có clipping + padding từng ô chống tràn chữ, lưu secret bằng **Windows DPAPI**, **SSRF Guard**, Production Environment confirmation dialog, Light/Dark theme + `English / Tiếng Việt`, đóng gói Portable `.zip`, Inno Setup `.exe`, `.msi`, `SHA256SUMS.txt` và cập nhật ký số (`latest.json`).
+14. **Bảo mật, Typography `JetBrains Mono` đồng nhất & Đóng gói Windows**: Áp dụng **`JetBrains Mono`** thống nhất trên toàn bộ giao diện, lưới KV & Environment có clipping + padding từng ô chống tràn chữ, lưu secret bằng **Windows DPAPI**, **SSRF Guard**, Production Environment confirmation dialog, Light/Dark theme + `English / Tiếng Việt`, đóng gói Portable `.zip`, Inno Setup `.exe`, `.msi`, `SHA256SUMS.txt` và cập nhật ký số (`latest.json`).

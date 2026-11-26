@@ -882,6 +882,23 @@ async fn update_member_role(
     Ok(Json(res))
 }
 
+async fn remove_workspace_member(
+    State(state): State<AppState>,
+    Extension(RequestCorrelationId(corr)): Extension<RequestCorrelationId>,
+    headers: axum::http::HeaderMap,
+    Path((workspace_id, user_id)): Path<(String, String)>,
+) -> Result<Json<swaggen_api_contract::MemberListResponse>, (StatusCode, Json<ErrorEnvelope>)> {
+    let ctx = require_auth(&state, &headers)
+        .await
+        .map_err(|e| map_err(&corr, e))?;
+    let res = state
+        .store
+        .remove_member(&ctx, &workspace_id, &user_id, now_unix())
+        .await
+        .map_err(|e| map_err(&corr, e))?;
+    Ok(Json(res))
+}
+
 async fn list_entities(
     State(state): State<AppState>,
     Extension(RequestCorrelationId(corr)): Extension<RequestCorrelationId>,
@@ -2302,6 +2319,10 @@ pub fn router(store: Arc<ServerStore>) -> Router {
             post(update_member_role),
         )
         .route(
+            "/v1/workspaces/{workspace_id}/members/{user_id}/remove",
+            post(remove_workspace_member),
+        )
+        .route(
             "/v1/workspaces/{workspace_id}/entities",
             get(list_entities).post(upsert_entity),
         )
@@ -2804,6 +2825,75 @@ mod tests {
         )
         .await;
         assert_eq!(st, 403);
+
+        // Non-owner cannot remove a member from ws3 (403)
+        let (st, _) = http_call(
+            &base,
+            Method::POST,
+            &format!(
+                "/v1/workspaces/{}/members/{}/remove",
+                ws3.workspace_id, owner_auth.user.user_id
+            ),
+            Some(&viewer_joined.session_token),
+            None,
+        )
+        .await;
+        assert_eq!(st, 403);
+
+        // Owner soft-deletes viewer from ws3 (200 + updated member list) -> viewer is denied (403) -> re-joining restores soft-deleted membership (200)
+        let (st, rm_body) = http_call(
+            &base,
+            Method::POST,
+            &format!(
+                "/v1/workspaces/{}/members/{}/remove",
+                ws3.workspace_id, viewer_joined.user.user_id
+            ),
+            Some(&owner_auth.session_token),
+            None,
+        )
+        .await;
+        assert_eq!(st, 200);
+        let after_rm: swaggen_api_contract::MemberListResponse =
+            serde_json::from_str(&rm_body).unwrap();
+        assert!(
+            after_rm
+                .members
+                .iter()
+                .all(|m| m.user_id != viewer_joined.user.user_id)
+        );
+
+        let (st, _) = http_call(
+            &base,
+            Method::GET,
+            &format!("/v1/workspaces/{}/entities", ws3.workspace_id),
+            Some(&viewer_joined.session_token),
+            None,
+        )
+        .await;
+        assert_eq!(st, 403);
+
+        let (st, _) = http_call(
+            &base,
+            Method::POST,
+            "/v1/auth/invite-links/join",
+            Some(&viewer_joined.session_token),
+            Some(json!({
+                "link_or_code": link_res.link.share_link,
+                "device_name": "ViewerWin"
+            })),
+        )
+        .await;
+        assert_eq!(st, 200);
+
+        let (st, _) = http_call(
+            &base,
+            Method::GET,
+            &format!("/v1/workspaces/{}/entities", ws3.workspace_id),
+            Some(&viewer_joined.session_token),
+            None,
+        )
+        .await;
+        assert_eq!(st, 200);
 
         // Revoke current session => subsequent call fails 401
         let (st, _) = http_call(
