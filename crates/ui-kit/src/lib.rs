@@ -467,15 +467,12 @@ const ICON_USERS_PNG: &[u8] = include_bytes!("../../../assets/icons/users.png");
 const ICON_BELL_PNG: &[u8] = include_bytes!("../../../assets/icons/bell.png");
 const ICON_TERMINAL_PNG: &[u8] = include_bytes!("../../../assets/icons/terminal.png");
 const ICON_SETTINGS_PNG: &[u8] = include_bytes!("../../../assets/icons/settings.png");
-const ICON_FOLDER_PNG: &[u8] = include_bytes!("../../../assets/icons/folder.png");
 const ICON_FILE_CODE_PNG: &[u8] = include_bytes!("../../../assets/icons/file-code.png");
 const ICON_HISTORY_PNG: &[u8] = include_bytes!("../../../assets/icons/history.png");
 const ICON_GLOBE_PNG: &[u8] = include_bytes!("../../../assets/icons/globe.png");
 const ICON_KEY_ROUND_PNG: &[u8] = include_bytes!("../../../assets/icons/key-round.png");
 const ICON_SEARCH_PNG: &[u8] = include_bytes!("../../../assets/icons/search.png");
 const ICON_PLUS_PNG: &[u8] = include_bytes!("../../../assets/icons/plus.png");
-const ICON_CHEVRON_DOWN_PNG: &[u8] = include_bytes!("../../../assets/icons/chevron-down.png");
-const ICON_CHEVRON_RIGHT_PNG: &[u8] = include_bytes!("../../../assets/icons/chevron-right.png");
 const ICON_SHIELD_CHECK_PNG: &[u8] = include_bytes!("../../../assets/icons/shield-check.png");
 const ICON_CIRCLE_ALERT_PNG: &[u8] = include_bytes!("../../../assets/icons/circle-alert.png");
 const ICON_CHECK_PNG: &[u8] = include_bytes!("../../../assets/icons/check.png");
@@ -492,20 +489,20 @@ fn icon_asset_spec(kind: IconKind) -> (&'static str, &'static [u8]) {
         IconKind::Bell => ("figma_icon_bell", ICON_BELL_PNG),
         IconKind::Terminal => ("figma_icon_terminal", ICON_TERMINAL_PNG),
         IconKind::Settings => ("figma_icon_settings", ICON_SETTINGS_PNG),
-        IconKind::Folder => ("figma_icon_folder", ICON_FOLDER_PNG),
         IconKind::FileCode => ("figma_icon_file_code", ICON_FILE_CODE_PNG),
         IconKind::History => ("figma_icon_history", ICON_HISTORY_PNG),
         IconKind::Globe => ("figma_icon_globe", ICON_GLOBE_PNG),
         IconKind::KeyRound => ("figma_icon_key_round", ICON_KEY_ROUND_PNG),
         IconKind::Search => ("figma_icon_search", ICON_SEARCH_PNG),
         IconKind::Plus => ("figma_icon_plus", ICON_PLUS_PNG),
-        IconKind::ChevronDown => ("figma_icon_chevron_down", ICON_CHEVRON_DOWN_PNG),
-        IconKind::ChevronRight => ("figma_icon_chevron_right", ICON_CHEVRON_RIGHT_PNG),
         IconKind::ShieldCheck => ("figma_icon_shield_check", ICON_SHIELD_CHECK_PNG),
         IconKind::AlertCircle => ("figma_icon_circle_alert", ICON_CIRCLE_ALERT_PNG),
         IconKind::Check => ("figma_icon_check", ICON_CHECK_PNG),
         IconKind::Copy => ("figma_icon_copy", ICON_COPY_PNG),
         IconKind::Trash => ("figma_icon_trash", ICON_TRASH_PNG),
+        IconKind::Folder | IconKind::ChevronDown | IconKind::ChevronRight => {
+            unreachable!("rendered as crisp vector paths in paint_icon")
+        }
     }
 }
 
@@ -627,7 +624,8 @@ pub enum MiniIconKind {
     Down,
 }
 
-/// Crisp rounded 22x22 vector action button for `+`, `-`, `×`, `⋯`, `↑`, `↓`.
+/// Sleek ghost/borderless 22x22 vector action button for `+`, `-`, `×`, `⋯`, `↑`, `↓`.
+/// Clean and unobtrusive at rest; highlights with a soft rounded pill on hover.
 pub fn mini_icon_button(
     ui: &mut egui::Ui,
     _id_salt: impl std::hash::Hash,
@@ -639,23 +637,15 @@ pub fn mini_icon_button(
     if resp.hovered() {
         ui.ctx().set_cursor_icon(egui::CursorIcon::PointingHand);
     }
-    let fill = if resp.hovered() {
-        selected_bg(ui)
-    } else {
-        subtle_bg(ui)
-    };
-    let stroke_col = if resp.hovered() {
-        hover_accent
-    } else {
-        border_color(ui)
-    };
-    ui.painter().rect(
-        rect,
-        5.0,
-        fill,
-        egui::Stroke::new(1.0, stroke_col),
-        egui::StrokeKind::Middle,
-    );
+    if resp.hovered() {
+        ui.painter().rect(
+            rect,
+            6.0,
+            selected_bg(ui),
+            egui::Stroke::new(1.0, hover_accent.gamma_multiply(0.45)),
+            egui::StrokeKind::Middle,
+        );
+    }
     let fg = if resp.hovered() {
         hover_accent
     } else {
@@ -669,7 +659,7 @@ pub fn mini_icon_button(
     }
 }
 
-/// Paints a mini crisp vector icon (`+`, `-`, `×`, `⋯`, `↑`, `↓`) centered inside `rect`.
+/// Paints a mini refined vector icon (`+`, `-`, `×`, `⋯`, `↑`, `↓`) centered inside `rect`.
 pub fn paint_mini_icon(
     painter: &egui::Painter,
     rect: egui::Rect,
@@ -677,12 +667,22 @@ pub fn paint_mini_icon(
     fg: egui::Color32,
 ) {
     let c = rect.center();
-    let r = (rect.width().min(rect.height()) * 0.24).clamp(3.0, 5.5);
-    let st = egui::Stroke::new(1.5, fg);
+    let r = (rect.width().min(rect.height()) * 0.23).clamp(3.2, 5.0);
+    let st = egui::Stroke::new(1.35, fg);
     match kind {
         MiniIconKind::Plus => {
             painter.line_segment([egui::pos2(c.x - r, c.y), egui::pos2(c.x + r, c.y)], st);
             painter.line_segment([egui::pos2(c.x, c.y - r), egui::pos2(c.x, c.y + r)], st);
+            // Soft rounded tips so + looks smooth and modern at low DPI
+            let tip_r = 0.65;
+            for pt in [
+                egui::pos2(c.x - r, c.y),
+                egui::pos2(c.x + r, c.y),
+                egui::pos2(c.x, c.y - r),
+                egui::pos2(c.x, c.y + r),
+            ] {
+                painter.circle_filled(pt, tip_r, fg);
+            }
         }
         MiniIconKind::Minus => {
             painter.line_segment([egui::pos2(c.x - r, c.y), egui::pos2(c.x + r, c.y)], st);
@@ -738,8 +738,19 @@ pub fn paint_mini_icon(
     }
 }
 
-/// Paints authentic Figma `Icon/*` transparent PNG assets tinted cleanly with `color`.
+/// Paints sharp vector Folder/Chevron icons and authentic Figma `Icon/*` assets tinted with `color`.
 pub fn paint_icon(painter: &egui::Painter, rect: egui::Rect, kind: IconKind, color: egui::Color32) {
+    match kind {
+        IconKind::Folder => {
+            paint_crisp_folder_icon(painter, rect, color);
+            return;
+        }
+        IconKind::ChevronDown | IconKind::ChevronRight => {
+            paint_crisp_chevron_icon(painter, rect, kind == IconKind::ChevronDown, color);
+            return;
+        }
+        _ => {}
+    }
     let (key, png_bytes) = icon_asset_spec(kind);
     if let Some(tex) = load_figma_texture(painter.ctx(), key, png_bytes) {
         painter.image(
@@ -749,6 +760,78 @@ pub fn paint_icon(painter: &egui::Painter, rect: egui::Rect, kind: IconKind, col
             color,
         );
     }
+}
+
+fn paint_crisp_folder_icon(painter: &egui::Painter, rect: egui::Rect, color: egui::Color32) {
+    let s = rect.width().min(rect.height()).max(10.0);
+    let x0 = (rect.center().x - s * 0.5).round();
+    let y0 = (rect.center().y - s * 0.5).round();
+
+    let left = x0 + (s * 0.07).round() + 0.5;
+    let right = x0 + (s * 0.93).round() - 0.5;
+    let top_tab = y0 + (s * 0.14).round() + 0.5;
+    let top_body = y0 + (s * 0.30).round() + 0.5;
+    let bottom = y0 + (s * 0.86).round() - 0.5;
+    let tab_end = x0 + (s * 0.42).round();
+    let tab_join = x0 + (s * 0.53).round();
+    let c = (s * 0.11).clamp(1.2, 2.2);
+
+    // Subtle pastel fill inside the folder body & tab so it looks crisp and structured
+    let fill = egui::Color32::from_rgba_unmultiplied(color.r(), color.g(), color.b(), 26);
+    painter.rect_filled(
+        egui::Rect::from_min_max(egui::pos2(left, top_body), egui::pos2(right, bottom)),
+        2.0,
+        fill,
+    );
+    painter.rect_filled(
+        egui::Rect::from_min_max(
+            egui::pos2(left, top_tab),
+            egui::pos2(tab_end, top_body + 1.0),
+        ),
+        1.5,
+        fill,
+    );
+
+    let outline = vec![
+        egui::pos2(left, top_tab + c),
+        egui::pos2(left + c, top_tab),
+        egui::pos2(tab_end, top_tab),
+        egui::pos2(tab_join, top_body),
+        egui::pos2(right - c, top_body),
+        egui::pos2(right, top_body + c),
+        egui::pos2(right, bottom - c),
+        egui::pos2(right - c, bottom),
+        egui::pos2(left + c, bottom),
+        egui::pos2(left, bottom - c),
+    ];
+    painter.add(egui::Shape::closed_line(
+        outline,
+        egui::Stroke::new(1.3, color),
+    ));
+}
+
+fn paint_crisp_chevron_icon(
+    painter: &egui::Painter,
+    rect: egui::Rect,
+    is_down: bool,
+    color: egui::Color32,
+) {
+    let c = rect.center();
+    let r = (rect.width().min(rect.height()) * 0.28).clamp(2.2, 4.2);
+    let pts = if is_down {
+        vec![
+            egui::pos2(c.x - r, c.y - r * 0.45),
+            egui::pos2(c.x, c.y + r * 0.55),
+            egui::pos2(c.x + r, c.y - r * 0.45),
+        ]
+    } else {
+        vec![
+            egui::pos2(c.x - r * 0.45, c.y - r),
+            egui::pos2(c.x + r * 0.55, c.y),
+            egui::pos2(c.x - r * 0.45, c.y + r),
+        ]
+    };
+    painter.add(egui::Shape::line(pts, egui::Stroke::new(1.35, color)));
 }
 
 /// Activity rail icon button matching Figma `Shell/Activity rail` (`6:1913`), compact 34px scale.
@@ -1668,4 +1751,140 @@ fn find_json_key_colon(trimmed: &str) -> Option<usize> {
         i += 1;
     }
     None
+}
+
+/// Harmonious moderate-saturation color identity assigned to each Personal / Team workspace
+/// so users can recognize and switch workspaces at a glance without eye fatigue.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct WorkspaceAccent {
+    pub name: &'static str,
+    pub dot: egui::Color32,
+    pub bg_tint: egui::Color32,
+    pub bg_active: egui::Color32,
+    pub border: egui::Color32,
+}
+
+const PERSONAL_WORKSPACE_PALETTE: &[WorkspaceAccent] = &[
+    WorkspaceAccent {
+        name: "Mint Teal",
+        dot: egui::Color32::from_rgb(0x0F, 0x76, 0x6E),
+        bg_tint: egui::Color32::from_rgb(0xF1, 0xFB, 0xF7),
+        bg_active: egui::Color32::from_rgb(0xE2, 0xF6, 0xEE),
+        border: egui::Color32::from_rgb(0x9C, 0xDC, 0xC6),
+    },
+    WorkspaceAccent {
+        name: "Sky Blue",
+        dot: egui::Color32::from_rgb(0x03, 0x69, 0xA1),
+        bg_tint: egui::Color32::from_rgb(0xF0, 0xF8, 0xFF),
+        bg_active: egui::Color32::from_rgb(0xDF, 0xEF, 0xFE),
+        border: egui::Color32::from_rgb(0x9D, 0xCF, 0xF8),
+    },
+    WorkspaceAccent {
+        name: "Warm Amber",
+        dot: egui::Color32::from_rgb(0xB4, 0x53, 0x09),
+        bg_tint: egui::Color32::from_rgb(0xFF, 0xFA, 0xEB),
+        bg_active: egui::Color32::from_rgb(0xFE, 0xF1, 0xD0),
+        border: egui::Color32::from_rgb(0xF1, 0xCC, 0x86),
+    },
+    WorkspaceAccent {
+        name: "Sage Green",
+        dot: egui::Color32::from_rgb(0x15, 0x80, 0x3D),
+        bg_tint: egui::Color32::from_rgb(0xF2, 0xFB, 0xF3),
+        bg_active: egui::Color32::from_rgb(0xE3, 0xF6, 0xE6),
+        border: egui::Color32::from_rgb(0xA4, 0xDC, 0xB2),
+    },
+    WorkspaceAccent {
+        name: "Soft Rose",
+        dot: egui::Color32::from_rgb(0xBE, 0x18, 0x5D),
+        bg_tint: egui::Color32::from_rgb(0xFF, 0xF2, 0xF6),
+        bg_active: egui::Color32::from_rgb(0xFE, 0xE2, 0xEC),
+        border: egui::Color32::from_rgb(0xF3, 0xB3, 0xCB),
+    },
+];
+
+const TEAM_WORKSPACE_PALETTE: &[WorkspaceAccent] = &[
+    WorkspaceAccent {
+        name: "Cobalt Indigo",
+        dot: egui::Color32::from_rgb(0x25, 0x63, 0xEB),
+        bg_tint: egui::Color32::from_rgb(0xF2, 0xF6, 0xFF),
+        bg_active: egui::Color32::from_rgb(0xE4, 0xED, 0xFF),
+        border: egui::Color32::from_rgb(0xA8, 0xC2, 0xFA),
+    },
+    WorkspaceAccent {
+        name: "Iris Violet",
+        dot: egui::Color32::from_rgb(0x7C, 0x3A, 0xED),
+        bg_tint: egui::Color32::from_rgb(0xF6, 0xF3, 0xFF),
+        bg_active: egui::Color32::from_rgb(0xEB, 0xE3, 0xFE),
+        border: egui::Color32::from_rgb(0xC7, 0xB3, 0xFA),
+    },
+    WorkspaceAccent {
+        name: "Ocean Cyan",
+        dot: egui::Color32::from_rgb(0x0E, 0x74, 0x90),
+        bg_tint: egui::Color32::from_rgb(0xEF, 0xFB, 0xFD),
+        bg_active: egui::Color32::from_rgb(0xDF, 0xF4, 0xF9),
+        border: egui::Color32::from_rgb(0x98, 0xDA, 0xE7),
+    },
+    WorkspaceAccent {
+        name: "Coral Terracotta",
+        dot: egui::Color32::from_rgb(0xC2, 0x41, 0x0C),
+        bg_tint: egui::Color32::from_rgb(0xFF, 0xF5, 0xF0),
+        bg_active: egui::Color32::from_rgb(0xFE, 0xE8, 0xDC),
+        border: egui::Color32::from_rgb(0xF6, 0xBC, 0x9E),
+    },
+    WorkspaceAccent {
+        name: "Plum Magenta",
+        dot: egui::Color32::from_rgb(0xA2, 0x1C, 0xAF),
+        bg_tint: egui::Color32::from_rgb(0xFC, 0xF2, 0xFF),
+        bg_active: egui::Color32::from_rgb(0xF7, 0xE2, 0xFD),
+        border: egui::Color32::from_rgb(0xE5, 0xAC, 0xF5),
+    },
+    WorkspaceAccent {
+        name: "Marigold",
+        dot: egui::Color32::from_rgb(0xB4, 0x53, 0x09),
+        bg_tint: egui::Color32::from_rgb(0xFF, 0xFA, 0xEB),
+        bg_active: egui::Color32::from_rgb(0xFE, 0xF1, 0xD0),
+        border: egui::Color32::from_rgb(0xF1, 0xCC, 0x86),
+    },
+];
+
+fn fnv1a_hash_str(s: &str) -> u64 {
+    let mut h: u64 = 0xcbf29ce484222325;
+    for b in s.as_bytes() {
+        h ^= u64::from(*b);
+        h = h.wrapping_mul(0x100000001b3);
+    }
+    h
+}
+
+pub fn workspace_accent(id: &str, is_team: bool) -> WorkspaceAccent {
+    if !is_team && id.eq_ignore_ascii_case("personal") {
+        return PERSONAL_WORKSPACE_PALETTE[0];
+    }
+    let palette = if is_team {
+        TEAM_WORKSPACE_PALETTE
+    } else {
+        PERSONAL_WORKSPACE_PALETTE
+    };
+    let mut idx = (fnv1a_hash_str(id) as usize) % palette.len();
+    if !is_team && idx == 0 && palette.len() > 1 {
+        // Reserve Mint Teal primarily for "personal" so additional personal workspaces stand out
+        idx = 1 + ((fnv1a_hash_str(&format!("{id}:alt")) as usize) % (palette.len() - 1));
+    }
+    palette[idx]
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn workspace_accent_assigns_distinct_soft_colors() {
+        let p = workspace_accent("personal", false);
+        assert_eq!(p.name, "Mint Teal");
+        let p2 = workspace_accent("payment-api", false);
+        assert_ne!(p2.dot, p.dot);
+        let t1 = workspace_accent("team-14df4cea-7ea9-4b71-9090-4e0d6325d917", true);
+        assert_ne!(t1.dot, p.dot);
+        assert_ne!(t1.bg_tint, egui::Color32::WHITE);
+    }
 }

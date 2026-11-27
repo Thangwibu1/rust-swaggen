@@ -151,73 +151,79 @@ pub fn show_workspace_manager(app: &mut App, ui: &mut egui::Ui) {
                     let col_idx = idx % cols.len();
                     let active =
                         *ws_id == app.workspace_id && app.selected_team_workspace_id.is_none();
-                    swaggen_ui_kit::surface_card(&mut cols[col_idx], |ui| {
-                        ui.horizontal(|ui| {
-                            ui.label(
-                                egui::RichText::new(ws_display)
-                                    .size(14.5)
-                                    .strong()
-                                    .color(Tokens::TEXT_PRIMARY),
-                            );
-                            ui.with_layout(
-                                egui::Layout::right_to_left(egui::Align::Center),
-                                |ui| {
-                                    if active {
-                                        swaggen_ui_kit::pill_badge(
-                                            ui,
-                                            Tokens::STATUS_SUCCESS,
-                                            "Active",
-                                        );
-                                    } else {
-                                        swaggen_ui_kit::pill_badge(
-                                            ui,
-                                            Tokens::STATUS_SUCCESS,
-                                            "Personal",
-                                        );
-                                    }
-                                },
-                            );
-                        });
-                        ui.add_space(6.0);
-                        if ws_entry.id == app.workspace_id {
-                            ui.label(
-                                egui::RichText::new(format!(
-                                    "{} requests · {} collections",
-                                    app.state.requests.len(),
-                                    app.state.collections.len()
-                                ))
-                                .size(12.0)
-                                .color(Tokens::TEXT_SECONDARY),
-                            );
-                        } else {
-                            ui.label(
-                                egui::RichText::new("Local personal workspace")
+                    let acc = swaggen_ui_kit::workspace_accent(ws_id.as_str(), false);
+                    egui::Frame::new()
+                        .fill(if active { acc.bg_active } else { acc.bg_tint })
+                        .stroke(egui::Stroke::new(
+                            if active { 1.5 } else { 1.0 },
+                            acc.border,
+                        ))
+                        .corner_radius(8)
+                        .inner_margin(egui::Margin::symmetric(14, 12))
+                        .show(&mut cols[col_idx], |ui| {
+                            ui.horizontal(|ui| {
+                                let (dot_r, _) = ui.allocate_exact_size(
+                                    egui::vec2(10.0, 10.0),
+                                    egui::Sense::hover(),
+                                );
+                                ui.painter().circle_filled(dot_r.center(), 4.5, acc.dot);
+                                ui.label(
+                                    egui::RichText::new(ws_display)
+                                        .size(14.5)
+                                        .strong()
+                                        .color(Tokens::TEXT_PRIMARY),
+                                );
+                                ui.with_layout(
+                                    egui::Layout::right_to_left(egui::Align::Center),
+                                    |ui| {
+                                        if active {
+                                            swaggen_ui_kit::pill_badge(ui, acc.dot, "Active");
+                                        } else {
+                                            swaggen_ui_kit::pill_badge(ui, acc.dot, "Personal");
+                                        }
+                                    },
+                                );
+                            });
+                            ui.add_space(6.0);
+                            if ws_entry.id == app.workspace_id {
+                                ui.label(
+                                    egui::RichText::new(format!(
+                                        "{} requests · {} collections",
+                                        app.state.requests.len(),
+                                        app.state.collections.len()
+                                    ))
                                     .size(12.0)
                                     .color(Tokens::TEXT_SECONDARY),
-                            );
-                        }
-                        ui.add_space(8.0);
-                        if swaggen_ui_kit::secondary_button(
-                            ui,
-                            !active,
-                            if active {
-                                "Current workspace"
+                                );
                             } else {
-                                "Open individual"
-                            },
-                        )
-                        .clicked()
-                        {
-                            if ws_entry.id != app.workspace_id {
-                                app.submit(Command::SwitchWorkspace {
-                                    id: ws_entry.id.clone(),
-                                });
+                                ui.label(
+                                    egui::RichText::new("Local personal workspace")
+                                        .size(12.0)
+                                        .color(Tokens::TEXT_SECONDARY),
+                                );
                             }
-                            app.selected_team_workspace_id = None;
-                            app.show_workspace_modal = false;
-                            app.navigate_to(MainMode::Workbench);
-                        }
-                    });
+                            ui.add_space(8.0);
+                            if swaggen_ui_kit::secondary_button(
+                                ui,
+                                !active,
+                                if active {
+                                    "Current workspace"
+                                } else {
+                                    "Open individual"
+                                },
+                            )
+                            .clicked()
+                            {
+                                if ws_entry.id != app.workspace_id {
+                                    app.submit(Command::SwitchWorkspace {
+                                        id: ws_entry.id.clone(),
+                                    });
+                                }
+                                app.selected_team_workspace_id = None;
+                                app.show_workspace_modal = false;
+                                app.navigate_to(MainMode::Workbench);
+                            }
+                        });
                     cols[col_idx].add_space(8.0);
                 }
             });
@@ -276,41 +282,59 @@ pub fn show_workspace_manager(app: &mut App, ui: &mut egui::Ui) {
                         let col_idx = idx % cols.len();
                         let active = app.selected_team_workspace_id.as_deref()
                             == Some(tw.workspace_id.as_str());
-                        swaggen_ui_kit::surface_card(&mut cols[col_idx], |ui| {
-                            ui.horizontal(|ui| {
-                                ui.label(swaggen_ui_kit::bold_text(
-                                    &tw.name,
-                                    14.0,
-                                    Tokens::TEXT_PRIMARY,
-                                ));
-                                ui.with_layout(
-                                    egui::Layout::right_to_left(egui::Align::Center),
-                                    |ui| {
-                                        swaggen_ui_kit::pill_badge(ui, Tokens::STATUS_INFO, "Team");
-                                    },
+                        let acc = swaggen_ui_kit::workspace_accent(&tw.workspace_id, true);
+                        egui::Frame::new()
+                            .fill(if active { acc.bg_active } else { acc.bg_tint })
+                            .stroke(egui::Stroke::new(
+                                if active { 1.5 } else { 1.0 },
+                                acc.border,
+                            ))
+                            .corner_radius(8)
+                            .inner_margin(egui::Margin::symmetric(14, 12))
+                            .show(&mut cols[col_idx], |ui| {
+                                ui.horizontal(|ui| {
+                                    let (dot_r, _) = ui.allocate_exact_size(
+                                        egui::vec2(10.0, 10.0),
+                                        egui::Sense::hover(),
+                                    );
+                                    ui.painter().circle_filled(dot_r.center(), 4.5, acc.dot);
+                                    ui.label(swaggen_ui_kit::bold_text(
+                                        &tw.name,
+                                        14.0,
+                                        Tokens::TEXT_PRIMARY,
+                                    ));
+                                    ui.with_layout(
+                                        egui::Layout::right_to_left(egui::Align::Center),
+                                        |ui| {
+                                            swaggen_ui_kit::pill_badge(
+                                                ui,
+                                                acc.dot,
+                                                if active { "Active" } else { "Team" },
+                                            );
+                                        },
+                                    );
+                                });
+                                ui.add_space(4.0);
+                                ui.label(
+                                    egui::RichText::new(format!(
+                                        "{} · {} members",
+                                        tw.role.as_str(),
+                                        tw.member_count
+                                    ))
+                                    .size(12.0)
+                                    .color(Tokens::TEXT_SECONDARY),
                                 );
+                                ui.add_space(8.0);
+                                if swaggen_ui_kit::primary_button(
+                                    ui,
+                                    !active,
+                                    if active { "Current team" } else { "Open team" },
+                                )
+                                .clicked()
+                                {
+                                    open_team = Some(tw.workspace_id.clone());
+                                }
                             });
-                            ui.add_space(4.0);
-                            ui.label(
-                                egui::RichText::new(format!(
-                                    "{} · {} members",
-                                    tw.role.as_str(),
-                                    tw.member_count
-                                ))
-                                .size(12.0)
-                                .color(Tokens::TEXT_SECONDARY),
-                            );
-                            ui.add_space(8.0);
-                            if swaggen_ui_kit::primary_button(
-                                ui,
-                                !active,
-                                if active { "Current team" } else { "Open team" },
-                            )
-                            .clicked()
-                            {
-                                open_team = Some(tw.workspace_id.clone());
-                            }
-                        });
                     }
                 });
                 if let Some(wid) = open_team {
@@ -1994,7 +2018,7 @@ pub fn show_command_palette(app: &mut App, ui: &mut egui::Ui) {
                 for (mode, label) in [
                     (MainMode::Workbench, "Open API Workbench"),
                     (MainMode::Specs, "Open API documentation & OpenAPI"),
-                    (MainMode::Runner, "Run collection, Mocks & Protocols"),
+                    (MainMode::Runner, "Local Mock Server, Protocols & Dev Tools"),
                     (
                         MainMode::TeamSync,
                         "Open Sync queue, Conflicts & Discussion",

@@ -308,13 +308,6 @@ pub enum Command {
         scope: String,
         downloads_dir: PathBuf,
     },
-    RunCollection {
-        state: Box<WorkspaceState>,
-        specs: Vec<SpecDocument>,
-        config: swaggen_runner::collection_runner::RunnerConfig,
-        concurrency: usize,
-    },
-    CancelRunner,
     StartLocalMock {
         routes: Vec<swaggen_runner::local_mock::MockRoute>,
         scenarios: Vec<swaggen_runner::advanced_protocols::MockScenarioRule>,
@@ -482,7 +475,6 @@ pub enum Event {
         redirect_uri: String,
     },
     OAuth2TokenReceived(OAuthTokenSet),
-    CollectionRunFinished(Box<swaggen_runner::collection_runner::CollectionRunReport>),
     LocalMockState {
         base_url: Option<String>,
         logs: Vec<swaggen_runner::local_mock::MockTrafficLog>,
@@ -609,7 +601,6 @@ impl Worker {
 
         std::thread::spawn(move || {
             let mut local_mock_handle: Option<swaggen_runner::local_mock::LocalMockHandle> = None;
-            let mut runner_cancel: Option<CancellationToken> = None;
             let mut sse_cancel: Option<CancellationToken> = None;
             let mut firebase_auth_cancel: Option<CancellationToken> = None;
             let runtime = tokio::runtime::Builder::new_multi_thread()
@@ -647,9 +638,6 @@ impl Worker {
                             for (_, tok) in map.drain() {
                                 tok.cancel();
                             }
-                        }
-                        if let Some(tok) = runner_cancel.take() {
-                            tok.cancel();
                         }
                         if let Some(tok) = sse_cancel.take() {
                             tok.cancel();
@@ -1407,99 +1395,6 @@ impl Worker {
                             let _ = out.send(ev);
                             wake_fn();
                         });
-                    }
-                    Command::RunCollection {
-                        state,
-                        specs,
-                        config,
-                        concurrency,
-                    } => {
-                        let tok = CancellationToken::new();
-                        runner_cancel = Some(tok.clone());
-                        let mut secret_map = BTreeMap::new();
-                        for name in sess.secrets.list_names() {
-                            if let Ok(secret) = sess.secrets.get(&SecretRef {
-                                workspace: current_workspace.clone(),
-                                name: name.clone(),
-                            }) && let Ok(text) = std::str::from_utf8(secret.expose())
-                            {
-                                secret_map.insert(name, text.to_owned());
-                            }
-                        }
-                        let downloads = sess.ws_store.downloads_dir();
-                        let out = outgoing.clone();
-                        let wake_fn = wake.clone();
-                        runtime.spawn(async move {
-                            let rep = if concurrency > 1 {
-                                let t0 = std::time::Instant::now();
-                                let started = time::OffsetDateTime::now_utc().unix_timestamp();
-                                let manifest =
-                                    swaggen_runner::collection_runner::build_run_manifest(
-                                        &state, &config, started,
-                                    );
-                                let shards =
-                                    swaggen_runner::collection_runner::run_collection_parallel(
-                                        &state,
-                                        &specs,
-                                        &secret_map,
-                                        &downloads,
-                                        &config,
-                                        concurrency,
-                                        tok,
-                                    )
-                                    .await;
-                                let mut steps = Vec::new();
-                                let mut passed = 0;
-                                let mut failed_assertions = 0;
-                                let mut failed_contract = 0;
-                                let mut skipped = 0;
-                                let mut infra_errors = 0;
-                                let mut canceled = false;
-                                for (s_idx, s) in shards.into_iter().enumerate() {
-                                    passed += s.passed;
-                                    failed_assertions += s.failed_assertions;
-                                    failed_contract += s.failed_contract;
-                                    skipped += s.skipped;
-                                    infra_errors += s.infra_errors;
-                                    canceled |= s.canceled;
-                                    for mut st in s.steps {
-                                        st.iteration = s_idx;
-                                        steps.push(st);
-                                    }
-                                }
-                                swaggen_runner::collection_runner::CollectionRunReport {
-                                    manifest,
-                                    started_at_unix: started,
-                                    finished_at_unix: time::OffsetDateTime::now_utc()
-                                        .unix_timestamp(),
-                                    total_duration_ms: t0.elapsed().as_millis() as u64,
-                                    canceled,
-                                    passed,
-                                    failed_assertions,
-                                    failed_contract,
-                                    skipped,
-                                    infra_errors,
-                                    steps,
-                                }
-                            } else {
-                                swaggen_runner::collection_runner::run_collection(
-                                    &state,
-                                    &specs,
-                                    &secret_map,
-                                    &downloads,
-                                    &config,
-                                    tok,
-                                )
-                                .await
-                            };
-                            let _ = out.send(Event::CollectionRunFinished(Box::new(rep)));
-                            wake_fn();
-                        });
-                    }
-                    Command::CancelRunner => {
-                        if let Some(tok) = runner_cancel.take() {
-                            tok.cancel();
-                        }
                     }
                     Command::StartLocalMock {
                         routes,

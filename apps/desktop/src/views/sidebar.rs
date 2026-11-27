@@ -26,6 +26,9 @@ struct SidebarActions {
     del_col_id: Option<String>,
     rename_col: Option<(String, String)>,
     recolor_col: Option<(String, Option<String>)>,
+    open_new_col_input: bool,
+    expand_all_cols: Option<bool>,
+    open_import_export: bool,
 }
 
 const COLLECTION_COLOR_SWATCHES: &[(&str, Option<&str>, egui::Color32)] = &[
@@ -84,8 +87,12 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
     // 1. Clean Full-Width Workspace Switcher Pill (no redundant "SWAGGEN" text)
     ui.horizontal(|ui| {
         let is_team = app.selected_team_workspace_id.is_some();
+        let active_ws_key = app
+            .selected_team_workspace_id
+            .as_deref()
+            .unwrap_or_else(|| app.workspace_id.as_str());
+        let ws_accent = swaggen_ui_kit::workspace_accent(active_ws_key, is_team);
         let kind_badge = if is_team { "Team" } else { "Local" };
-        let kind_icon = if is_team { "👥" } else { "📁" };
         let ws_btn_w = (ui.available_width() - 2.0).max(120.0);
         let max_ws_chars = ((ws_btn_w - 86.0) / 7.0).max(6.0) as usize;
         let ws_display = app.active_workspace_display_name();
@@ -103,23 +110,22 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
             .add_sized(
                 [ws_btn_w, 30.0],
                 egui::Button::new(
-                    egui::RichText::new(format!("{kind_icon}  {ws_short}  ·  {kind_badge}  ▾"))
+                    egui::RichText::new(format!("   {ws_short}  ·  {kind_badge}  ▾"))
                         .size(11.5)
                         .color(swaggen_ui_kit::text_primary(ui))
                         .strong(),
                 )
-                .fill(swaggen_ui_kit::subtle_bg(ui))
-                .stroke(egui::Stroke::new(
-                    1.0,
-                    if is_team {
-                        Tokens::STATUS_INFO
-                    } else {
-                        swaggen_ui_kit::border_color(ui)
-                    },
-                ))
+                .fill(ws_accent.bg_tint)
+                .stroke(egui::Stroke::new(1.2, ws_accent.border))
                 .corner_radius(7),
             )
             .on_hover_text("Switch Individual or Team Workspace");
+        let b_rect = ws_btn.rect;
+        ui.painter().circle_filled(
+            egui::pos2(b_rect.left() + 13.0, b_rect.center().y),
+            4.5,
+            ws_accent.dot,
+        );
 
         let mut switch_local_ws: Option<swaggen_domain::LocalId> = None;
         let mut switch_team_ws: Option<(String, String)> = None;
@@ -183,13 +189,40 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                 );
                 for (wid, wname) in &local_ws_list {
                     let is_active = cur_team_id.is_none() && *wid == cur_ws_id;
-                    if ui
-                        .selectable_label(is_active, format!("📁 {wname}"))
-                        .clicked()
-                    {
+                    let acc = swaggen_ui_kit::workspace_accent(wid.as_str(), false);
+                    let row_btn = ui.add_sized(
+                        [ui.available_width(), 26.0],
+                        egui::Button::new(
+                            egui::RichText::new(format!("    {wname}"))
+                                .size(12.0)
+                                .color(if is_active {
+                                    Tokens::TEXT_PRIMARY
+                                } else {
+                                    swaggen_ui_kit::text_primary(ui)
+                                })
+                                .strong(),
+                        )
+                        .fill(if is_active {
+                            acc.bg_active
+                        } else {
+                            acc.bg_tint
+                        })
+                        .stroke(egui::Stroke::new(
+                            if is_active { 1.2 } else { 0.8 },
+                            acc.border,
+                        ))
+                        .corner_radius(6),
+                    );
+                    ui.painter().circle_filled(
+                        egui::pos2(row_btn.rect.left() + 12.0, row_btn.rect.center().y),
+                        4.0,
+                        acc.dot,
+                    );
+                    if row_btn.clicked() {
                         switch_local_ws = Some(wid.clone());
                         ui.close();
                     }
+                    ui.add_space(3.0);
                 }
                 if !team_ws_list.is_empty() {
                     ui.separator();
@@ -201,13 +234,36 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                     );
                     for (tid, tname, role_str) in &team_ws_list {
                         let is_active = cur_team_id.as_deref() == Some(tid.as_str());
-                        if ui
-                            .selectable_label(is_active, format!("👥 {tname} ({role_str})"))
-                            .clicked()
-                        {
+                        let acc = swaggen_ui_kit::workspace_accent(tid, true);
+                        let row_btn = ui.add_sized(
+                            [ui.available_width(), 26.0],
+                            egui::Button::new(
+                                egui::RichText::new(format!("    {tname} · {role_str}"))
+                                    .size(12.0)
+                                    .color(Tokens::TEXT_PRIMARY)
+                                    .strong(),
+                            )
+                            .fill(if is_active {
+                                acc.bg_active
+                            } else {
+                                acc.bg_tint
+                            })
+                            .stroke(egui::Stroke::new(
+                                if is_active { 1.2 } else { 0.8 },
+                                acc.border,
+                            ))
+                            .corner_radius(6),
+                        );
+                        ui.painter().circle_filled(
+                            egui::pos2(row_btn.rect.left() + 12.0, row_btn.rect.center().y),
+                            4.0,
+                            acc.dot,
+                        );
+                        if row_btn.clicked() {
                             switch_team_ws = Some((tid.clone(), tname.clone()));
                             ui.close();
                         }
+                        ui.add_space(3.0);
                     }
                 }
                 ui.separator();
@@ -461,6 +517,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                     let (row_rect, row_resp) =
                         ui.allocate_exact_size(egui::vec2(row_w, 26.0), egui::Sense::hover());
 
+                    let col_tint = resolve_collection_color(col.color.as_deref());
                     // Highlight collection when dragging a request over it!
                     let is_drop_hovered = app.dragging_request_id.is_some()
                         && pointer_pos.is_some_and(|p| row_rect.contains(p));
@@ -478,6 +535,18 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                             ui.ctx()
                                 .data_mut(|d| d.insert_persisted(col_state_id, true));
                         }
+                    } else if col.color.is_some() {
+                        let tint_alpha = if row_resp.hovered() { 28 } else { 14 };
+                        ui.painter().rect_filled(
+                            row_rect,
+                            5.0,
+                            egui::Color32::from_rgba_unmultiplied(
+                                col_tint.r(),
+                                col_tint.g(),
+                                col_tint.b(),
+                                tint_alpha,
+                            ),
+                        );
                     } else if row_resp.hovered() {
                         ui.painter().rect_filled(row_rect, 5.0, Tokens::BG_SUBTLE);
                     }
@@ -501,17 +570,6 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                             .data_mut(|d| d.insert_persisted(col_state_id, is_open));
                     }
 
-                    let col_tint = resolve_collection_color(col.color.as_deref());
-                    // Accent left color stripe on Collection row
-                    if col.color.is_some() {
-                        ui.painter().line_segment(
-                            [
-                                egui::pos2(row_rect.left() + 1.5, row_rect.top() + 4.0),
-                                egui::pos2(row_rect.left() + 1.5, row_rect.bottom() - 4.0),
-                            ],
-                            egui::Stroke::new(2.5, col_tint),
-                        );
-                    }
                     let chev_rect = egui::Rect::from_center_size(
                         egui::pos2(row_rect.left() + 9.0, row_rect.center().y),
                         egui::vec2(11.0, 11.0),
@@ -528,7 +586,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                     );
                     let folder_rect = egui::Rect::from_center_size(
                         egui::pos2(row_rect.left() + 23.0, row_rect.center().y),
-                        egui::vec2(14.0, 14.0),
+                        egui::vec2(15.0, 15.0),
                     );
                     swaggen_ui_kit::paint_icon(
                         ui.painter(),
@@ -556,7 +614,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                         Tokens::TEXT_PRIMARY,
                     );
 
-                    // Crisp `+` New request icon button
+                    // Sleek ghost `+` New request icon button (no boxy border at rest)
                     let add_rect = egui::Rect::from_center_size(
                         egui::pos2(row_rect.right() - 34.0, row_rect.center().y),
                         egui::vec2(20.0, 20.0),
@@ -566,24 +624,16 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                         ui.scope_id().with(("col_add_req", &col.id)),
                         egui::Sense::click(),
                     );
-                    ui.painter().rect(
-                        add_rect,
-                        5.0,
-                        if add_resp.hovered() {
-                            Tokens::BG_SELECTED
-                        } else {
-                            Tokens::BG_SUBTLE
-                        },
-                        egui::Stroke::new(
-                            1.0,
-                            if add_resp.hovered() {
-                                Tokens::STATUS_INFO
-                            } else {
-                                Tokens::BORDER_DEFAULT
-                            },
-                        ),
-                        egui::StrokeKind::Middle,
-                    );
+                    if add_resp.hovered() {
+                        ui.ctx().set_cursor_icon(egui::CursorIcon::PointingHand);
+                        ui.painter().rect(
+                            add_rect,
+                            6.0,
+                            Tokens::BG_SELECTED,
+                            egui::Stroke::new(1.0, Tokens::STATUS_INFO.gamma_multiply(0.45)),
+                            egui::StrokeKind::Middle,
+                        );
+                    }
                     swaggen_ui_kit::paint_mini_icon(
                         ui.painter(),
                         add_rect,
@@ -595,34 +645,29 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                         },
                     );
                     if add_resp
-                        .on_hover_text("Add REST request (open ⋯ for GraphQL / Folder)")
+                        .on_hover_text("New request in this collection")
                         .clicked()
                     {
                         acts.add_req_target = Some((col.id.clone(), None));
                     }
 
-                    // Crisp `⋯` Collection actions icon button
+                    // Sleek ghost `⋯` Collection actions icon button
                     let dots_rect = egui::Rect::from_center_size(
                         egui::pos2(row_rect.right() - 11.0, row_rect.center().y),
                         egui::vec2(20.0, 20.0),
                     );
                     let dots_id = ui.scope_id().with(("col_dots", &col.id));
                     let dots_resp = ui.interact(dots_rect, dots_id, egui::Sense::click());
-                    ui.painter().rect(
-                        dots_rect,
-                        5.0,
-                        if dots_resp.hovered() {
-                            Tokens::BG_SELECTED
-                        } else {
-                            egui::Color32::TRANSPARENT
-                        },
-                        if dots_resp.hovered() {
-                            egui::Stroke::new(1.0, Tokens::STATUS_INFO)
-                        } else {
-                            egui::Stroke::NONE
-                        },
-                        egui::StrokeKind::Middle,
-                    );
+                    if dots_resp.hovered() {
+                        ui.ctx().set_cursor_icon(egui::CursorIcon::PointingHand);
+                        ui.painter().rect(
+                            dots_rect,
+                            6.0,
+                            Tokens::BG_SELECTED,
+                            egui::Stroke::new(1.0, Tokens::STATUS_INFO.gamma_multiply(0.45)),
+                            egui::StrokeKind::Middle,
+                        );
+                    }
                     swaggen_ui_kit::paint_mini_icon(
                         ui.painter(),
                         dots_rect,
@@ -748,6 +793,49 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                     }
                 }
             }
+
+            // Right-clickable empty whitespace area below Collections tree
+            let default_col_id = app
+                .active_request()
+                .map(|r| r.collection_id.clone())
+                .or_else(|| app.state.collections.first().map(|c| c.id.clone()));
+            let empty_h = ui.available_height().max(90.0);
+            let empty_w = ui.available_width().max(100.0);
+            let (_empty_rect, empty_resp) =
+                ui.allocate_exact_size(egui::vec2(empty_w, empty_h), egui::Sense::click());
+            empty_resp.context_menu(|ui| {
+                ui.set_min_width(196.0);
+                if let Some(ref cid) = default_col_id {
+                    if ui.button("New HTTP request  (Ctrl+T)").clicked() {
+                        acts.add_req_target = Some((cid.clone(), None));
+                        ui.close();
+                    }
+                    if ui.button("New GraphQL request").clicked() {
+                        acts.add_gql_target = Some((cid.clone(), None));
+                        ui.close();
+                    }
+                }
+                if ui.button("New collection").clicked() {
+                    acts.open_new_col_input = true;
+                    ui.close();
+                }
+                ui.separator();
+                if ui.button("Import API / OpenAPI / cURL…").clicked() {
+                    acts.open_import_export = true;
+                    ui.close();
+                }
+                if !app.state.collections.is_empty() {
+                    ui.separator();
+                    if ui.button("Expand all collections").clicked() {
+                        acts.expand_all_cols = Some(true);
+                        ui.close();
+                    }
+                    if ui.button("Collapse all collections").clicked() {
+                        acts.expand_all_cols = Some(false);
+                        ui.close();
+                    }
+                }
+            });
         });
 
     // Floating Drag-and-Drop ghost pill & drop cleanup
@@ -897,6 +985,18 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
     {
         app.mark_dirty();
         app.status = "Moved collection to Trash (restore anytime from Sidebar Trash)".into();
+    }
+    if acts.open_new_col_input {
+        app.show_new_collection_input = true;
+    }
+    if acts.open_import_export {
+        app.navigate_to(MainMode::ImportExport);
+    }
+    if let Some(expand_state) = acts.expand_all_cols {
+        for c in &app.state.collections {
+            let cid = ui.make_persistent_id(("col_open", &c.id));
+            ui.ctx().data_mut(|d| d.insert_persisted(cid, expand_state));
+        }
     }
 
     // 5. Pointer-locked Splitter + PERSONAL section anchored cleanly at sidebar bottom

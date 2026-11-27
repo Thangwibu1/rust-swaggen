@@ -26,14 +26,13 @@ use std::{
 use swaggen_api_contract::{
     API_VERSION, AcceptInvitationRequest, BootstrapOwnerRequest, BranchSummary, Capabilities,
     ChangePasswordRequest, CommentListResponse, CreateBranchRequest, CreateCommentRequest,
-    CreateInvitationRequest, CreateScheduleRequest, CreateTeamMockRequest, CreateWorkspaceRequest,
-    ErrorEnvelope, FirebaseLoginRequest, LoginRequest, MarkNotificationsReadRequest,
-    MergeRequestRecord, OpenMergeRequest, PresenceEntry, PresenceHeartbeatRequest,
-    PresenceListResponse, PublishBatchRequest, PutVaultSecretRequest, RegisterRunnerRequest,
-    ReplyCommentRequest, ResolveCommentRequest, RestoreRevisionRequest, RevisionListResponse, Role,
-    RunnerLeaseRecord, ScheduleRecord, ServiceStatus, SsrfCheckRequest, SsrfCheckResponse,
-    TeamMockListResponse, TeamMockRoute, TotpEnrollResponse, TotpStatusResponse, TotpVerifyRequest,
-    TransferOwnershipRequest, UpdateMemberRoleRequest, UpsertEntityRequest,
+    CreateInvitationRequest, CreateTeamMockRequest, CreateWorkspaceRequest, ErrorEnvelope,
+    FirebaseLoginRequest, LoginRequest, MarkNotificationsReadRequest, MergeRequestRecord,
+    OpenMergeRequest, PresenceEntry, PresenceHeartbeatRequest, PresenceListResponse,
+    PublishBatchRequest, PutVaultSecretRequest, ReplyCommentRequest, ResolveCommentRequest,
+    RestoreRevisionRequest, RevisionListResponse, Role, ServiceStatus, SsrfCheckRequest,
+    SsrfCheckResponse, TeamMockListResponse, TeamMockRoute, TotpEnrollResponse, TotpStatusResponse,
+    TotpVerifyRequest, TransferOwnershipRequest, UpdateMemberRoleRequest, UpsertEntityRequest,
     VaultSecretListResponse, VaultSecretSummary, VaultSecretValueResponse, WorkspaceArchiveRequest,
     WorkspaceListResponse, WorkspaceQuotaStatus,
 };
@@ -96,8 +95,6 @@ const KV_MFA: &str = "mfa_users";
 const KV_BRANCHES: &str = "branches";
 const KV_MERGE_REQUESTS: &str = "merge_requests";
 const KV_TEAM_VAULT: &str = "team_vault";
-const KV_RUNNERS: &str = "runner_leases";
-const KV_SCHEDULES: &str = "schedules";
 
 fn ws_kv_key(workspace_id: &str, item_id: &str) -> String {
     format!("{workspace_id}:{item_id}")
@@ -2058,136 +2055,6 @@ async fn reveal_vault_secret(
     }))
 }
 
-async fn register_runner_lease(
-    State(state): State<AppState>,
-    Extension(RequestCorrelationId(corr)): Extension<RequestCorrelationId>,
-    headers: axum::http::HeaderMap,
-    Path(workspace_id): Path<String>,
-    Json(req): Json<RegisterRunnerRequest>,
-) -> Result<(StatusCode, Json<RunnerLeaseRecord>), (StatusCode, Json<ErrorEnvelope>)> {
-    let ctx = require_auth(&state, &headers)
-        .await
-        .map_err(|e| map_err(&corr, e))?;
-    let role = caller_workspace_role(&state, &ctx, &workspace_id)
-        .await
-        .map_err(|e| map_err(&corr, e))?;
-    if !matches!(role, Role::Owner | Role::Admin) {
-        return Err(map_err(
-            &corr,
-            StoreError::Forbidden(
-                "Only Owner/Admin can register workspace self-hosted runners".into(),
-            ),
-        ));
-    }
-    let now = now_unix();
-    let rec = RunnerLeaseRecord {
-        runner_id: uuid::Uuid::new_v4().to_string(),
-        workspace_id: workspace_id.clone(),
-        runner_name: req.runner_name,
-        tags: req.tags,
-        registered_by: ctx.user_id,
-        last_heartbeat_unix: now,
-        lease_expires_unix: now + 300,
-    };
-    let val = serde_json::to_string(&rec).map_err(|_| map_err(&corr, StoreError::InternalSafe))?;
-    state
-        .store
-        .kv_put(
-            KV_RUNNERS,
-            &ws_kv_key(&workspace_id, &rec.runner_id),
-            &val,
-            now,
-        )
-        .await
-        .map_err(|e| map_err(&corr, e))?;
-    Ok((StatusCode::CREATED, Json(rec)))
-}
-
-async fn heartbeat_runner_lease(
-    State(state): State<AppState>,
-    Extension(RequestCorrelationId(corr)): Extension<RequestCorrelationId>,
-    headers: axum::http::HeaderMap,
-    Path((workspace_id, runner_id)): Path<(String, String)>,
-) -> Result<Json<RunnerLeaseRecord>, (StatusCode, Json<ErrorEnvelope>)> {
-    let ctx = require_auth(&state, &headers)
-        .await
-        .map_err(|e| map_err(&corr, e))?;
-    let role = caller_workspace_role(&state, &ctx, &workspace_id)
-        .await
-        .map_err(|e| map_err(&corr, e))?;
-    if !matches!(role, Role::Owner | Role::Admin | Role::Editor) {
-        return Err(map_err(&corr, StoreError::Forbidden("Forbidden".into())));
-    }
-    let key = ws_kv_key(&workspace_id, &runner_id);
-    let raw = state
-        .store
-        .kv_get(KV_RUNNERS, &key)
-        .await
-        .map_err(|e| map_err(&corr, e))?
-        .ok_or_else(|| map_err(&corr, StoreError::NotFound("Runner lease not found".into())))?;
-    let mut rec: RunnerLeaseRecord =
-        serde_json::from_str(&raw).map_err(|_| map_err(&corr, StoreError::InternalSafe))?;
-    let now = now_unix();
-    rec.last_heartbeat_unix = now;
-    rec.lease_expires_unix = now + 300;
-    let val = serde_json::to_string(&rec).map_err(|_| map_err(&corr, StoreError::InternalSafe))?;
-    state
-        .store
-        .kv_put(KV_RUNNERS, &key, &val, now)
-        .await
-        .map_err(|e| map_err(&corr, e))?;
-    Ok(Json(rec))
-}
-
-async fn create_schedule(
-    State(state): State<AppState>,
-    Extension(RequestCorrelationId(corr)): Extension<RequestCorrelationId>,
-    headers: axum::http::HeaderMap,
-    Path(workspace_id): Path<String>,
-    Json(req): Json<CreateScheduleRequest>,
-) -> Result<(StatusCode, Json<ScheduleRecord>), (StatusCode, Json<ErrorEnvelope>)> {
-    let ctx = require_auth(&state, &headers)
-        .await
-        .map_err(|e| map_err(&corr, e))?;
-    let role = caller_workspace_role(&state, &ctx, &workspace_id)
-        .await
-        .map_err(|e| map_err(&corr, e))?;
-    if !role.can_write_entities() {
-        return Err(map_err(
-            &corr,
-            StoreError::Forbidden("Viewer cannot create scheduled runs".into()),
-        ));
-    }
-    if let Some(wh) = &req.failure_webhook_url
-        && let Err(reason) = validate_outbound_url(wh, &SsrfPolicy::default())
-    {
-        return Err(map_err(&corr, StoreError::InvalidInput(reason)));
-    }
-    let now = now_unix();
-    let next_fire_unix = now + 60;
-    let rec = ScheduleRecord {
-        schedule_id: uuid::Uuid::new_v4().to_string(),
-        workspace_id: workspace_id.clone(),
-        name: req.name,
-        cron_expr: req.cron_expr,
-        timezone_offset_secs: req.timezone_offset_secs,
-        next_fire_unix,
-        failure_webhook_url: req.failure_webhook_url,
-    };
-    let val = serde_json::to_string(&rec).map_err(|_| map_err(&corr, StoreError::InternalSafe))?;
-    state
-        .store
-        .kv_put(
-            KV_SCHEDULES,
-            &ws_kv_key(&workspace_id, &rec.schedule_id),
-            &val,
-            now,
-        )
-        .await
-        .map_err(|e| map_err(&corr, e))?;
-    Ok((StatusCode::CREATED, Json(rec)))
-}
-
 async fn not_found(request: Request<Body>) -> (StatusCode, Json<ErrorEnvelope>) {
     let correlation_id = request
         .extensions()
@@ -2456,18 +2323,6 @@ pub fn router_with_admin(
             "/v1/workspaces/{workspace_id}/vault/{key}",
             get(reveal_vault_secret).put(put_vault_secret),
         )
-        .route(
-            "/v1/workspaces/{workspace_id}/runners/register",
-            post(register_runner_lease),
-        )
-        .route(
-            "/v1/workspaces/{workspace_id}/runners/{runner_id}/heartbeat",
-            post(heartbeat_runner_lease),
-        )
-        .route(
-            "/v1/workspaces/{workspace_id}/schedules",
-            post(create_schedule),
-        )
         .fallback(not_found)
         .layer(middleware::from_fn_with_state(
             state.clone(),
@@ -2562,9 +2417,6 @@ pub fn build_server_openapi_json() -> serde_json::Value {
             "/v1/workspaces/{workspace_id}/merge-requests/{merge_id}/merge": { "post": { "summary": "Merge conflict-free approved request" } },
             "/v1/workspaces/{workspace_id}/vault": { "get": { "summary": "List workspace vault secret metadata" } },
             "/v1/workspaces/{workspace_id}/vault/{key}": { "get": { "summary": "Reveal workspace vault secret (Editor+)" }, "put": { "summary": "Put or rotate workspace vault secret" } },
-            "/v1/workspaces/{workspace_id}/runners/register": { "post": { "summary": "Register self-hosted runner lease" } },
-            "/v1/workspaces/{workspace_id}/runners/{runner_id}/heartbeat": { "post": { "summary": "Extend self-hosted runner lease" } },
-            "/v1/workspaces/{workspace_id}/schedules": { "post": { "summary": "Create timezone/DST scheduled run monitor" } },
             "/admin": { "get": { "summary": "Web Admin Portal for broadcasting release updates" } },
             "/v1/admin/login": { "post": { "summary": "Authenticate admin using SWAGGEN_ADMIN_USERNAME & SWAGGEN_ADMIN_PASSWORD" } },
             "/v1/admin/releases/broadcast": { "post": { "summary": "Broadcast new desktop release update to all users" } },
@@ -3589,49 +3441,6 @@ mod tests {
         )
         .await;
         assert_eq!(st, 403);
-
-        // P11 Self-Hosted Runner lease (MK07) & Schedule webhook SSRF guard (MK08/MK09)
-        let (st, lease_b) = http_call(
-            &base,
-            Method::POST,
-            &format!("/v1/workspaces/{}/runners/register", ws.workspace_id),
-            Some(&bob.session_token),
-            Some(json!({"runner_name":"ci-win-01","tags":["windows"]})),
-        )
-        .await;
-        assert_eq!(st, 201);
-        let lease: swaggen_api_contract::RunnerLeaseRecord =
-            serde_json::from_str(&lease_b).unwrap();
-        let (st, _) = http_call(
-            &base,
-            Method::POST,
-            &format!(
-                "/v1/workspaces/{}/runners/{}/heartbeat",
-                ws.workspace_id, lease.runner_id
-            ),
-            Some(&bob.session_token),
-            None,
-        )
-        .await;
-        assert_eq!(st, 200);
-        let (st, _) = http_call(
-            &base,
-            Method::POST,
-            &format!("/v1/workspaces/{}/schedules", ws.workspace_id),
-            Some(&bob.session_token),
-            Some(json!({"name":"BadHook","cron_expr":"0 9 * * *","timezone_offset_secs":0,"failure_webhook_url":"http://169.254.169.254/hook"})),
-        )
-        .await;
-        assert_eq!(st, 400);
-        let (st, _) = http_call(
-            &base,
-            Method::POST,
-            &format!("/v1/workspaces/{}/schedules", ws.workspace_id),
-            Some(&bob.session_token),
-            Some(json!({"name":"Nightly","cron_expr":"0 9 * * *","timezone_offset_secs":0,"failure_webhook_url":"https://alerts.example.com/hook"})),
-        )
-        .await;
-        assert_eq!(st, 201);
 
         stop.send(()).unwrap();
         let _ = srv.await;

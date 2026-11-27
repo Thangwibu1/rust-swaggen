@@ -121,8 +121,11 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                 ui.columns(cols_count, |cols| {
                     // ================= LEFT CARD: PERSONAL WORKSPACES =================
                     egui::Frame::new()
-                        .fill(Tokens::BG_SURFACE)
-                        .stroke(egui::Stroke::new(1.0, Tokens::BORDER_DEFAULT))
+                        .fill(egui::Color32::from_rgb(0xFA, 0xFE, 0xFC))
+                        .stroke(egui::Stroke::new(
+                            1.0,
+                            egui::Color32::from_rgb(0xC5, 0xE6, 0xD8),
+                        ))
                         .corner_radius(12)
                         .inner_margin(egui::Margin::symmetric(22, 20))
                         .show(&mut cols[0], |ui| {
@@ -196,19 +199,16 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                             for (ws_id, ws_label) in &local_list {
                                 let is_loaded = *ws_id == app.workspace_id
                                     && app.selected_team_workspace_id.is_none();
+                                let accent = swaggen_ui_kit::workspace_accent(ws_id.as_str(), false);
                                 egui::Frame::new()
                                     .fill(if is_loaded {
-                                        swaggen_ui_kit::selected_bg(ui)
+                                        accent.bg_active
                                     } else {
-                                        swaggen_ui_kit::subtle_bg(ui)
+                                        accent.bg_tint
                                     })
                                     .stroke(egui::Stroke::new(
-                                        1.0,
-                                        if is_loaded {
-                                            Tokens::STATUS_INFO
-                                        } else {
-                                            Tokens::BORDER_DEFAULT
-                                        },
+                                        if is_loaded { 1.5 } else { 1.0 },
+                                        accent.border,
                                     ))
                                     .corner_radius(8)
                                     .inner_margin(egui::Margin::symmetric(14, 10))
@@ -216,11 +216,29 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                                         ui.set_min_width(ui.available_width());
                                         ui.horizontal(|ui| {
                                             ui.vertical(|ui| {
-                                                ui.label(swaggen_ui_kit::bold_text(
-                                                    ws_label,
-                                                    13.5,
-                                                    Tokens::TEXT_PRIMARY,
-                                                ));
+                                                ui.horizontal(|ui| {
+                                                    let (dot_r, _) = ui.allocate_exact_size(
+                                                        egui::vec2(10.0, 10.0),
+                                                        egui::Sense::hover(),
+                                                    );
+                                                    ui.painter().circle_filled(
+                                                        dot_r.center(),
+                                                        4.5,
+                                                        accent.dot,
+                                                    );
+                                                    ui.label(swaggen_ui_kit::bold_text(
+                                                        ws_label,
+                                                        13.5,
+                                                        Tokens::TEXT_PRIMARY,
+                                                    ));
+                                                    if is_loaded {
+                                                        swaggen_ui_kit::pill_badge(
+                                                            ui,
+                                                            accent.dot,
+                                                            "Active",
+                                                        );
+                                                    }
+                                                });
                                                 let subtitle = if *ws_id == app.workspace_id {
                                                     format!(
                                                         "{} collection(s) · {} request(s)",
@@ -318,8 +336,11 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
 
                     // ================= RIGHT CARD: TEAM WORKSPACES & JOIN =================
                     egui::Frame::new()
-                        .fill(Tokens::BG_SURFACE)
-                        .stroke(egui::Stroke::new(1.0, Tokens::BORDER_DEFAULT))
+                        .fill(egui::Color32::from_rgb(0xFA, 0xFC, 0xFF))
+                        .stroke(egui::Stroke::new(
+                            1.0,
+                            egui::Color32::from_rgb(0xC7, 0xD7, 0xFA),
+                        ))
                         .corner_radius(12)
                         .inner_margin(egui::Margin::symmetric(22, 20))
                         .show(&mut cols[right_idx], |ui| {
@@ -522,19 +543,19 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                                             .selected_team_workspace_id
                                             .as_deref()
                                             == Some(ws.workspace_id.as_str());
+                                        let accent = swaggen_ui_kit::workspace_accent(
+                                            &ws.workspace_id,
+                                            true,
+                                        );
                                         egui::Frame::new()
                                             .fill(if is_cur_team {
-                                                swaggen_ui_kit::selected_bg(ui)
+                                                accent.bg_active
                                             } else {
-                                                swaggen_ui_kit::subtle_bg(ui)
+                                                accent.bg_tint
                                             })
                                             .stroke(egui::Stroke::new(
-                                                1.0,
-                                                if is_cur_team {
-                                                    Tokens::STATUS_INFO
-                                                } else {
-                                                    Tokens::BORDER_DEFAULT
-                                                },
+                                                if is_cur_team { 1.5 } else { 1.0 },
+                                                accent.border,
                                             ))
                                             .corner_radius(8)
                                             .inner_margin(egui::Margin::symmetric(14, 10))
@@ -543,6 +564,15 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                                                 ui.horizontal(|ui| {
                                                     ui.vertical(|ui| {
                                                         ui.horizontal(|ui| {
+                                                            let (dot_r, _) = ui.allocate_exact_size(
+                                                                egui::vec2(10.0, 10.0),
+                                                                egui::Sense::hover(),
+                                                            );
+                                                            ui.painter().circle_filled(
+                                                                dot_r.center(),
+                                                                4.5,
+                                                                accent.dot,
+                                                            );
                                                             ui.label(swaggen_ui_kit::bold_text(
                                                                 &ws.name,
                                                                 13.5,
@@ -550,9 +580,16 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                                                             ));
                                                             swaggen_ui_kit::pill_badge(
                                                                 ui,
-                                                                Tokens::STATUS_INFO,
+                                                                accent.dot,
                                                                 ws.role.as_str(),
                                                             );
+                                                            if is_cur_team {
+                                                                swaggen_ui_kit::pill_badge(
+                                                                    ui,
+                                                                    Tokens::STATUS_SUCCESS,
+                                                                    "Active",
+                                                                );
+                                                            }
                                                         });
                                                         ui.label(
                                                             egui::RichText::new(format!(

@@ -839,47 +839,6 @@ pub struct VaultSecretValueResponse {
     pub value: String,
 }
 
-/// P11 Self-Hosted Runner Lease & Schedule Monitor DTOs (MK07, MK08, MK09).
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(deny_unknown_fields)]
-pub struct RegisterRunnerRequest {
-    pub runner_name: String,
-    pub tags: Vec<String>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(deny_unknown_fields)]
-pub struct RunnerLeaseRecord {
-    pub runner_id: String,
-    pub workspace_id: String,
-    pub runner_name: String,
-    pub tags: Vec<String>,
-    pub registered_by: String,
-    pub last_heartbeat_unix: i64,
-    pub lease_expires_unix: i64,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(deny_unknown_fields)]
-pub struct CreateScheduleRequest {
-    pub name: String,
-    pub cron_expr: String,
-    pub timezone_offset_secs: i64,
-    pub failure_webhook_url: Option<String>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(deny_unknown_fields)]
-pub struct ScheduleRecord {
-    pub schedule_id: String,
-    pub workspace_id: String,
-    pub name: String,
-    pub cron_expr: String,
-    pub timezone_offset_secs: i64,
-    pub next_fire_unix: i64,
-    pub failure_webhook_url: Option<String>,
-}
-
 pub fn permission_matrix() -> Vec<PermissionMatrixRow> {
     vec![
         PermissionMatrixRow {

@@ -3,7 +3,7 @@
 //! - Unified URL bar (`[ Method ▾ | URL ]  [ Send ]  [ ⋯ ]` with `GRAPHQL` inside Method dropdown)
 //! - Live interactive `{{variable}}` status pills + 1-click inline variable quick-setter
 //! - Flat border-collapsed Postman Key-Value grid (zero box-inside-box clutter)
-//! - First-class `Scripts` (`Pre-request` | `Post-response`) JS tab with Postman `pm.*` & Playwright `expect()`
+//! - First-class `Scripts` (`Pre-request` | `Post-response`) JS tab (Postman `pm.environment.*` / headers) & `Extractors`
 //! - Clean 2-column Request `Settings` & full `Auth` (`Bearer`, `Basic`, `API Key`, `OAuth 2.0`, `AWS SigV4`, `Digest`)
 use crate::app::{App, MainMode, RequestSubTab};
 use eframe::egui;
@@ -13,10 +13,10 @@ use swaggen_domain::{
         generate_variables_skeleton,
     },
     workspace::{
-        ApiKeyPlacement, AssertionRule, AssertionTarget, AuthConfig, ClientCertMapping, HttpMethod,
-        HttpVersionPolicy, IdempotencyMode, KeyValueRow, MultipartField, MultipartValueKind,
-        OAuthGrantType, RequestBody, RequestItem, VariableContext, VariableEntry,
-        VariableSuggestion, apply_brace_var_completion, extract_brace_var_trigger, folder_chain,
+        ApiKeyPlacement, AuthConfig, ClientCertMapping, HttpMethod, HttpVersionPolicy,
+        IdempotencyMode, KeyValueRow, MultipartField, MultipartValueKind, OAuthGrantType,
+        RequestBody, RequestItem, VariableContext, VariableEntry, VariableSuggestion,
+        apply_brace_var_completion, extract_brace_var_trigger, folder_chain,
         infer_query_param_suggestions, inspect_request_variables, new_uid,
         remove_url_path_param_key, rename_url_path_param_key, resolve_effective_auth,
         resolve_request_preview, split_url_parts,
@@ -1358,7 +1358,7 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
         (resolved, eff_source, avail_vars)
     };
 
-    // 3. Clean Postman Sub-tabs: `Params` (Query Params + Path Variables) | `Headers` | `Body` | `Auth` | `Scripts` | `Assertions` | `Settings` | `Code`
+    // 3. Clean Postman Sub-tabs: `Params` (Query Params + Path Variables) | `Headers` | `Body` | `Auth` | `Scripts` | `Extractors` | `Settings` | `Code`
     let q_count = req_clone
         .query_params
         .iter()
@@ -1371,7 +1371,7 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
         .count();
     let total_params = q_count + p_count;
     let h_count = req_clone.headers.len();
-    let a_count = req_clone.assertions.len() + req_clone.extractors.len();
+    let e_count = req_clone.extractors.len();
     let has_scripts = !req_clone.pre_request_script.trim().is_empty()
         || !req_clone.post_response_script.trim().is_empty();
 
@@ -1390,10 +1390,10 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
     } else {
         "Scripts"
     };
-    let tests_lbl = if a_count > 0 {
-        format!("Assertions ({a_count})")
+    let extractors_lbl = if e_count > 0 {
+        format!("Extractors ({e_count})")
     } else {
-        "Assertions".into()
+        "Extractors".into()
     };
 
     let is_gql = req_clone.is_graphql();
@@ -1420,7 +1420,7 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
         tabs.extend([
             (RequestSubTab::Auth, "Auth"),
             (RequestSubTab::Scripts, scripts_lbl),
-            (RequestSubTab::Assertions, tests_lbl.as_str()),
+            (RequestSubTab::Extractors, extractors_lbl.as_str()),
             (RequestSubTab::Connection, "Settings"),
             (RequestSubTab::Resolved, "Code"),
         ]);
@@ -1700,8 +1700,8 @@ pub fn show_config_panel(app: &mut App, ui: &mut egui::Ui, req_idx: usize, alloc
             RequestSubTab::Scripts => {
                 show_scripts_editor(app, ui, req_idx, inner_scroll_h, &mut changed);
             }
-            RequestSubTab::Assertions => {
-                show_assertions_editor(app, ui, req_idx, &mut changed);
+            RequestSubTab::Extractors => {
+                show_extractors_editor(app, ui, req_idx, &mut changed);
             }
             RequestSubTab::Connection => {
                 show_clean_settings_editor(app, ui, req_idx, &resolved, &mut changed);
@@ -2745,7 +2745,7 @@ fn show_auth_editor(
     }
 }
 
-/// First-class Pre-request & Post-response JS Automation Editor (F9 — Postman `pm.*` + Playwright `expect()`).
+/// Pre-request & Post-response JS Scripts Editor (Postman `pm.*` variable & header automation).
 fn show_scripts_editor(
     app: &mut App,
     ui: &mut egui::Ui,
@@ -2771,9 +2771,9 @@ fn show_scripts_editor(
             "Pre-request"
         };
         let post_lbl = if post_has {
-            "Post-response (Tests) ●"
+            "Post-response ●"
         } else {
-            "Post-response (Tests)"
+            "Post-response"
         };
         if ui
             .selectable_label(!app.script_subtab_post, pre_lbl)
@@ -2787,7 +2787,7 @@ fn show_scripts_editor(
         if ui
             .selectable_label(app.script_subtab_post, post_lbl)
             .on_hover_text(
-                "Runs AFTER HTTP response arrives — assert status/JSON with pm.test() or Playwright expect(), and chain tokens into env!",
+                "Runs AFTER HTTP response arrives — read response JSON/headers and save tokens/variables into env",
             )
             .clicked()
         {
@@ -2807,14 +2807,14 @@ fn show_scripts_editor(
                 swaggen_ui_kit::pill_badge(
                     ui,
                     Tokens::TEXT_WARNING,
-                    &format!("{} migration note(s)", compat.unsupported_apis.len()),
+                    &format!("{} note(s)", compat.unsupported_apis.len()),
                 );
             }
         }
 
         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-            if swaggen_ui_kit::secondary_button(ui, !active_code.trim().is_empty(), "▶ Dry-Run Script")
-                .on_hover_text("Test this script locally against the latest response & active environment")
+            if swaggen_ui_kit::secondary_button(ui, !active_code.trim().is_empty(), "▶ Run Script")
+                .on_hover_text("Run this script locally against the latest response & active environment")
                 .clicked()
             {
                 let resp_opt = app
@@ -2869,8 +2869,10 @@ fn show_scripts_editor(
                 app.status = match rep.error {
                     Some(ref e) => format!("Script error: {e}"),
                     None => format!(
-                        "Script dry-run OK ({} test(s), {} log(s))",
-                        rep.test_results.len(),
+                        "Script executed OK ({} env var(s) updated, {} log(s))",
+                        rep.mutated_env.len()
+                            + rep.mutated_collection_vars.len()
+                            + rep.mutated_globals.len(),
                         rep.logs.len()
                     ),
                 };
@@ -2887,14 +2889,6 @@ fn show_scripts_editor(
     let snippets: &[(&str, &str)] = if app.script_subtab_post {
         &[
             (
-                "+ Playwright: status 200 & fast",
-                "test(\"Status is 200 and fast\", () => {\n  expect(response.status()).toBe(200);\n  expect(response.responseTime).toBeLessThan(1000);\n});\n",
-            ),
-            (
-                "+ Postman: status 200",
-                "pm.test(\"Status code is 200\", () => {\n  pm.response.to.have.status(200);\n});\n",
-            ),
-            (
                 "+ Save JSON token -> Env",
                 "const data = pm.response.json();\nif (data.token) {\n  pm.environment.set(\"api_token\", data.token);\n}\n",
             ),
@@ -2903,8 +2897,12 @@ fn show_scripts_editor(
                 "const items = pm.response.json();\nif (items.length > 0) {\n  pm.collectionVariables.set(\"item_id\", items[0].id);\n}\n",
             ),
             (
-                "+ Assert JSON property",
-                "const body = response.json();\ntest(\"Has expected field\", () => {\n  expect(body).toHaveProperty(\"id\");\n});\n",
+                "+ Save header -> Env",
+                "const reqId = pm.response.headers.get(\"x-request-id\");\nif (reqId) {\n  pm.environment.set(\"last_request_id\", reqId);\n}\n",
+            ),
+            (
+                "+ Log JSON response",
+                "const data = pm.response.json();\nconsole.log(\"Status:\", pm.response.code, data);\n",
             ),
         ]
     } else {
@@ -2946,7 +2944,7 @@ fn show_scripts_editor(
                             egui::TextEdit::multiline(target)
                                 .id_salt(("req_js_editor", app.script_subtab_post))
                                 .hint_text(if app.script_subtab_post {
-                                    "// JavaScript (Postman pm.* & Playwright test/expect)\ntest(\"Status 200\", () => {\n  expect(response.status()).toBe(200);\n});"
+                                    "// Post-response JavaScript (save tokens/ids to env)\nconst data = pm.response.json();\nif (data.token) {\n  pm.environment.set(\"api_token\", data.token);\n}"
                                 } else {
                                     "// Pre-request JavaScript\npm.environment.set(\"timestamp\", Date.now());"
                                 })
@@ -3037,12 +3035,35 @@ fn show_scripts_editor(
             *changed = true;
         }
     }
+
+    if let Some((pre_opt, post_opt)) = app.script_reports.get(&req_id) {
+        let active_rep = if app.script_subtab_post {
+            post_opt.as_ref()
+        } else {
+            pre_opt.as_ref()
+        };
+        if let Some(rep) = active_rep {
+            if let Some(ref err) = rep.error {
+                ui.add_space(4.0);
+                swaggen_ui_kit::notice_banner(ui, NoticeKind::Danger, "Script error", err);
+            }
+            if !rep.logs.is_empty() {
+                ui.add_space(4.0);
+                ui.label(swaggen_ui_kit::bold_text(
+                    "Console log",
+                    11.0,
+                    swaggen_ui_kit::text_secondary(ui),
+                ));
+                swaggen_ui_kit::code_surface(ui, &rep.logs.join("\n"));
+            }
+        }
+    }
 }
 
-fn show_assertions_editor(app: &mut App, ui: &mut egui::Ui, req_idx: usize, changed: &mut bool) {
+fn show_extractors_editor(app: &mut App, ui: &mut egui::Ui, req_idx: usize, changed: &mut bool) {
     ui.horizontal_wrapped(|ui| {
         ui.label(
-            egui::RichText::new("Declarative Assertions & Variable Extractors")
+            egui::RichText::new("Response Variable Extractors (Save JSONPath / Header to Env)")
                 .size(11.5)
                 .color(swaggen_ui_kit::text_secondary(ui))
                 .strong(),
@@ -3053,144 +3074,18 @@ fn show_assertions_editor(app: &mut App, ui: &mut egui::Ui, req_idx: usize, chan
         }
     });
     ui.add_space(4.0);
-    let rules = &mut app.state.requests[req_idx].assertions;
-    let mut del_idx = None;
-    for (i, r) in rules.iter_mut().enumerate() {
-        ui.horizontal_wrapped(|ui| {
-            if ui.checkbox(&mut r.enabled, "").changed() {
-                *changed = true;
-            }
-            if ui
-                .add(
-                    egui::TextEdit::singleline(&mut r.label)
-                        .hint_text("label")
-                        .desired_width(110.0),
-                )
-                .changed()
-            {
-                *changed = true;
-            }
-            let tname = match &r.target {
-                AssertionTarget::StatusEquals => "Status ==",
-                AssertionTarget::MaxDurationMs => "Latency <=",
-                AssertionTarget::HeaderEquals { .. } => "Header ==",
-                AssertionTarget::JsonPathEquals { .. } => "JSONPath ==",
-                AssertionTarget::BodyContains => "Body contains",
-            };
-            egui::ComboBox::from_id_salt(("assert-kind", i))
-                .selected_text(tname)
-                .width(105.0)
-                .show_ui(ui, |ui| {
-                    if ui
-                        .selectable_label(
-                            matches!(r.target, AssertionTarget::StatusEquals),
-                            "Status ==",
-                        )
-                        .clicked()
-                    {
-                        r.target = AssertionTarget::StatusEquals;
-                        *changed = true;
-                    }
-                    if ui
-                        .selectable_label(
-                            matches!(r.target, AssertionTarget::MaxDurationMs),
-                            "Latency <=",
-                        )
-                        .clicked()
-                    {
-                        r.target = AssertionTarget::MaxDurationMs;
-                        *changed = true;
-                    }
-                    if ui
-                        .selectable_label(
-                            matches!(r.target, AssertionTarget::JsonPathEquals { .. }),
-                            "JSONPath ==",
-                        )
-                        .clicked()
-                    {
-                        r.target = AssertionTarget::JsonPathEquals {
-                            path: "$.ok".into(),
-                        };
-                        *changed = true;
-                    }
-                    if ui
-                        .selectable_label(
-                            matches!(r.target, AssertionTarget::HeaderEquals { .. }),
-                            "Header ==",
-                        )
-                        .clicked()
-                    {
-                        r.target = AssertionTarget::HeaderEquals {
-                            name: "content-type".into(),
-                        };
-                        *changed = true;
-                    }
-                    if ui
-                        .selectable_label(
-                            matches!(r.target, AssertionTarget::BodyContains),
-                            "Body contains",
-                        )
-                        .clicked()
-                    {
-                        r.target = AssertionTarget::BodyContains;
-                        *changed = true;
-                    }
-                });
-            match &mut r.target {
-                AssertionTarget::JsonPathEquals { path }
-                | AssertionTarget::HeaderEquals { name: path } => {
-                    if ui
-                        .add(egui::TextEdit::singleline(path).desired_width(110.0))
-                        .changed()
-                    {
-                        *changed = true;
-                    }
-                }
-                _ => {}
-            }
-            if ui
-                .add(
-                    egui::TextEdit::singleline(&mut r.expected)
-                        .hint_text("expected")
-                        .desired_width(120.0),
-                )
-                .changed()
-            {
-                *changed = true;
-            }
-            if ui.small_button("×").clicked() {
-                del_idx = Some(i);
-            }
-        });
-    }
-    if let Some(i) = del_idx {
-        rules.remove(i);
+    if swaggen_ui_kit::secondary_button(ui, true, "+ Add Variable Extractor").clicked() {
+        app.state.requests[req_idx].extractors.push(
+            swaggen_domain::dynamic_vars::ResponseExtractorRule {
+                id: new_uid(),
+                target_var: "extracted_id".into(),
+                source: swaggen_domain::dynamic_vars::ExtractorSource::BodyJsonPath,
+                expression: "$.id".into(),
+                mark_secret: false,
+            },
+        );
         *changed = true;
     }
-    ui.horizontal(|ui| {
-        if swaggen_ui_kit::secondary_button(ui, true, "+ Add Assertion").clicked() {
-            app.state.requests[req_idx].assertions.push(AssertionRule {
-                id: new_uid(),
-                label: "Status 200".into(),
-                target: AssertionTarget::StatusEquals,
-                expected: "200".into(),
-                enabled: true,
-            });
-            *changed = true;
-        }
-        if swaggen_ui_kit::secondary_button(ui, true, "+ Add Variable Extractor").clicked() {
-            app.state.requests[req_idx].extractors.push(
-                swaggen_domain::dynamic_vars::ResponseExtractorRule {
-                    id: new_uid(),
-                    target_var: "extracted_id".into(),
-                    source: swaggen_domain::dynamic_vars::ExtractorSource::BodyJsonPath,
-                    expression: "$.id".into(),
-                    mark_secret: false,
-                },
-            );
-            *changed = true;
-        }
-    });
     let extractors = &mut app.state.requests[req_idx].extractors;
     let mut rm_ext = None;
     for (i, ex) in extractors.iter_mut().enumerate() {

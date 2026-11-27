@@ -46,7 +46,7 @@ pub enum RequestSubTab {
     Body,
     Auth,
     Scripts,
-    Assertions,
+    Extractors,
     Connection,
     Resolved,
 }
@@ -55,7 +55,6 @@ pub enum RequestSubTab {
 pub enum ResponseSubTab {
     Body,
     HeadersCookies,
-    Assertions,
     Redirects,
     Diff,
     SaveExample,
@@ -215,6 +214,17 @@ pub struct App {
     pub expanded_history_cursors: std::collections::BTreeSet<i64>,
     pub cherry_pick_selections:
         HashMap<i64, std::collections::BTreeSet<swaggen_domain::workspace::RequestCherryPickHunk>>,
+    pub history_compare_current: bool,
+    pub history_filter_query: String,
+    pub history_auto_publish: bool,
+    pub history_show_matching_ws_reqs: bool,
+    pub selected_history_cursors: std::collections::BTreeSet<i64>,
+    pub selected_ws_snapshot_reqs: std::collections::BTreeSet<(i64, String)>,
+    pub expanded_ws_snapshot_reqs: std::collections::BTreeSet<(i64, String)>,
+    pub cherry_pick_ws_req_selections: HashMap<
+        (i64, String),
+        std::collections::BTreeSet<swaggen_domain::workspace::RequestCherryPickHunk>,
+    >,
 
     // P07 Version B core UI state
     pub transfer_progress: Option<(u64, &'static str, u64, Option<u64>)>,
@@ -235,16 +245,9 @@ pub struct App {
     pub attach_shared_dir: String,
     pub p07_export_preview: String,
 
-    // P08 Runner, Mock Server, GraphQL/SSE, Snippets & Dev Utils UI state
+    // Mocks, Protocols & Dev Utils UI state
     pub snippet_target: swaggen_runner::protocols_and_tools::SnippetTarget,
     pub runner_subtab: usize,
-    pub runner_iterations: usize,
-    pub runner_delay_ms: u64,
-    pub runner_stop_on_fail: bool,
-    pub runner_validate_contract: bool,
-    pub runner_dataset_text: String,
-    pub runner_running: bool,
-    pub last_run_report: Option<swaggen_runner::collection_runner::CollectionRunReport>,
     pub mock_seed: u64,
     pub local_mock_url: Option<String>,
     pub local_mock_logs: Vec<swaggen_runner::local_mock::MockTrafficLog>,
@@ -281,9 +284,7 @@ pub struct App {
     pub update_signing_key: String,
     pub update_payload_text: String,
 
-    // P10 Sandboxed Script + Extensions + v0.1.16 UX/Automation UI state
-    pub sandbox_script_text: String,
-    pub sandbox_report: Option<swaggen_runner::sandbox::SandboxExecutionReport>,
+    // Pre/Post Script & Extensions UI state
     pub extensions: Vec<swaggen_domain::extensions::ExtensionManifest>,
     pub script_subtab_post: bool,
     pub script_reports: HashMap<
@@ -299,11 +300,6 @@ pub struct App {
     pub quick_var_value: String,
     pub spec_view_mode: usize,
     pub spec_local_file_path: String,
-    pub runner_test_kind: usize,
-    pub runner_selected_requests: std::collections::BTreeSet<String>,
-    pub runner_concurrency: usize,
-    pub runner_selected_step_idx: usize,
-    pub runner_trace_tab: usize,
     pub mock_port_input: String,
     pub mock_scenarios: Vec<swaggen_runner::advanced_protocols::MockScenarioRule>,
     pub protocol_subtab: usize,
@@ -473,6 +469,14 @@ impl App {
             preview_history_cursor: None,
             expanded_history_cursors: std::collections::BTreeSet::new(),
             cherry_pick_selections: HashMap::new(),
+            history_compare_current: true,
+            history_filter_query: String::new(),
+            history_auto_publish: false,
+            history_show_matching_ws_reqs: false,
+            selected_history_cursors: std::collections::BTreeSet::new(),
+            selected_ws_snapshot_reqs: std::collections::BTreeSet::new(),
+            expanded_ws_snapshot_reqs: std::collections::BTreeSet::new(),
+            cherry_pick_ws_req_selections: HashMap::new(),
             transfer_progress: None,
             previous_responses: HashMap::new(),
             diff_ignore_paths: "timestamp, request_id".into(),
@@ -492,13 +496,6 @@ impl App {
             p07_export_preview: String::new(),
             snippet_target: swaggen_runner::protocols_and_tools::SnippetTarget::Curl,
             runner_subtab: 0,
-            runner_iterations: 1,
-            runner_delay_ms: 0,
-            runner_stop_on_fail: false,
-            runner_validate_contract: false,
-            runner_dataset_text: String::new(),
-            runner_running: false,
-            last_run_report: None,
             mock_seed: 42,
             local_mock_url: None,
             local_mock_logs: Vec::new(),
@@ -532,8 +529,6 @@ impl App {
             update_manifest_json: String::new(),
             update_signing_key: String::new(),
             update_payload_text: String::new(),
-            sandbox_script_text: "const p = pm.response.json();\npm.test(\"ok\", () => {\n  pm.expect(pm.response.code).to.eql(200);\n});".into(),
-            sandbox_report: None,
             extensions: vec![swaggen_domain::extensions::ExtensionManifest::install_disabled(
                 "hdr-tagger",
                 "Trace Header Tagger",
@@ -550,11 +545,6 @@ impl App {
             quick_var_value: String::new(),
             spec_view_mode: 0,
             spec_local_file_path: String::new(),
-            runner_test_kind: 0,
-            runner_selected_requests: std::collections::BTreeSet::new(),
-            runner_concurrency: 1,
-            runner_selected_step_idx: 0,
-            runner_trace_tab: 0,
             mock_port_input: "0".into(),
             mock_scenarios: Vec::new(),
             protocol_subtab: 0,
@@ -697,44 +687,30 @@ impl App {
         };
         if ev.entity_kind == "request" {
             match serde_json::from_str::<RequestItem>(raw) {
-                Ok(mut req) => {
-                    if !self
-                        .state
-                        .collections
-                        .iter()
-                        .any(|c| c.id == req.collection_id)
-                    {
-                        req.collection_id = self
-                            .state
-                            .collections
-                            .first()
-                            .map(|c| c.id.clone())
-                            .unwrap_or_else(|| "default".into());
-                    }
-                    if let Some(existing) = self.state.requests.iter_mut().find(|r| r.id == req.id)
-                    {
-                        *existing = req.clone();
-                    } else {
-                        self.state.requests.push(req.clone());
-                    }
-                    self.open_request_in_workbench(&req.id);
+                Ok(req) => {
+                    let req_id = req.id.clone();
+                    let req_for_pub = req.clone();
+                    let action = self.state.apply_or_restore_request_from_history(req);
+                    self.state.open_or_focus_tab(&req_id);
                     self.mark_dirty();
                     self.save_workspace_local_only();
-                    if let Some((profile_id, workspace_id)) = self.active_team_target() {
+                    if self.history_auto_publish
+                        && let Some((profile_id, workspace_id)) = self.active_team_target()
+                    {
                         self.submit(Command::PublishSequentialEvent {
                             profile_id,
                             workspace_id,
-                            entity_id: req.id.clone(),
+                            entity_id: req_for_pub.id.clone(),
                             kind: "request".into(),
-                            name: format!("{} {}", req.method.as_str(), req.name),
-                            payload_json: serde_json::to_string(&req)
+                            name: format!("{} {}", req_for_pub.method.as_str(), req_for_pub.name),
+                            payload_json: serde_json::to_string(&req_for_pub)
                                 .unwrap_or_else(|_| "{}".into()),
                             note: format!("Cherry-pick #{} (r{})", ev.cursor, ev.revision),
                         });
                     }
                     self.error = false;
                     self.status = format!(
-                        "Cherry-picked #{} ({}) into Workbench",
+                        "{action} #{} ({}) into current workspace",
                         ev.cursor, ev.entity_name
                     );
                 }
@@ -757,7 +733,7 @@ impl App {
                     self.mark_dirty();
                     self.save_workspace_local_only();
                     self.error = false;
-                    self.status = format!("Cherry-picked workspace snapshot #{}", ev.cursor);
+                    self.status = format!("Restored workspace snapshot #{}", ev.cursor);
                 }
                 Err(e) => {
                     self.error = true;
@@ -775,11 +751,6 @@ impl App {
         ev: &swaggen_api_contract::ChangeEventRecord,
         hunks: &[swaggen_domain::workspace::RequestCherryPickHunk],
     ) {
-        if hunks.is_empty() {
-            self.error = true;
-            self.status = "Select at least one changed section to cherry-pick.".into();
-            return;
-        }
         let Some(raw) = ev.payload_json.as_deref() else {
             self.error = true;
             self.status = format!("Event #{} has no payload to cherry-pick.", ev.cursor);
@@ -793,7 +764,20 @@ impl App {
                 return;
             }
         };
+        self.cherry_pick_ws_request_hunks(ev.cursor, &source, hunks);
+    }
 
+    pub fn cherry_pick_ws_request_hunks(
+        &mut self,
+        cursor: i64,
+        source: &RequestItem,
+        hunks: &[swaggen_domain::workspace::RequestCherryPickHunk],
+    ) {
+        if hunks.is_empty() {
+            self.error = true;
+            self.status = "Select at least one section to cherry-pick.".into();
+            return;
+        }
         let target_idx =
             if let Some(pos) = self.state.requests.iter().position(|r| r.id == source.id) {
                 pos
@@ -811,22 +795,25 @@ impl App {
                     "",
                 );
                 new_req.id = source.id.clone();
+                self.state.trashed_requests.retain(|r| r.id != source.id);
                 self.state.requests.push(new_req);
                 self.state.requests.len() - 1
             };
 
         let applied_labels = swaggen_domain::workspace::apply_request_cherry_pick_hunks(
             &mut self.state.requests[target_idx],
-            &source,
+            source,
             hunks,
         );
         let target_req = self.state.requests[target_idx].clone();
-        self.open_request_in_workbench(&target_req.id);
+        self.state.open_or_focus_tab(&target_req.id);
         self.mark_dirty();
         self.save_workspace_local_only();
 
         let summary = applied_labels.join(", ");
-        if let Some((profile_id, workspace_id)) = self.active_team_target() {
+        if self.history_auto_publish
+            && let Some((profile_id, workspace_id)) = self.active_team_target()
+        {
             self.submit(Command::PublishSequentialEvent {
                 profile_id,
                 workspace_id,
@@ -834,14 +821,160 @@ impl App {
                 kind: "request".into(),
                 name: format!("{} {}", target_req.method.as_str(), target_req.name),
                 payload_json: serde_json::to_string(&target_req).unwrap_or_else(|_| "{}".into()),
-                note: format!("Cherry-pick #{} ({summary})", ev.cursor),
+                note: format!("Cherry-pick #{cursor} ({summary})"),
             });
         }
         self.error = false;
         self.status = format!(
-            "Cherry-picked [{summary}] from #{} into Workbench",
-            ev.cursor
+            "Cherry-picked [{summary}] of '{}' (#{cursor}) into current workspace",
+            target_req.name
         );
+    }
+
+    pub fn cherry_pick_batch_requests(&mut self, items: Vec<(i64, RequestItem)>) {
+        if items.is_empty() {
+            return;
+        }
+        let mut applied_count = 0usize;
+        let mut last_id = None;
+        let auto_pub = self.history_auto_publish;
+        let team_target = self.active_team_target();
+
+        for (cursor, req) in items {
+            let rid = req.id.clone();
+            let pub_req = req.clone();
+            self.state.apply_or_restore_request_from_history(req);
+            last_id = Some(rid);
+            applied_count += 1;
+            if auto_pub && let Some((ref profile_id, ref workspace_id)) = team_target {
+                self.submit(Command::PublishSequentialEvent {
+                    profile_id: profile_id.clone(),
+                    workspace_id: workspace_id.clone(),
+                    entity_id: pub_req.id.clone(),
+                    kind: "request".into(),
+                    name: format!("{} {}", pub_req.method.as_str(), pub_req.name),
+                    payload_json: serde_json::to_string(&pub_req).unwrap_or_else(|_| "{}".into()),
+                    note: format!("Batch cherry-pick #{cursor}"),
+                });
+            }
+        }
+        if let Some(ref rid) = last_id {
+            self.state.open_or_focus_tab(rid);
+        }
+        self.selected_history_cursors.clear();
+        self.selected_ws_snapshot_reqs.clear();
+        self.mark_dirty();
+        self.save_workspace_local_only();
+        self.error = false;
+        self.status = if auto_pub {
+            format!("Cherry-picked & published {applied_count} request(s) to current workspace")
+        } else {
+            format!(
+                "Cherry-picked {applied_count} request(s) into current workspace (press Ctrl+S or Publish when ready)"
+            )
+        };
+    }
+
+    pub fn revert_publish_events(
+        &mut self,
+        targets: Vec<(swaggen_api_contract::ChangeEventRecord, Option<RequestItem>)>,
+    ) {
+        if targets.is_empty() {
+            return;
+        }
+        let mut restored_cnt = 0usize;
+        let mut deleted_cnt = 0usize;
+        let auto_pub = self.history_auto_publish;
+        let team_target = self.active_team_target();
+
+        for (ev, prev_req_opt) in targets {
+            if ev.entity_kind == "request" {
+                match prev_req_opt {
+                    Some(prev_req) => {
+                        let pub_req = prev_req.clone();
+                        let rid = prev_req.id.clone();
+                        self.state.apply_or_restore_request_from_history(prev_req);
+                        self.state.open_or_focus_tab(&rid);
+                        restored_cnt += 1;
+                        if auto_pub && let Some((ref profile_id, ref workspace_id)) = team_target {
+                            self.submit(Command::PublishSequentialEvent {
+                                profile_id: profile_id.clone(),
+                                workspace_id: workspace_id.clone(),
+                                entity_id: pub_req.id.clone(),
+                                kind: "request".into(),
+                                name: format!("{} {}", pub_req.method.as_str(), pub_req.name),
+                                payload_json: serde_json::to_string(&pub_req)
+                                    .unwrap_or_else(|_| "{}".into()),
+                                note: format!(
+                                    "Revert #{} -> r{}",
+                                    ev.cursor,
+                                    ev.revision.saturating_sub(1)
+                                ),
+                            });
+                        }
+                    }
+                    None => {
+                        // First creation commit: reverting undoes creation by soft-deleting to local Trash
+                        if self.state.delete_request(&ev.entity_id) {
+                            deleted_cnt += 1;
+                        }
+                    }
+                }
+            }
+        }
+
+        self.selected_history_cursors.clear();
+        self.mark_dirty();
+        self.save_workspace_local_only();
+        self.error = false;
+        self.status = format!(
+            "Reverted commit(s): {restored_cnt} request(s) rolled back, {deleted_cnt} newly-created moved to Trash"
+        );
+    }
+
+    pub fn publish_all_dirty_requests(&mut self) {
+        let Some((profile_id, workspace_id)) = self.active_team_target() else {
+            return;
+        };
+        self.save_workspace_local_only();
+        let note = {
+            let n = self.publish_note_input.trim();
+            if n.is_empty() {
+                "Sync local changes".to_owned()
+            } else {
+                n.to_owned()
+            }
+        };
+        let mut dirty_reqs: Vec<RequestItem> = self
+            .state
+            .requests
+            .iter()
+            .filter(|r| r.dirty_vs_shared)
+            .cloned()
+            .collect();
+        if dirty_reqs.is_empty()
+            && let Some(active) = self.active_request().cloned()
+        {
+            dirty_reqs.push(active);
+        }
+        let count = dirty_reqs.len();
+        for req in dirty_reqs {
+            let payload_json = serde_json::to_string(&req).unwrap_or_else(|_| "{}".into());
+            self.submit(Command::PublishSequentialEvent {
+                profile_id: profile_id.clone(),
+                workspace_id: workspace_id.clone(),
+                entity_id: req.id.clone(),
+                kind: "request".into(),
+                name: format!("{} {}", req.method.as_str(), req.name),
+                payload_json,
+                note: note.clone(),
+            });
+        }
+        for r in &mut self.state.requests {
+            r.dirty_vs_shared = false;
+        }
+        self.publish_note_input.clear();
+        self.status = format!("Publishing {count} modified request(s) to Team server…");
     }
 
     pub fn open_request_in_workbench(&mut self, req_id: &str) {
@@ -1392,9 +1525,6 @@ impl App {
                     state,
                     message,
                 } => {
-                    if let Some(newest) = events.first().map(|e| e.cursor) {
-                        self.expanded_history_cursors.insert(newest);
-                    }
                     self.publish_history = events;
                     if let Some(st) = state {
                         self.sync_state = *st;
@@ -1504,18 +1634,6 @@ impl App {
                         "OAuth2 token received ({}; attached & saved locally as 'oauth_access_token')",
                         tok.token_type
                     );
-                }
-                Event::CollectionRunFinished(rep) => {
-                    self.runner_running = false;
-                    self.status = format!(
-                        "Runner complete: passed={} failed_assert={} failed_contract={} skipped={} infra={}",
-                        rep.passed,
-                        rep.failed_assertions,
-                        rep.failed_contract,
-                        rep.skipped,
-                        rep.infra_errors
-                    );
-                    self.last_run_report = Some(*rep);
                 }
                 Event::LocalMockState { base_url, logs } => {
                     self.status = match &base_url {
@@ -1665,14 +1783,10 @@ impl App {
                     );
                     let script_var_count =
                         mutated_env.len() + mutated_collection_vars.len() + mutated_globals.len();
-                    let script_tests_count = pre_script_report
+                    let script_err = pre_script_report
                         .as_ref()
-                        .map(|r| r.test_results.len())
-                        .unwrap_or(0)
-                        + post_script_report
-                            .as_ref()
-                            .map(|r| r.test_results.len())
-                            .unwrap_or(0);
+                        .and_then(|r| r.error.clone())
+                        .or_else(|| post_script_report.as_ref().and_then(|r| r.error.clone()));
                     if pre_script_report.is_some() || post_script_report.is_some() {
                         self.script_reports
                             .insert(request_id.clone(), (pre_script_report, post_script_report));
@@ -1721,8 +1835,8 @@ impl App {
                         } else {
                             String::new()
                         },
-                        if script_tests_count > 0 {
-                            format!(" · {script_tests_count} script test(s)")
+                        if let Some(ref e) = script_err {
+                            format!(" · Script error: {e}")
                         } else {
                             String::new()
                         }
@@ -1884,7 +1998,7 @@ impl App {
                 .and_then(|id| self.state.requests.iter().find(|r| r.id == id))
                 .map(|r| r.name.clone())
                 .unwrap_or_else(|| "API Workbench".into()),
-            MainMode::Runner => "Testing & Developer Tools".into(),
+            MainMode::Runner => "Mocks, Protocols & Tools".into(),
             MainMode::Server => "Team Collaboration & Workspaces".into(),
             MainMode::TeamSync => "Publish History".into(),
             MainMode::Specs => "API Definitions & Docs".into(),
@@ -2555,7 +2669,7 @@ impl eframe::App for App {
                         (
                             MainMode::Runner,
                             IconKind::Play,
-                            "Testing, Mocks & Protocols",
+                            "Mocks, Protocols & Dev Tools",
                         ),
                         (
                             MainMode::TeamSync,
@@ -3304,6 +3418,14 @@ mod tests {
             preview_history_cursor: None,
             expanded_history_cursors: std::collections::BTreeSet::new(),
             cherry_pick_selections: HashMap::new(),
+            history_compare_current: true,
+            history_filter_query: String::new(),
+            history_auto_publish: false,
+            history_show_matching_ws_reqs: false,
+            selected_history_cursors: std::collections::BTreeSet::new(),
+            selected_ws_snapshot_reqs: std::collections::BTreeSet::new(),
+            expanded_ws_snapshot_reqs: std::collections::BTreeSet::new(),
+            cherry_pick_ws_req_selections: HashMap::new(),
             transfer_progress: None,
             previous_responses: HashMap::new(),
             diff_ignore_paths: String::new(),
@@ -3323,13 +3445,6 @@ mod tests {
             p07_export_preview: String::new(),
             snippet_target: swaggen_runner::protocols_and_tools::SnippetTarget::Curl,
             runner_subtab: 0,
-            runner_iterations: 1,
-            runner_delay_ms: 0,
-            runner_stop_on_fail: false,
-            runner_validate_contract: false,
-            runner_dataset_text: String::new(),
-            runner_running: false,
-            last_run_report: None,
             mock_seed: 42,
             local_mock_url: None,
             local_mock_logs: Vec::new(),
@@ -3363,8 +3478,6 @@ mod tests {
             update_manifest_json: String::new(),
             update_signing_key: String::new(),
             update_payload_text: String::new(),
-            sandbox_script_text: String::new(),
-            sandbox_report: None,
             extensions: Vec::new(),
             script_subtab_post: true,
             script_reports: HashMap::new(),
@@ -3374,11 +3487,6 @@ mod tests {
             quick_var_value: String::new(),
             spec_view_mode: 0,
             spec_local_file_path: String::new(),
-            runner_test_kind: 0,
-            runner_selected_requests: Default::default(),
-            runner_concurrency: 1,
-            runner_selected_step_idx: 0,
-            runner_trace_tab: 0,
             mock_port_input: "0".into(),
             mock_scenarios: Vec::new(),
             protocol_subtab: 0,

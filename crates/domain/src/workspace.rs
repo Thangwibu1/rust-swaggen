@@ -787,30 +787,56 @@ impl CookieRecord {
     }
 }
 
+fn parse_month_abbrev(raw: &str) -> Option<time::Month> {
+    match raw.trim().to_ascii_lowercase().as_str() {
+        "jan" | "january" => Some(time::Month::January),
+        "feb" | "february" => Some(time::Month::February),
+        "mar" | "march" => Some(time::Month::March),
+        "apr" | "april" => Some(time::Month::April),
+        "may" => Some(time::Month::May),
+        "jun" | "june" => Some(time::Month::June),
+        "jul" | "july" => Some(time::Month::July),
+        "aug" | "august" => Some(time::Month::August),
+        "sep" | "sept" | "september" => Some(time::Month::September),
+        "oct" | "october" => Some(time::Month::October),
+        "nov" | "november" => Some(time::Month::November),
+        "dec" | "december" => Some(time::Month::December),
+        _ => None,
+    }
+}
+
 fn parse_http_cookie_expires(raw: &str) -> Option<i64> {
-    let trimmed = raw.trim();
-    if let Ok(dt) =
-        time::OffsetDateTime::parse(trimmed, &time::format_description::well_known::Rfc2822)
-    {
-        return Some(dt.unix_timestamp());
+    // Supports RFC 1123 (`Wed, 21 Oct 2099 07:28:00 GMT`), RFC 850/cookie-date (`21-Oct-2099 07:28:00 GMT`), etc.
+    let without_day_prefix = match raw.trim().split_once(',') {
+        Some((_, rest)) => rest.trim(),
+        None => raw.trim(),
+    };
+    let tokens: Vec<&str> = without_day_prefix
+        .split([' ', '\t', '-'])
+        .filter(|s| !s.is_empty())
+        .collect();
+    if tokens.len() < 4 {
+        return None;
     }
-    // Support dashed RFC 6265 cookie-date `Wed, 21-Oct-2028 07:28:00 GMT` by normalizing `-` in date token
-    let tokens: Vec<&str> = trimmed.split_whitespace().collect();
-    if tokens.len() >= 4 && tokens[1].contains('-') {
-        let expanded = format!(
-            "{} {} {} {}",
-            tokens[0],
-            tokens[1].replace('-', " "),
-            tokens[2],
-            tokens[3..].join(" ")
-        );
-        if let Ok(dt) =
-            time::OffsetDateTime::parse(&expanded, &time::format_description::well_known::Rfc2822)
-        {
-            return Some(dt.unix_timestamp());
-        }
+    let day: u8 = tokens[0].parse().ok()?;
+    let month = parse_month_abbrev(tokens[1])?;
+    let mut year: i32 = tokens[2].parse().ok()?;
+    if (0..=69).contains(&year) {
+        year += 2000;
+    } else if (70..=99).contains(&year) {
+        year += 1900;
     }
-    None
+    let mut hms = tokens[3].split(':');
+    let hour: u8 = hms.next()?.parse().ok()?;
+    let minute: u8 = hms.next()?.parse().ok()?;
+    let second: u8 = hms.next()?.parse().ok()?;
+    let date = time::Date::from_calendar_date(year, month, day).ok()?;
+    let tm = time::Time::from_hms(hour, minute, second).ok()?;
+    Some(
+        time::PrimitiveDateTime::new(date, tm)
+            .assume_utc()
+            .unix_timestamp(),
+    )
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -4305,6 +4331,44 @@ pub fn apply_request_cherry_pick_hunks(
     applied
 }
 
+impl WorkspaceState {
+    /// Applies or restores a historical `RequestItem` into the current live workspace,
+    /// mapping missing collection IDs cleanly and un-trashing any previously deleted match.
+    pub fn apply_or_restore_request_from_history(
+        &mut self,
+        mut hist_req: RequestItem,
+    ) -> &'static str {
+        if !self
+            .collections
+            .iter()
+            .any(|c| c.id == hist_req.collection_id)
+        {
+            hist_req.collection_id = self
+                .collections
+                .first()
+                .map(|c| c.id.clone())
+                .unwrap_or_else(|| "default".into());
+        }
+        if let Some(ref fid) = hist_req.folder_id
+            && !self
+                .folders
+                .iter()
+                .any(|f| &f.id == fid && f.collection_id == hist_req.collection_id)
+        {
+            hist_req.folder_id = None;
+        }
+        hist_req.dirty_vs_shared = true;
+        self.trashed_requests.retain(|r| r.id != hist_req.id);
+        if let Some(existing) = self.requests.iter_mut().find(|r| r.id == hist_req.id) {
+            *existing = hist_req;
+            "Updated"
+        } else {
+            self.requests.push(hist_req);
+            "Restored"
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -4823,6 +4887,36 @@ mod tests {
         assert_eq!(cur.url, r1.url);
         assert_eq!(cur.headers, r1.headers);
         assert_eq!(cur.body, r2.body);
+
+        // Compare historical snapshot vs current live state even when consecutive commits are identical,
+        // and cherry-pick / restore multiple requests into current WorkspaceState.
+        let mut ws = WorkspaceState::new_personal(LocalId::parse("personal").unwrap(), "Personal");
+        let cid = ws.collections[0].id.clone();
+        let live_r1 = RequestItem::new(
+            cid.clone(),
+            "Users",
+            HttpMethod::Get,
+            "{{base_url}}/v2/users",
+        );
+        let mut live_r1_deleted = live_r1.clone();
+        live_r1_deleted.id = "deleted-in-current".into();
+        ws.requests.push(live_r1.clone());
+
+        let mut hist_r1 = live_r1.clone();
+        hist_r1.url = "{{base_url}}/v1/users".into();
+        let diffs_vs_current = diff_request_snapshots(Some(&live_r1), &hist_r1);
+        assert!(!diffs_vs_current.is_empty());
+
+        let outcome1 = ws.apply_or_restore_request_from_history(hist_r1);
+        let outcome2 = ws.apply_or_restore_request_from_history(live_r1_deleted);
+        assert_eq!(outcome1, "Updated");
+        assert_eq!(outcome2, "Restored");
+        assert!(
+            ws.requests
+                .iter()
+                .any(|r| r.id == live_r1.id && r.url == "{{base_url}}/v1/users")
+        );
+        assert!(ws.requests.iter().any(|r| r.id == "deleted-in-current"));
     }
 
     #[test]
